@@ -1,5 +1,17 @@
 # Change Log
 
+## 3.3.2 [2022-06-01]
+ - This release must be used with GeoNode 3.3.x **only**
+
+<li> Thu May 19 15:58:06 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/6f9b68eeef6a6bfe0fece727e2226a5f1d61caea target=blank>Bundle for PR #981 (#983)</a></li>
+<li> Thu May 19 15:33:41 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/8873bd63154fed7cc8f45ba10e95b224ba49aba5 target=blank>#979 Expose mapstore's setViewer to allow for custom GFI panel (#981)</a></li>
+<li> Thu Apr 14 10:14:44 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/ee37be09ad917cf7ff52af2c384bd91a62b601ce target=blank>Compiled Bundle for #889 (#923)</a></li>
+<li> Wed Apr 13 15:47:40 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/74b4eaf1f64e28d165bf824de154989582c6eac6 target=blank>Added global extensions folder (#909)</a></li>
+<li> Wed Apr 13 13:49:12 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/54301d6d2546078bd9558298ca9b31c475eadd60 target=blank>Enable KML format for WPS export of vector layers (#913)</a></li>
+<li> Wed Mar 16 09:34:56 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/bd4ae08b1dd703a8bb3369f25f46b1ffe43a0317 target=blank>#852 "FeatureType Grid Widget" returns empty geometries when a spatial filter is set (#879)</a></li>
+<li> Tue Mar 15 11:55:32 2022 +0100: stefano bovio <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/73d6bf5751d290b7f09e1997e3194016ea7e8a1e target=blank>Update mapstore submodule to latest stable branch 2022.01.xx with additional print pluggable components (#867)</a></li>
+<li> Wed Feb 23 14:22:12 2022 +0100: afabiani <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/cbd1cefb0e145162973501a0da6b0702ad89c415 target=blank>Bump to version 3.3.2</a></li>
+
 ## 3.3.1 [2022-02-23]
 
 ### Backward Compatibility
