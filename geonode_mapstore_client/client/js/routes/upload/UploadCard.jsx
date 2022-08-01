@@ -63,7 +63,7 @@ function UploadCard({
                 {((progress < 100 && progress > 0) || status === 'running') ? <Spinner /> : null}
                 {onRemove
                     ? <Button size="xs" onClick={onRemove}>
-                        <FaIcon name="trash"/>
+                        <FaIcon name="trash" />
                     </Button>
                     : null}
             </div>
@@ -83,11 +83,11 @@ function UploadCard({
                     {(detailUrl || status === 'finished')
                         ? <Button
                             variant="primary"
-                            href={detailUrl}
+                            href={detailUrl || '/catalogue/#/search/?f=dataset'}
                             target="_blank"
                             rel="noopener noreferrer"
                         >
-                            <Message msgId="gnviewer.view" />
+                            <Message msgId={`${detailUrl ? 'gnviewer.view' : 'gnhome.viewDatasets'}`} />
                         </Button>
                         : null}
                     {(state === 'INVALID' || status === 'failed')
