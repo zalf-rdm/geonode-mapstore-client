@@ -1,5 +1,36 @@
 # Change Log
 
+## 4.0.3 [2022-08-05]
+
+### Backward Compatibility
+ - This release must be used with GeoNode 4.0.0 **only**
+
+<li> Fri Aug 5 10:19:37 2022 +0000: geosolutions-pr-generator[bot] <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/ff47eec0e093259ac516448b411822dc9963cada target=blank>[create-pull-request] automated change (#1141)</a></li>
+<li> Fri Aug 5 09:15:54 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/8f53b499a144f82af4cd4abffb61bbe6ffe5009d target=blank>[Fixes 1122] Issues with pressing Enter in Clone dialog (#1133) (#1140)</a></li>
+<li> Wed Aug 3 13:56:08 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/12467275f06a0dbc474e2064746aad751c05b6e7 target=blank>fixes 1120 (#1135)</a></li>
+<li> Wed Aug 3 13:55:59 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/703a29b107da5159209b3c009d1bb2d200a0f5bd target=blank>[Fixes 1114] Favorites are broken (#1119) (#1134)</a></li>
+<li> Mon Aug 1 11:16:33 2022 +0000: geosolutions-pr-generator[bot] <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/5a3365832ee8ca9e663ca4d2a41d155de68ea232 target=blank>[create-pull-request] automated change (#1129)</a></li>
+<li> Mon Aug 1 09:07:38 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/33a3d964a126294aa25c7c421abb99cde2c1ba65 target=blank>Show some informative message when a GPKG is imported (#1107) (#1124)</a></li>
+<li> Fri Jul 29 13:29:42 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/d00a9f795bdd89f46f1676e6df59d9dad4163979 target=blank>gpkg progress (#1125)</a></li>
+<li> Fri Jul 29 13:27:22 2022 +0000: geosolutions-pr-generator[bot] <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/cb60073082da081357a065f29cfd244854150c9b target=blank>[create-pull-request] automated change (#1113)</a></li>
+<li> Mon Jul 25 16:31:25 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/c6ada771274f6cd93a7f5eec2999c23dfc312379 target=blank>[Fixes #1097] Spinner should not keep spinning in INVALID state (#1098) (#1112)</a></li>
+<li> Mon Jul 25 14:15:48 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/c83fa14debe8c47c66ba87c625b7709aaa95859f target=blank>[Fixes #1085] Spinner is missing during the upload phase  (#1087) (#1111)</a></li>
+<li> Mon Jul 18 12:20:04 2022 +0200: geosolutions-pr-generator[bot] <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/980d7f9e659804d252d3b79ddc8c3596aedd78df target=blank>[create-pull-request] automated change (#1106)</a></li>
+<li> Mon Jul 18 08:46:27 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/639bd7145a1e48f784a65bb23e27f41dd72e41c8 target=blank>[Fixes #1051] Total number of resources and list of resources should be updated after deleting a resource from the list (#1057) (#1103)</a></li>
+<li> Mon Jul 18 08:45:42 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/36d661e98f447f338c5eba2bbd3a8fedff83f56f target=blank>[Fixes #1038] Reload catalogue after saving a resource (#1062) (#1102)</a></li>
+<li> Mon Jul 18 08:44:38 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/7d8df35ae22a56bb7228eacb9e4e299a5e275989 target=blank>[Fixes #1072] Dataset legend must show the dataset's title instead of Geoserver's layername (#1075) (#1101)</a></li>
+<li> Mon Jul 18 08:43:53 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/c99fb4c13de8e0dd617b713a9d4d9206231262a4 target=blank>[Fixes #1058] Problem with color picker in Bar and Pie chart (#1082) (#1100)</a></li>
+<li> Mon Jul 18 08:42:35 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/d18c3b532ede505754ef4baaea9f5e89d02e8823 target=blank>[Fixes #1089] Fix text overflow in resource Delete dialog box (#1090) (#1099)</a></li>
+<li> Tue Jul 12 23:30:17 2022 +0200: geosolutions-pr-generator[bot] <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/1578b55e452e9d26193750a3b4a968b00dd8d3e3 target=blank>[create-pull-request] automated change (#1096)</a></li>
+<li> Tue Jul 12 23:01:53 2022 +0200: Giovanni Allegri <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/f480028f1dbb6c64c855ec14d087d144ade0cabb target=blank>[Fixes #1084] Use raw JSON body instead of ulencoded form for permissions PUT (#1086) (#1095)</a></li>
+<li> Tue Jul 12 14:57:59 2022 +0200: geosolutions-pr-generator[bot] <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/99b14b3a8659e6b07baaa35834be52319ac0e2cb target=blank>[create-pull-request] automated change (#1092)</a></li>
+<li> Tue Jul 12 12:41:23 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/212a98623cb66265953910b451e96c309ab4736d target=blank>[Fixes #955] Blured icon images (#1056) (#1079)</a></li>
+<li> Tue Jul 12 12:39:41 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/42b326ca9aae765b27b83205b89cd1a8371b071c target=blank>[Fixes #1069] Use new config setting for supported dataset file types (#1070) (#1081)</a></li>
+<li> Tue Jul 12 12:38:04 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/9ef27e429279a6648068e83da2c4afc838a08bf0 target=blank>[Backport 4.x] [Fixes #1064] Expose supported upload file formats as configurations (#1080)</a></li>
+<li> Thu Jul 7 16:04:14 2022 +0200: geosolutions-pr-generator[bot] <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/20f6942ad03025f6ba70fc0e3f472080e2cf8af5 target=blank>[create-pull-request] automated change (#1074)</a></li>
+<li> Thu Jul 7 09:44:57 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/7abcafbe821bcdc949e434d63388c45580ba3382 target=blank>[Backport 4.x][Fixes #1053] Include base support for localization in gn-document app entry (#1061)</a></li>
+
+
 ## 4.0.2 [2022-07-01]
 
 ### Backward Compatibility
