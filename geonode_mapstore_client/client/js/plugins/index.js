@@ -14,6 +14,7 @@ import {
     CatalogActionButton,
     MeasureActionButton,
     LayerDownloadActionButton,
+    DataDownloadActionButton,
     AnnotationsActionButton,
     FullScreenActionButton,
     FilterLayerActionButton
@@ -112,6 +113,18 @@ export const plugins = {
                 ActionNavbar: {
                     name: 'LayerDownload',
                     Component: LayerDownloadActionButton
+                }
+            }
+        }
+    ),
+    DataDownloadPlugin: toLazyPlugin(
+        'LayerDownload',
+        () => import(/* webpackChunkName: 'plugins/data-download' */ '@mapstore/framework/plugins/LayerDownload'),
+        {
+            containers: {
+                ActionNavbar: {
+                    name: 'DataDownload',
+                    Component: DataDownloadActionButton
                 }
             }
         }
@@ -427,6 +440,14 @@ export const plugins = {
     SyncPlugin: toLazyPlugin(
         'Sync',
         () => import(/* webpackChunkName: 'plugins/sync-plugin' */ '@js/plugins/Sync')
+    ),
+    IsoDownloadPlugin: toLazyPlugin(
+        'IsoDownload',
+        () => import(/* webpackChunkName: 'plugins/iso-download-plugin' */ '@js/plugins/downloads/IsoDownload')
+    ),
+    DublinCoreDownloadPlugin: toLazyPlugin(
+        'DublinCoreDownload',
+        () => import(/* webpackChunkName: 'plugins/iso-download-plugin' */ '@js/plugins/downloads/DublinCoreDownload')
     )
 };
 
