@@ -1,5 +1,12 @@
 # Change Log
 
+## 3.3.3 [2022-09-22]
+ - This release must be used with GeoNode 3.3.x **only**
+
+<li> Wed Jul 6 18:30:43 2022 +0200: geosolutions-pr-generator[bot] <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/87e51049ec3a41f247090e7527533d7a8fe363a2 target=blank>[create-pull-request] automated change (#1067)</a></li>
+<li> Wed Jul 6 15:03:21 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/6275cf6745438781e4eeea16cf02cb668631bf24 target=blank>[Fixes #1065] Extend configs to include new timeline setting for Mapstore's Timeline plugin (#1066)</a></li>
+<li> Wed Jun 1 15:35:54 2022 +0200: afabiani <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/8b371a98515782ea21da6e6b8d04e6e901721cbe target=blank> - Bump to version 3.3.3</a></li>
+
 ## 3.3.2 [2022-06-01]
  - This release must be used with GeoNode 3.3.x **only**
 
