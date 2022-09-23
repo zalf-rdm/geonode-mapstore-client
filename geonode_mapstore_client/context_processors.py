@@ -33,6 +33,7 @@ def resource_urls(request):
         'DATASET_MAX_UPLOAD_SIZE': get_max_upload_size("dataset_upload_size"),
         'DOCUMENT_MAX_UPLOAD_SIZE': get_max_upload_size("document_upload_size"),
         'DEFAULT_LAYER_FORMAT': getattr(settings, "DEFAULT_LAYER_FORMAT", 'image/png'),
+        'DEFAULT_THUMBNAIL_SIZE': getattr(settings, "THUMBNAIL_SIZE", {'width': 500, 'height': 200}),
         'MAX_PARALLEL_UPLOADS': get_max_upload_parallelism_limit("default_max_parallel_uploads"),
         'ALLOWED_DOCUMENT_TYPES': getattr(settings, "ALLOWED_DOCUMENT_TYPES", []),
         'LANGUAGES': getattr(settings, "LANGUAGES", []),

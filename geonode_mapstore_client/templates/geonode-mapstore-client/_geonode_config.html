@@ -47,6 +47,7 @@
         const defaultMapCenterY = geoNodeSettings.DEFAULT_MAP_CENTER_Y || 0;
         const defaultMapZoom = geoNodeSettings.DEFAULT_MAP_ZOOM || 0;
         const defaultTileSize = geoNodeSettings.DEFAULT_TILE_SIZE || 512;
+        const defaultThumbnailSize = geoNodeSettings.DEFAULT_THUMBNAIL_SIZE || {'width': 500, 'height': 200};
         const datasetMaxUploadSize = geoNodeSettings.DATASET_MAX_UPLOAD_SIZE;
         const documentMaxUploadSize = geoNodeSettings.DOCUMENT_MAX_UPLOAD_SIZE;
         const maxParallelUploads = geoNodeSettings.MAX_PARALLEL_UPLOADS
@@ -128,6 +129,7 @@
                     datasetMaxUploadSize: datasetMaxUploadSize,
                     documentMaxUploadSize: documentMaxUploadSize,
                     maxParallelUploads: maxParallelUploads,
+                    defaultThumbnailSize: defaultThumbnailSize,
                     upload: { 
                         supportedDatasetFileTypes: supportedDatasetFileTypes
                         }
