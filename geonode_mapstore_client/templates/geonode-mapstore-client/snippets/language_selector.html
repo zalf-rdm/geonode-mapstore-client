@@ -6,6 +6,7 @@
 <form id="gn-language-selector-form" action="/i18n/setlang/" method="post" style="display:none;">
     {% csrf_token %}
     <input name="language" type="hidden" value="{{ LANGUAGE }}"/>
+    <input name="next" type="hidden" value="{{  window.location|safe }}"/>
 </form>
 
     {% if inline %}
@@ -32,7 +33,7 @@
                             const language = event.target.getAttribute('data-lang-code');
                             if (language) {
                                 languageInput.value = language;
-                                languageForm.action = '/i18n/setlang/?next=' + (window.location && (window.location.pathname + window.location.hash) || '/');
+                                languageForm.action = '/i18n/setlang';
                                 languageForm.submit();
                             }
                         });
