@@ -14,7 +14,7 @@ import { connect } from 'react-redux';
 import security from '@mapstore/framework/reducers/security';
 import controls from '@mapstore/framework/reducers/controls';
 import notifications from '@mapstore/framework/reducers/notifications';
-import Home from '@js/routes/Home';
+import HomeRoute from '@js/routes/Home';
 
 import gnsearch from '@js/reducers/gnsearch';
 import gnresource from '@js/reducers/gnresource';
@@ -32,6 +32,7 @@ import {
     getAccountInfo,
     getResourcesTotalCount
 } from '@js/api/geonode/v2';
+import { HOME_ROUTES, appRouteComponentTypes } from '@js/utils/AppRoutesUtils';
 
 import {
     setupConfiguration,
@@ -44,13 +45,11 @@ const ConnectedRouter = connect((state) => ({
     locale: state?.locale || DEFAULT_LOCALE
 }))(Router);
 
-const routes = [
-    {
-        name: 'homepage',
-        path: '/',
-        component: Home
-    }
-];
+const viewer = {
+    [appRouteComponentTypes.HOME]: HomeRoute
+};
+
+const routes = HOME_ROUTES.map(({component, ...config}) => ({...config, component: viewer[component]}));
 
 initializeApp();
 
