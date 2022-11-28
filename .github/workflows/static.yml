@@ -54,9 +54,12 @@ jobs:
           npm run docs
           cd ../../
           mv ./docs ./gh-pages/master
+      - name: Checkout 4.1.x
+        uses: actions/checkout@v3
+        with:
+           ref: 4.1.x
       - name: Build 4.1.x documentation
         run: |
-          git checkout origin/4.1.x
           cd ./geonode_mapstore_client/client/
           npm run docs
           cd ../../
