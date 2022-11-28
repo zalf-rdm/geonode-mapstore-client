@@ -10,18 +10,17 @@ import { ResourceTypes } from '@js/utils/ResourceUtils';
 
 export const appRouteComponentTypes = {
     VIEWER: 'ViewerRoute',
-    SEARCH: 'SearchRoute',
-    DETAIL: 'DetailRoute',
+    CATALOGUE: 'CatalogueRoute',
     DATASET_UPLOAD: 'UploadDatasetRoute',
     DOCUMENT_UPLOAD: 'UploadDocumentRoute',
-    HOME: 'HomeRoute'
+    COMPONENTS: 'ComponentsRoute'
 };
 
-export const HOME_ROUTES = [
+export const COMPONENTS_ROUTES = [
     {
-        name: 'homepage',
-        path: '/',
-        component: appRouteComponentTypes.HOME
+        name: 'components',
+        path: ['/'],
+        component: appRouteComponentTypes.COMPONENTS
     }
 ];
 
@@ -150,21 +149,15 @@ export const CATALOGUE_ROUTES = [
         shouldNotRequestResources: true
     },
     {
-        name: 'resources',
+        name: 'catalogue',
         path: [
             '/',
             '/search/',
-            '/search/filter'
-        ],
-        component: appRouteComponentTypes.SEARCH
-    },
-    {
-        name: 'detail',
-        path: [
+            '/search/filter',
             '/detail/:pk',
             '/detail/:ctype/:pk'
         ],
-        component: appRouteComponentTypes.DETAIL
+        component: appRouteComponentTypes.CATALOGUE
     },
     {
         name: 'upload_dataset',
