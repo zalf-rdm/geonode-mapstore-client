@@ -3248,7 +3248,10 @@
                 }
             },
             {
-                "name": "DeleteResource"
+                "name": "DeleteResource",
+                "cfg": {
+                    "redirectTo": false
+                }
             },
             {
                 "name": "DownloadResource"
