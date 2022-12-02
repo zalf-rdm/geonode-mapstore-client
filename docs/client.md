@@ -200,6 +200,9 @@ set new Featured Resources includes data, page, links</p>
 <dt><a href="#SYNC_RESOURCES">SYNC_RESOURCES</a></dt>
 <dd><p>Sync geostory components with their live resources on geonode</p>
 </dd>
+<dt><a href="#closeOpenPanels">closeOpenPanels</a></dt>
+<dd><p>Close open panels on new panel open</p>
+</dd>
 <dt><a href="#gnSyncComponentsWithResources">gnSyncComponentsWithResources</a> ⇒ <code>Observable</code></dt>
 <dd><p>Sync reources in current geostory or dashboard with their respective sources</p>
 </dd>
@@ -768,7 +771,6 @@ check if the menu perms is allowed by user or resource
     * [.getResourcePermissions](#module_utils/ResourceUtils.getResourcePermissions) ⇒
     * [.parseDocumentConfig](#module_utils/ResourceUtils.parseDocumentConfig) ⇒ <code>Object</code>
     * [.parseMapConfig](#module_utils/ResourceUtils.parseMapConfig) ⇒ <code>Object</code>
-    * [.canCopyResource](#module_utils/ResourceUtils.canCopyResource)
 
 <a name="module_utils/ResourceUtils.resourceToLayerConfig"></a>
 
@@ -830,13 +832,6 @@ Parse map response object
 | mapResponse | <code>Object</code> | api response object |
 | resource | <code>Object</code> | optional resource object |
 
-<a name="module_utils/ResourceUtils.canCopyResource"></a>
-
-### utils/ResourceUtils.canCopyResource
-Util to check if resosurce can be cloned (Save As)
-Requirements for copying are 'add_resource' permission and is_copyable property on resource
-
-**Kind**: static constant of [<code>utils/ResourceUtils</code>](#module_utils/ResourceUtils)  
 <a name="DOWNLOAD_METADATA"></a>
 
 ## DOWNLOAD\_METADATA
@@ -847,6 +842,12 @@ Sync geostory components with their live resources on geonode
 
 ## SYNC\_RESOURCES
 Sync geostory components with their live resources on geonode
+
+**Kind**: global constant  
+<a name="closeOpenPanels"></a>
+
+## closeOpenPanels
+Close open panels on new panel open
 
 **Kind**: global constant  
 <a name="gnSyncComponentsWithResources"></a>
