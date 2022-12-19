@@ -1,5 +1,46 @@
 # Change Log
 
+## 4.0.5 [2022-12-22]
+
+### Backward Compatibility
+ - This release must be used with GeoNode 4.0.2 **only**
+
+<li> Thu Dec 15 10:04:24 2022 +0100: geosolutions-pr-generator[bot] <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/c01c6e84b30d9c6e2a2574d4164a42a6f5ce919b target=blank>[create-pull-request] automated change (#1367)</a></li>
+<li> Thu Dec 15 09:52:51 2022 +0100: stefano bovio <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/254001e88048b534810073f8b56d64f0a8b542f5 target=blank>[Fixes #1305] Unable to upload GEOJSON files with .json extention (#1317) (#1366)</a></li>
+<li> Fri Dec 2 16:46:18 2022 +0100: geosolutions-pr-generator[bot] <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/8a23bc7dd33426babcb5884908e0a0cf43f67127 target=blank>[create-pull-request] automated change (#1357)</a></li>
+<li> Fri Dec 2 16:24:59 2022 +0100: stefano bovio <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/1da2950756c21b238ec241c58554b03a3fd2bb78 target=blank>[Fixes #1306] Annotations and add dataset form is not opened when info is showing (#1330) (#1356)</a></li>
+<li> Fri Dec 2 16:24:46 2022 +0100: stefano bovio <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/e241a5a749ff14963d1a71611183a37d446a61df target=blank>[Fixes #1309] HTML tags in the title on pressing enter from the edit info form (#1322) (#1355)</a></li>
+<li> Fri Dec 2 16:24:30 2022 +0100: stefano bovio <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/0127df4ad088ed46f099a1964a17d4911e4009b6 target=blank>[Fixes #1307] Manage permissions on group not respected (#1316) (#1354)</a></li>
+<li> Fri Dec 2 16:23:45 2022 +0100: stefano bovio <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/83ac810ecdc6c1c3a8c753b6826e3fc6e374c1ff target=blank>[Fixes #1310] Some checkbox filter combinations fail (#1312) (#1353)</a></li>
+<li> Fri Dec 2 16:23:23 2022 +0100: stefano bovio <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/827907d5d031d583f7ba8325483d6179ca73030a target=blank>[Fixes #1308] Clone option in the list view is missing on Maps for non admin users (#1352)</a></li>
+<li> Wed Nov 16 15:41:57 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/add5bf12bab80d4bfb00c975b45ac8ba3c961d6a target=blank>[Fixes 1291] (#1292) (#1311)</a></li>
+<li> Tue Nov 15 10:36:13 2022 +0100: geosolutions-pr-generator[bot] <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/3db98d0c0b6eacae32119baed38cf7f164bf90c8 target=blank>[create-pull-request] automated change (#1301)</a></li>
+<li> Tue Nov 15 09:14:33 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/02f4a7d7f9e66f83bf35b8f6e65cfe0fb80f3a47 target=blank>[Fixes 1249] Change Edit Layer style to Edit style (#1251) (#1290)</a></li>
+<li> Tue Nov 15 09:44:29 2022 +0100: geosolutions-pr-generator[bot] <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/cab451e6b4ac2c93f71274274eac04463f80f2f6 target=blank>[create-pull-request] automated change (#1300)</a></li>
+<li> Mon Nov 14 14:24:26 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/ae6f662a53aa9d9d774c57a5083d9028790600ff target=blank>[Fixes #1267] Filter executionrequest by source (#1276) (#1299)</a></li>
+<li> Wed Nov 9 14:06:54 2022 +0000: geosolutions-pr-generator[bot] <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/309910110ebc82e84eccfc846b0407b59ccdd6bd target=blank>[create-pull-request] automated change (#1287)</a></li>
+<li> Wed Nov 9 11:44:04 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/722396b23452d289b254d3a2dca6496cc9ddaa36 target=blank>[Fixes 1268] Fix metedata view buttons bug (#1269) (#1285)</a></li>
+<li> Wed Nov 9 11:40:57 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/b8d25ec2dd8eef8e49f7a129df30fc7a569102b7 target=blank>[Fixes #1243] Show metadata page in Document view when preview is not available (#1250) (#1284)</a></li>
+<li> Tue Nov 8 17:01:14 2022 +0100: geosolutions-pr-generator[bot] <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/3700b1f31d217824e69783ec609127fd39be4be1 target=blank>[create-pull-request] automated change (#1283)</a></li>
+<li> Tue Nov 8 14:52:39 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/7da41df659763ce2faedd8fcca6c87611e93e6c3 target=blank>[Fixes #1278] Inconsistencies in group permissions search panel (#1279) (#1282)</a></li>
+<li> Tue Nov 8 11:36:32 2022 +0100: geosolutions-pr-generator[bot] <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/eb4e3a469b376df11a571f24501b3a3859fa3025 target=blank>[create-pull-request] automated change (#1272)</a></li>
+<li> Fri Oct 28 16:23:49 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/612b6c7a70b6f6142cf5d886149f84e9d3f4ead2 target=blank>[Fixes #1247] Move Remote Service under Add Resource (#1248) (#1270)</a></li>
+<li> Thu Oct 20 10:38:46 2022 +0200: geosolutions-pr-generator[bot] <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/9edca18ea0d8d88df372b600e98c658424b433a3 target=blank>[create-pull-request] automated change (#1256)</a></li>
+<li> Thu Oct 20 08:00:58 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/a3fcbb3f1811f71850a00d928b5c84ce07029fd0 target=blank>[Fixes 1226] Embedded maps should have the timeline plugin (#1232) (#1242)</a></li>
+<li> Thu Oct 20 08:00:36 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/5e44e5ca87e7f7d46b1c625223e9441205ede35e target=blank>[Fixes #1213] Avoid executing permissions request for anonymous users (#1223) (#1241)</a></li>
+<li> Wed Oct 19 16:17:14 2022 +0200: mattiagiupponi <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/b6dbafee44cd3623484af3e4f93b0c8b190d8fa5 target=blank>Fix map cloning (#1252) (#1253)</a></li>
+<li> Mon Oct 10 18:14:13 2022 +0200: Giovanni Allegri <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/04bab3b676aaf58c6707328b276ed213b751ed7b target=blank>-[Fixes #1211] Add THUMBNAIL_GENERATOR_DEFAULT_SIZE configurations to __GEONODE_CONFIG__ (#1212) (#1240)</a></li>
+<li> Fri Oct 7 17:15:09 2022 +0200: geosolutions-pr-generator[bot] <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/14a2968c7d606394fdf1fa693ffd29bd5be4de4f target=blank>[create-pull-request] automated change (#1236)</a></li>
+<li> Fri Oct 7 14:29:13 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/578e16610630c2451d46fa399da78eb8f7c32664 target=blank>[Fixes #1192] Geonode Download filtered dataset, where filter is based on another layer (#1229) (#1235)</a></li>
+<li> Fri Oct 7 14:28:19 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/1b9f47b54238097023d19205cd29d07f696bd8e5 target=blank>[Fixes #1216] Remove uploaded items from new importer upload list on refresh (#1217) (#1222)</a></li>
+<li> Fri Oct 7 14:26:55 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/079f04f64067c480612db5207e2527ca109942d5 target=blank>[Fixes #1210] Configure the client to receive image properties from server (#1214) (#1221)</a></li>
+<li> Wed Sep 28 09:26:26 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/a0269e0e493f139f4f8f6858c18b31301d36d99a target=blank>[Fixes 1177] (#1199) (#1218)</a></li>
+<li> Wed Sep 21 12:56:56 2022 +0200: Giovanni Allegri <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/b3c0d02befd83d89f40f6df0cbe635787a08d0e2 target=blank>fix typo in utils.py (#1181) (#1207)</a></li>
+<li> Tue Sep 20 13:21:28 2022 +0000: geosolutions-pr-generator[bot] <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/afcf68082ca0bb8fb6023cfe1da56c56656051e3 target=blank>[create-pull-request] automated change (#1208)</a></li>
+<li> Mon Sep 19 15:14:09 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/55c7f56521a2fb25ed01c1ec6c9e86391a017341 target=blank>[Fixes #1144] Disable / hide the charts button if a user doesn't have enough perms on the dataset (#1196) (#1205)</a></li>
+<li> Thu Sep 15 12:35:12 2022 +0000: David Quartey <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/ca033bec0a02a71acf2424564e90d29df54d3c91 target=blank>[Fixes #1147] Theme override styles from customization app needs some improvement (#1204) (#1206)</a></li>
+<li> Wed Sep 14 08:55:55 2022 +0200: afabiani <a href=https://github.com/GeoNode/geonode-mapstore-client/commit/1ed0b8a5061664cb1f8ac0cbbab631364b77f6fe target=blank>Bump to version 4.0.5</a></li>
+
 ## 4.0.4 [2022-09-14]
 
 ### Backward Compatibility
