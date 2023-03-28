@@ -83,6 +83,17 @@ export const CATALOGUE_ROUTES = [
         shouldNotRequestResources: true
     },
     {
+        name: 'tabular_viewer',
+        path: [
+            '/tabular/:pk'
+        ],
+        pageConfig: {
+            resourceType: 'tabular'
+        },
+        component: ViewerRoute,
+        shouldNotRequestResources: true
+    },
+    {
         name: 'dataset_edit_data_viewer',
         path: [
             '/dataset/:pk/edit/data'
