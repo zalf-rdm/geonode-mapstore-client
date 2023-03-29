@@ -90,7 +90,7 @@ export const CATALOGUE_ROUTES = [
         pageConfig: {
             resourceType: 'tabular'
         },
-        component: ViewerRoute,
+        component: appRouteComponentTypes.VIEWER,
         shouldNotRequestResources: true
     },
     {
