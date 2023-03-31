@@ -415,6 +415,10 @@ export const plugins = {
     FeaturedResourcesGridPlugin: toModulePlugin(
         'FeaturedResourcesGrid',
         () => import(/* webpackChunkName: 'plugins/featured-resources-grid' */ '@js/plugins/FeaturedResourcesGrid')
+    ),
+    TabularPreviewPlugin: toModulePlugin(
+        'TabularPreview',
+        () => import(/* webpackChunkName: 'plugins/tabular-preview-plugin' */ '@js/plugins/TabularPreview')
     )
 };
 
