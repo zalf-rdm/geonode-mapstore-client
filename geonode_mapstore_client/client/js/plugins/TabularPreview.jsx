@@ -35,7 +35,6 @@ function rowsFromFeatures(data) {
 
 
 function TableComponent({ owsUrl, typeName }) {
-
     const [header, setHeader] = useState();
     const [rows, setRows] = useState();
     const [error, setError] = useState();
@@ -55,8 +54,8 @@ function TableComponent({ owsUrl, typeName }) {
     if (error) {
         console.error(error);
     }
-    if (!header) {
-        return <div>No header data available!</div>
+    if (!rows) {
+        return <div>No data available!</div>
     }
     return (
         <div id="tabular-preview" class="tableFixHead" style={{ overflow:"auto" }}>
