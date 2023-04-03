@@ -58,8 +58,10 @@ function TableComponent({ owsUrl, typeName }) {
         return <div>No data available!</div>
     }
     return (
-        <div id="tabular-preview" class="tableFixHead" style={{ overflow:"auto" }}>
-            <Table head={header} body={rows} />
+        <div id="tabular-preview">
+            <div  class="tableFixHead" style={{ overflow:"auto" }}>
+                <Table head={header} body={rows} />
+            </div>
         </div>
     );
 
