@@ -1,6 +1,7 @@
 {% load static %}
 {% load client_lib_tags %}
 {% load client_version %}
+{% load get_tabular_data %}
 <!DOCTYPE html>
 <html>
     <head>
@@ -34,7 +35,7 @@
                 {% include './_geonode_config.html' with plugins_config_key='dataset_embed' is_embed='true' %}
             {% endblock %}
             <div class="gn-embed gn-theme">
-                {% block container %}
+                {% comment %} {% block container %}
                     <div id="ms-container">
                         <div class="gn-main-event-container">
                             <div class="gn-main-event-content">
@@ -43,10 +44,47 @@
                             </div>
                         </div>
                     </div>
-                {% endblock %}
-
+                {% endblock %} {% endcomment %}
+                
                 {% block ms_scripts %}
+                    {% if resource.subtype != 'tabular' %}
                     <script id="gn-script" src="{% static 'mapstore/dist/js/gn-map.js' %}?{% client_version %}"></script>
+                    {% else %}
+                    <style>
+                        .msgapi table {
+                            border-collapse: collapse;
+                        }
+                        .msgapi tr {
+                            border-bottom: 1px solid #ccc;
+                        }
+                        .msgapi th, td {
+                            text-align: left;
+                            padding: 4px;
+                        }
+                    </style>
+                    <div>
+                        <table style="overflow">
+                            <tr>
+                            {% describe_tabular_data resource as attributes %}
+                            {% for header in attributes %}
+                            <th>{{ header }}</th>
+                            {% endfor %}
+                            </tr>
+        
+                            {% get_tabular_data resource 10 as data %}
+                            {% for row in data %}
+                            <tr>
+                            {% for name in row %}
+                            <td>{{ row|get_obj_attr:name }}</td>
+                            {% endfor %}
+                            </tr>
+                            {% endfor %}
+                            <tr><td>...</td></tr>
+        
+                        </table>
+                    </div>
+                    {% comment %} <script id="gn-script" src="{% static 'mapstore/dist/js/gn-tabular.js' %}?{% client_version %}"></script> {% endcomment %}
+                    {% endif %}
                 {% endblock %}
             </div>
         </div>
