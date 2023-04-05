@@ -144,13 +144,11 @@ function DetailsInfoFields({ fields, formatHref }) {
     </div>);
 }
 
-function DetailsInfoTable({head, body}) {
-    return (
-        <div className="gn-details-info-table">
-            <Table head={head} body={body} />
-        </div>
-    )
-}
+const tabTypes = {
+    'attribute-table': DetailsAttributeTable,
+    'linked-resources': DetailsLinkedResources,
+    'tab': DetailsInfoFields
+};
 
 const parseTabItems = (items) => {
     return (items || []).filter(({ value }) => {
@@ -192,11 +190,18 @@ const parseAttributeData = (dataset) => {
 function DetailsInfo({
     tabs = [],
     resource,
-    formatHref
+    formatHref,
+    resourceTypesInfo
 }) {
     const filteredTabs = tabs
-        .map((tab) => ({ ...tab, items: tab.type === "attribute_table" ? tab.items : parseTabItems(tab?.items) }))
-    //.filter(tab => tab?.items?.length > 0);
+        .map((tab) =>
+            ({
+                ...tab,
+                items: isDefaultTabType(tab.type) ? parseTabItems(tab?.items) : tab?.items,
+                Component: tabTypes[tab.type] || tabTypes.tab
+            }))
+        // ensure tab has items .. attribute table loads them dynamically
+        .filter(tab => tab?.items?.length > 0 || tab.type === 'attribute-table' );
     const selectedTabId = filteredTabs?.[0]?.id;
     return (
         <Tabs
@@ -204,28 +209,15 @@ function DetailsInfo({
             bsStyle="pills"
             className="gn-details-info tabs-underline"
         >
-            {filteredTabs.map((tab, idx) => {
-                const [attributeData, setAttributeData] = useState({ header: [], rows: [] });
-                if (tab.type === "attribute_table") {
-                    useEffect(() => {
-                        const getAttributes = async () => {
-                            if (resource.resource_type === "dataset") {
-                                const dataset = await getDatasetByPk(resource.pk);
-                                setAttributeData(parseAttributeData(dataset));
-                            }
-                        }
-                        getAttributes();
-                    }, [])
-                }
-                return (
-                    <Tab key={idx} eventKey={tab?.id} title={<DetailInfoFieldLabel field={tab} />}>
-                        {tab.type === "attribute_table"
-                            ? <DetailsInfoTable head={attributeData.header} body={attributeData.rows} />
-                            : <DetailsInfoFields fields={tab?.items} formatHref={formatHref} />}
-                    </Tab>
-                )
-            })
-            }
+            {filteredTabs.map(({Component, ...tab}, idx) => (
+                <Tab key={idx} eventKey={tab?.id} title={<DetailInfoFieldLabel field={tab} />}>
+                    <Component 
+                        fields={tab?.items}
+                        resource={resource}
+                        formatHref={formatHref}
+                        resourceTypesInfo={resourceTypesInfo} />
+                </Tab>
+            ))}
         </Tabs>
     );
 }

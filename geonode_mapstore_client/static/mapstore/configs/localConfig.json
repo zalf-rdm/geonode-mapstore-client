@@ -1059,7 +1059,7 @@
                             ]
                         },
                         {
-                            "type": "attribute_table",
+                            "type": "attribute-table",
                             "id": "attributes",
                             "labelId": "gnviewer.attributes"
                         },
@@ -3640,7 +3640,7 @@
                         {
                             "type": "attribute-table",
                             "id": "attributes",
-                            "labelId": "gnviewer.attributes",
+                            "labelId": "gnviewer.attributes"
                         },
                         {
                             "type": "linked-resources",
