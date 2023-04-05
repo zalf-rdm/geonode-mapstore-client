@@ -291,7 +291,7 @@ function DetailsPanel({
                             : null}
                     </div>
                 </div>
-                <DetailsInfo tabs={tabs} formatHref={formatHref} allowEdit={activeEditMode} resourceTypesInfo={types} resource={resource} onSetExtent={onSetExtent}/>
+                <DetailsInfo tabs={tabs} resource={resource} formatHref={formatHref}/>
             </section>
         </div>
     );
