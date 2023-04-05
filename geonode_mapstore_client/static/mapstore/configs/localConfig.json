@@ -3692,6 +3692,7 @@
                         },
                         {
 <<<<<<< HEAD
+<<<<<<< HEAD
                             "type": "locations",
                             "id": "locations",
                             "labelId": "gnviewer.locations",
@@ -3703,6 +3704,11 @@
                             "labelId": "gnviewer.attributes",
                             "disableIf": "{context.get(state('gnResourceData'), 'resource_type') !== 'dataset'}",
                             "items": "{context.get(state('gnResourceData'), 'attribute_set')}"
+=======
+                            "type": "attribute-table",
+                            "id": "attributes",
+                            "labelId": "gnviewer.attributes"
+>>>>>>> 17bb8049 (Add table tab describing the resource's attributes)
                         },
                         {
                             "type": "linked-resources",

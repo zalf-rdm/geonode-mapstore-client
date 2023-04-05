@@ -14,12 +14,18 @@ import isEmpty from 'lodash/isEmpty';
 import moment from 'moment';
 
 import Button from '@js/components/Button';
+<<<<<<< HEAD
 import { Tabs, Tab } from "react-bootstrap";
 import Table from '@js/components/Table';
 
 import {
     getDatasetByPk
 } from '@js/api/geonode/v2'
+=======
+import DetailsAttributeTable from '@js/components/DetailsPanel/DetailsAttributeTable';
+import DetailsLinkedResources from '@js/components/DetailsPanel/DetailsLinkedResources';
+import Message from '@mapstore/framework/components/I18N/Message';
+>>>>>>> 17bb8049 (Add table tab describing the resource's attributes)
 
 const replaceTemplateString = (properties, str) => {
     return Object.keys(properties).reduce((updatedStr, key) => {
@@ -146,6 +152,7 @@ function DetailsInfoFields({ fields, formatHref }) {
     </div>);
 }
 
+<<<<<<< HEAD
 function DetailsInfoTable({head, body}) {
     return (
         <div className="gn-details-info-table">
@@ -153,6 +160,13 @@ function DetailsInfoTable({head, body}) {
         </div>
     )
 }
+=======
+const tabTypes = {
+    'attribute-table': DetailsAttributeTable,
+    'linked-resources': DetailsLinkedResources,
+    'tab': DetailsInfoFields
+};
+>>>>>>> 17bb8049 (Add table tab describing the resource's attributes)
 
 const parseTabItems = (items) => {
     return (items || []).filter(({ value }) => {
@@ -194,38 +208,32 @@ const parseAttributeData = (dataset) => {
 function DetailsInfo({
     tabs = [],
     resource,
-    formatHref
+    formatHref,
+    resourceTypesInfo
 }) {
     const filteredTabs = tabs
-        .map((tab) => ({ ...tab, items: tab.type === "attribute_table" ? tab.items : parseTabItems(tab?.items) }))
-    //.filter(tab => tab?.items?.length > 0);
+        .map((tab) =>
+            ({
+                ...tab,
+                items: isDefaultTabType(tab.type) ? parseTabItems(tab?.items) : tab?.items,
+                Component: tabTypes[tab.type] || tabTypes.tab
+            }))
+        // ensure tab has items .. attribute table loads them dynamically
+        .filter(tab => tab?.items?.length > 0 || tab.type === 'attribute-table' );
     const selectedTabId = filteredTabs?.[0]?.id;
     return (
         <Tabs
             className="gn-details-info tabs-underline"
         >
-            {filteredTabs.map((tab, idx) => {
-                const [attributeData, setAttributeData] = useState({ header: [], rows: [] });
-                if (tab.type === "attribute_table") {
-                    useEffect(() => {
-                        const getAttributes = async () => {
-                            if (resource.resource_type === "dataset") {
-                                const dataset = await getDatasetByPk(resource.pk);
-                                setAttributeData(parseAttributeData(dataset));
-                            }
-                        }
-                        getAttributes();
-                    }, [])
-                }
-                return (
-                    <Tab key={idx} eventKey={tab?.id} title={<DetailInfoFieldLabel field={tab} />}>
-                        {tab.type === "attribute_table"
-                            ? <DetailsInfoTable head={attributeData.header} body={attributeData.rows} />
-                            : <DetailsInfoFields fields={tab?.items} formatHref={formatHref} />}
-                    </Tab>
-                )
-            })
-            }
+            {filteredTabs.map(({Component, ...tab}, idx) => (
+                <Tab key={idx} eventKey={tab?.id} title={<DetailInfoFieldLabel field={tab} />}>
+                    <Component 
+                        fields={tab?.items}
+                        resource={resource}
+                        formatHref={formatHref}
+                        resourceTypesInfo={resourceTypesInfo} />
+                </Tab>
+            ))}
         </Tabs>
     );
 }
