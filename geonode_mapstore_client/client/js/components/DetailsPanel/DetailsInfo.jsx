@@ -209,7 +209,7 @@ function DetailsInfo({
                             }
                         }
                         getAttributes();
-                    })
+                    }, [])
                 }
                 return (
                     <Tab key={idx} eventKey={tab?.id} title={<DetailInfoFieldLabel field={tab} />}>
