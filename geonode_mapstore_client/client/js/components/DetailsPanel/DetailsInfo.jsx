@@ -146,12 +146,13 @@ function DetailsInfoFields({ fields, formatHref }) {
     </div>);
 }
 
-const tabTypes = {
-    'attribute-table': DetailsAttributeTable,
-    'linked-resources': DetailsLinkedResources,
-    'locations': DetailsLocations,
-    'tab': DetailsInfoFields
-};
+function DetailsInfoTable({head, body}) {
+    return (
+        <div className="gn-details-info-table">
+            <Table head={head} body={body} />
+        </div>
+    )
+}
 
 const parseTabItems = (items) => {
     return (items || []).filter(({ value }) => {
@@ -219,7 +220,7 @@ function DetailsInfo({
                 return (
                     <Tab key={idx} eventKey={tab?.id} title={<DetailInfoFieldLabel field={tab} />}>
                         {tab.type === "attribute_table"
-                            ? <Table head={attributeData.header} body={attributeData.rows} />
+                            ? <DetailsInfoTable head={attributeData.header} body={attributeData.rows} />
                             : <DetailsInfoFields fields={tab?.items} formatHref={formatHref} />}
                     </Tab>
                 )

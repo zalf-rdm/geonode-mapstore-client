@@ -525,19 +525,13 @@
         position: relative;
     }
     .table {
-        table-layout: fixed;
-        tbody > tr {
-            > th {
-                padding: 0.25rem;
-                font-weight: bold;
-            }
-
-            > td {
-                padding: 0.25rem;
-                font-weight: lighter;
-                word-wrap: break-word;
-            }
-
+        thead > tr > th {
+            padding: 0.25rem;
+            font-weight: lighter;
+        }
+        tbody > tr > td {
+            padding: 0.25rem;
+            font-weight: lighter;
         }
     }
 }
