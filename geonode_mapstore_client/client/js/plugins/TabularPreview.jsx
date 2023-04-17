@@ -59,7 +59,7 @@ function TableComponent({ owsUrl, typeName }) {
     }
     return (
         <div id="tabular-preview">
-            <div  class="tableFixHead" style={{ overflow:"auto" }}>
+            <div className="tableFixHead" style={{ overflow:"auto" }}>
                 <Table head={header} body={rows} />
             </div>
         </div>
