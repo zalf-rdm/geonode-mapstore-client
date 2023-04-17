@@ -1069,17 +1069,16 @@
                             "items": "{({extent: context.get(state('gnResourceData'), 'extent')})}"
                         },
                         {
-                            "type": "attribute-table",
+                            "type": "attribute_table",
                             "id": "attributes",
-                            "labelId": "gnviewer.attributes",
-                            "disableIf": "{context.get(state('gnResourceData'), 'resource_type') !== 'dataset'}",
-                            "items": "{context.get(state('gnResourceData'), 'attribute_set')}"
+                            "labelId": "gnviewer.attributes"
                         },
                         {
                             "type": "linked-resources",
                             "id": "related",
                             "labelId": "gnviewer.linkedResources.label",
                             "items": "{context.get(state('gnResourceData'), 'linkedResources')}"
+
                         }
                     ]
                 }
@@ -3692,6 +3691,7 @@
                             ]
                         },
                         {
+<<<<<<< HEAD
                             "type": "locations",
                             "id": "locations",
                             "labelId": "gnviewer.locations",
@@ -3709,6 +3709,11 @@
                             "id": "related",
                             "labelId": "gnviewer.linkedResources.label",
                             "items": "{context.get(state('gnResourceData'), 'linkedResources')}"
+=======
+                            "type": "attribute_table",
+                            "id": "attributes",
+                            "labelId": "gnviewer.attributes"
+>>>>>>> 3bf9f937 (Add attribute table to details viewer)
                         }
                     ]
                 }
