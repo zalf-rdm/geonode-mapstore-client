@@ -1059,11 +1059,9 @@
                             ]
                         },
                         {
-                            "type": "attribute-table",
+                            "type": "attribute_table",
                             "id": "attributes",
-                            "labelId": "gnviewer.attributes",
-                            "disableIf": "{context.get(state('gnResourceData'), 'resource_type') !== 'dataset'}",
-                            "items": "{context.get(state('gnResourceData'), 'attribute_set')}"
+                            "labelId": "gnviewer.attributes"
                         },
                         {
                             "type": "linked-resources",
@@ -3643,8 +3641,6 @@
                             "type": "attribute-table",
                             "id": "attributes",
                             "labelId": "gnviewer.attributes",
-                            "disableIf": "{context.get(state('gnResourceData'), 'resource_type') !== 'dataset'}",
-                            "items": "{context.get(state('gnResourceData'), 'attribute_set')}"
                         },
                         {
                             "type": "linked-resources",
