@@ -35,7 +35,7 @@
                 {% include './_geonode_config.html' with plugins_config_key='dataset_embed' is_embed='true' %}
             {% endblock %}
             <div class="gn-embed gn-theme">
-                {% comment %} {% block container %}
+                {% block container %}
                     <div id="ms-container">
                         <div class="gn-main-event-container">
                             <div class="gn-main-event-content">
@@ -44,8 +44,8 @@
                             </div>
                         </div>
                     </div>
-                {% endblock %} {% endcomment %}
-                
+                {% endblock %}
+
                 {% block ms_scripts %}
                     {% if resource.subtype != 'tabular' %}
                     <script id="gn-script" src="{% static 'mapstore/dist/js/gn-map.js' %}?{% client_version %}"></script>
