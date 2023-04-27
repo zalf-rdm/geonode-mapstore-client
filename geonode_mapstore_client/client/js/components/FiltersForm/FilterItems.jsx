@@ -5,16 +5,20 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-
 import React from 'react';
-import PropTypes from 'prop-types';
 import castArray from 'lodash/castArray';
+import isNil from 'lodash/isNil';
+import PropTypes from 'prop-types';
 import { FormGroup, Checkbox } from 'react-bootstrap';
 import ReactSelect from 'react-select';
+
+import Accordion from "@js/components/Accordion";
+import Badge from "@js/components/Badge";
+import SelectInfiniteScroll from '@js/components/SelectInfiniteScroll';
+import { getFilterLabelById } from '@js/utils/SearchUtils';
 import Message from '@mapstore/framework/components/I18N/Message';
 import localizedProps from '@mapstore/framework/components/misc/enhancers/localizedProps';
-import { getFilterLabelById } from '@js/utils/SearchUtils';
-import SelectInfiniteScroll from '@js/components/SelectInfiniteScroll';
+
 const SelectSync = localizedProps('placeholder')(ReactSelect);
 function FilterItems({
     id,
@@ -95,26 +99,45 @@ function FilterItems({
                 }
                 if (field.type === 'filter') {
                     const customFilters = castArray(values.f || []);
+                    const isFacet = (item) => item.style === 'facet';
+                    const renderFacet = ({item, active, onChangeFacet, renderChild}) => {
+                        return (
+                            <div className="gn-facet-wrapper">
+                                <div key={item.id} className={`facet${active ? " active" : ""}`} onClick={onChangeFacet}>
+                                    <Message msgId={item.labelId}/>
+                                    {!isNil(item.count) && <Badge>{item.count}</Badge>}
+
+                                </div>
+                                {item.items && renderChild && <div className="facet-children">{renderChild()}</div>}
+                            </div>
+                        );
+                    };
+
                     const filterChild = () => {
                         return field.items && field.items.map((item) => {
                             const active = customFilters.find(value => value === item.id);
+                            const onChangeFilter = () => {
+                                onChange({
+                                    f: active
+                                        ? customFilters.filter(value => value !== item.id)
+                                        : [...customFilters.filter(value => field.id !== value), item.id, field.id]
+                                });
+                            };
                             return (
-                                <Checkbox
-                                    key={item.id}
-                                    className="gn-sub-filter-items"
-                                    type="checkbox"
-                                    checked={!!active}
-                                    value={item.id}
-                                    onChange={() => {
-                                        onChange({
-                                            f: active
-                                                ? customFilters.filter(value => value !== item.id)
-                                                : [...customFilters.filter(value => field.id !== value), item.id, field.id]
-                                        });
-                                    }}
-                                >
-                                    <Message msgId={item.labelId}/>
-                                </Checkbox>
+                                <div className={'gn-sub-filter-items'}>
+                                    {isFacet(item)
+                                        ? renderFacet({item, active, onChangeFacet: onChangeFilter})
+                                        : <Checkbox
+                                            key={item.id}
+                                            type="checkbox"
+                                            checked={!!active}
+                                            value={item.id}
+                                            onChange={onChangeFilter}
+                                        >
+                                            <Message msgId={item.labelId}/>
+                                        </Checkbox>
+                                    }
+                                </div>
                             );
                         } );
                     };
@@ -125,24 +148,48 @@ function FilterItems({
                             ? field.items.map((item) => item.id)
                             : [])
                     ];
-                    return (
-                        <FormGroup key={field.id} controlId={'gn-radio-filter-' + field.id}>
-                            <Checkbox
-                                type="checkbox"
-                                checked={!!active}
-                                value={field.id}
-                                onChange={() => {
-                                    onChange({
-                                        f: active
-                                            ? customFilters.filter(value => !parentFilterIds.includes(value))
-                                            : [...customFilters, field.id]
-                                    });
-                                }}>
-                                <Message msgId={field.labelId}/>
-                                {filterChild()}
-                            </Checkbox>
-                        </FormGroup>
-                    );
+                    const onChangeFilterParent = () => {
+                        onChange({
+                            f: active
+                                ? customFilters.filter(value => !parentFilterIds.includes(value))
+                                : [...customFilters, field.id]
+                        });
+                    };
+                    return isFacet(field)
+                        ? renderFacet({
+                            item: field,
+                            active,
+                            onChangeFacet: onChangeFilterParent,
+                            renderChild: filterChild
+                        }) : (
+                            <FormGroup key={field.id} controlId={'gn-radio-filter-' + field.id}>
+                                <Checkbox
+                                    type="checkbox"
+                                    checked={!!active}
+                                    value={field.id}
+                                    onChange={onChangeFilterParent}>
+                                    <Message msgId={field.labelId}/>
+                                    {filterChild()}
+                                </Checkbox>
+                            </FormGroup>
+                        );
+                }
+                if (field.type === 'accordion') {
+                    const key = `${id}-${field.id}`;
+                    return (<Accordion
+                        key={key}
+                        titleId={field.labelId}
+                        identifier={key}
+                        content={<div className={'accordion-items'}>
+                            <FilterItems
+                                id={id}
+                                items={field.items}
+                                suggestionsRequestTypes={suggestionsRequestTypes}
+                                values={values}
+                                onChange={onChange}
+                            />
+                        </div>}
+                    />);
                 }
                 return null;
             })}

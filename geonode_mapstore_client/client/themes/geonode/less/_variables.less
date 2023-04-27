@@ -69,6 +69,11 @@
 @gn-font-family-sans-serif: 'Montserrat', sans-serif;
 @gn-font-family-base: 'Montserrat', sans-serif;
 
+@gn-accordion-bg: @gn-main-variant-bg;
+@gn-accordion-color: @gn-main-color;
+@gn-accordion-hover-bg: darken(@gn-main-hover-bg, 5%);
+@gn-accordion-hover-color: @gn-main-color;
+
 .gn-buttons-vars() {
     @button-default: {
         button-color: --gn-button-color, @gn-main-color;
@@ -309,6 +314,8 @@
 
         badge-color: --gn-badge-color, @gn-badge-color;
         badge-bg: --gn-badge-bg, @gn-badge-bg;
+        badge-primary-color: --gn-badge-primary-color, @gn-primary-contrast;
+        badge-primary-bg: --gn-badge-primary-bg, @gn-primary;
 
         loader-color: --gn-loader-color, @gn-main-color;
         loader-fade-color: --gn-loader-fade-color, rgba(@gn-main-color, 0.2);
@@ -335,6 +342,11 @@
         timeline-histogram-border-color: --gn-timeline-histogram-color, darken(@gn-primary, 10%);
         timeline-range-bg: --gn-timeline-range-bg, rgba(@gn-main-color, 0.2);
         timeline-playback-range-bg: --gn-timeline-playback-range-bg, rgba(lighten(@gn-success, 10%), 0.2);
+
+        accordion-bg: --gn-accordion-bg, @gn-accordion-bg;
+        accordion-color: --gn-accordion-color, @gn-accordion-color;
+        accordion-hover-bg: --gn-accordion-hover-bg, @gn-accordion-hover-bg;
+        accordion-hover-color: --gn-accordion-hover-color, @gn-accordion-hover-color;
 
     }
 }
