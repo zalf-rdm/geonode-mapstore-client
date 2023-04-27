@@ -320,6 +320,7 @@
             "temporalExtent": "Estensione temporale",
             "spatialRepresentationType": "Tipo di rappresentazione spaziale",
             "supplementalInformation": "Informazioni supplementari",
+            "viewFullMetadata": "Visualizza i metadati completi",
             "abstract": "Astratto",
             "readMore": "Leggi di più",
             "readLess": "Leggi di meno"

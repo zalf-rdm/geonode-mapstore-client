@@ -759,6 +759,13 @@
                                     "type": "html",
                                     "labelId": "gnviewer.supplementalInformation",
                                     "value": "{context.get(state('gnResourceData'), 'supplemental_information')}"
+                                },
+                                {
+                                    "type": "link",
+                                    "style": "label",
+                                    "labelId": "gnviewer.viewFullMetadata",
+                                    "href": "{context.getMetadataDetailUrl(state('gnResourceData'))}",
+                                    "disableIf": "{!context.getMetadataDetailUrl(state('gnResourceData'))}"
                                 }
                             ]
                         }
@@ -1614,6 +1621,13 @@
                                     "type": "html",
                                     "labelId": "gnviewer.supplementalInformation",
                                     "value": "{context.get(state('gnResourceData'), 'supplemental_information')}"
+                                },
+                                {
+                                    "type": "link",
+                                    "style": "label",
+                                    "labelId": "gnviewer.viewFullMetadata",
+                                    "href": "{context.getMetadataDetailUrl(state('gnResourceData'))}",
+                                    "disableIf": "{!context.getMetadataDetailUrl(state('gnResourceData'))}"
                                 }
                             ]
                         }
@@ -2245,6 +2259,13 @@
                                     "type": "html",
                                     "labelId": "gnviewer.supplementalInformation",
                                     "value": "{context.get(state('gnResourceData'), 'supplemental_information')}"
+                                },
+                                {
+                                    "type": "link",
+                                    "style": "label",
+                                    "labelId": "gnviewer.viewFullMetadata",
+                                    "href": "{context.getMetadataDetailUrl(state('gnResourceData'))}",
+                                    "disableIf": "{!context.getMetadataDetailUrl(state('gnResourceData'))}"
                                 }
                             ]
                         }
@@ -2534,6 +2555,13 @@
                                     "type": "html",
                                     "labelId": "gnviewer.supplementalInformation",
                                     "value": "{context.get(state('gnResourceData'), 'supplemental_information')}"
+                                },
+                                {
+                                    "type": "link",
+                                    "style": "label",
+                                    "labelId": "gnviewer.viewFullMetadata",
+                                    "href": "{context.getMetadataDetailUrl(state('gnResourceData'))}",
+                                    "disableIf": "{!context.getMetadataDetailUrl(state('gnResourceData'))}"
                                 }
                             ]
                         }
@@ -2741,6 +2769,13 @@
                                     "type": "html",
                                     "labelId": "gnviewer.supplementalInformation",
                                     "value": "{context.get(state('gnResourceData'), 'supplemental_information')}"
+                                },
+                                {
+                                    "type": "link",
+                                    "style": "label",
+                                    "labelId": "gnviewer.viewFullMetadata",
+                                    "href": "{context.getMetadataDetailUrl(state('gnResourceData'))}",
+                                    "disableIf": "{!context.getMetadataDetailUrl(state('gnResourceData'))}"
                                 }
                             ]
                         }
@@ -3241,6 +3276,13 @@
                                     "type": "html",
                                     "labelId": "gnviewer.supplementalInformation",
                                     "value": "{context.get(state('gnResourceData'), 'supplemental_information')}"
+                                },
+                                {
+                                    "type": "link",
+                                    "style": "label",
+                                    "labelId": "gnviewer.viewFullMetadata",
+                                    "href": "{context.getMetadataDetailUrl(state('gnResourceData'))}",
+                                    "disableIf": "{!context.getMetadataDetailUrl(state('gnResourceData'))}"
                                 }
                             ]
                         }

@@ -318,6 +318,7 @@
             "temporalExtent": "Zeitliche Ausdehnung",
             "spatialRepresentationType": "Räumlicher darstellungstyp",
             "supplementalInformation": "Zusätzliche informationen",
+            "viewFullMetadata": "Vollständige Metadaten anzeigen",
             "abstract": "Zusammenfassung",
             "readMore": "Weiterlesen",
             "readLess": "Weniger lesen"

@@ -290,6 +290,7 @@
             "temporalExtent": "Temporal Extent",
             "spatialRepresentationType": "Spatial representation type",
             "supplementalInformation": "Supplemental information",
+            "viewFullMetadata": "View full metadata",
             "abstract": "Abstract",
             "readMore": "Read more",
             "readLess": "Read less"
