@@ -684,19 +684,19 @@
                                 },
                                 {
                                     "type": "date",
-                                    "format": "MMMM Do YYYY",
+                                    "format": "YYYY-MM-DD HH:mm",
+                                    "labelId": "{'gnviewer.'+context.get(state('gnResourceData'), 'date_type')}",
+                                    "value": "{context.get(state('gnResourceData'), 'date')}"
+                                },
+                                {
+                                    "type": "date",
+                                    "format": "YYYY-MM-DD HH:mm",
                                     "labelId": "gnviewer.created",
                                     "value": "{context.get(state('gnResourceData'), 'created')}"
                                 },
                                 {
                                     "type": "date",
-                                    "format": "MMMM Do YYYY",
-                                    "labelId": "gnviewer.published",
-                                    "value": "{context.get(state('gnResourceData'), 'date')}"
-                                },
-                                {
-                                    "type": "date",
-                                    "format": "MMMM Do YYYY",
+                                    "format": "YYYY-MM-DD HH:mm",
                                     "labelId": "gnviewer.lastModified",
                                     "value": "{context.get(state('gnResourceData'), 'last_updated')}"
                                 },
@@ -721,7 +721,7 @@
                                 {
                                     "type": "link",
                                     "labelId": "gnviewer.pointOfContact",
-                                    "href": "{'/messages/create/' + context.get(state('gnResourceData'), 'poc.pk')}",
+                                    "href": "{'/people/profile/' + context.get(state('gnResourceData'), 'poc.username')}",
                                     "value": "{context.getUserResourceName(context.get(state('gnResourceData'), 'poc'))}",
                                     "disableIf": "{!context.get(state('gnResourceData'), 'poc.username')}"
                                 },
@@ -1546,19 +1546,19 @@
                                 },
                                 {
                                     "type": "date",
-                                    "format": "MMMM Do YYYY",
+                                    "format": "YYYY-MM-DD HH:mm",
+                                    "labelId": "{'gnviewer.'+context.get(state('gnResourceData'), 'date_type')}",
+                                    "value": "{context.get(state('gnResourceData'), 'date')}"
+                                },
+                                {
+                                    "type": "date",
+                                    "format": "YYYY-MM-DD HH:mm",
                                     "labelId": "gnviewer.created",
                                     "value": "{context.get(state('gnResourceData'), 'created')}"
                                 },
                                 {
                                     "type": "date",
-                                    "format": "MMMM Do YYYY",
-                                    "labelId": "gnviewer.published",
-                                    "value": "{context.get(state('gnResourceData'), 'date')}"
-                                },
-                                {
-                                    "type": "date",
-                                    "format": "MMMM Do YYYY",
+                                    "format": "YYYY-MM-DD HH:mm",
                                     "labelId": "gnviewer.lastModified",
                                     "value": "{context.get(state('gnResourceData'), 'last_updated')}"
                                 },
@@ -1583,7 +1583,7 @@
                                 {
                                     "type": "link",
                                     "labelId": "gnviewer.pointOfContact",
-                                    "href": "{'/messages/create/' + context.get(state('gnResourceData'), 'poc.pk')}",
+                                    "href": "{'/people/profile/' + context.get(state('gnResourceData'), 'poc.username')}",
                                     "value": "{context.getUserResourceName(context.get(state('gnResourceData'), 'poc'))}",
                                     "disableIf": "{!context.get(state('gnResourceData'), 'poc.username')}"
                                 },
@@ -2184,19 +2184,19 @@
                                 },
                                 {
                                     "type": "date",
-                                    "format": "MMMM Do YYYY",
+                                    "format": "YYYY-MM-DD HH:mm",
+                                    "labelId": "{'gnviewer.'+context.get(state('gnResourceData'), 'date_type')}",
+                                    "value": "{context.get(state('gnResourceData'), 'date')}"
+                                },
+                                {
+                                    "type": "date",
+                                    "format": "YYYY-MM-DD HH:mm",
                                     "labelId": "gnviewer.created",
                                     "value": "{context.get(state('gnResourceData'), 'created')}"
                                 },
                                 {
                                     "type": "date",
-                                    "format": "MMMM Do YYYY",
-                                    "labelId": "gnviewer.published",
-                                    "value": "{context.get(state('gnResourceData'), 'date')}"
-                                },
-                                {
-                                    "type": "date",
-                                    "format": "MMMM Do YYYY",
+                                    "format": "YYYY-MM-DD HH:mm",
                                     "labelId": "gnviewer.lastModified",
                                     "value": "{context.get(state('gnResourceData'), 'last_updated')}"
                                 },
@@ -2221,7 +2221,7 @@
                                 {
                                     "type": "link",
                                     "labelId": "gnviewer.pointOfContact",
-                                    "href": "{'/messages/create/' + context.get(state('gnResourceData'), 'poc.pk')}",
+                                    "href": "{'/people/profile/' + context.get(state('gnResourceData'), 'poc.username')}",
                                     "value": "{context.getUserResourceName(context.get(state('gnResourceData'), 'poc'))}",
                                     "disableIf": "{!context.get(state('gnResourceData'), 'poc.username')}"
                                 },
@@ -2480,19 +2480,19 @@
                                 },
                                 {
                                     "type": "date",
-                                    "format": "MMMM Do YYYY",
+                                    "format": "YYYY-MM-DD HH:mm",
+                                    "labelId": "{'gnviewer.'+context.get(state('gnResourceData'), 'date_type')}",
+                                    "value": "{context.get(state('gnResourceData'), 'date')}"
+                                },
+                                {
+                                    "type": "date",
+                                    "format": "YYYY-MM-DD HH:mm",
                                     "labelId": "gnviewer.created",
                                     "value": "{context.get(state('gnResourceData'), 'created')}"
                                 },
                                 {
                                     "type": "date",
-                                    "format": "MMMM Do YYYY",
-                                    "labelId": "gnviewer.published",
-                                    "value": "{context.get(state('gnResourceData'), 'date')}"
-                                },
-                                {
-                                    "type": "date",
-                                    "format": "MMMM Do YYYY",
+                                    "format": "YYYY-MM-DD HH:mm",
                                     "labelId": "gnviewer.lastModified",
                                     "value": "{context.get(state('gnResourceData'), 'last_updated')}"
                                 },
@@ -2517,7 +2517,7 @@
                                 {
                                     "type": "link",
                                     "labelId": "gnviewer.pointOfContact",
-                                    "href": "{'/messages/create/' + context.get(state('gnResourceData'), 'poc.pk')}",
+                                    "href": "{'/people/profile/' + context.get(state('gnResourceData'), 'poc.username')}",
                                     "value": "{context.getUserResourceName(context.get(state('gnResourceData'), 'poc'))}",
                                     "disableIf": "{!context.get(state('gnResourceData'), 'poc.username')}"
                                 },
@@ -2694,19 +2694,19 @@
                                 },
                                 {
                                     "type": "date",
-                                    "format": "MMMM Do YYYY",
+                                    "format": "YYYY-MM-DD HH:mm",
+                                    "labelId": "{'gnviewer.'+context.get(state('gnResourceData'), 'date_type')}",
+                                    "value": "{context.get(state('gnResourceData'), 'date')}"
+                                },
+                                {
+                                    "type": "date",
+                                    "format": "YYYY-MM-DD HH:mm",
                                     "labelId": "gnviewer.created",
                                     "value": "{context.get(state('gnResourceData'), 'created')}"
                                 },
                                 {
                                     "type": "date",
-                                    "format": "MMMM Do YYYY",
-                                    "labelId": "gnviewer.published",
-                                    "value": "{context.get(state('gnResourceData'), 'date')}"
-                                },
-                                {
-                                    "type": "date",
-                                    "format": "MMMM Do YYYY",
+                                    "format": "YYYY-MM-DD HH:mm",
                                     "labelId": "gnviewer.lastModified",
                                     "value": "{context.get(state('gnResourceData'), 'last_updated')}"
                                 },
@@ -2731,7 +2731,7 @@
                                 {
                                     "type": "link",
                                     "labelId": "gnviewer.pointOfContact",
-                                    "href": "{'/messages/create/' + context.get(state('gnResourceData'), 'poc.pk')}",
+                                    "href": "{'/people/profile/' + context.get(state('gnResourceData'), 'poc.username')}",
                                     "value": "{context.getUserResourceName(context.get(state('gnResourceData'), 'poc'))}",
                                     "disableIf": "{!context.get(state('gnResourceData'), 'poc.username')}"
                                 },
@@ -3201,19 +3201,19 @@
                                 },
                                 {
                                     "type": "date",
-                                    "format": "MMMM Do YYYY",
+                                    "format": "YYYY-MM-DD HH:mm",
+                                    "labelId": "{'gnviewer.'+context.get(state('gnResourceData'), 'date_type')}",
+                                    "value": "{context.get(state('gnResourceData'), 'date')}"
+                                },
+                                {
+                                    "type": "date",
+                                    "format": "YYYY-MM-DD HH:mm",
                                     "labelId": "gnviewer.created",
                                     "value": "{context.get(state('gnResourceData'), 'created')}"
                                 },
                                 {
                                     "type": "date",
-                                    "format": "MMMM Do YYYY",
-                                    "labelId": "gnviewer.published",
-                                    "value": "{context.get(state('gnResourceData'), 'date')}"
-                                },
-                                {
-                                    "type": "date",
-                                    "format": "MMMM Do YYYY",
+                                    "format": "YYYY-MM-DD HH:mm",
                                     "labelId": "gnviewer.lastModified",
                                     "value": "{context.get(state('gnResourceData'), 'last_updated')}"
                                 },
@@ -3238,7 +3238,7 @@
                                 {
                                     "type": "link",
                                     "labelId": "gnviewer.pointOfContact",
-                                    "href": "{'/messages/create/' + context.get(state('gnResourceData'), 'poc.pk')}",
+                                    "href": "{'/people/profile/' + context.get(state('gnResourceData'), 'poc.username')}",
                                     "value": "{context.getUserResourceName(context.get(state('gnResourceData'), 'poc'))}",
                                     "disableIf": "{!context.get(state('gnResourceData'), 'poc.username')}"
                                 },
