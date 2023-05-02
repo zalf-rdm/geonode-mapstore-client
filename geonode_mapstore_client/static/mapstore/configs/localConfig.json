@@ -772,7 +772,7 @@
                         {
                             "type": "linked-resources",
                             "id": "related",
-                            "labelId": "gnviewer.relatedResources",
+                            "labelId": "gnviewer.linkedResources",
                             "items": "{context.get(state('gnResourceData'), 'linkedResources')}"
                         }
                     ]
@@ -1640,7 +1640,7 @@
                         {
                             "type": "linked-resources",
                             "id": "related",
-                            "labelId": "gnviewer.relatedResources",
+                            "labelId": "gnviewer.linkedResources",
                             "items": "{context.get(state('gnResourceData'), 'linkedResources')}"
                         }
                     ]
@@ -2284,7 +2284,7 @@
                         {
                             "type": "linked-resources",
                             "id": "related",
-                            "labelId": "gnviewer.relatedResources",
+                            "labelId": "gnviewer.linkedResources",
                             "items": "{context.get(state('gnResourceData'), 'linkedResources')}"
                         }
                     ]
@@ -2586,7 +2586,7 @@
                         {
                             "type": "linked-resources",
                             "id": "related",
-                            "labelId": "gnviewer.relatedResources",
+                            "labelId": "gnviewer.linkedResources",
                             "items": "{context.get(state('gnResourceData'), 'linkedResources')}"
                         }
                     ]
@@ -2806,7 +2806,7 @@
                         {
                             "type": "linked-resources",
                             "id": "related",
-                            "labelId": "gnviewer.relatedResources",
+                            "labelId": "gnviewer.linkedResources",
                             "items": "{context.get(state('gnResourceData'), 'linkedResources')}"
                         }
                     ]
