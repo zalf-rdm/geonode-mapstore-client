@@ -306,6 +306,16 @@ export const getResourceByPk = (pk) => {
         .then(({ data }) => data.resource);
 };
 
+export const getLinkedResourcesByPk = (pk) => {
+    return axios.get(parseDevHostname(`${endpoints[RESOURCES]}/${pk}/linked_resources`), {
+        params: {
+            'page': 1,
+            'page_size': 99999
+        }
+    })
+        .then(({ data }) => data.resources ?? []);
+};
+
 export const getResourceByUuid = (uuid) => {
     return axios.get(parseDevHostname(`${endpoints[RESOURCES]}`), {
         params: {
@@ -865,6 +875,7 @@ export default {
     getEndpoints,
     getResources,
     getResourceByPk,
+    getLinkedResourcesByPk,
     getResourceByUuid,
     createGeoApp,
     getGeoAppByPk,

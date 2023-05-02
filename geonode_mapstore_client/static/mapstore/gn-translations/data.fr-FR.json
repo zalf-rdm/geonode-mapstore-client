@@ -325,7 +325,8 @@
             "viewFullMetadata": "Afficher les métadonnées complètes",
             "abstract": "Résumé",
             "readMore": "En savoir plus",
-            "readLess": "Lire moins"
+            "readLess": "Lire moins",
+            "linkedResources": "Ressources liées"
         }
     }
 }

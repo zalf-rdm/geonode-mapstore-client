@@ -293,7 +293,8 @@
             "viewFullMetadata": "View full metadata",
             "abstract": "Abstract",
             "readMore": "Read more",
-            "readLess": "Read less"
+            "readLess": "Read less",
+            "linkedResources": "Linked Resources"
         }
     }
 }

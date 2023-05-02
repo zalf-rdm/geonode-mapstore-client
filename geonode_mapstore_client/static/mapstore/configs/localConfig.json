@@ -768,6 +768,12 @@
                                     "disableIf": "{!context.getMetadataDetailUrl(state('gnResourceData'))}"
                                 }
                             ]
+                        },
+                        {
+                            "type": "linked-resources",
+                            "id": "related",
+                            "labelId": "gnviewer.relatedResources",
+                            "items": "{context.get(state('gnResourceData'), 'linkedResources')}"
                         }
                     ]
                 }
@@ -1630,6 +1636,12 @@
                                     "disableIf": "{!context.getMetadataDetailUrl(state('gnResourceData'))}"
                                 }
                             ]
+                        },
+                        {
+                            "type": "linked-resources",
+                            "id": "related",
+                            "labelId": "gnviewer.relatedResources",
+                            "items": "{context.get(state('gnResourceData'), 'linkedResources')}"
                         }
                     ]
                 }
@@ -2268,6 +2280,12 @@
                                     "disableIf": "{!context.getMetadataDetailUrl(state('gnResourceData'))}"
                                 }
                             ]
+                        },
+                        {
+                            "type": "linked-resources",
+                            "id": "related",
+                            "labelId": "gnviewer.relatedResources",
+                            "items": "{context.get(state('gnResourceData'), 'linkedResources')}"
                         }
                     ]
                 }
@@ -2564,6 +2582,12 @@
                                     "disableIf": "{!context.getMetadataDetailUrl(state('gnResourceData'))}"
                                 }
                             ]
+                        },
+                        {
+                            "type": "linked-resources",
+                            "id": "related",
+                            "labelId": "gnviewer.relatedResources",
+                            "items": "{context.get(state('gnResourceData'), 'linkedResources')}"
                         }
                     ]
                 }
@@ -2778,6 +2802,12 @@
                                     "disableIf": "{!context.getMetadataDetailUrl(state('gnResourceData'))}"
                                 }
                             ]
+                        },
+                        {
+                            "type": "linked-resources",
+                            "id": "related",
+                            "labelId": "gnviewer.relatedResources",
+                            "items": "{context.get(state('gnResourceData'), 'linkedResources')}"
                         }
                     ]
                 }
@@ -3285,6 +3315,12 @@
                                     "disableIf": "{!context.getMetadataDetailUrl(state('gnResourceData'))}"
                                 }
                             ]
+                        },
+                        {
+                            "type": "linked-resources",
+                            "id": "related",
+                            "labelId": "gnviewer.linkedResources",
+                            "items": "{context.get(state('gnResourceData'), 'linkedResources')}"
                         }
                     ]
                 }

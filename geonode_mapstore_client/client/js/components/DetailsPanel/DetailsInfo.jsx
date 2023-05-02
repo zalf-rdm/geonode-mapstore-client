@@ -5,13 +5,14 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-
 import React, { useState } from 'react';
-import Message from '@mapstore/framework/components/I18N/Message';
-import moment from 'moment';
 import castArray from 'lodash/castArray';
-import Button from '@js/components/Button';
+import moment from 'moment';
 import { Tabs, Tab } from "react-bootstrap";
+
+import Button from '@js/components/Button';
+import DetailsLinkedResources from '@js/components/DetailsPanel/DetailsLinkedResources';
+import Message from '@mapstore/framework/components/I18N/Message';
 
 const replaceTemplateString = (properties, str) => {
     return Object.keys(properties).reduce((updatedStr, key) => {
@@ -41,8 +42,8 @@ function DetailsInfoField({ field, children }) {
     const values = castArray(field.value);
     const isLinkLabel = isFieldLabelOnly(field);
     return (
-        <div className="gn-details-info-row">
-            <div className={`gn-details-info-label${isLinkLabel ? '-link' : ''}`}><DetailInfoFieldLabel field={field} /></div>
+        <div className={`gn-details-info-row${isLinkLabel ? ' link' : ''}`}>
+            <div className={`gn-details-info-label`}><DetailInfoFieldLabel field={field} /></div>
             {!isLinkLabel && <div className="gn-details-info-value">{children(values)}</div>}
         </div>
     );
@@ -128,6 +129,11 @@ function DetailsInfoFields({ fields, formatHref }) {
     </div>);
 }
 
+const tabTypes = {
+    'linked-resources': DetailsLinkedResources,
+    'tab': DetailsInfoFields
+};
+
 const parseTabItems = (items) => {
     return (items || []).filter(({value, style}) => {
         if (isEmptyValue(value) && !isStyleLabel(style)) {
@@ -136,14 +142,21 @@ const parseTabItems = (items) => {
         return true;
     });
 };
+const isDefaultTabType = (type) => type === 'tab';
 
 function DetailsInfo({
     tabs = [],
-    formatHref
+    formatHref,
+    resourceTypesInfo
 }) {
     const filteredTabs = tabs
-        .map((tab) => ({ ...tab, items: parseTabItems(tab?.items) }))
-        .filter(tab => tab?.items?.length > 0);
+        .map((tab) =>
+            ({
+                ...tab,
+                items: isDefaultTabType(tab.type) ? parseTabItems(tab?.items) : tab?.items,
+                Component: tabTypes[tab.type] || tabTypes.tab
+            }))
+        .filter(tab => tab?.items?.length > 0 );
     const selectedTabId = filteredTabs?.[0]?.id;
     return (
         <Tabs
@@ -151,9 +164,9 @@ function DetailsInfo({
             bsStyle="pills"
             className="gn-details-info tabs-underline"
         >
-            {filteredTabs.map((tab, idx) => (
+            {filteredTabs.map(({Component, ...tab}, idx) => (
                 <Tab key={idx} eventKey={tab?.id} title={<DetailInfoFieldLabel field={tab} />}>
-                    <DetailsInfoFields fields={tab?.items} formatHref={formatHref} />
+                    <Component fields={tab?.items} formatHref={formatHref} resourceTypesInfo={resourceTypesInfo} />
                 </Tab>
             ))}
         </Tabs>
