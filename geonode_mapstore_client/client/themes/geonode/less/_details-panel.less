@@ -527,11 +527,15 @@
     .table {
         thead > tr > th {
             padding: 0.25rem;
-            font-weight: lighter;
+            font-weight: bold;
         }
         tbody > tr > td {
             padding: 0.25rem;
             font-weight: lighter;
+        }
+        tbody > tr > td:empty::before {
+            content: "empty";
+            color: grey;
         }
     }
 }
