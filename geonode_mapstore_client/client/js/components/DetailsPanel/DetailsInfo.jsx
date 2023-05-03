@@ -162,30 +162,9 @@ const parseTabItems = (items) => {
 };
 const isDefaultTabType = (type) => type === 'tab';
 
-const parseAttributeData = (dataset) => {
-    if (dataset?.attribute_set) {
-        const header = [{
-            value: "Name",
-            key: "name"
-        }, {
-            value: "Label",
-            key: "label"
-        }, {
-            value: "Description",
-            key: "description"
-        }]
-
-        const rows = dataset.attribute_set.map(attribute => ({
-            name: attribute.attribute,
-            label: attribute.attribute_label || "",
-            description: attribute.description || "",
-        }));
-
-        return { header, rows };
-    }
-
-    return { header: [], rows: [] };
-};
+const canShowAttributeTab = ({resource, tab}) => {
+    return resource?.resource_type === 'dataset' && tab?.type === 'attribute-table'
+}
 
 function DetailsInfo({
     tabs = [],
@@ -201,7 +180,7 @@ function DetailsInfo({
                 Component: tabTypes[tab.type] || tabTypes.tab
             }))
         // ensure tab has items .. attribute table loads them dynamically
-        .filter(tab => tab?.items?.length > 0 || tab.type === 'attribute-table' );
+        .filter(tab => tab?.items?.length > 0 || canShowAttributeTab({resource, tab}) );
     const selectedTabId = filteredTabs?.[0]?.id;
     return (
         <Tabs
