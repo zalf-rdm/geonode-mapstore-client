@@ -14,18 +14,12 @@ import isEmpty from 'lodash/isEmpty';
 import moment from 'moment';
 
 import Button from '@js/components/Button';
-<<<<<<< HEAD
 import { Tabs, Tab } from "react-bootstrap";
 import Table from '@js/components/Table';
 
-import {
-    getDatasetByPk
-} from '@js/api/geonode/v2'
-=======
 import DetailsAttributeTable from '@js/components/DetailsPanel/DetailsAttributeTable';
 import DetailsLinkedResources from '@js/components/DetailsPanel/DetailsLinkedResources';
 import Message from '@mapstore/framework/components/I18N/Message';
->>>>>>> 17bb8049 (Add table tab describing the resource's attributes)
 
 const replaceTemplateString = (properties, str) => {
     return Object.keys(properties).reduce((updatedStr, key) => {
@@ -152,7 +146,6 @@ function DetailsInfoFields({ fields, formatHref }) {
     </div>);
 }
 
-<<<<<<< HEAD
 function DetailsInfoTable({head, body}) {
     return (
         <div className="gn-details-info-table">
@@ -160,13 +153,11 @@ function DetailsInfoTable({head, body}) {
         </div>
     )
 }
-=======
 const tabTypes = {
     'attribute-table': DetailsAttributeTable,
     'linked-resources': DetailsLinkedResources,
     'tab': DetailsInfoFields
 };
->>>>>>> 17bb8049 (Add table tab describing the resource's attributes)
 
 const parseTabItems = (items) => {
     return (items || []).filter(({ value }) => {
@@ -204,6 +195,9 @@ const parseAttributeData = (dataset) => {
 
     return { header: [], rows: [] };
 };
+const canShowAttributeTab = ({resource, tab}) => {
+    return resource?.resource_type === 'dataset' && tab?.type === 'attribute-table'
+}
 
 function DetailsInfo({
     tabs = [],
@@ -219,7 +213,7 @@ function DetailsInfo({
                 Component: tabTypes[tab.type] || tabTypes.tab
             }))
         // ensure tab has items .. attribute table loads them dynamically
-        .filter(tab => tab?.items?.length > 0 || tab.type === 'attribute-table' );
+        .filter(tab => tab?.items?.length > 0 || canShowAttributeTab({resource, tab}) );
     const selectedTabId = filteredTabs?.[0]?.id;
     return (
         <Tabs
