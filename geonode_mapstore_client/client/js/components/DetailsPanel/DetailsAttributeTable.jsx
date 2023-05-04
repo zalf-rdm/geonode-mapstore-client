@@ -6,6 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 import React, { useState, useEffect } from 'react';
+import { FormattedMessage } from 'react-intl';
 import PropTypes from 'prop-types';
 
 import {
@@ -28,10 +29,11 @@ const parseAttributeData = (dataset) => {
             key: "description"
         }]
 
+        const na = <FormattedMessage id="gnhome.na" defaultMessage="N/A" />
         const rows = dataset.attribute_set.map(attribute => ({
             name: attribute.attribute,
-            label: attribute.attribute_label || "",
-            description: attribute.description || "",
+            label: attribute.attribute_label || na,
+            description: attribute.description || na,
         }));
 
         return { header, rows };

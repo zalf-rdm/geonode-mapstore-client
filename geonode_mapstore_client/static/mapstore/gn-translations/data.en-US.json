@@ -136,9 +136,13 @@
             "permissionsMissing": "You don't have permission to view or download the resource",
             "filter": "Filter",
             "noPreview": "A preview is not available for this resource",
+<<<<<<< HEAD
             "na": "N/A",
             "emptyFilterItems": "No items to display",
             "loadingItems": "Loading items..."
+=======
+            "na": "N/A"
+>>>>>>> 235a6c1e (Use formatted message instead css pseudoselector)
         },
         "viewer": {
             "document": {
