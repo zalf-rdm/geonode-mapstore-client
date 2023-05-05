@@ -11,6 +11,7 @@ import moment from 'moment';
 import { Tabs, Tab } from "react-bootstrap";
 
 import Button from '@js/components/Button';
+import DetailsAttributeTable from '@js/components/DetailsPanel/DetailsAttributeTable';
 import DetailsLinkedResources from '@js/components/DetailsPanel/DetailsLinkedResources';
 import Message from '@mapstore/framework/components/I18N/Message';
 
@@ -55,7 +56,7 @@ function DetailsHTML({ value, placeholder }) {
         return (
             <div className={`gn-details-info-html${expand ? '' : ' collapsed'}`}>
                 {expand
-                    ? <div className="gn-details-info-html-value" dangerouslySetInnerHTML={{ __html: value }}/>
+                    ? <div className="gn-details-info-html-value" dangerouslySetInnerHTML={{ __html: value }} />
                     : <div className="gn-details-info-html-value">{placeholder}</div>}
                 <Button onClick={() => setExpand(!expand)}>
                     <Message msgId={expand ? 'gnviewer.readLess' : 'gnviewer.readMore'} />
@@ -63,7 +64,7 @@ function DetailsHTML({ value, placeholder }) {
             </div>);
     }
     return (
-        <div dangerouslySetInnerHTML={{ __html: value }}/>
+        <div dangerouslySetInnerHTML={{ __html: value }} />
     );
 }
 
@@ -110,7 +111,7 @@ function DetailsInfoFields({ fields, formatHref }) {
                 return (
                     <DetailsInfoField key={filedIndex} field={field}>
                         {(values) => values.map((value, idx) => (
-                            <DetailsHTML key={idx} value={value} placeholder={field.placeholder}/>
+                            <DetailsHTML key={idx} value={value} placeholder={field.placeholder} />
                         ))}
                     </DetailsInfoField>
                 );
@@ -130,6 +131,7 @@ function DetailsInfoFields({ fields, formatHref }) {
 }
 
 const tabTypes = {
+    'attribute-table': DetailsAttributeTable,
     'linked-resources': DetailsLinkedResources,
     'tab': DetailsInfoFields
 };
@@ -150,13 +152,14 @@ function DetailsInfo({
     resourceTypesInfo
 }) {
     const filteredTabs = tabs
+        .filter((tab) => !tab?.disableIf)
         .map((tab) =>
             ({
                 ...tab,
                 items: isDefaultTabType(tab.type) ? parseTabItems(tab?.items) : tab?.items,
                 Component: tabTypes[tab.type] || tabTypes.tab
             }))
-        .filter(tab => tab?.items?.length > 0 );
+        .filter(tab => tab?.items?.length > 0);
     const selectedTabId = filteredTabs?.[0]?.id;
     return (
         <Tabs
@@ -166,7 +169,10 @@ function DetailsInfo({
         >
             {filteredTabs.map(({Component, ...tab}, idx) => (
                 <Tab key={idx} eventKey={tab?.id} title={<DetailInfoFieldLabel field={tab} />}>
-                    <Component fields={tab?.items} formatHref={formatHref} resourceTypesInfo={resourceTypesInfo} />
+                    <Component
+                        fields={tab?.items}
+                        formatHref={formatHref}
+                        resourceTypesInfo={resourceTypesInfo} />
                 </Tab>
             ))}
         </Tabs>

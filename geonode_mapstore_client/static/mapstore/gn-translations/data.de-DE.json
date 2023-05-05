@@ -131,7 +131,8 @@
             "search": "Suchen...",
             "permissionsMissing": "Sie sind nicht berechtigt, diese Ressource anzuzeigen",
             "filter": "Filter",
-            "noPreview": "Für diese Ressource ist keine Vorschau verfügbar"
+            "noPreview": "Für diese Ressource ist keine Vorschau verfügbar",
+            "na": "n.a."
         },
         "viewer": {
             "document": {

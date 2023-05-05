@@ -131,7 +131,8 @@
             "search": "Search...",
             "permissionsMissing": "You don't have permission to view or download the resource",
             "filter": "Filter",
-            "noPreview": "A preview is not available for this resource"
+            "noPreview": "A preview is not available for this resource",
+            "na": "N/A"
         },
         "viewer": {
             "document": {

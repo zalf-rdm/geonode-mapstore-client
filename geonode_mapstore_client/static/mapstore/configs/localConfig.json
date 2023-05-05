@@ -770,6 +770,13 @@
                             ]
                         },
                         {
+                            "type": "attribute-table",
+                            "id": "attributes",
+                            "labelId": "gnviewer.attributes",
+                            "disableIf": "{context.get(state('gnResourceData'), 'resource_type') !== 'dataset'}",
+                            "items": "{context.get(state('gnResourceData'), 'attribute_set')}"
+                        },
+                        {
                             "type": "linked-resources",
                             "id": "related",
                             "labelId": "gnviewer.linkedResources",
@@ -3315,6 +3322,13 @@
                                     "disableIf": "{!context.getMetadataDetailUrl(state('gnResourceData'))}"
                                 }
                             ]
+                        },
+                        {
+                            "type": "attribute-table",
+                            "id": "attributes",
+                            "labelId": "gnviewer.attributes",
+                            "disableIf": "{context.get(state('gnResourceData'), 'resource_type') !== 'dataset'}",
+                            "items": "{context.get(state('gnResourceData'), 'attribute_set')}"
                         },
                         {
                             "type": "linked-resources",

@@ -237,7 +237,7 @@ export function setupConfiguration({
      *      msAPI.onAction('CHANGE_MAP_VIEW', onChangeMapView);
      *  });
      * </script>
-     * 
+     *
      * @example
      * <!--
      * use mapstore api offAction method to listen to an action only once
@@ -258,7 +258,7 @@ export function setupConfiguration({
      *      msAPI.onAction('CHANGE_MAP_VIEW', onChangeMapView);
      *  });
      * </script>
-     * 
+     *
      * @example
      * <!--
      * use mapstore api triggerAction method to dispatch an action
