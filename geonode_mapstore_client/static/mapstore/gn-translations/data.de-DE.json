@@ -116,6 +116,8 @@
             "customFilterExample": "Benutzerdefinierter Filter (Global)",
             "copiedResourceUrl": "Ressourcen-URL kopiert!",
             "copyResourceUrl": "Ressourcen-URL kopieren",
+            "copiedCapabilitiesUrl": "WMS Funktionen-URL kopiert!",
+            "copyCapabilitiesUrl": "WMS Funktionen-URL Kopieren",
             "open": "Öffnen",
             "share": "Teilen",
             "update": "Aktualisieren",

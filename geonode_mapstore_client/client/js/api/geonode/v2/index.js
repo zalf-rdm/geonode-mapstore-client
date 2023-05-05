@@ -871,6 +871,17 @@ export const deleteExecutionRequest = (executionId) => {
     return axios.delete(`${parseDevHostname(endpoints[EXECUTIONREQUEST])}/${executionId}`);
 };
 
+export const getResourceByTypeAndByPk = (type, pk) => {
+    switch (type) {
+    case "document":
+        return getDocumentByPk(pk);
+    case "dataset":
+        return getDatasetByPk(pk);
+    // Add type condition based on requirement
+    default:
+        return getResourceByPk(pk);
+    }
+};
 export default {
     getEndpoints,
     getResources,
@@ -910,5 +921,6 @@ export default {
     getProcessedUploadsByImportId,
     uploadDocument,
     getExecutionStatus,
-    deleteExecutionRequest
+    deleteExecutionRequest,
+    getResourceByTypeAndByPk
 };

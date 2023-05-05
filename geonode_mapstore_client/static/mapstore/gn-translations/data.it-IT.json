@@ -118,6 +118,8 @@
             "customFilterExample": "Filtro personalizzato (Global)",
             "copiedResourceUrl": "Url della risorsa copiato!",
             "copyResourceUrl": "Copia url della risorsa",
+            "copiedCapabilitiesUrl": "URL funzionalità WMS copiato!",
+            "copyCapabilitiesUrl": "Copia l'URL delle funzionalità WMS",
             "open": "Apri",
             "share": "Condividi",
             "update": "Aggiorna",

@@ -86,7 +86,10 @@ const DetailsPanelTools = ({
 }) => {
 
     const isMounted = useRef();
-    const [copiedResourceLink, setCopiedResourceLink] = useState(false);
+    const [copiedUrl, setCopiedUrl] = useState({
+        resource: false,
+        capabilities: false
+    });
 
     useEffect(() => {
         isMounted.current = true;
@@ -95,11 +98,11 @@ const DetailsPanelTools = ({
         };
     }, []);
 
-    const handleCopyPermalink = () => {
-        setCopiedResourceLink(true);
+    const handleCopyPermalink = (type) => {
+        setCopiedUrl({...copiedUrl, [type]: true});
         setTimeout(() => {
             if (isMounted.current) {
-                setCopiedResourceLink(false);
+                setCopiedUrl({...copiedUrl, [type]: false});
             }
         }, 700);
     };
@@ -126,7 +129,7 @@ const DetailsPanelTools = ({
             <CopyToClipboard
                 tooltipPosition="top"
                 tooltipId={
-                    copiedResourceLink
+                    copiedUrl.resource
                         ? 'gnhome.copiedResourceUrl'
                         : 'gnhome.copyResourceUrl'
                 }
@@ -134,10 +137,25 @@ const DetailsPanelTools = ({
             >
                 <Button
                     variant="default"
-                    onClick={handleCopyPermalink}>
+                    onClick={()=> handleCopyPermalink('resource')}>
                     <FaIcon name="share-alt" />
                 </Button>
             </CopyToClipboard>
+            {resource?.capabilities_url && <CopyToClipboard
+                tooltipPosition="top"
+                tooltipId={
+                    copiedUrl.capabilities
+                        ? 'gnhome.copiedCapabilitiesUrl'
+                        : 'gnhome.copyCapabilitiesUrl'
+                }
+                text={resource.capabilities_url}
+            >
+                <Button
+                    variant="default"
+                    onClick={()=> handleCopyPermalink('capabilities')}>
+                    <FaIcon name="globe" />
+                </Button>
+            </CopyToClipboard>}
             {detailUrl && !editThumbnail && <Button
                 variant="primary"
                 href={(resourceCanPreviewed || canView) ? detailUrl : metadataDetailUrl}
