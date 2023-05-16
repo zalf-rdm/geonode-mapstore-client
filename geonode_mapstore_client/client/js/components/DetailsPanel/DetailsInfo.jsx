@@ -7,6 +7,7 @@
  */
 import React, { useState } from 'react';
 import castArray from 'lodash/castArray';
+import isEmpty from 'lodash/isEmpty';
 import moment from 'moment';
 import { Tabs, Tab } from "react-bootstrap";
 
@@ -28,7 +29,12 @@ const getDateRangeValue = (startValue, endValue, format) => {
     }
     return moment(startValue ? startValue : endValue).format(format);
 };
-const isEmptyValue = (value) => (value?.length === 0 || value === 'None' || !value);
+const isEmptyValue = (value) => {
+    if (typeof value === 'object') {
+        return isEmpty(value) || (isEmpty(value.start) && isEmpty(value.end));
+    }
+    return value === 'None' || !value;
+};
 const isStyleLabel = (style) => style === "label";
 const isFieldLabelOnly = ({style, value}) => isEmptyValue(value) && isStyleLabel(style);
 

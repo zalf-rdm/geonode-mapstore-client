@@ -761,6 +761,15 @@
                                     "value": "{context.get(state('gnResourceData'), 'supplemental_information')}"
                                 },
                                 {
+                                    "type": "date",
+                                    "format": "YYYY-MM-DD HH:mm",
+                                    "labelId": "gnviewer.temporalExtent",
+                                    "value": {
+                                        "start": "{context.get(state('gnResourceData'), 'temporal_extent_start')}",
+                                        "end": "{context.get(state('gnResourceData'), 'temporal_extent_end')}"
+                                    }
+                                },
+                                {
                                     "type": "link",
                                     "style": "label",
                                     "labelId": "gnviewer.viewFullMetadata",
@@ -1636,6 +1645,15 @@
                                     "value": "{context.get(state('gnResourceData'), 'supplemental_information')}"
                                 },
                                 {
+                                    "type": "date",
+                                    "format": "YYYY-MM-DD HH:mm",
+                                    "labelId": "gnviewer.temporalExtent",
+                                    "value": {
+                                        "start": "{context.get(state('gnResourceData'), 'temporal_extent_start')}",
+                                        "end": "{context.get(state('gnResourceData'), 'temporal_extent_end')}"
+                                    }
+                                },
+                                {
                                     "type": "link",
                                     "style": "label",
                                     "labelId": "gnviewer.viewFullMetadata",
@@ -2280,6 +2298,15 @@
                                     "value": "{context.get(state('gnResourceData'), 'supplemental_information')}"
                                 },
                                 {
+                                    "type": "date",
+                                    "format": "YYYY-MM-DD HH:mm",
+                                    "labelId": "gnviewer.temporalExtent",
+                                    "value": {
+                                        "start": "{context.get(state('gnResourceData'), 'temporal_extent_start')}",
+                                        "end": "{context.get(state('gnResourceData'), 'temporal_extent_end')}"
+                                    }
+                                },
+                                {
                                     "type": "link",
                                     "style": "label",
                                     "labelId": "gnviewer.viewFullMetadata",
@@ -2582,6 +2609,15 @@
                                     "value": "{context.get(state('gnResourceData'), 'supplemental_information')}"
                                 },
                                 {
+                                    "type": "date",
+                                    "format": "YYYY-MM-DD HH:mm",
+                                    "labelId": "gnviewer.temporalExtent",
+                                    "value": {
+                                        "start": "{context.get(state('gnResourceData'), 'temporal_extent_start')}",
+                                        "end": "{context.get(state('gnResourceData'), 'temporal_extent_end')}"
+                                    }
+                                },
+                                {
                                     "type": "link",
                                     "style": "label",
                                     "labelId": "gnviewer.viewFullMetadata",
@@ -2800,6 +2836,15 @@
                                     "type": "html",
                                     "labelId": "gnviewer.supplementalInformation",
                                     "value": "{context.get(state('gnResourceData'), 'supplemental_information')}"
+                                },
+                                {
+                                    "type": "date",
+                                    "format": "YYYY-MM-DD HH:mm",
+                                    "labelId": "gnviewer.temporalExtent",
+                                    "value": {
+                                        "start": "{context.get(state('gnResourceData'), 'temporal_extent_start')}",
+                                        "end": "{context.get(state('gnResourceData'), 'temporal_extent_end')}"
+                                    }
                                 },
                                 {
                                     "type": "link",
@@ -3313,6 +3358,15 @@
                                     "type": "html",
                                     "labelId": "gnviewer.supplementalInformation",
                                     "value": "{context.get(state('gnResourceData'), 'supplemental_information')}"
+                                },
+                                {
+                                    "type": "date",
+                                    "format": "YYYY-MM-DD HH:mm",
+                                    "labelId": "gnviewer.temporalExtent",
+                                    "value": {
+                                        "start": "{context.get(state('gnResourceData'), 'temporal_extent_start')}",
+                                        "end": "{context.get(state('gnResourceData'), 'temporal_extent_end')}"
+                                    }
                                 },
                                 {
                                     "type": "link",
