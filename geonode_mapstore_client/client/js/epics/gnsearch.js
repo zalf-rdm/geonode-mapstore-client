@@ -14,7 +14,8 @@ import {
     getResources,
     getFeaturedResources,
     getResourceByUuid,
-    getResourceByTypeAndByPk
+    getResourceByTypeAndByPk,
+    getFacetItems
 } from '@js/api/geonode/v2';
 import {
     SEARCH_RESOURCES,
@@ -24,7 +25,9 @@ import {
     updateResourcesMetadata,
     setFeaturedResources,
     UPDATE_FEATURED_RESOURCES,
-    requestResource
+    requestResource,
+    GET_FACET_ITEMS,
+    setFacetItems
 } from '@js/actions/gnsearch';
 import {
     resourceLoading,
@@ -349,11 +352,27 @@ export const gnWatchStopCopyProcessOnSearch = (action$, store) =>
                 });
         });
 
+/**
+ * Get facet filter items
+ */
+export const gnGetFacetItems = (action$) =>
+    action$.ofType(GET_FACET_ITEMS)
+        .switchMap(() =>
+            Observable.defer(() =>
+                getFacetItems()
+            ).switchMap((facetItems) =>
+                Observable.of(
+                    setFacetItems(facetItems)
+                )
+            )
+        );
+
 export default {
     gnsSearchResourcesEpic,
     gnsSearchResourcesOnLocationChangeEpic,
     gnsSelectResourceEpic,
     getFeaturedResourcesEpic,
     gnWatchStopCopyProcessOnSearch,
-    gnsRequestResourceOnLocationChange
+    gnsRequestResourceOnLocationChange,
+    gnGetFacetItems
 };

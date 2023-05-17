@@ -15,7 +15,7 @@ let filters = {};
 export const setFilterById = (id, value) => {
     filters[id] = value;
 };
-export const getFilterLabelById = (filterKey = '', id) => filters?.[filterKey + id]?.selectOption?.label;
+export const getFilterLabelById = (filterKey = '', id) => filters?.[filterKey + id]?.selectOption?.label || filters?.[filterKey + id]?.label;
 export const getFilterById = (filterKey = '', id) => filters?.[filterKey + id];
 
 export const hashLocationToHref = ({
@@ -80,9 +80,54 @@ export function getQueryFilters(query) {
     return queryFilters;
 }
 
+export const filterFormItemsContainFacet = (formItems) => {
+    return formItems.some(formItem => formItem.items ? filterFormItemsContainFacet(formItem.items) : !!formItem.facet);
+};
+
+export const updateFilterFormItemsWithFacet = (formItems, facetItems) => {
+    return formItems.reduce((acc, formItem) => {
+        if (!!formItem.facet) {
+            const filteredFacetItems = (facetItems || [])
+                .filter(f => f.type === formItem.facet)
+                .sort((a, b) => a.order - b.order);
+            return [
+                ...acc,
+                ...filteredFacetItems
+                    .map(({ name, key, label, labelId, loadItems } = {}) => {
+                        return {
+                            name,
+                            key,
+                            id: name,
+                            type: formItem.type,
+                            style: formItem.style,
+                            labelId,
+                            label,
+                            loadItems: (params) => loadItems({ name, style: formItem.style, filterKey: key }, params)
+                        };
+                    })
+            ];
+        }
+        if (formItem?.items) {
+            return [
+                ...acc,
+                {
+                    ...formItem,
+                    items: updateFilterFormItemsWithFacet(formItem.items, facetItems)
+                }
+            ];
+        }
+        return [
+            ...acc,
+            formItem
+        ];
+    }, []);
+};
+
 export default {
     hashLocationToHref,
     getUserName,
     clearQueryParams,
-    getQueryFilters
+    getQueryFilters,
+    filterFormItemsContainFacet,
+    updateFilterFormItemsWithFacet
 };

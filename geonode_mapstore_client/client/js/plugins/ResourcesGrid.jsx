@@ -30,8 +30,8 @@ import {
 import { withResizeDetector } from 'react-resize-detector';
 import { userSelector } from '@mapstore/framework/selectors/security';
 import ConnectedCardGrid from '@js/plugins/resourcesgrid/ConnectedCardGrid';
-import { getTotalResources } from '@js/selectors/search';
-import { searchResources, setSearchConfig } from '@js/actions/gnsearch';
+import { getTotalResources, getFacetsItems } from '@js/selectors/search';
+import { searchResources, setSearchConfig, getFacetItems } from '@js/actions/gnsearch';
 
 import gnsearch from '@js/reducers/gnsearch';
 import gnresource from '@js/reducers/gnresource';
@@ -43,10 +43,10 @@ import resourceServiceEpics from '@js/epics/resourceservice';
 import favoriteEpics from '@js/epics/favorite';
 import DetailsPanel from '@js/components/DetailsPanel';
 import { processingDownload } from '@js/selectors/resourceservice';
-import { resourceHasPermission } from '@js/utils/ResourceUtils';
-import { downloadResource, setFavoriteResource } from '@js/actions/gnresource';
+import {resourceHasPermission} from '@js/utils/ResourceUtils';
+import {downloadResource, setFavoriteResource} from '@js/actions/gnresource';
 import FiltersForm from '@js/components/FiltersForm';
-import { getCategories, getRegions, getOwners, getKeywords } from '@js/api/geonode/v2';
+import {getCategories, getRegions, getOwners, getKeywords} from '@js/api/geonode/v2';
 import usePluginItems from '@js/hooks/usePluginItems';
 import { ProcessTypes } from '@js/utils/ResourceServiceUtils';
 import { replace } from 'connected-react-router';
@@ -407,6 +407,11 @@ function ResourcesGrid({
             placeholderId: 'gnhome.ownersPlaceholder',
             type: 'select',
             suggestionsRequestKey: 'owners'
+        },
+        {
+            type: "accordion",
+            style: "facet",
+            facet: "thesaurus"
         }
     ],
     pagePath = '',
@@ -435,15 +440,16 @@ function ResourcesGrid({
     onReplaceLocation,
     error,
     enableGeoNodeCardsMenuItems,
-    detailsTabs = []
+    detailsTabs = [],
+    onGetFacets,
+    facets
 }, context) {
 
     const [cardLayoutStyle, setCardLayoutStyle] = useLocalStorage('layoutCardsStyle', 'grid');
+
     const isPaginated = pagination !== undefined
         ? pagination
-        : cardLayoutStyle === 'grid'
-            ? false
-            : true;
+        : cardLayoutStyle !== 'grid';
     const customCardsMenuItems = enableGeoNodeCardsMenuItems ? getConfigProp('geoNodeCardsMenuItems') || [] : [];
     const parsedConfig = parsePluginConfigExpressions(monitoredState, {
         menuItems: [...customCardsMenuItems, ...menuItems],
@@ -711,17 +717,19 @@ function ResourcesGrid({
                         ref={filterFormNode}
                         className="gn-resources-filter"
                     >
-                        <FiltersForm
+                        {showFilterForm && <FiltersForm
                             key="gn-filter-form"
                             id="gn-filter-form"
                             fields={parsedConfig.filtersFormItems}
+                            facets={facets}
                             extentProps={parsedConfig.extent}
                             suggestionsRequestTypes={suggestionsRequestTypes}
                             query={query}
                             onChange={handleUpdate}
                             onClose={handleShowFilterForm.bind(null, false)}
                             onClear={handleClear}
-                        />
+                            onGetFacets={onGetFacets}
+                        />}
                     </div>
                 </div>,
                 document.querySelector('body > div'))}
@@ -765,8 +773,9 @@ const ResourcesGridPlugin = connect(
         state => state?.router?.location,
         state => state?.gnresource?.data || null,
         state => getMonitoredState(state, getConfigProp('monitorState')),
-        state => state?.gnsearch?.error
-    ], (params, user, totalResources, loading, location, resource, monitoredState, error) => ({
+        state => state?.gnsearch?.error,
+        getFacetsItems
+    ], (params, user, totalResources, loading, location, resource, monitoredState, error, facets) => ({
         params,
         user,
         totalResources,
@@ -774,12 +783,14 @@ const ResourcesGridPlugin = connect(
         location,
         resource,
         monitoredState,
-        error
+        error,
+        facets
     })),
     {
         onSearch: searchResources,
         onInit: setSearchConfig,
-        onReplaceLocation: replace
+        onReplaceLocation: replace,
+        onGetFacets: getFacetItems
     }
 )(withResizeDetector(ResourcesGrid));
 

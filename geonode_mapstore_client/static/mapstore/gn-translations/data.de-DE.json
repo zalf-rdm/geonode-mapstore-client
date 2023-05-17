@@ -134,7 +134,8 @@
             "permissionsMissing": "Sie sind nicht berechtigt, diese Ressource anzuzeigen",
             "filter": "Filter",
             "noPreview": "Für diese Ressource ist keine Vorschau verfügbar",
-            "na": "n.a."
+            "na": "n.a.",
+            "emptyAccordion": "Keine Elemente zum Anzeigen"
         },
         "viewer": {
             "document": {

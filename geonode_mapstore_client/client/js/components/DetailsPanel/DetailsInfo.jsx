@@ -144,10 +144,7 @@ const tabTypes = {
 
 const parseTabItems = (items) => {
     return (items || []).filter(({value, style}) => {
-        if (isEmptyValue(value) && !isStyleLabel(style)) {
-            return false;
-        }
-        return true;
+        return !(isEmptyValue(value) && !isStyleLabel(style));
     });
 };
 const isDefaultTabType = (type) => type === 'tab';

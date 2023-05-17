@@ -47,7 +47,7 @@ const DetailsAttributeTable = ({ fields }) => {
 };
 
 DetailsAttributeTable.propTypes = {
-    fields: PropTypes.array,
+    fields: PropTypes.array
 };
 
 DetailsAttributeTable.defaultProps = {

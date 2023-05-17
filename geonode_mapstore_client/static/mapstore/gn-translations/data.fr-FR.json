@@ -133,7 +133,9 @@
             "search": "Chercher...",
             "permissionsMissing": "Vous n'êtes pas autorisé à afficher ou télécharger la ressource",
             "filter": "Filtre",
-            "noPreview": "Un aperçu n'est pas disponible pour cette ressource"
+            "noPreview": "Un aperçu n'est pas disponible pour cette ressource",
+            "na": "N/A",
+            "emptyAccordion": "Aucun élément à afficher"
         },
         "viewer": {
             "document": {

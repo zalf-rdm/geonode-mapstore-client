@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import React, { memo } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Button from '@js/components/Button';
 import Message from '@mapstore/framework/components/I18N/Message';
@@ -19,6 +19,7 @@ import isEmpty from 'lodash/isEmpty';
 import omit from 'lodash/omit';
 import withDebounceOnCallback from '@mapstore/framework/components/misc/enhancers/withDebounceOnCallback';
 import localizedProps from '@mapstore/framework/components/misc/enhancers/localizedProps';
+import { updateFilterFormItemsWithFacet, filterFormItemsContainFacet } from '@js/utils/SearchUtils';
 import { FormControl as FormControlRB, Glyphicon } from 'react-bootstrap';
 const FormControl = localizedProps('placeholder')(FormControlRB);
 function InputControl({ onChange, value, ...props }) {
@@ -37,14 +38,30 @@ function FilterForm({
     style,
     styleContainerForm,
     query,
-    fields,
+    fields: fieldsProp,
+    facets,
     onChange,
     onClose,
     onClear,
     extentProps,
     suggestionsRequestTypes,
-    timeDebounce
+    timeDebounce,
+    onGetFacets
 }) {
+
+    const [fields, setFields] = useState(updateFilterFormItemsWithFacet(fieldsProp, facets));
+
+    useEffect(() => {
+        if (filterFormItemsContainFacet(fieldsProp) && fieldsProp && onGetFacets) {
+            onGetFacets();
+        }
+    }, []);
+
+    useEffect(() => {
+        setFields(
+            updateFilterFormItemsWithFacet(fieldsProp, facets)
+        );
+    }, [facets, fieldsProp]);
 
     const handleFieldChange = (newParam) => {
         onChange(newParam);
@@ -142,7 +159,9 @@ FilterForm.defaultProps = {
 };
 
 const arePropsEqual = (prevProps, nextProps) => {
-    return isEqual( prevProps.query, nextProps.query );
+    return isEqual(prevProps.query, nextProps.query)
+        && isEqual(prevProps.fields, nextProps.fields)
+        && isEqual(prevProps.facets, nextProps.facets);
 };
 
 

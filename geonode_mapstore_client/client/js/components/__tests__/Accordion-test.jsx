@@ -33,7 +33,7 @@ describe('Accordion test', () => {
         const accordion = document.querySelector('.gn-accordion');
         expect(accordion).toBeTruthy();
 
-        const accordionTitle = accordion.querySelector('.accordion-title');
+        const accordionTitle = accordion.querySelector('.accordion-title-label');
         expect(accordionTitle).toBeTruthy();
         expect(accordionTitle.innerText).toBe('Test');
 

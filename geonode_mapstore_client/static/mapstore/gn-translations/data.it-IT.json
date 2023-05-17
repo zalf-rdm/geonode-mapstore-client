@@ -135,7 +135,9 @@
             "search": "Cerca...",
             "permissionsMissing": "Non hai i permessi per visualizzare o scaricare la risorsa",
             "filter": "Filtra",
-            "noPreview": "Un'anteprima non è disponibile per questa risorsa"
+            "noPreview": "Un'anteprima non è disponibile per questa risorsa",
+            "na": "N/D",
+            "emptyAccordion": "Nessun elemento da visualizzare"
         },
         "viewer": {
             "document": {

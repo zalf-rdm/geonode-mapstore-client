@@ -133,7 +133,9 @@
             "search": "Buscar...",
             "permissionsMissing": "No tienes permiso para ver o descargar el recurso.",
             "filter": "Filtrar",
-            "noPreview": "Una vista previa no está disponible para este recurso"
+            "noPreview": "Una vista previa no está disponible para este recurso",
+            "na": "N/A",
+            "emptyAccordion": "No hay elementos para mostrar"
         },
         "viewer": {
             "document": {
