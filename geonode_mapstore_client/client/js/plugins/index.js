@@ -416,6 +416,10 @@ export const plugins = {
         'FeaturedResourcesGrid',
         () => import(/* webpackChunkName: 'plugins/featured-resources-grid' */ '@js/plugins/FeaturedResourcesGrid')
     ),
+    ExclusiveLayerPlugin: toModulePlugin(
+        'ExclusiveLayer',
+        () => import(/* webpackChunkName: 'plugins/exclusive-layer' */ '@js/plugins/ExclusiveLayer')
+    ),
     TabularPreviewPlugin: toModulePlugin(
         'TabularPreview',
         () => import(/* webpackChunkName: 'plugins/tabular-preview-plugin' */ '@js/plugins/TabularPreview')
