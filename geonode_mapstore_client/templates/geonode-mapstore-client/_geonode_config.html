@@ -2,6 +2,7 @@
 {% load base_tags %}
 {% load get_menu_json %}
 {% load apikey %}
+{% load static %}
 {% comment %}
     app and map configuration need to be normalized
 {% endcomment %}
@@ -153,7 +154,7 @@
                 mapboxAccessToken: '{{ MAPBOX_ACCESS_TOKEN }}',
                 geoNodeApi: {
                     endpointV1: siteUrl + 'api',
-                    endpointV2: siteUrl + 'api/v2'
+                    endpointV2: siteUrl + 'api/v2/'
                 },
                 projectionDefs: projectionDefs,
                 geoNodeCustomFilters: customFilters,
@@ -176,11 +177,12 @@
                     documentMaxUploadSize: documentMaxUploadSize,
                     maxParallelUploads: maxParallelUploads,
                     defaultThumbnailSize: defaultThumbnailSize,
-                    upload: { 
+                    upload: {
                         supportedDatasetFileTypes: supportedDatasetFileTypes
-                    }
+                    },
+                    staticPath: "{% static '' %}"
                 }
-            }, 
+            },
         };
 
         // override maps configuration with properties from setting.py

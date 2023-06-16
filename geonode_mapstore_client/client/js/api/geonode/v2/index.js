@@ -10,7 +10,9 @@ import axios from '@mapstore/framework/libs/ajax';
 import {
     parseDevHostname,
     getApiToken,
-    paramsSerializer
+    paramsSerializer,
+    getGeoNodeConfig,
+    getGeoNodeLocalConfig
 } from '@js/utils/APIUtils';
 import merge from 'lodash/merge';
 import mergeWith from 'lodash/mergeWith';
@@ -80,7 +82,8 @@ export const setEndpoints = (data) => {
  */
 export const getEndpoints = () => {
     const apikey = getApiToken();
-    return axios.get('/api/v2/', {
+    const endpointV2 = getGeoNodeLocalConfig('geoNodeApi.endpointV2', '/api/v2/');
+    return axios.get(endpointV2, {
         params: {
             ...(apikey && { apikey })
         }
@@ -457,10 +460,10 @@ export const getAccountInfo = () => {
         .catch(() => null);
 };
 
-export const getConfiguration = (configUrl = '/static/mapstore/configs/localConfig.json') => {
+export const getConfiguration = (configUrl = getGeoNodeLocalConfig('staticPath', '/static/') + 'mapstore/configs/localConfig.json') => {
     return axios.get(configUrl)
         .then(({ data }) => {
-            const geoNodePageConfig = window.__GEONODE_CONFIG__ || {};
+            const geoNodePageConfig = getGeoNodeConfig();
             const geoNodePageLocalConfig = geoNodePageConfig.localConfig || {};
             const pluginsConfigPatchRules = geoNodePageConfig.pluginsConfigPatchRules || [];
 

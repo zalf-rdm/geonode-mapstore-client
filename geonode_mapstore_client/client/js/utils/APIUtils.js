@@ -9,6 +9,37 @@
 import url from 'url';
 import queryString from "query-string";
 import isEmpty from "lodash/isEmpty";
+import get from "lodash/get";
+
+/**
+ * Get geonode config
+ * @param {string} path
+ * @param {any} defaultValue
+ * @return {any} value resolved
+ * @module utils/APIUtils
+ */
+export const getGeoNodeConfig = (path = '', defaultValue = undefined) => {
+    const geoNodeConfig =  window.__GEONODE_CONFIG__ || {};
+    if (!isEmpty(path)) {
+        return get(geoNodeConfig, path, defaultValue);
+    }
+    return geoNodeConfig;
+};
+
+/**
+ * Get geonode local configuration by path
+ * @param {string} path
+ * @param {any} defaultValue
+ * @return {any} value resolved
+ * @module utils/APIUtils
+ */
+export const getGeoNodeLocalConfig = (path = '', defaultValue = undefined) => {
+    const localConfig = getGeoNodeConfig('localConfig', {});
+    if (!isEmpty(path)) {
+        return get(localConfig, path, defaultValue);
+    }
+    return localConfig;
+};
 
 /**
 * Utilities for api requests
@@ -21,7 +52,7 @@ const getGeoNodeTargetHostname = () => {
     if (geoNodeTargetHostname) {
         return geoNodeTargetHostname;
     }
-    const endpointV2 = window?.__GEONODE_CONFIG__?.localConfig?.geoNodeApi?.endpointV2;
+    const endpointV2 = getGeoNodeLocalConfig('geoNodeApi.endpointV2');
     if (endpointV2) {
         const { hostname } = url.parse(endpointV2);
         if (hostname) {
@@ -72,7 +103,7 @@ export const getApiToken = () => {
     will always raise an error due the missing auth. In this way if the
     main call provide an apikey, we can proceed with the login
     */
-    const geoNodePageConfig = window.__GEONODE_CONFIG__ || {};
+    const geoNodePageConfig = getGeoNodeConfig();
     return geoNodePageConfig.apikey || null;
 };
 
