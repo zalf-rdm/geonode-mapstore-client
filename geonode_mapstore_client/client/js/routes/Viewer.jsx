@@ -83,7 +83,6 @@ function ViewerRoute({
             if (pk === 'new') {
                 onCreate(resourceType);
             } else {
-                resourceType = resourceType === 'tabular' ? 'dataset': resourceType;
                 onUpdate(resourceType, pk, {
                     page: name
                 });
