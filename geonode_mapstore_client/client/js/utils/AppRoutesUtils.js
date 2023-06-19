@@ -83,12 +83,13 @@ export const CATALOGUE_ROUTES = [
         shouldNotRequestResources: true
     },
     {
+        // tabular preview needs an extra route
         name: 'tabular_viewer',
         path: [
             '/tabular/:pk'
         ],
         pageConfig: {
-            resourceType: 'tabular'
+            resourceType: ResourceTypes.DATASET
         },
         component: appRouteComponentTypes.VIEWER,
         shouldNotRequestResources: true
