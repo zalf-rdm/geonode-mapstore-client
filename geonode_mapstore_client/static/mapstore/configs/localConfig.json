@@ -507,23 +507,6 @@
               ],
               "leftMenuItems": [
                 {
-                  "labelId": "gnviewer.save",
-                  "showPendingChangesIcon": true,
-                  "disableIf": "{(state('gnResourceData') && state('gnResourceData').subtype === 'tabular') || !state('isNewResource') && !context.resourceHasPermission(state('gnResourceData'), 'change_resourcebase') && (!context.canCopyResource(state('gnResourceData'), state('user')) || !state('selectedLayerPermissions').includes('download_resourcebase'))}",
-                  "type": "dropdown",
-                  "items": [
-                    {
-                      "type": "plugin",
-                      "name": "Save"
-                    },
-                    {
-                      "type": "plugin",
-                      "name": "SaveAs",
-                      "disableIf": "{!state('selectedLayerPermissions').includes('download_resourcebase') || !context.resourceHasPermission(state('gnResourceData'), 'download_resourcebase')}"
-                    }
-                  ]
-                },
-                {
                   "labelId": "gnviewer.edit",
                   "type": "dropdown",
                   "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'change_resourcebase')}",
@@ -596,11 +579,6 @@
                 {
                   "type": "plugin",
                   "name": "Print"
-                },
-                {
-                  "type": "plugin",
-                  "name": "FilterLayer",
-                  "disableIf": "(state('gnResourceData') && state('gnResourceData').subtype === 'tabular')"
                 },
                 {
                   "labelId": "gnviewer.download",
