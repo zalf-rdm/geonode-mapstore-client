@@ -41,13 +41,18 @@ function getDatasetFileType(file, supportedTypes) {
 const cancelTokens = {};
 const sources = {};
 
+const reorderDatasetFileTypes = (supportedDatasetFileTypes = []) => {
+    const order = {vector: 1, raster: 2};
+    return supportedDatasetFileTypes?.sort((a, b) => order[a.format] - order[b.format]) ?? [];
+};
+
 function UploadList({
     children,
     onSuccess
 }) {
     const { maxParallelUploads, upload: uploadSettings = {} } = getConfigProp('geoNodeSettings') || {};
 
-    const { supportedDatasetFileTypes: supportedDatasetTypes } = uploadSettings;
+    const supportedDatasetTypes = reorderDatasetFileTypes(uploadSettings.supportedDatasetFileTypes);
 
     const supportedExtensions = supportedDatasetTypes.map(({ ext }) => ext || []).flat();
     const supportedMimeTypes = supportedDatasetTypes.map(({ mimeType }) => mimeType || []).flat();
