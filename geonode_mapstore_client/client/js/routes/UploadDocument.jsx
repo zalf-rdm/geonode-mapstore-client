@@ -133,7 +133,7 @@ function UploadList({
     const onSuccessfulUpload = (successfulUploads) => {
         const successfulUploadsNames = successfulUploads.map(({ baseName }) => baseName);
         updateWaitingUploads(omit(waitingUploads, successfulUploadsNames));
-        setUploadUrls(omit(uploadUrls, successfulUploadsNames));
+        setUploadUrls(uploadUrls?.filter(({baseName} = {}) => !successfulUploadsNames?.includes(baseName)));
     };
 
     function handleUploadProcess() {
