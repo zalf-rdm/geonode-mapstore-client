@@ -721,9 +721,8 @@
                                 {
                                     "type": "link",
                                     "labelId": "gnviewer.pointOfContact",
-                                    "href": "{'/people/profile/' + context.get(state('gnResourceData'), 'poc.username')}",
-                                    "value": "{context.getUserResourceName(context.get(state('gnResourceData'), 'poc'))}",
-                                    "disableIf": "{!context.get(state('gnResourceData'), 'poc.username')}"
+                                    "value": "{context.getUserResourceNames(context.get(state('gnResourceData'), 'poc'))}",
+                                    "disableIf": "{!context.get(state('gnResourceData'), 'poc')}"
                                 },
                                 {
                                     "type": "query",
@@ -1596,9 +1595,8 @@
                                 {
                                     "type": "link",
                                     "labelId": "gnviewer.pointOfContact",
-                                    "href": "{'/people/profile/' + context.get(state('gnResourceData'), 'poc.username')}",
-                                    "value": "{context.getUserResourceName(context.get(state('gnResourceData'), 'poc'))}",
-                                    "disableIf": "{!context.get(state('gnResourceData'), 'poc.username')}"
+                                    "value": "{context.getUserResourceNames(context.get(state('gnResourceData'), 'poc'))}",
+                                    "disableIf": "{!context.get(state('gnResourceData'), 'poc')}"
                                 },
                                 {
                                     "type": "query",
@@ -2240,9 +2238,8 @@
                                 {
                                     "type": "link",
                                     "labelId": "gnviewer.pointOfContact",
-                                    "href": "{'/people/profile/' + context.get(state('gnResourceData'), 'poc.username')}",
-                                    "value": "{context.getUserResourceName(context.get(state('gnResourceData'), 'poc'))}",
-                                    "disableIf": "{!context.get(state('gnResourceData'), 'poc.username')}"
+                                    "value": "{context.getUserResourceNames(context.get(state('gnResourceData'), 'poc'))}",
+                                    "disableIf": "{!context.get(state('gnResourceData'), 'poc')}"
                                 },
                                 {
                                     "type": "query",
@@ -2551,9 +2548,8 @@
                                 {
                                     "type": "link",
                                     "labelId": "gnviewer.pointOfContact",
-                                    "href": "{'/people/profile/' + context.get(state('gnResourceData'), 'poc.username')}",
-                                    "value": "{context.getUserResourceName(context.get(state('gnResourceData'), 'poc'))}",
-                                    "disableIf": "{!context.get(state('gnResourceData'), 'poc.username')}"
+                                    "value": "{context.getUserResourceNames(context.get(state('gnResourceData'), 'poc'))}",
+                                    "disableIf": "{!context.get(state('gnResourceData'), 'poc')}"
                                 },
                                 {
                                     "type": "query",
@@ -2780,9 +2776,8 @@
                                 {
                                     "type": "link",
                                     "labelId": "gnviewer.pointOfContact",
-                                    "href": "{'/people/profile/' + context.get(state('gnResourceData'), 'poc.username')}",
-                                    "value": "{context.getUserResourceName(context.get(state('gnResourceData'), 'poc'))}",
-                                    "disableIf": "{!context.get(state('gnResourceData'), 'poc.username')}"
+                                    "value": "{context.getUserResourceNames(context.get(state('gnResourceData'), 'poc'))}",
+                                    "disableIf": "{!context.get(state('gnResourceData'), 'poc')}"
                                 },
                                 {
                                     "type": "query",
@@ -3302,9 +3297,8 @@
                                 {
                                     "type": "link",
                                     "labelId": "gnviewer.pointOfContact",
-                                    "href": "{'/people/profile/' + context.get(state('gnResourceData'), 'poc.username')}",
-                                    "value": "{context.getUserResourceName(context.get(state('gnResourceData'), 'poc'))}",
-                                    "disableIf": "{!context.get(state('gnResourceData'), 'poc.username')}"
+                                    "value": "{context.getUserResourceNames(context.get(state('gnResourceData'), 'poc'))}",
+                                    "disableIf": "{!context.get(state('gnResourceData'), 'poc')}"
                                 },
                                 {
                                     "type": "query",
