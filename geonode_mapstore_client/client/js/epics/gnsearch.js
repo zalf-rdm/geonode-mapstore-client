@@ -8,8 +8,10 @@
 
 import { Observable } from 'rxjs';
 import isEqual from 'lodash/isEqual';
+import isEmpty from 'lodash/isEmpty';
 import isArray from 'lodash/isArray';
 import isNil from 'lodash/isNil';
+import pick from 'lodash/pick';
 import {
     getResources,
     getFeaturedResources,
@@ -27,7 +29,10 @@ import {
     UPDATE_FEATURED_RESOURCES,
     requestResource,
     GET_FACET_ITEMS,
-    setFacetItems
+    setFacetItems,
+    getFacetFilters,
+    GET_FACET_FILTERS,
+    setFilters
 } from '@js/actions/gnsearch';
 import {
     resourceLoading,
@@ -54,6 +59,8 @@ import { getResourceData } from '@js/selectors/resource';
 import uuid from 'uuid';
 import { matchPath } from 'react-router-dom';
 import { CATALOGUE_ROUTES } from '@js/utils/AppRoutesUtils';
+import { getFacetsByKey, getQueryParams } from '@js/api/geonode/v2/index';
+import { getFacetsItems } from '@js/selectors/search';
 
 const UPDATE_RESOURCES_REQUEST = 'GEONODE_SEARCH:UPDATE_RESOURCES_REQUEST';
 const updateResourcesRequest = (payload, reset) => ({
@@ -352,20 +359,59 @@ export const gnWatchStopCopyProcessOnSearch = (action$, store) =>
                 });
         });
 
+const isKeyPresent = (filterKey, filterValue) =>
+    filterKey === (typeof filterKey === "string" ? filterValue : Number(filterValue));
+/**
+ * Set facet filter from topic items based on the query applied
+ */
+export const gnSetFacetFilter = (action$, {getState = () => {}}) =>
+    action$.ofType(GET_FACET_FILTERS, LOCATION_CHANGE)
+        .filter(({facets} = {}) => !isEmpty(facets) || getFacetsItems(getState()))
+        .switchMap(({facets: facetsItems} = {})=> {
+            const customFilters = getCustomMenuFilters(getState());
+            const location = getState()?.router?.location;
+            const { query } = url.parse((location?.search || ''), true);
+            const stateFacetItems = getFacetsItems(getState());
+
+            const facets = facetsItems || stateFacetItems;
+            const topicQuery = pick(query, Object.keys(query).filter(q => facets.map(f => f.filter).includes(q)));
+            const facetNames = facets
+                ?.filter(facet => topicQuery[facet.filter])
+                ?.map(facet => ({facet: facet.name, key: topicQuery[facet.filter]})) ?? [];
+            const queries = {...getQueryParams(query, customFilters), include_topics: true};
+
+            return Observable.forkJoin(
+                facetNames.map(({facet, key} = {}) => Observable.defer(() => getFacetsByKey(facet, {...queries, key})))
+            ).switchMap((topics) => {
+                let filters = {};
+                const updatedTopics = (topics ?? [])?.reduce((a, t) => t?.items?.concat(a), []);
+                const facetFilters = facets?.map((facet) => ({filter: facet.filter, value: query?.[facet.filter]}))?.filter(f => !isEmpty(f.value));
+
+                facetFilters.forEach(({filter, value} = {}) => {
+                    updatedTopics?.forEach((item) => {
+                        const itemObj = isKeyPresent(item.key, value) && item;
+                        if (!isEmpty(itemObj)) {
+                            filters[filter + itemObj.key] = {...itemObj, count: itemObj.count || 0};
+                        }
+                    });
+                });
+                return Observable.of(setFilters(filters));
+            }).concat(!isEmpty(stateFacetItems) ? Observable.empty() : Observable.of(setFacetItems(facets)));
+        });
+
 /**
  * Get facet filter items
  */
-export const gnGetFacetItems = (action$) =>
+export const gnGetFacetItems = (action$, {getState = () => {}}) =>
     action$.ofType(GET_FACET_ITEMS)
-        .switchMap(() =>
-            Observable.defer(() =>
-                getFacetItems()
-            ).switchMap((facetItems) =>
-                Observable.of(
-                    setFacetItems(facetItems)
-                )
-            )
-        );
+        .switchMap(() => {
+            const customFilters = getCustomMenuFilters(getState());
+            return Observable.defer(() =>
+                getFacetItems(customFilters)
+            ).switchMap((facets = []) =>
+                Observable.of(getFacetFilters(facets))
+            );
+        });
 
 export default {
     gnsSearchResourcesEpic,
@@ -374,5 +420,6 @@ export default {
     getFeaturedResourcesEpic,
     gnWatchStopCopyProcessOnSearch,
     gnsRequestResourceOnLocationChange,
-    gnGetFacetItems
+    gnGetFacetItems,
+    gnSetFacetFilter
 };

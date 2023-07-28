@@ -49,12 +49,10 @@ describe('FilterItems component', () => {
             {
                 "labelId": "gnhome.resourceTypes",
                 "placeholderId": "gnhome.resourceTypesPlaceholder",
-                "type": "select",
-                "suggestionsRequestKey": "resourceTypes"
+                "type": "select"
             }
         ];
-        const suggestionsRequestTypes = { resourceTypes: { loadOptions: () => new Promise(resolve => resolve([])) }};
-        ReactDOM.render( <FilterItems items={items} suggestionsRequestTypes={suggestionsRequestTypes}/>, document.getElementById("container"));
+        ReactDOM.render( <FilterItems items={items}/>, document.getElementById("container"));
         const filterItemsSelectNode = document.querySelector('.Select');
         expect(filterItemsSelectNode).toBeTruthy();
     });
@@ -113,6 +111,7 @@ describe('FilterItems component', () => {
                     "type": "accordion",
                     "id": "accordion",
                     "labelId": "gnhome.accordion",
+                    "loadItems": () => Promise.resolve(),
                     "items": [
                         {
                             "type": "filter",
@@ -141,6 +140,7 @@ describe('FilterItems component', () => {
                     "type": "accordion",
                     "id": "accordion",
                     "labelId": "gnhome.accordion",
+                    "loadItems": () => Promise.resolve(),
                     "items": [
                         {
                             "type": "filter",

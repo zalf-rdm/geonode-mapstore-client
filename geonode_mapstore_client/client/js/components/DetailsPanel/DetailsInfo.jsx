@@ -86,7 +86,7 @@ function DetailsInfoFields({ fields, formatHref }) {
                         {(values) => values.map((value, idx) => {
                             return field.href
                                 ? <a key={idx} href={field.href}>{value}</a>
-                                : <a key={idx} href={value.href}>{value.value}</a>
+                                : <a key={idx} href={value.href}>{value.value}</a>;
                         })}
                     </DetailsInfoField>
                 );

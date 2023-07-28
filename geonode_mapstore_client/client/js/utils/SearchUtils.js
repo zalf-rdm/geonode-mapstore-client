@@ -11,14 +11,6 @@ import castArray from 'lodash/castArray';
 import omit from 'lodash/omit';
 import uuid from 'uuid/v1';
 
-let filters = {};
-
-export const setFilterById = (id, value) => {
-    filters[id] = value;
-};
-export const getFilterLabelById = (filterKey = '', id) => filters?.[filterKey + id]?.selectOption?.label || filters?.[filterKey + id]?.label;
-export const getFilterById = (filterKey = '', id) => filters?.[filterKey + id];
-
 export const hashLocationToHref = ({
     location,
     pathname,
@@ -85,7 +77,7 @@ export const filterFormItemsContainFacet = (formItems) => {
     return formItems.some(formItem => formItem.items ? filterFormItemsContainFacet(formItem.items) : !!formItem.facet);
 };
 
-export const updateFilterFormItemsWithFacet = (formItems, facetItems) => {
+export const updateFilterFormItemsWithFacet = ({formItems, facetItems}) => {
     return formItems.reduce((acc, formItem) => {
         if (!!formItem.facet) {
             const filteredFacetItems = (facetItems || [])
@@ -94,16 +86,18 @@ export const updateFilterFormItemsWithFacet = (formItems, facetItems) => {
             return [
                 ...acc,
                 ...filteredFacetItems
-                    .map(({ name, key, label, is_localized: isLocalized, loadItems } = {}) => {
+                    .map(({ name, key, config, filter: filterKey, label, is_localized: isLocalized, loadItems } = {}) => {
+                        const style = config.style || formItem.style;
+                        const type = config.type || formItem.type;
                         return {
                             uuid: uuid(),
                             name,
                             key,
                             id: name,
-                            type: formItem.type,
-                            style: formItem.style,
+                            type,
+                            style,
                             ...(isLocalized ? { labelId: label } : { label }),
-                            loadItems: (params) => loadItems({ name, style: formItem.style, filterKey: key }, params)
+                            loadItems: (params, filters, setFilters) => loadItems({ name, style, filterKey, filters, setFilters }, params)
                         };
                     })
             ];
@@ -114,7 +108,7 @@ export const updateFilterFormItemsWithFacet = (formItems, facetItems) => {
                 {
                     ...formItem,
                     uuid: formItem.uuid || uuid(),
-                    items: updateFilterFormItemsWithFacet(formItem.items, facetItems)
+                    items: updateFilterFormItemsWithFacet({formItems: formItem.items, facetItems})
                 }
             ];
         }

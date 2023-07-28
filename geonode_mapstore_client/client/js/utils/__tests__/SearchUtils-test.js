@@ -22,18 +22,18 @@ describe('Test Resource Utils', () => {
     describe('Test updateFilterFormItemsWithFacet', () => {
         it('test with no facet item in filter form items', () => {
             const formItems = [{name: "1"}, {name: "2"}];
-            const items = updateFilterFormItemsWithFacet(formItems);
+            const items = updateFilterFormItemsWithFacet({formItems});
             expect(items[0].name).toEqual(formItems[0].name);
             expect(items[1].name).toEqual(formItems[1].name);
         });
         it('test with facet item and filter form items', () => {
             const formItems = [{name: "1"}, {style: "facet", type: "accordion", facet: "thesaurus"}];
-            const facetItems = {name: "some-name", key: "filterkey", label: "label1", type: "thesaurus"};
-            const items = updateFilterFormItemsWithFacet(formItems, [facetItems]);
+            const facetItems = [{name: "some-name", key: "filterkey", label: "label1", type: "thesaurus", config: {style: "facet"}}];
+            const items = updateFilterFormItemsWithFacet({formItems, facetItems});
             expect(items.length).toBe(2);
-            expect(items[1].name).toBe(facetItems.name);
-            expect(items[1].key).toBe(facetItems.key);
-            expect(items[1].id).toBe(facetItems.name);
+            expect(items[1].name).toBe(facetItems[0].name);
+            expect(items[1].key).toBe(facetItems[0].key);
+            expect(items[1].id).toBe(facetItems[0].name);
             expect(items[1].type).toBe("accordion");
             expect(items[1].style).toBe("facet");
             expect(items[1].label).toBe("label1");
@@ -41,18 +41,19 @@ describe('Test Resource Utils', () => {
         });
         it('test with facet item by no matching facet', () => {
             const formItems = [{name: "1"}, {style: "facet", type: "accordion", facet: "thesaurus"}];
-            const facetItems = {name: "some-name", key: "filterkey", label: "label1", type: "owner"};
-            const items = updateFilterFormItemsWithFacet(formItems, [facetItems]);
+            const facetItems = [{name: "some-name", key: "filterkey", label: "label1", type: "owner", config: {style: "facet"}}];
+            const items = updateFilterFormItemsWithFacet({formItems, facetItems});
             expect(items.length).toBe(1);
             expect(items[0].name).toEqual(formItems[0].name);
         });
         it('test with nested facet item', () => {
+            const config = {style: "facet"};
             const formItems = [{ type: "group", items: [{style: "facet", type: "accordion", facet: "thesaurus"}] }];
             const facetItems = [
-                {name: "some-name", key: "filterkey", label: "label1", type: "thesaurus"},
-                {name: "some-name-2", key: "filterkey", label: "label2", type: "thesaurus"}
+                {name: "some-name", key: "filterkey", label: "label1", type: "thesaurus", config},
+                {name: "some-name-2", key: "filterkey", label: "label2", type: "thesaurus", config}
             ];
-            const items = updateFilterFormItemsWithFacet(formItems, facetItems);
+            const items = updateFilterFormItemsWithFacet({formItems, facetItems});
             expect(items.length).toBe(1);
             expect(items[0].items.length).toBe(2);
         });
