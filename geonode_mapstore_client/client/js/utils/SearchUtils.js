@@ -86,13 +86,13 @@ export const updateFilterFormItemsWithFacet = ({formItems, facetItems}) => {
             return [
                 ...acc,
                 ...filteredFacetItems
-                    .map(({ name, key, config, filter: filterKey, label, is_localized: isLocalized, loadItems } = {}) => {
+                    .map(({ name, config, filter: filterKey, label, is_localized: isLocalized, loadItems } = {}) => {
                         const style = config.style || formItem.style;
                         const type = config.type || formItem.type;
                         return {
                             uuid: uuid(),
                             name,
-                            key,
+                            key: filterKey,
                             id: name,
                             type,
                             style,

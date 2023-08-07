@@ -28,11 +28,11 @@ describe('Test Resource Utils', () => {
         });
         it('test with facet item and filter form items', () => {
             const formItems = [{name: "1"}, {style: "facet", type: "accordion", facet: "thesaurus"}];
-            const facetItems = [{name: "some-name", key: "filterkey", label: "label1", type: "thesaurus", config: {style: "facet"}}];
+            const facetItems = [{name: "some-name", filter: "filterkey", label: "label1", type: "thesaurus", config: {style: "facet"}}];
             const items = updateFilterFormItemsWithFacet({formItems, facetItems});
             expect(items.length).toBe(2);
             expect(items[1].name).toBe(facetItems[0].name);
-            expect(items[1].key).toBe(facetItems[0].key);
+            expect(items[1].key).toBe(facetItems[0].filter);
             expect(items[1].id).toBe(facetItems[0].name);
             expect(items[1].type).toBe("accordion");
             expect(items[1].style).toBe("facet");
@@ -41,7 +41,7 @@ describe('Test Resource Utils', () => {
         });
         it('test with facet item by no matching facet', () => {
             const formItems = [{name: "1"}, {style: "facet", type: "accordion", facet: "thesaurus"}];
-            const facetItems = [{name: "some-name", key: "filterkey", label: "label1", type: "owner", config: {style: "facet"}}];
+            const facetItems = [{name: "some-name", filter: "filterkey", label: "label1", type: "owner", config: {style: "facet"}}];
             const items = updateFilterFormItemsWithFacet({formItems, facetItems});
             expect(items.length).toBe(1);
             expect(items[0].name).toEqual(formItems[0].name);
@@ -50,8 +50,8 @@ describe('Test Resource Utils', () => {
             const config = {style: "facet"};
             const formItems = [{ type: "group", items: [{style: "facet", type: "accordion", facet: "thesaurus"}] }];
             const facetItems = [
-                {name: "some-name", key: "filterkey", label: "label1", type: "thesaurus", config},
-                {name: "some-name-2", key: "filterkey", label: "label2", type: "thesaurus", config}
+                {name: "some-name", filter: "filterkey", label: "label1", type: "thesaurus", config},
+                {name: "some-name-2", filter: "filterkey", label: "label2", type: "thesaurus", config}
             ];
             const items = updateFilterFormItemsWithFacet({formItems, facetItems});
             expect(items.length).toBe(1);
