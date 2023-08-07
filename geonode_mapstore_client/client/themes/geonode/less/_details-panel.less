@@ -420,7 +420,6 @@
             flex: 1;
             padding-left: 1rem;
             max-width: calc(100% - 250px);
-            display: flex;
             .gn-details-info-html {
                 &.collapsed {
                     display: flex;
@@ -437,8 +436,9 @@
                     border-bottom: 1px solid transparent;
                 }
             }
-            &> a + a {
-                margin-left: 0.5rem;
+            &> a {
+                margin-right: 0.5rem;
+                white-space: nowrap;
             }
         }
         &.linked-resources {
