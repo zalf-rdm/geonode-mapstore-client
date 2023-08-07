@@ -14,6 +14,7 @@ import { FormGroup, Checkbox, FormControl as FormControlRB } from 'react-bootstr
 import ReactSelect from 'react-select';
 
 import Accordion from "@js/components/Accordion";
+import Tabs from "@js/components/Tabs";
 import SelectInfiniteScroll from '@js/components/SelectInfiniteScroll';
 import localizedProps from '@mapstore/framework/components/misc/enhancers/localizedProps';
 import withDebounceOnCallback from '@mapstore/framework/components/misc/enhancers/withDebounceOnCallback';
@@ -84,7 +85,8 @@ function FilterItem({
     extentProps,
     timeDebounce,
     field,
-    filters
+    filters,
+    setFilters
 }, { messages }) {
 
 
@@ -318,9 +320,30 @@ function FilterItem({
                     items={accordionItems}
                     values={values}
                     onChange={onChange}
+                    filters={filters}
+                    setFilters={setFilters}
                 />)
             }
         />);
+    }
+    if (field.type === 'tabs') {
+        const key = `${id}-${field.id}`;
+        return (
+            <Tabs
+                identifier={key}
+                tabs={(field?.items || [])?.map((item) => ({
+                    title: item.labelId ? getMessageById(messages, field.labelId) : item.label,
+                    component: <FilterItems
+                        {...item}
+                        items={item.items}
+                        values={values}
+                        filters={filters}
+                        setFilters={setFilters}
+                        onChange={onChange}
+                    />
+                }))}
+            />
+        );
     }
     return null;
 }

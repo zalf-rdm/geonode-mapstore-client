@@ -9,9 +9,9 @@ import React, { useState } from 'react';
 import castArray from 'lodash/castArray';
 import isEmpty from 'lodash/isEmpty';
 import moment from 'moment';
-import { Tabs, Tab } from "react-bootstrap";
 
 import Button from '@js/components/Button';
+import Tabs from '@js/components/Tabs';
 import DetailsAttributeTable from '@js/components/DetailsPanel/DetailsAttributeTable';
 import DetailsLinkedResources from '@js/components/DetailsPanel/DetailsLinkedResources';
 import Message from '@mapstore/framework/components/I18N/Message';
@@ -171,19 +171,18 @@ function DetailsInfo({
     const selectedTabId = filteredTabs?.[0]?.id;
     return (
         <Tabs
-            defaultActiveKey={selectedTabId}
-            bsStyle="pills"
             className="gn-details-info tabs-underline"
-        >
-            {filteredTabs.map(({Component, ...tab}, idx) => (
-                <Tab key={idx} eventKey={tab?.id} title={<DetailInfoFieldLabel field={tab} />}>
-                    <Component
-                        fields={tab?.items}
-                        formatHref={formatHref}
-                        resourceTypesInfo={resourceTypesInfo} />
-                </Tab>
-            ))}
-        </Tabs>
+            selectedTabId={selectedTabId}
+            tabs={filteredTabs.map(({Component, ...tab} = {}) => ({
+                title: <DetailInfoFieldLabel field={tab} />,
+                eventKey: tab?.id,
+                component: <Component
+                    fields={tab?.items}
+                    formatHref={formatHref}
+                    resourceTypesInfo={resourceTypesInfo} />
+
+            }))}
+        />
     );
 }
 

@@ -58,6 +58,11 @@
 
         }
     }
+    .gn-tabs {
+        > .nav {
+            .background-color-var(@theme-vars[main-bg]);
+        }
+    }
 }
 
 // **************
@@ -280,5 +285,26 @@
                 }
             }
         }
+    }
+}
+
+.gn-tabs {
+    padding: 0.5rem;
+    > .nav {
+        position: sticky;
+        top: 2.5rem;
+        z-index: 1;
+        li {
+            a {
+                padding: 0.125rem;
+            }
+            a:focus {
+                outline-color: transparent;
+                outline-offset: 0px;
+            }
+        }
+    }
+    .tab-content {
+        margin-top: 0.5rem;
     }
 }
