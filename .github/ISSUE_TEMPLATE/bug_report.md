@@ -7,10 +7,10 @@ assignees: ''
 
 ---
 
+## Describe the bug
+
+
 ## Expected Behavior
-
-
-## Actual Behavior
 
 
 ## Steps to Reproduce the Problem
@@ -21,8 +21,7 @@ assignees: ''
 
 ## Specifications
 
-  - GeoNode version:
+  - GeoNode client version:
+  - Browser:
   - Installation type (vanilla, geonode-project):
-  - Installation method (manual, docker):
-  - Platform:
   - Additional details:
