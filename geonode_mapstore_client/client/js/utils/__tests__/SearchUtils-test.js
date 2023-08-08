@@ -10,6 +10,7 @@
 import expect from 'expect';
 import {
     filterFormItemsContainFacet,
+    parseIcon,
     updateFilterFormItemsWithFacet
 } from '../SearchUtils';
 
@@ -56,6 +57,17 @@ describe('Test Resource Utils', () => {
             const items = updateFilterFormItemsWithFacet({formItems, facetItems});
             expect(items.length).toBe(1);
             expect(items[0].items.length).toBe(2);
+        });
+    });
+    describe('parseIcon', ()=> {
+        it('test with input as string', () => {
+            expect(parseIcon("fa-test")).toBe("test");
+        });
+        it('test with input as object with icon prop', () => {
+            expect(parseIcon({icon: "fa-test"})).toBe("test");
+        });
+        it('test with input as object with fa_class prop', () => {
+            expect(parseIcon({fa_class: "fa-test"})).toBe("test");
         });
     });
 });

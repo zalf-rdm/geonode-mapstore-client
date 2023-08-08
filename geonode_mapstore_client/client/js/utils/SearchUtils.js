@@ -122,11 +122,29 @@ export const updateFilterFormItemsWithFacet = ({formItems, facetItems}) => {
     }, []);
 };
 
+/**
+ * Parse icon name from item.
+ * Skip font awesome prefix from prop `fa-${icon}` and pick only icon name
+ * @param {Object} item filter items
+ * @returns {string} icon name
+ */
+//
+export const parseIcon = (item) => {
+    let value;
+    if (typeof item === 'object') {
+        value = item.icon ?? item?.fa_class;
+    } else {
+        value = item;
+    }
+    return value?.replace("fa-", "");
+};
+
 export default {
     hashLocationToHref,
     getUserName,
     clearQueryParams,
     getQueryFilters,
     filterFormItemsContainFacet,
-    updateFilterFormItemsWithFacet
+    updateFilterFormItemsWithFacet,
+    parseIcon
 };

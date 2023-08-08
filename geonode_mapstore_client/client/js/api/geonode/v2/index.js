@@ -29,6 +29,7 @@ import { getUserInfo } from '@js/api/geonode/user';
 import { ResourceTypes, availableResourceTypes, setAvailableResourceTypes } from '@js/utils/ResourceUtils';
 import { getConfigProp } from '@mapstore/framework/utils/ConfigUtils';
 import { mergeConfigsPatch } from '@mapstore/patcher';
+import { parseIcon } from '@js/utils/SearchUtils';
 
 /**
  * Actions for GeoNode save workflow
@@ -788,16 +789,20 @@ export const getFacetItemsByFacetName = ({ name: facetName, style, filterKey, fi
                 count: 0,
                 filterKey: item.filterKey ?? filterKey,
                 filterValue: isNil(item.filterValue) ? String(item.key) : String(item.filterValue),
-                style
+                style,
+                icon: parseIcon(item),
+                image: item.image
             }))
-            : _items.map(({label, is_localized: isLocalized, key, count} = {})=> {
+            : _items.map(({label, is_localized: isLocalized, key, count, fa_class: icon, image} = {})=> {
                 return {
                     type: "filter",
                     ...(!isNil(isLocalized) && !isLocalized ? { labelId: label } : { label }), // TODO remove when api send isLocalized for all facets response
                     count,
                     filterKey,
                     filterValue: String(key),
-                    style
+                    style,
+                    icon: parseIcon(icon),
+                    image
                 };
             });
 
