@@ -116,7 +116,9 @@ describe('Test Resource Utils', () => {
                             mapLayer: {
                                 pk: 10
                             }
-                        }
+                        },
+                        opacity: 0.5,
+                        visibility: false
                     }
                 ]
             }
@@ -130,7 +132,10 @@ describe('Test Resource Utils', () => {
                 styles: [{ name: 'custom:style', title: 'My Style', format: 'css' }]
             },
             current_style: 'geonode:style',
-            name: 'geonode:layer'
+            name: 'geonode:layer',
+            opacity: 0.5,
+            visibility: false,
+            order: 0
         });
     });
     it('should convert data blob to geonode map properties', () => {

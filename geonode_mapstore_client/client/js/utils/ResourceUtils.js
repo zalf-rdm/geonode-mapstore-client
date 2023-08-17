@@ -410,7 +410,7 @@ export function cleanStyles(styles = [], excluded = []) {
 export function getGeoNodeMapLayers(data) {
     return (data?.map?.layers || [])
         .filter(layer => layer?.extendedParams?.mapLayer)
-        .map((layer) => {
+        .map((layer, index) => {
             return {
                 ...(layer?.extendedParams?.mapLayer && {
                     pk: layer.extendedParams.mapLayer.pk
@@ -421,7 +421,10 @@ export function getGeoNodeMapLayers(data) {
                         .map(({ canEdit, metadata, ...style }) => ({ ...style }))
                 },
                 current_style: layer.style || '',
-                name: layer.name
+                name: layer.name,
+                order: index,
+                opacity: layer.opacity ?? 1,
+                visibility: layer.visibility
             };
         });
 }
