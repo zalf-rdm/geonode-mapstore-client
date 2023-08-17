@@ -231,6 +231,7 @@ function ResourcesGrid({
             type: 'dropdown',
             variant: 'primary',
             responsive: true,
+            noCaret: true,
             items: [
                 {
                     labelId: 'gnhome.uploadDataset',

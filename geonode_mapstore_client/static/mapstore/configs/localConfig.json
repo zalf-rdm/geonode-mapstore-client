@@ -585,15 +585,6 @@
                         },
                         {
                             "type": "plugin",
-                            "name": "DeleteResource",
-                            "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'delete_resourcebase')}"
-                        },
-                        {
-                            "type": "divider",
-                            "authenticated": true
-                        },
-                        {
-                            "type": "plugin",
                             "name": "Print"
                         },
                         {
@@ -628,6 +619,11 @@
                             "href": "{'#/map/new?gn-dataset=' + (state('gnResourceData') || {}).pk}",
                             "labelId": "gnviewer.createMap",
                             "disableIf": "{!(state('user') && state('user').perms && state('user').perms.includes('add_resource'))}"
+                        },
+                        {
+                            "type": "plugin",
+                            "name": "DeleteResource",
+                            "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'delete_resourcebase')}"
                         }
                     ],
                     "rightMenuItems": [
@@ -1497,15 +1493,6 @@
                         },
                         {
                             "type": "plugin",
-                            "name": "DeleteResource",
-                            "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'delete_resourcebase')}"
-                        },
-                        {
-                            "type": "divider",
-                            "authenticated": true
-                        },
-                        {
-                            "type": "plugin",
                             "name": "Print"
                         },
                         {
@@ -1521,6 +1508,11 @@
                             "type": "plugin",
                             "name": "DatasetsCatalog",
                             "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'change_resourcebase') && !state('isNewResource')}"
+                        },
+                        {
+                            "type": "plugin",
+                            "name": "DeleteResource",
+                            "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'delete_resourcebase')}"
                         }
                     ],
                     "rightMenuItems": [
