@@ -457,11 +457,16 @@ function ResourcesGrid({
     const { loadedPlugins } = context;
     const configuredItems = usePluginItems({ items, loadedPlugins }, []);
 
-    const cardOptions = [...configuredItems.map(({ name, Component }) => ({
-        type: 'plugin',
-        Component,
-        action: name
-    }))].sort((a, b) => resourceCardActionsOrder.indexOf(a.action) - resourceCardActionsOrder.indexOf(b.action));
+    const cardOptions = [...configuredItems
+        .filter(item => item.target === 'cardOptions')
+        .map(({ name, Component }) => ({
+            type: 'plugin',
+            Component,
+            action: name
+        }))].sort((a, b) => resourceCardActionsOrder.indexOf(a.action) - resourceCardActionsOrder.indexOf(b.action));
+
+    const detailsToolbarItems = configuredItems
+        .filter(item => (item.target === "cardOptions" && item.detailsToolbar) || item.target === "detailsToolbar");
 
     const updatedLocation = useRef();
     updatedLocation.current = location;
@@ -668,6 +673,7 @@ function ResourcesGrid({
                     linkHref={closeDetailPanelHref}
                     formatHref={handleFormatHref}
                     tabs={parsedConfig.detailsTabs}
+                    toolbarItems={detailsToolbarItems}
                 />}
             </div>
         </div>

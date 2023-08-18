@@ -26,7 +26,8 @@ import {
     parseUploadFiles,
     getResourceTypesInfo,
     ResourceTypes,
-    FEATURE_INFO_FORMAT
+    FEATURE_INFO_FORMAT,
+    isDocumentExternalSource
 } from '../ResourceUtils';
 
 describe('Test Resource Utils', () => {
@@ -974,5 +975,17 @@ describe('Test Resource Utils', () => {
             expect(name).toBe('Dashboard');
             expect(formatMetadataUrl(resource)).toBe('/apps/100/metadata');
         });
+    });
+    it('isDocumentExternalSource', () => {
+        let resource = { resource_type: "document", sourcetype: "REMOTE" };
+        expect(isDocumentExternalSource(resource)).toBeTruthy();
+
+        // LOCAL
+        resource = {...resource, sourcetype: "LOCAL"};
+        expect(isDocumentExternalSource(resource)).toBeFalsy();
+
+        // NOT DOCUMENT
+        resource = {...resource, resource_type: "dataset"};
+        expect(isDocumentExternalSource(resource)).toBeFalsy();
     });
 });

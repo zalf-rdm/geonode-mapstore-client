@@ -339,7 +339,8 @@
             "dateFilter": {
                 "from": "Date from",
                 "to": "Date to"
-            }
+            },
+            "sourceType": "Source"
         }
     }
 }

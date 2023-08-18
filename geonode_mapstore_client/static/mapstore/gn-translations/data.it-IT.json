@@ -341,7 +341,8 @@
             "dateFilter": {
                 "from": "Data da",
                 "to": "Data a"
-            }
+            },
+            "sourceType": "Fonte"
         }
     }
 }

@@ -338,7 +338,8 @@
             "dateFilter": {
                 "from": "Fecha desde",
                 "to": "Fecha hasta"
-            }
+            },
+            "sourceType": "Fuente"
         }
     }
 }
