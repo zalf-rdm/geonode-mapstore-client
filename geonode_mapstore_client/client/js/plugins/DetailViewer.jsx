@@ -166,14 +166,13 @@ const ConnectedButton = connect(
  *  }
  * }
  */
-function DetailViewer({
+function DetailViewerPanel({
     location,
     enabled,
     onEditResource,
     onEditAbstractResource,
     onEditThumbnail,
     canEdit,
-    hide,
     user,
     onClose,
     monitoredState,
@@ -182,7 +181,6 @@ function DetailViewer({
     items,
     resourceId
 }, context) {
-
     const parsedConfig = parsePluginConfigExpressions(monitoredState, { tabs });
 
     const handleTitleValue = (val) => {
@@ -210,10 +208,6 @@ function DetailViewer({
         });
     };
 
-    if (hide) {
-        return null;
-    }
-
     const { loadedPlugins } = context;
     const configuredItems = usePluginItems({ items, loadedPlugins }, [resourceId]);
     const toolbarItems = configuredItems.filter(item => item.target === "toolbar");
@@ -238,6 +232,8 @@ function DetailViewer({
         </OverlayContainer>
     );
 }
+
+const DetailViewer = ({hide, ...props}) => hide ? null : <DetailViewerPanel {...props}/>;
 
 const DetailViewerPlugin = connect(
     createSelector(
