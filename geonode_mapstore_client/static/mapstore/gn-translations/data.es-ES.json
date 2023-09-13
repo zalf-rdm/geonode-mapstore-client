@@ -157,6 +157,7 @@
             "view": "Ver",
             "viewMetadata": "Ver metadatos",
             "viewData":  "Ver datos",
+            "viewInfo": "Ver información",
             "backToDataset": "< Regrese al conjunto de datos",
             "goBackTo": "< Volver a { resourceName }",
             "uploadImage": "Haz clic para subir una imagen",

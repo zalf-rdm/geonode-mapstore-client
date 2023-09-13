@@ -157,6 +157,7 @@
             "view": "Anzeigen",
             "viewMetadata": "Metadaten anzeigen",
             "viewData":  "Daten anzeigen",
+            "viewInfo": "Informationen anzeigen",
             "backToDataset": "< Zurück zum Datensatz",
             "goBackTo": "< Geh zurück zu { resourceName }",
             "uploadImage": "Klicken Sie hier, um ein Bild hochzuladen",

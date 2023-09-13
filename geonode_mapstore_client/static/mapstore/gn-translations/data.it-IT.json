@@ -155,6 +155,7 @@
             "view": "Visualizza",
             "viewMetadata": "Visualizza i metadati",
             "viewData": "Visualizza i dati",
+            "viewInfo": "Visualizza informazioni",
             "editInfo": "Modifica informazioni",
             "editStyle": "Modifica Stile",
             "editLayerStyle": "Modifica lo stile del dataset",

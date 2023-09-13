@@ -153,6 +153,7 @@
             "view": "Vue",
             "viewMetadata": "Afficher les métadonnées",
             "viewData":  "Afficher les données",
+            "viewInfo": "Afficher les informations",
             "editInfo": "Modifier les informations",
             "editStyle": "Modifier le Style",
             "editLayerStyle": "Modifier le style de jeu de données",

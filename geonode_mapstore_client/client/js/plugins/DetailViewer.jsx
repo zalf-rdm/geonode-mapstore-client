@@ -91,7 +91,7 @@ const ButtonViewer = ({ onClick, hide, variant, size, showMessage }) => {
             size={size}
             onClick={handleClickButton}
         >
-            {!showMessage ? <FaIcon name="info-circle" /> : <Message msgId="gnviewer.editInfo"/>}
+            {!showMessage ? <FaIcon name="info-circle" /> : <Message msgId="gnviewer.viewInfo"/>}
         </Button>
     ) : null;
 };

@@ -155,6 +155,7 @@
             "view": "View",
             "viewMetadata": "View Metadata",
             "viewData": "View Data",
+            "viewInfo": "View information",
             "backToDataset": "< Go back to the dataset",
             "goBackTo": "< Go back to { resourceName }",
             "uploadImage": "Click to upload an image",

@@ -153,6 +153,7 @@
             "editData": "Edit Data",
             "view": "View",
             "viewMetadata": "View Metadata",
+            "viewInfo": "View information",
             "viewData": "View Data",
             "backToDataset": "< Go back to the dataset",
             "goBackTo": "< Go back to { resourceName }",
