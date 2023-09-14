@@ -224,7 +224,7 @@ def get_user_menu(context):
         },
         {
             "type": "link",
-            "href": "/geoserver/",
+            "href": settings.GEOSERVER_WEB_UI_LOCATION,
             "label": "GeoServer"
         }
     ] + monitoring + [devider] + general
