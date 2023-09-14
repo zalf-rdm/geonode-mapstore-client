@@ -179,15 +179,18 @@ def get_user_menu(context):
             devider,
             {"type": "link", "href": "/monitoring/", "label": "Monitoring & Analytics"},
         ]
-    admin_only = (
-        [
-            {"type": "link", "href": "/admin/", "label": "Admin"},
-            {"type": "link", "href": settings.GEOSERVER_WEB_UI_LOCATION, "label": "GeoServer"},
-        ]
-        + monitoring
-        + [devider]
-        + general
-    )
+    admin_only = [
+        {
+            "type": "link",
+            "href": "/admin/",
+            "label": "Admin"
+        },
+        {
+            "type": "link",
+            "href": settings.GEOSERVER_WEB_UI_LOCATION,
+            "label": "GeoServer"
+        }
+    ] + monitoring + [devider] + general
 
     if user.is_superuser:
         profile["items"].extend(admin_only)
