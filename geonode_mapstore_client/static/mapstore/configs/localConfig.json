@@ -502,7 +502,6 @@
                     "leftMenuItems": [
                         {
                             "type": "plugin",
-                            "variant": "info",
                             "size": "md",
                             "name": "DetailViewerButton"
                         },
@@ -1446,7 +1445,6 @@
                     "leftMenuItems": [
                         {
                             "type": "plugin",
-                            "variant": "info",
                             "size": "md",
                             "name": "DetailViewerButton"
                         },
@@ -2111,7 +2109,6 @@
                     "leftMenuItems": [
                         {
                             "type": "plugin",
-                            "variant": "info",
                             "size": "md",
                             "name": "DetailViewerButton"
                         },
@@ -2419,7 +2416,6 @@
                     "leftMenuItems": [
                         {
                             "type": "plugin",
-                            "variant": "info",
                             "size": "md",
                             "name": "DetailViewerButton"
                         },
@@ -2657,7 +2653,6 @@
                     "leftMenuItems": [
                         {
                             "type": "plugin",
-                            "variant": "info",
                             "size": "md",
                             "name": "DetailViewerButton"
                         },
