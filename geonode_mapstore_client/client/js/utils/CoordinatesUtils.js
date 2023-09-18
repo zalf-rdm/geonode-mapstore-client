@@ -9,6 +9,7 @@
 
 import isNil from 'lodash/isNil';
 import join from 'lodash/join';
+import isEmpty from 'lodash/isEmpty';
 import { reprojectBbox, getViewportGeometry } from '@mapstore/framework/utils/CoordinatesUtils';
 import turfBbox from '@turf/bbox';
 
@@ -101,24 +102,20 @@ export const boundsToExtentString = (bounds, fromCrs) => {
     return join(reprojectedExtents.map(ext => join(ext.map((val) => val.toFixed(4)), ',')), ',');
 };
 
-
-export function bboxToPolygon(bbox, crs) {
+export function bboxToExtent(bbox, crs) {
+    if (isEmpty(bbox)) {
+        return {};
+    }
     const { minx, miny, maxx, maxy } = bbox.bounds;
     const extent = [minx, miny, maxx, maxy];
-    const llExtent = bbox.crs === crs
+    const _extent = bbox.crs === crs
         ? extent
         : reprojectBbox(extent, bbox.crs, crs);
-    const [minxLL, minyLL, maxxLL, maxyLL] = llExtent;
     return {
-        type: 'Polygon',
-        // coordinates direction counter-clockwise
-        coordinates: [[
-            [minxLL, minyLL],
-            [maxxLL, minyLL],
-            [maxxLL, maxyLL],
-            [minxLL, maxyLL],
-            [minxLL, minyLL]
-        ]]
+        bbox: {
+            srid: crs,
+            coords: _extent
+        }
     };
 }
 

@@ -9,25 +9,20 @@
 
 import expect from 'expect';
 import {
-    bboxToPolygon,
+    bboxToExtent,
     getExtent
 } from '../CoordinatesUtils';
 
 describe('Test Coordinates Utils', () => {
     it('should keep the wms params from the url if available', () => {
-        const bbox = {
+        const _bbox = {
             bounds: {minx: -10, miny: -10, maxx: 10, maxy: 10},
             crs: 'EPSG:4326'
         };
-        const polygon = bboxToPolygon(bbox, 'EPSG:4326');
-        expect(polygon.type).toBe('Polygon');
-        expect(polygon.coordinates).toEqual([[
-            [-10, -10],
-            [10, -10],
-            [10, 10],
-            [-10, 10],
-            [-10, -10]
-        ]]);
+        const {bbox} = bboxToExtent(_bbox, 'EPSG:4326');
+        const {coords, srid} = bbox;
+        expect(srid).toBe('EPSG:4326');
+        expect(coords).toEqual([-10, -10, 10, 10]);
     });
 
     it('should get extent from Bbox', () => {

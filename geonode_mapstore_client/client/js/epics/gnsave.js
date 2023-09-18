@@ -8,7 +8,7 @@
 
 import axios from '@mapstore/framework/libs/ajax';
 import { Observable } from 'rxjs';
-import { mapInfoSelector, mapSelector } from '@mapstore/framework/selectors/map';
+import { mapInfoSelector } from '@mapstore/framework/selectors/map';
 import { userSelector } from '@mapstore/framework/selectors/security';
 import {
     error as errorNotification,
@@ -69,6 +69,7 @@ import {
 import {
     ResourceTypes,
     cleanCompactPermissions,
+    extentConfig,
     toGeoNodeMapConfig
 } from '@js/utils/ResourceUtils';
 import {
@@ -77,23 +78,31 @@ import {
 } from '@js/utils/ResourceServiceUtils';
 import { setControlProperty } from '@mapstore/framework/actions/controls';
 
-function parseMapBody(body, map) {
-    const geoNodeMap = toGeoNodeMapConfig(body.data, map);
+function parseMapBody(body) {
+    const geoNodeMap = toGeoNodeMapConfig(body.data);
     return {
         ...body,
         ...geoNodeMap
     };
 }
 
+function withExtent(body) {
+    const extentConf = extentConfig(body.data);
+    return {
+        ...body,
+        ...extentConf
+    };
+}
+
 const SaveAPI = {
     [ResourceTypes.MAP]: (state, id, body) => {
-        const map =  mapSelector(state) || {};
         return id
-            ? updateMap(id, { ...parseMapBody(body, map), id })
-            : createMap(parseMapBody(body, map));
+            ? updateMap(id, { ...parseMapBody(body), id })
+            : createMap(parseMapBody(body));
     },
-    [ResourceTypes.GEOSTORY]: (state, id, body) => {
+    [ResourceTypes.GEOSTORY]: (state, id, _body) => {
         const user = userSelector(state);
+        const body = { ...withExtent(_body) };
         return id
             ? updateGeoApp(id, body)
             : createGeoApp({
@@ -103,8 +112,9 @@ const SaveAPI = {
                 ...body
             });
     },
-    [ResourceTypes.DASHBOARD]: (state, id, body) => {
+    [ResourceTypes.DASHBOARD]: (state, id, _body) => {
         const user = userSelector(state);
+        const body = { ...withExtent(_body) };
         return id
             ? updateGeoApp(id, body)
             : createGeoApp({
@@ -114,7 +124,8 @@ const SaveAPI = {
                 ...body
             });
     },
-    [ResourceTypes.DOCUMENT]: (state, id, body) => {
+    [ResourceTypes.DOCUMENT]: (state, id, _body) => {
+        const body = { ...withExtent(_body) };
         return id ? updateDocument(id, body) : false;
     },
     [ResourceTypes.DATASET]: (state, id, body) => {

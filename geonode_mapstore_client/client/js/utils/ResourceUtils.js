@@ -6,13 +6,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import turfBbox from '@turf/bbox';
 import uuid from 'uuid';
 import url from 'url';
+import isEmpty from 'lodash/isEmpty';
 import { getConfigProp, convertFromLegacy, normalizeConfig } from '@mapstore/framework/utils/ConfigUtils';
 import { parseDevHostname } from '@js/utils/APIUtils';
 import { ProcessTypes, ProcessStatus } from '@js/utils/ResourceServiceUtils';
-import { bboxToPolygon } from '@js/utils/CoordinatesUtils';
+import { bboxToExtent } from '@js/utils/CoordinatesUtils';
 import { uniqBy, orderBy, isString, isObject, pick, difference } from 'lodash';
 import { excludeGoogleBackground, extractTileMatrixFromSources } from '@mapstore/framework/utils/LayersUtils';
 import { determineResourceType } from '@js/utils/FileUtils';
@@ -21,16 +21,11 @@ import { determineResourceType } from '@js/utils/FileUtils';
 * @module utils/ResourceUtils
 */
 
-function getExtentFromResource({ ll_bbox_polygon: llBboxPolygon }) {
-    if (!llBboxPolygon) {
+function getExtentFromResource({ extent }) {
+    if (isEmpty(extent?.coords)) {
         return null;
     }
-    const extent = turfBbox({
-        type: 'Feature',
-        properties: {},
-        geometry: llBboxPolygon
-    });
-    const [minx, miny, maxx, maxy] = extent;
+    const [minx, miny, maxx, maxy] = extent.coords;
 
     // if the extent is greater than the max extent of the WGS84 return null
     const WGS84_MAX_EXTENT = [-180, -90, 180, 90];
@@ -429,22 +424,23 @@ export function getGeoNodeMapLayers(data) {
         });
 }
 
-export function toGeoNodeMapConfig(data, mapState) {
+export function toGeoNodeMapConfig(data) {
     if (!data) {
         return {};
     }
     const maplayers = getGeoNodeMapLayers(data);
-    const { projection } = data?.map || {};
-    const { bbox } = mapState || {};
-    const llBboxPolygon = bboxToPolygon(bbox, 'EPSG:4326');
-    const bboxPolygon = bboxToPolygon(bbox, projection);
     return {
-        maplayers,
-        ll_bbox_polygon: llBboxPolygon,
-        srid: projection,
-        // following properties are using the srid definition
-        bbox_polygon: bboxPolygon
+        maplayers
     };
+}
+
+export function extentConfig(data) {
+    if (!data) {
+        return {};
+    }
+    const { bbox: _bbox, projection } = data?.map ?? {};
+    const bbox = bboxToExtent(_bbox, projection);
+    return { ...bbox };
 }
 
 export function compareBackgroundLayers(aLayer, bLayer) {
