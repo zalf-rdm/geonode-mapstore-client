@@ -343,7 +343,16 @@
                 "from": "Data da",
                 "to": "Data a"
             },
-            "sourceType": "Fonte"
+            "sourceType": "Fonte",
+            "locations": "Posizioni",
+            "boundingBox": "Rettangolo di selezione (WGS84)",
+            "center": "Centro (WGS84)",
+            "minLat": "Min Lat",
+            "minLon": "Min Lon",
+            "maxLat": "Max Lat",
+            "maxLon": "Max Lon",
+            "centerLat": "Centro Lat",
+            "centerLon": "Centro Lon"
         }
     }
 }

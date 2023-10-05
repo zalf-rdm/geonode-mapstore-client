@@ -11,7 +11,8 @@ import { reprojectBbox } from '@mapstore/framework/utils/CoordinatesUtils';
 
 const ZoomTo = ({
     map,
-    extent
+    extent,
+    nearest = true
 }) => {
     const once = useRef();
     useEffect(() => {
@@ -35,7 +36,7 @@ const ZoomTo = ({
             map.getView().fit(bounds, {
                 size: map.getSize(),
                 duration: 300,
-                nearest: true
+                nearest
             });
             // ensure to avoid other fit action by setting once to true
             once.current = true;

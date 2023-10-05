@@ -33,8 +33,13 @@ const Tabs = ({
         <RTabs
             bsStyle="pills"
             className={className}
+            animation={false}
             key={identifier}
-            defaultActiveKey={selectedKey}
+            {...!persistSelection ? {
+                activeKey: selectedTabId
+            } : {
+                defaultActiveKey: !persistSelection ? selectedTabId : eventKeys[identifier] ?? 0
+            }}
             onSelect={onSelect ? onSelect : onSelectTab}
         >
             {tabs.map((tab, index)=> {

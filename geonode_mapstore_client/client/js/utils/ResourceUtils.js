@@ -12,7 +12,6 @@ import isEmpty from 'lodash/isEmpty';
 import { getConfigProp, convertFromLegacy, normalizeConfig } from '@mapstore/framework/utils/ConfigUtils';
 import { parseDevHostname } from '@js/utils/APIUtils';
 import { ProcessTypes, ProcessStatus } from '@js/utils/ResourceServiceUtils';
-import { bboxToExtent } from '@js/utils/CoordinatesUtils';
 import { uniqBy, orderBy, isString, isObject, pick, difference } from 'lodash';
 import { excludeGoogleBackground, extractTileMatrixFromSources } from '@mapstore/framework/utils/LayersUtils';
 import { determineResourceType } from '@js/utils/FileUtils';
@@ -432,15 +431,6 @@ export function toGeoNodeMapConfig(data) {
     return {
         maplayers
     };
-}
-
-export function extentConfig(data) {
-    if (!data) {
-        return {};
-    }
-    const { bbox: _bbox, projection } = data?.map ?? {};
-    const bbox = bboxToExtent(_bbox, projection);
-    return { ...bbox };
 }
 
 export function compareBackgroundLayers(aLayer, bLayer) {

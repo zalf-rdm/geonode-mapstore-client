@@ -341,7 +341,16 @@
                 "from": "Date de",
                 "to": "Date à"
             },
-            "sourceType": "Source"
+            "sourceType": "Source",
+            "locations": "Emplacements",
+            "boundingBox": "Boîte englobante (WGS84)",
+            "center": "Centre (WGS84)",
+            "minLat": "Min Lat",
+            "minLon": "Min Lon",
+            "maxLat": "Max Lat",
+            "maxLon": "Max Lon",
+            "centerLat": "Centre Lat",
+            "centerLon": "Centre Lon"
         }
     }
 }

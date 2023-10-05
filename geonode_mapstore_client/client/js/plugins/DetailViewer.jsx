@@ -20,7 +20,8 @@ import {
     setFavoriteResource,
     setMapThumbnail,
     setResourceThumbnail,
-    enableMapThumbnailViewer
+    enableMapThumbnailViewer,
+    setResourceExtent
 } from '@js/actions/gnresource';
 import { processingDownload } from '@js/selectors/resourceservice';
 import FaIcon from '@js/components/FaIcon/FaIcon';
@@ -76,7 +77,8 @@ const ConnectedDetailsPanel = connect(
         onFavorite: setFavoriteResource,
         onMapThumbnail: setMapThumbnail,
         onResourceThumbnail: setResourceThumbnail,
-        onClose: enableMapThumbnailViewer
+        onClose: enableMapThumbnailViewer,
+        onSetExtent: setResourceExtent
     }
 )(DetailsPanel);
 

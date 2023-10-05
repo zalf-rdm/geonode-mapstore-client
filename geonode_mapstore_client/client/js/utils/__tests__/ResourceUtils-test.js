@@ -27,8 +27,7 @@ import {
     getResourceTypesInfo,
     ResourceTypes,
     FEATURE_INFO_FORMAT,
-    isDocumentExternalSource,
-    extentConfig
+    isDocumentExternalSource
 } from '../ResourceUtils';
 
 describe('Test Resource Utils', () => {
@@ -985,21 +984,5 @@ describe('Test Resource Utils', () => {
         // NOT DOCUMENT
         resource = {...resource, resource_type: "dataset"};
         expect(isDocumentExternalSource(resource)).toBeFalsy();
-    });
-    it('extentConfig', () => {
-        const data = {
-            map: {
-                bbox: {
-                    bounds: {minx: -10, miny: -10, maxx: 10, maxy: 10},
-                    crs: "EPSG:4326"
-                },
-                projection: "EPSG:4326"
-            }
-        };
-        const extentConf = extentConfig(data);
-        expect(extentConf).toBeTruthy();
-        expect(extentConf.bbox).toBeTruthy();
-        expect(extentConf.bbox.coords).toEqual([-10, -10, 10, 10]);
-        expect(extentConf.bbox.srid).toBe("EPSG:4326");
     });
 });

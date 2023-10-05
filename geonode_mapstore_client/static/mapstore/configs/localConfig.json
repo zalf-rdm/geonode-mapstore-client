@@ -65,6 +65,10 @@
             "path": "gnresource.data"
         },
         {
+            "name": "gnResourceInitialData",
+            "path": "gnresource.initialResource"
+        },
+        {
             "name": "isNewResource",
             "path": "gnresource.isNew"
         },
@@ -777,6 +781,12 @@
                                     "disableIf": "{!context.getMetadataDetailUrl(state('gnResourceData'))}"
                                 }
                             ]
+                        },
+                        {
+                            "type": "locations",
+                            "id": "locations",
+                            "labelId": "gnviewer.locations",
+                            "items": "{({extent: context.get(state('gnResourceData'), 'extent')})}"
                         },
                         {
                             "type": "attribute-table",
@@ -1655,6 +1665,12 @@
                             ]
                         },
                         {
+                            "type": "locations",
+                            "id": "locations",
+                            "labelId": "gnviewer.locations",
+                            "items": "{({extent: context.get(state('gnResourceData'), 'extent')})}"
+                        },
+                        {
                             "type": "linked-resources",
                             "id": "related",
                             "labelId": "gnviewer.linkedResources",
@@ -2303,6 +2319,12 @@
                             ]
                         },
                         {
+                            "type": "locations",
+                            "id": "locations",
+                            "labelId": "gnviewer.locations",
+                            "items": "{({extent: context.get(state('gnResourceData'), 'extent'), initialExtent: context.get(state('gnResourceInitialData'), 'extent')})}"
+                        },
+                        {
                             "type": "linked-resources",
                             "id": "related",
                             "labelId": "gnviewer.linkedResources",
@@ -2618,6 +2640,12 @@
                             ]
                         },
                         {
+                            "type": "locations",
+                            "id": "locations",
+                            "labelId": "gnviewer.locations",
+                            "items": "{({extent: context.get(state('gnResourceData'), 'extent'), initialExtent: context.get(state('gnResourceInitialData'), 'extent')})}"
+                        },
+                        {
                             "type": "linked-resources",
                             "id": "related",
                             "labelId": "gnviewer.linkedResources",
@@ -2849,6 +2877,12 @@
                                     "disableIf": "{!context.getMetadataDetailUrl(state('gnResourceData'))}"
                                 }
                             ]
+                        },
+                        {
+                            "type": "locations",
+                            "id": "locations",
+                            "labelId": "gnviewer.locations",
+                            "items": "{({extent: context.get(state('gnResourceData'), 'extent'), initialExtent: context.get(state('gnResourceInitialData'), 'extent')})}"
                         },
                         {
                             "type": "linked-resources",
@@ -3376,6 +3410,12 @@
                                     "disableIf": "{!context.getMetadataDetailUrl(state('gnResourceData'))}"
                                 }
                             ]
+                        },
+                        {
+                            "type": "locations",
+                            "id": "locations",
+                            "labelId": "gnviewer.locations",
+                            "items": "{({extent: context.get(state('gnResourceData'), 'extent')})}"
                         },
                         {
                             "type": "attribute-table",

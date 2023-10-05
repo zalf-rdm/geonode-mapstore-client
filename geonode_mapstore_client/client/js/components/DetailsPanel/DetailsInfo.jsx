@@ -15,6 +15,7 @@ import Tabs from '@js/components/Tabs';
 import DetailsAttributeTable from '@js/components/DetailsPanel/DetailsAttributeTable';
 import DetailsLinkedResources from '@js/components/DetailsPanel/DetailsLinkedResources';
 import Message from '@mapstore/framework/components/I18N/Message';
+import DetailsLocations from '@js/components/DetailsPanel/DetailsLocations';
 
 const replaceTemplateString = (properties, str) => {
     return Object.keys(properties).reduce((updatedStr, key) => {
@@ -144,6 +145,7 @@ function DetailsInfoFields({ fields, formatHref }) {
 const tabTypes = {
     'attribute-table': DetailsAttributeTable,
     'linked-resources': DetailsLinkedResources,
+    'locations': DetailsLocations,
     'tab': DetailsInfoFields
 };
 
@@ -156,8 +158,7 @@ const isDefaultTabType = (type) => type === 'tab';
 
 function DetailsInfo({
     tabs = [],
-    formatHref,
-    resourceTypesInfo
+    ...props
 }) {
     const filteredTabs = tabs
         .filter((tab) => !tab?.disableIf)
@@ -167,20 +168,17 @@ function DetailsInfo({
                 items: isDefaultTabType(tab.type) ? parseTabItems(tab?.items) : tab?.items,
                 Component: tabTypes[tab.type] || tabTypes.tab
             }))
-        .filter(tab => tab?.items?.length > 0);
-    const selectedTabId = filteredTabs?.[0]?.id;
+        .filter(tab => !isEmpty(tab?.items));
+    const [selectedTabId, onSelect] = useState(filteredTabs?.[0]?.id);
     return (
         <Tabs
             className="gn-details-info tabs-underline"
             selectedTabId={selectedTabId}
+            onSelect={onSelect}
             tabs={filteredTabs.map(({Component, ...tab} = {}) => ({
                 title: <DetailInfoFieldLabel field={tab} />,
                 eventKey: tab?.id,
-                component: <Component
-                    fields={tab?.items}
-                    formatHref={formatHref}
-                    resourceTypesInfo={resourceTypesInfo} />
-
+                component: <Component fields={tab?.items} {...props} />
             }))}
         />
     );

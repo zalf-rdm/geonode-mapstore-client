@@ -55,7 +55,8 @@ import {
     getResourceData,
     getResourceId,
     getDataPayload,
-    getCompactPermissions
+    getCompactPermissions,
+    getExtentPayload
 } from '@js/selectors/resource';
 
 import {
@@ -69,7 +70,6 @@ import {
 import {
     ResourceTypes,
     cleanCompactPermissions,
-    extentConfig,
     toGeoNodeMapConfig
 } from '@js/utils/ResourceUtils';
 import {
@@ -86,23 +86,14 @@ function parseMapBody(body) {
     };
 }
 
-function withExtent(body) {
-    const extentConf = extentConfig(body.data);
-    return {
-        ...body,
-        ...extentConf
-    };
-}
-
 const SaveAPI = {
     [ResourceTypes.MAP]: (state, id, body) => {
         return id
             ? updateMap(id, { ...parseMapBody(body), id })
             : createMap(parseMapBody(body));
     },
-    [ResourceTypes.GEOSTORY]: (state, id, _body) => {
+    [ResourceTypes.GEOSTORY]: (state, id, body) => {
         const user = userSelector(state);
-        const body = { ...withExtent(_body) };
         return id
             ? updateGeoApp(id, body)
             : createGeoApp({
@@ -112,9 +103,8 @@ const SaveAPI = {
                 ...body
             });
     },
-    [ResourceTypes.DASHBOARD]: (state, id, _body) => {
+    [ResourceTypes.DASHBOARD]: (state, id, body) => {
         const user = userSelector(state);
-        const body = { ...withExtent(_body) };
         return id
             ? updateGeoApp(id, body)
             : createGeoApp({
@@ -124,8 +114,7 @@ const SaveAPI = {
                 ...body
             });
     },
-    [ResourceTypes.DOCUMENT]: (state, id, _body) => {
-        const body = { ...withExtent(_body) };
+    [ResourceTypes.DOCUMENT]: (state, id, body) => {
         return id ? updateDocument(id, body) : false;
     },
     [ResourceTypes.DATASET]: (state, id, body) => {
@@ -139,10 +128,12 @@ export const gnSaveContent = (action$, store) =>
             const state = store.getState();
             const contentType = state.gnresource?.type || 'map';
             const data = getDataPayload(state, contentType);
+            const extent = getExtentPayload(state, contentType);
             const body = {
                 'title': action.metadata.name,
                 ...(action.metadata.description && { 'abstract': action.metadata.description }),
-                ...(data && { 'data': JSON.parse(JSON.stringify(data)) })
+                ...(data && { 'data': JSON.parse(JSON.stringify(data)) }),
+                ...(extent && { extent })
             };
             const currentResource = getResourceData(state);
             return Observable.defer(() => SaveAPI[contentType](state, action.id, body, action.reload))

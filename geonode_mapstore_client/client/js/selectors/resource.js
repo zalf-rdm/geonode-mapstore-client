@@ -122,6 +122,10 @@ export const getSelectedLayerPermissions = (state) => {
     return selectedLayerPermissions;
 };
 
+export const getResourceExtent = (state) => {
+    return state?.gnresource?.data?.extent || {};
+};
+
 export const getDataPayload = (state, resourceType) => {
     const type = resourceType || state?.gnresource?.type;
     switch (type) {
@@ -138,6 +142,14 @@ export const getDataPayload = (state, resourceType) => {
     default:
         return null;
     }
+};
+
+export const getExtentPayload = (state, resourceType) => {
+    const type = resourceType || state?.gnresource?.type;
+    if (![ResourceTypes.DATASET, ResourceTypes.MAP].includes(type)) {
+        return getResourceExtent(state);
+    }
+    return null;
 };
 
 function removeProperty(value, paths) {
@@ -233,7 +245,7 @@ export const getResourceDirtyState = (state) => {
         return null;
     }
     const resourceType = state?.gnresource?.type;
-    const metadataKeys = ['title', 'abstract', 'data'];
+    const metadataKeys = ['title', 'abstract', 'data', 'extent'];
     const { data: initialData = {}, ...resource } = pick(state?.gnresource?.initialResource || {}, metadataKeys);
     const { compactPermissions, geoLimits } = getPermissionsPayload(state);
     const currentData = JSON.parse(JSON.stringify(getDataPayload(state) || {})); // JSON stringify is needed to remove undefined values
