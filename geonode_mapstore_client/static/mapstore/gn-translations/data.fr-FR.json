@@ -350,7 +350,8 @@
             "maxLat": "Max Lat",
             "maxLon": "Max Lon",
             "centerLat": "Centre Lat",
-            "centerLon": "Centre Lon"
+            "centerLon": "Centre Lon",
+            "mapExtentHelpText": "<b>Vous pouvez modifier l'étendue et la position de cette ressource</b>. Shift-clic et faites glisser pour dessiner une nouvelle étendue, cliquez sur le marqueur puis cliquez et faites glisser pour définir sa position"
         }
     }
 }

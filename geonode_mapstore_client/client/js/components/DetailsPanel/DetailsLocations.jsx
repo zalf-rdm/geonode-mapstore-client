@@ -18,7 +18,8 @@ import mapTypeHOC from "@mapstore/framework/components/map/enhancers/mapType";
 import ZoomTo from "@js/components/ZoomTo/ZoomTo";
 import { getPolygonFromExtent, bboxToFeatureGeometry } from "@mapstore/framework/utils/CoordinatesUtils";
 import DrawSupport from "@js/components/DrawExtent";
-import { Message } from "@mapstore/framework/components/I18N/I18N";
+import Message from "@mapstore/framework/components/I18N/Message";
+import HTML from "@mapstore/framework/components/I18N/HTML";
 import tooltip from "@mapstore/framework/components/misc/enhancers/tooltip";
 import CopyToClipboardCmp from 'react-copy-to-clipboard';
 import Button from "@mapstore/framework/components/misc/Button";
@@ -96,6 +97,30 @@ const BoundingBoxAndCenter = ({extent, center }) => {
     );
 };
 
+const getFeatureStyle = (type, isDrawn) => {
+    if (type === "polygon") {
+        return {
+            color: isDrawn ? "#ffaa01" : "#397AAB",
+            opacity: 0.8,
+            fillColor: isDrawn
+                ? "rgba(255, 170, 1, 0.1)"
+                : "#397AAB",
+            fillOpacity: 0.2,
+            weight: 2
+        };
+    }
+    return {
+        iconAnchor: [0.5, 0.5],
+        anchorXUnits: "fraction",
+        anchorYUnits: "fraction",
+        fillColor: isDrawn ? "#ffaa01" : "#397AAB",
+        opacity: 0,
+        size: 16,
+        fillOpacity: 1,
+        symbolUrl: '/static/mapstore/symbols/plus.svg'
+    };
+};
+
 const DetailsLocations = ({ onSetExtent, fields, allowEdit: allowEditProp, resource } = {}) => {
     const extent = get(fields, 'extent.coords');
     const initialExtent = get(fields, 'initialExtent.coords');
@@ -109,63 +134,53 @@ const DetailsLocations = ({ onSetExtent, fields, allowEdit: allowEditProp, resou
     return (
         <div className="gn-viewer-extent-map">
             <BoundingBoxAndCenter center={center} extent={extent} />
-            <Map
-                id="gn-locations-map"
-                key={`${resource?.resource_type}:${resource?.pk}`}
-                mapType={"openlayers"}
-                map={{
-                    registerHooks: false,
-                    projection: 'EPSG:4326'
-                }}
-                styleMap={{
-                    position: 'relative',
-                    flex: 1,
-                    height: '100%'
-                }}
-                layers={[
-                    {
-                        type: 'osm',
-                        title: 'Open Street Map',
-                        name: 'mapnik',
-                        source: 'osm',
-                        group: 'background',
-                        visibility: true
-                    },
-                    ...(!isEmpty(extent)
-                        ? [
-                            {
-                                id: "extent-location",
-                                type: "vector",
-                                features: [
-                                    {
-                                        ...polygon,
-                                        style: {
-                                            color: isDrawn ? "#ffaa01" : "#397AAB",
-                                            opacity: 0.8,
-                                            fillColor: isDrawn
-                                                ? "rgba(255, 170, 1, 0.1)"
-                                                : "#397AAB",
-                                            fillOpacity: 0.2,
-                                            weight: 2
+            <div className="map-wrapper">
+                <Map
+                    id="gn-locations-map"
+                    key={`${resource?.resource_type}:${resource?.pk}`}
+                    mapType={"openlayers"}
+                    map={{
+                        registerHooks: false,
+                        projection: "EPSG:3857"
+                    }}
+                    options={{interactive: !!allowEdit}}
+                    styleMap={{
+                        height: '100%'
+                    }}
+                    layers={[
+                        {
+                            type: 'osm',
+                            title: 'Open Street Map',
+                            name: 'mapnik',
+                            source: 'osm',
+                            group: 'background',
+                            visibility: true
+                        },
+                        ...(!isEmpty(extent)
+                            ? [
+                                {
+                                    id: "extent-location",
+                                    type: "vector",
+                                    features: [
+                                        {
+                                            ...polygon,
+                                            style: getFeatureStyle("polygon", isDrawn)
+                                        },
+                                        {
+                                            ...center,
+                                            style: getFeatureStyle("point", isDrawn)
                                         }
-                                    },
-                                    {
-                                        ...center,
-                                        style: {
-                                            iconGlyph: "sort-desc",
-                                            iconShape: "circle",
-                                            iconColor: isDrawn ? "yellow" : "blue"
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                        : [])
-                ]}
-            >
-                <ZoomTo extent={extent?.join(",")} nearest={false} />
-                {allowEdit && <DrawSupport onSetExtent={onSetExtent}/>}
-            </Map>
+                                    ]
+                                }
+                            ]
+                            : [])
+                    ]}
+                >
+                    <ZoomTo extent={extent?.join(",")} nearest={false} />
+                    {allowEdit && <DrawSupport onSetExtent={onSetExtent}/>}
+                </Map>
+                {allowEdit && <HTML msgId="gnviewer.mapExtentHelpText"/>}
+            </div>
         </div>
     );
 };

@@ -350,7 +350,8 @@
             "maxLat": "Max Lat",
             "maxLon": "Max Lon",
             "centerLat": "Center Lat",
-            "centerLon": "Center Lon"
+            "centerLon": "Center Lon",
+            "mapExtentHelpText": "<b>Sie können die Ausdehnung und Position dieser Ressource bearbeiten</b>. Shift-Klick und ziehen Sie, um eine neue Ausdehnung zu zeichnen, klicken Sie auf die Markierung und klicken und ziehen Sie dann, um ihre Position festzulegen"
         }
     }
 }

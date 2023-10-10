@@ -10,7 +10,8 @@
 import expect from 'expect';
 import {
     bboxToExtent,
-    getExtent
+    getExtent,
+    getAdjustedExtent
 } from '../CoordinatesUtils';
 
 describe('Test Coordinates Utils', () => {
@@ -35,5 +36,14 @@ describe('Test Coordinates Utils', () => {
         }];
 
         expect(getExtent({ layers, features: [] })).toEqual([-10, -10, 10, 10]);
+    });
+
+    it('getAdjustedExtent', () => {
+        const bounds = [-180, -90, 180, 90];
+        expect(getAdjustedExtent(bounds)).toNotEqual(bounds);
+
+        // Not adjusted
+        expect(getAdjustedExtent(bounds, "EPSG:4326", "EPSG:2145")).toEqual(bounds);
+        expect(getAdjustedExtent([])).toEqual([]);
     });
 });

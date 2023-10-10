@@ -352,7 +352,8 @@
             "maxLat": "Max Lat",
             "maxLon": "Max Lon",
             "centerLat": "Centro Lat",
-            "centerLon": "Centro Lon"
+            "centerLon": "Centro Lon",
+            "mapExtentHelpText": "<b>Puoi modificare l'estensione e la posizione di questa risorsa</b>. Shift-clic e trascina per disegnare una nuova estensione, fare clic sul marcatore, quindi fare clic e trascinare per impostarne la posizione"
         }
     }
 }

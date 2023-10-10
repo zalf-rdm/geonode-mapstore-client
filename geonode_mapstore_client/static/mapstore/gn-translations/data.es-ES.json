@@ -349,7 +349,8 @@
             "maxLat": "Max Lat",
             "maxLon": "Max Lon",
             "centerLat": "Centro Lat",
-            "centerLon": "Centro Lon"
+            "centerLon": "Centro Lon",
+            "mapExtentHelpText": "<b>Puedes editar la extensión y posición de este recurso</b>. Shift-clic y arrastre para dibujar una nueva extensión, haga clic en el marcador y luego haga clic y arrastre para establecer su posición"
         }
     }
 }

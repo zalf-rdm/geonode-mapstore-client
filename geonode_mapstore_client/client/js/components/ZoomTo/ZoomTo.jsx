@@ -8,6 +8,7 @@
 
 import { useRef, useEffect } from 'react';
 import { reprojectBbox } from '@mapstore/framework/utils/CoordinatesUtils';
+import { getAdjustedExtent } from '@js/utils/CoordinatesUtils';
 
 const ZoomTo = ({
     map,
@@ -23,9 +24,9 @@ const ZoomTo = ({
             ] = extent.split(',');
             const projection = map.getView().getProjection().getCode();
             let bounds;
-            const aBounds = reprojectBbox([aMinx, aMiny, aMaxx, aMaxy], 'EPSG:4326', projection);
+            const aBounds = reprojectBbox(getAdjustedExtent([aMinx, aMiny, aMaxx, aMaxy]), 'EPSG:4326', projection);
             if (bMinx !== undefined && bMiny !== undefined && bMaxx !== undefined && bMaxy !== undefined) {
-                const bBounds = reprojectBbox([bMinx, bMiny, bMaxx, bMaxy], 'EPSG:4326', projection);
+                const bBounds = reprojectBbox(getAdjustedExtent([bMinx, bMiny, bMaxx, bMaxy]), 'EPSG:4326', projection);
                 // if there is the second bbox we should shift the minimum x value to correctly center the view
                 // the x of the [A] bounds needs to be shifted by the width of the [B] bounds
                 const minx = aBounds[0] - (bBounds[2] - bBounds[0]);
