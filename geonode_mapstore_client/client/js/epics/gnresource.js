@@ -62,7 +62,8 @@ import {
 import {
     setControlProperty,
     resetControls,
-    SET_CONTROL_PROPERTY
+    SET_CONTROL_PROPERTY,
+    setControlProperties
 } from '@mapstore/framework/actions/controls';
 import {
     resourceToLayerConfig,
@@ -219,7 +220,8 @@ const resourceTypes = {
                             }
                             : mapConfig),
                         ...(extent
-                            ? [ setControlProperty('fitBounds', 'geometry', extent) ]
+                            // Add duration to allow map config to be properly updated with zoom on fitBounds action
+                            ? [ setControlProperties('fitBounds', 'geometry', extent, "duration", 400) ]
                             : []),
                         setControlProperty('toolbar', 'expanded', false)
                     );
