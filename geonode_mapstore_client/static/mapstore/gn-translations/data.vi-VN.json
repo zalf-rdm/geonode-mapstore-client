@@ -304,6 +304,13 @@
             "abstract": "Abstract",
             "readMore": "Read more",
             "readLess": "Read less",
+            "linkedResources": {
+                "label": "Linked Resources",
+                "linkedBy": "Linked By",
+                "linkedTo": "Linked To",
+                "uses": "Uses",
+                "usedBy": "Used By"
+            },
             "extent": "Extent",
             "dateFilter": {
                 "from": "Date from",

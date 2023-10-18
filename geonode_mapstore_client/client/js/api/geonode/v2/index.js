@@ -297,7 +297,7 @@ export const getLinkedResourcesByPk = (pk) => {
             'page_size': 99999
         }
     })
-        .then(({ data }) => data.resources ?? []);
+        .then(({ data }) => data ?? {});
 };
 
 export const getResourceByUuid = (uuid) => {

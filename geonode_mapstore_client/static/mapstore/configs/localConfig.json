@@ -798,7 +798,7 @@
                         {
                             "type": "linked-resources",
                             "id": "related",
-                            "labelId": "gnviewer.linkedResources",
+                            "labelId": "gnviewer.linkedResources.label",
                             "items": "{context.get(state('gnResourceData'), 'linkedResources')}"
                         }
                     ]
@@ -1673,7 +1673,7 @@
                         {
                             "type": "linked-resources",
                             "id": "related",
-                            "labelId": "gnviewer.linkedResources",
+                            "labelId": "gnviewer.linkedResources.label",
                             "items": "{context.get(state('gnResourceData'), 'linkedResources')}"
                         }
                     ]
@@ -2327,7 +2327,7 @@
                         {
                             "type": "linked-resources",
                             "id": "related",
-                            "labelId": "gnviewer.linkedResources",
+                            "labelId": "gnviewer.linkedResources.label",
                             "items": "{context.get(state('gnResourceData'), 'linkedResources')}"
                         }
                     ]
@@ -2648,7 +2648,7 @@
                         {
                             "type": "linked-resources",
                             "id": "related",
-                            "labelId": "gnviewer.linkedResources",
+                            "labelId": "gnviewer.linkedResources.label",
                             "items": "{context.get(state('gnResourceData'), 'linkedResources')}"
                         }
                     ]
@@ -2887,7 +2887,7 @@
                         {
                             "type": "linked-resources",
                             "id": "related",
-                            "labelId": "gnviewer.linkedResources",
+                            "labelId": "gnviewer.linkedResources.label",
                             "items": "{context.get(state('gnResourceData'), 'linkedResources')}"
                         }
                     ]
@@ -3427,7 +3427,7 @@
                         {
                             "type": "linked-resources",
                             "id": "related",
-                            "labelId": "gnviewer.linkedResources",
+                            "labelId": "gnviewer.linkedResources.label",
                             "items": "{context.get(state('gnResourceData'), 'linkedResources')}"
                         }
                     ]

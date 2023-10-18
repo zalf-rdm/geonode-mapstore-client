@@ -335,7 +335,13 @@
             "abstract": "Résumé",
             "readMore": "En savoir plus",
             "readLess": "Lire moins",
-            "linkedResources": "Ressources liées",
+            "linkedResources": {
+                "label": "Ressources liées",
+                "linkedBy": "Lié par",
+                "linkedTo": "Lié à",
+                "uses": "Les usages",
+                "usedBy": "Utilisé par"
+            },
             "extent": "Étendue",
             "dateFilter": {
                 "from": "Date de",
