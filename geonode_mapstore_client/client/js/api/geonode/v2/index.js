@@ -26,7 +26,7 @@ import pick from 'lodash/pick';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 import { getUserInfo } from '@js/api/geonode/user';
-import { ResourceTypes, availableResourceTypes, setAvailableResourceTypes } from '@js/utils/ResourceUtils';
+import { ResourceTypes, availableResourceTypes, setAvailableResourceTypes, getDownloadUrlInfo } from '@js/utils/ResourceUtils';
 import { getConfigProp } from '@mapstore/framework/utils/ConfigUtils';
 import { mergeConfigsPatch } from '@mapstore/patcher';
 import { parseIcon } from '@js/utils/SearchUtils';
@@ -645,7 +645,11 @@ export const copyResource = (resource) => {
 };
 
 export const downloadResource = (resource) => {
-    const url = resource.download_url || resource.href;
+    const { url, ajaxSafe } = getDownloadUrlInfo(resource);
+    if (!ajaxSafe) {
+        window.open(url, '_blank');
+        return Promise.reject(new Error("Not ajax safe"));
+    }
     return axios.get(url, {
         responseType: 'blob',
         headers: {

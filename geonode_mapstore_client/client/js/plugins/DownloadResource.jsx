@@ -9,8 +9,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
+import isEmpty from 'lodash/isEmpty';
 import { createPlugin } from '@mapstore/framework/utils/PluginsUtils';
-import { isDocumentExternalSource } from '@js/utils/ResourceUtils';
+import { getDownloadUrlInfo } from '@js/utils/ResourceUtils';
 import Message from '@mapstore/framework/components/I18N/Message';
 import Button from '@js/components/Button';
 import tooltip from '@mapstore/framework/components/misc/enhancers/tooltip';
@@ -42,19 +43,20 @@ const DownloadButton = ({
     const Component =  RENDER_TYPE[renderType];
     const isButton = renderType !== "menuItem";
     const _resource = resource ?? resourceData;
-    const isExternalLink = isDocumentExternalSource(_resource);
+    const downloadInfo = getDownloadUrlInfo(_resource);
+    const isNotAjaxSafe = !Boolean(downloadInfo?.ajaxSafe);
 
-    if (!(_resource?.download_url && _resource?.perms?.includes('download_resourcebase')) || (!isButton && isExternalLink)) {
+    if ((isEmpty(_resource?.download_urls) && !_resource?.perms?.includes('download_resourcebase')) || (!isButton && isNotAjaxSafe)) {
         return null;
     }
 
-    if (isExternalLink) {
+    if (!isNotAjaxSafe) {
         return (
             <Component
                 {...isButton && { variant, size }}
                 {...showIcon && { tooltipId: "gnviewer.download" }}
                 download={`${_resource?.title}.${_resource?.extension}`}
-                href={_resource?.href}
+                href={ downloadInfo.url }
                 target="_blank"
                 rel="noopener noreferrer"
             >

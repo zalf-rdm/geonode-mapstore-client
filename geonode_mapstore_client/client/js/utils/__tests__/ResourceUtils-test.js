@@ -27,7 +27,8 @@ import {
     getResourceTypesInfo,
     ResourceTypes,
     FEATURE_INFO_FORMAT,
-    isDocumentExternalSource
+    isDocumentExternalSource,
+    getDownloadUrlInfo
 } from '../ResourceUtils';
 
 describe('Test Resource Utils', () => {
@@ -984,5 +985,32 @@ describe('Test Resource Utils', () => {
         // NOT DOCUMENT
         resource = {...resource, resource_type: "dataset"};
         expect(isDocumentExternalSource(resource)).toBeFalsy();
+    });
+    it('getDownloadUrlInfo', () => {
+        const downloadData = {url: "/someurl", ajax_safe: true };
+
+        // EXTERNAL SOURCE
+        let resource = { download_urls: [downloadData], href: "/somehref", resource_type: "document", sourcetype: "REMOTE"};
+        let downloadInfo = getDownloadUrlInfo(resource);
+        expect(downloadInfo.url).toBe("/somehref");
+        expect(downloadInfo.ajaxSafe).toBeFalsy();
+
+        // AJAX SAFE
+        resource = { download_urls: [downloadData]};
+        downloadInfo = getDownloadUrlInfo(resource);
+        expect(downloadInfo.url).toBe(downloadData.url);
+        expect(downloadInfo.ajaxSafe).toBeTruthy();
+
+        // HREF
+        resource = {href: "/someurl"};
+        downloadInfo = getDownloadUrlInfo(resource);
+        expect(downloadInfo.url).toBe(resource.href);
+        expect(downloadInfo.ajaxSafe).toBeFalsy();
+
+        // NOT AJAX SAFE
+        resource = {download_urls: [{...downloadData, ajax_safe: false}]};
+        downloadInfo = getDownloadUrlInfo(resource);
+        expect(downloadInfo.url).toBe(downloadData.url);
+        expect(downloadInfo.ajaxSafe).toBeFalsy();
     });
 });

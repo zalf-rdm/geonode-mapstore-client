@@ -31,7 +31,7 @@ import {
 import { updateResourceCompactPermissions } from '@js/actions/gnresource';
 import Permissions from '@js/components/Permissions';
 import { getUsers, getGroups, getResourceTypes } from '@js/api/geonode/v2';
-import { resourceToPermissionEntry, availableResourceTypes, getResourcePermissions, cleanUrl } from '@js/utils/ResourceUtils';
+import { resourceToPermissionEntry, availableResourceTypes, getResourcePermissions, cleanUrl, getDownloadUrlInfo } from '@js/utils/ResourceUtils';
 import SharePageLink from '@js/plugins/share/SharePageLink';
 import { getCurrentResourcePermissionsLoading } from '@js/selectors/resourceservice';
 
@@ -192,7 +192,7 @@ const SharePlugin = connect(
         permissionsLoading,
         embedUrl: resource?.embed_url,
         resourceType: type,
-        downloadUrl: resource?.download_url
+        downloadUrl: getDownloadUrlInfo(resource)?.url
     })),
     {
         onClose: setControlProperty.bind(null, 'rightOverlay', 'enabled', false),
