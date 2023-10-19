@@ -458,7 +458,7 @@ export const getAccountInfo = () => {
         .catch(() => null);
 };
 
-export const getConfiguration = (configUrl = getGeoNodeLocalConfig('staticPath', '/static/') + 'mapstore/configs/localConfig.json') => {
+export const getConfiguration = (configUrl = getGeoNodeLocalConfig('geoNodeSettings.staticPath', '/static/') + 'mapstore/configs/localConfig.json') => {
     return axios.get(configUrl)
         .then(({ data }) => {
             const geoNodePageConfig = getGeoNodeConfig();

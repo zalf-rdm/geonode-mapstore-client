@@ -82,7 +82,7 @@ const highlight = new THREE.MeshLambertMaterial({
 // https://github.com/IFCjs/hello-world/pull/54
 function IFCModel({ src, sessionId, onChange, onUpdateInfo = () => {} }) {
     const ifc = useLoader(IFCLoader, parseDevHostname(`${src}?_v_=${sessionId}`), (loader) => {
-        loader.ifcManager.setWasmPath(getGeoNodeLocalConfig('staticPath', '/static/') + 'mapstore/dist/js/web-ifc/');
+        loader.ifcManager.setWasmPath(getGeoNodeLocalConfig('geoNodeSettings.staticPath', '/static/') + 'mapstore/dist/js/web-ifc/');
         loader.ifcManager.state.api.isWasmPathAbsolute = true;
     });
     useEffect(() => {
