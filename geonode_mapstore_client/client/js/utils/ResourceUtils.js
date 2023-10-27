@@ -10,7 +10,7 @@ import uuid from 'uuid';
 import url from 'url';
 import isEmpty from 'lodash/isEmpty';
 import { getConfigProp, convertFromLegacy, normalizeConfig } from '@mapstore/framework/utils/ConfigUtils';
-import { parseDevHostname } from '@js/utils/APIUtils';
+import { getGeoNodeLocalConfig, parseDevHostname } from '@js/utils/APIUtils';
 import { ProcessTypes, ProcessStatus } from '@js/utils/ResourceServiceUtils';
 import { uniqBy, orderBy, isString, isObject, pick, difference } from 'lodash';
 import { excludeGoogleBackground, extractTileMatrixFromSources } from '@mapstore/framework/utils/LayersUtils';
@@ -711,4 +711,12 @@ export const getDownloadUrlInfo = (resource) => {
         }
     }
     return hrefUrl;
+};
+
+export const getCataloguePath = (path = '') => {
+    const catalogPagePath = getGeoNodeLocalConfig('geoNodeSettings.catalogPagePath');
+    if (!isEmpty(catalogPagePath)) {
+        return path.replace('/catalogue/', catalogPagePath);
+    }
+    return path;
 };

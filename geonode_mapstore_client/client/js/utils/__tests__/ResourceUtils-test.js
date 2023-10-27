@@ -8,6 +8,8 @@
  */
 
 import expect from 'expect';
+import get from 'lodash/get';
+import set from 'lodash/set';
 import {
     resourceToLayerConfig,
     getResourcePermissions,
@@ -28,7 +30,8 @@ import {
     ResourceTypes,
     FEATURE_INFO_FORMAT,
     isDocumentExternalSource,
-    getDownloadUrlInfo
+    getDownloadUrlInfo,
+    getCataloguePath
 } from '../ResourceUtils';
 
 describe('Test Resource Utils', () => {
@@ -974,7 +977,7 @@ describe('Test Resource Utils', () => {
             expect(formatMetadataUrl(resource)).toBe('/apps/100/metadata');
         });
     });
-    it('isDocumentExternalSource', () => {
+    it('test isDocumentExternalSource', () => {
         let resource = { resource_type: "document", sourcetype: "REMOTE" };
         expect(isDocumentExternalSource(resource)).toBeTruthy();
 
@@ -986,7 +989,7 @@ describe('Test Resource Utils', () => {
         resource = {...resource, resource_type: "dataset"};
         expect(isDocumentExternalSource(resource)).toBeFalsy();
     });
-    it('getDownloadUrlInfo', () => {
+    it('test getDownloadUrlInfo', () => {
         const downloadData = {url: "/someurl", ajax_safe: true };
 
         // EXTERNAL SOURCE
@@ -1012,5 +1015,28 @@ describe('Test Resource Utils', () => {
         downloadInfo = getDownloadUrlInfo(resource);
         expect(downloadInfo.url).toBe(downloadData.url);
         expect(downloadInfo.ajaxSafe).toBeFalsy();
+    });
+    it('test getCataloguePath', () => {
+
+        // default
+        expect(getCataloguePath()).toBe('');
+
+        // valid path and catalogPath not configured
+        let path = '/catalogue/#/search/filter';
+        expect(getCataloguePath(path)).toBe(path);
+
+        const cPath = 'localConfig.geoNodeSettings.catalogPagePath';
+        if (!window.__GEONODE_CONFIG__) window.__GEONODE_CONFIG__ = {};
+        const prevValue = get(window.__GEONODE_CONFIG__, cPath);
+        set(window.__GEONODE_CONFIG__, cPath, "/catalog/");
+
+        // valid path and catalogPath configured
+        expect(getCataloguePath(path)).toBe('/catalog/#/search/filter');
+
+        // not catalogue path and catalogPath configured
+        expect(getCataloguePath('/some/#/search/filter')).toBe('/some/#/search/filter');
+
+        // reset value
+        set(window.__GEONODE_CONFIG__, cPath, prevValue);
     });
 });

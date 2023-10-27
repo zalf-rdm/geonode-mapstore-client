@@ -43,7 +43,7 @@ import resourceServiceEpics from '@js/epics/resourceservice';
 import favoriteEpics from '@js/epics/favorite';
 import DetailsPanel from '@js/components/DetailsPanel';
 import { processingDownload } from '@js/selectors/resourceservice';
-import {resourceHasPermission} from '@js/utils/ResourceUtils';
+import { resourceHasPermission, getCataloguePath } from '@js/utils/ResourceUtils';
 import {downloadResource, setFavoriteResource} from '@js/actions/gnresource';
 import FiltersForm from '@js/components/FiltersForm';
 import usePluginItems from '@js/hooks/usePluginItems';
@@ -237,13 +237,13 @@ function ResourcesGrid({
                     labelId: 'gnhome.uploadDataset',
                     value: 'layer',
                     type: 'link',
-                    href: '/catalogue/#/upload/dataset'
+                    href: '{context.getCataloguePath("/catalogue/#/upload/dataset")}'
                 },
                 {
                     labelId: 'gnhome.uploadDocument',
                     value: 'document',
                     type: 'link',
-                    href: '/catalogue/#/upload/document'
+                    href: '{context.getCataloguePath("/catalogue/#/upload/document")}'
                 },
                 {
                     labelId: 'gnhome.createDataset',
@@ -256,19 +256,19 @@ function ResourcesGrid({
                     labelId: 'gnhome.createMap',
                     value: 'map',
                     type: 'link',
-                    href: '/catalogue/#/map/new'
+                    href: '{context.getCataloguePath("/catalogue/#/map/new")}'
                 },
                 {
                     labelId: 'gnhome.createGeostory',
                     value: 'geostory',
                     type: 'link',
-                    href: '/catalogue/#/geostory/new'
+                    href: '{context.getCataloguePath("/catalogue/#/geostory/new")}'
                 },
                 {
                     labelId: 'gnhome.createDashboard',
                     value: 'dashboard',
                     type: 'link',
-                    href: '/catalogue/#/dashboard/new'
+                    href: '{context.getCataloguePath("/catalogue/#/dashboard/new")}'
                 },
                 {
                     labelId: 'gnhome.remoteServices',
@@ -423,7 +423,7 @@ function ResourcesGrid({
     pagination,
     disableDetailPanel,
     disableFilters,
-    filterPagePath = '/catalogue/#/search/filter',
+    filterPagePath = getCataloguePath('/catalogue/#/search/filter'),
     resourceCardActionsOrder = [
         ProcessTypes.DELETE_RESOURCE,
         ProcessTypes.COPY_RESOURCE,

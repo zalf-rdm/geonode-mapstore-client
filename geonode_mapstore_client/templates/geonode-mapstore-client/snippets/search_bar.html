@@ -108,9 +108,12 @@
                 }
 
                 const newQueryHash = newParams.join('&');
+                const catalogPagePath = window.__GEONODE_CONFIG__.localConfig.geoNodeSettings.catalogPagePath;
+                const searchPath = '/catalogue/#/search';
+                const baseCatalogPath = catalogPagePath ? searchPath.replace('/catalogue/', catalogPagePath) : searchPath;
                 
                 {% block searchbar_search_href %}
-                location.href = '/catalogue/#/search' + (newQueryHash ? '?' + newQueryHash : '');
+                location.href = baseCatalogPath + (newQueryHash ? '?' + newQueryHash : '');
                 {% endblock %}
 
                 clearRequest();

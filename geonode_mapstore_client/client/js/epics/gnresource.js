@@ -69,7 +69,8 @@ import {
     resourceToLayerConfig,
     ResourceTypes,
     toMapStoreMapConfig,
-    parseStyleName
+    parseStyleName,
+    getCataloguePath
 } from '@js/utils/ResourceUtils';
 import {
     canAddResource,
@@ -324,7 +325,7 @@ export const gnViewerRequestNewResourceConfig = (action$, store) =>
                     ...window.location,
                     pathname: '/account/login/',
                     hash: '',
-                    search: `?next=/catalogue`
+                    search: `?next=${getCataloguePath('/catalogue')}`
                 });
                 window.location.href = formattedUrl;
                 window.reload();

@@ -65,6 +65,7 @@
         let extensionsFolder = geoNodeSettings.EXTENSIONS_FOLDER_PATH;
         let supportedDatasetFileTypes = geoNodeSettings.SUPPORTED_DATASET_FILE_TYPES;
         let catalogHomeRedirectsTo = geoNodeSettings.CATALOG_HOME_REDIRECTS_TO;
+        let catalogPagePath = geoNodeSettings.CATALOG_PAGE_PATH;
         let customFilters = geoNodeSettings.CUSTOM_FILTERS || {
             "my-resources": {
                 "filter{owner.pk}": "{state('user') && state('user').pk}"
@@ -183,7 +184,8 @@
                         supportedDatasetFileTypes: supportedDatasetFileTypes
                     },
                     staticPath: "{% static '' %}",
-                    catalogHomeRedirectsTo: catalogHomeRedirectsTo
+                    catalogHomeRedirectsTo: catalogHomeRedirectsTo,
+                    catalogPagePath: catalogPagePath
                 }
             },
         };
