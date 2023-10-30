@@ -38,13 +38,13 @@ const Tabs = ({
             {...!persistSelection ? {
                 activeKey: selectedTabId
             } : {
-                defaultActiveKey: !persistSelection ? selectedTabId : eventKeys[identifier] ?? 0
+                defaultActiveKey: eventKeys[identifier] ?? 0
             }}
             onSelect={onSelect ? onSelect : onSelectTab}
         >
             {tabs.map((tab, index)=> {
                 const eventKey = !isNil(tab.eventKey) ? tab.eventKey : index;
-                const component = (!onSelect || selectedKey === eventKey) ? tab.component : null;
+                const component = selectedKey === eventKey ? tab.component : null;
                 return (
                     <Tab key={`tab-${index}`} eventKey={eventKey} title={tab.title}>
                         {component}

@@ -136,7 +136,8 @@
             "filter": "Filtrar",
             "noPreview": "Una vista previa no está disponible para este recurso",
             "na": "N/A",
-            "emptyAccordion": "No hay elementos para mostrar"
+            "emptyFilterItems": "No hay elementos para mostrar",
+            "loadingItems": "Cargando artículos..."
         },
         "viewer": {
             "document": {

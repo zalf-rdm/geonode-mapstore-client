@@ -39,6 +39,19 @@ const AccordionTitle = ({
     );
 };
 
+/**
+ * Accordion component
+ * @prop {string} title of the accordion
+ * @prop {string} titleId translation path of the title on the accordion
+ * @prop {string} noItemsMsgId default message when no items present
+ * @prop {string} identifier string
+ * @prop {function} content function to render child items
+ * @prop {function} loadItems function to fetch accordion items
+ * @prop {array} items accordion items available without the need to fetch
+ * @prop {string} query string
+ * @prop {boolean} defaultExpanded flag to expand the accordion on load by default
+ * @prop {boolean} expanded flag to keep accordion stay expanded and disable toggle function on the accordion (Note: Not on accordion items)
+ */
 const Accordion = ({
     title,
     titleId,
@@ -59,7 +72,7 @@ const Accordion = ({
 
     const onClick = () => {
         const expandedList = isExpanded
-            ? accordionsExpanded.filter(expanded => expanded !== identifier)
+            ? accordionsExpanded.filter(accordionExpanded => accordionExpanded !== identifier)
             : uniq(accordionsExpanded.concat(identifier));
         setAccordionsExpanded(expandedList);
     };
@@ -88,11 +101,10 @@ const Accordion = ({
             </AccordionTitle>
             {isExpanded ? <div className="accordion-body">
                 <div className={'accordion-items'}>
-                    {!isEmpty(accordionItems)
+                    {loading ? null : !isEmpty(accordionItems)
                         ? content(accordionItems)
-                        : !loading
-                            ? <Message msgId={noItemsMsgId}/>
-                            : null}
+                        : !loading ? <Message msgId={noItemsMsgId}/> : null
+                    }
                 </div>
             </div> : null}
         </div>
@@ -103,6 +115,7 @@ Accordion.propTypes = {
     title: PropTypes.oneOfType([PropTypes.node, PropTypes.string]),
     titleId: PropTypes.string,
     identifier: PropTypes.string,
+    noItemsMsgId: PropTypes.string,
     content: PropTypes.func,
     loadItems: PropTypes.func,
     items: PropTypes.array,
@@ -113,6 +126,6 @@ Accordion.defaultProps = {
     title: null,
     identifier: "",
     content: () => null,
-    noItemsMsgId: "gnhome.emptyAccordion"
+    noItemsMsgId: "gnhome.emptyFilterItems"
 };
 export default Accordion;

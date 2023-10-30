@@ -136,7 +136,8 @@
             "filter": "Filtre",
             "noPreview": "Un aperçu n'est pas disponible pour cette ressource",
             "na": "N/A",
-            "emptyAccordion": "Aucun élément à afficher"
+            "emptyFilterItems": "Aucun élément à afficher",
+            "loadingItems": "Chargement des éléments..."
         },
         "viewer": {
             "document": {

@@ -22,6 +22,7 @@ import { getMessageById } from '@mapstore/framework/utils/LocaleUtils';
 import FilterByExtent from './FilterByExtent';
 import DateRangeFilter from './DateRangeFilter';
 import FaIcon from '../FaIcon';
+import Group from '@js/components/Group/Group';
 
 const FormControl = localizedProps('placeholder')(FormControlRB);
 function InputControl({ onChange, value, debounceTime, ...props }) {
@@ -237,17 +238,22 @@ function FilterItem({
         );
     }
     if (field.type === 'group') {
-        return (<>
-            <div className="gn-filter-form-group-title">
-                <strong>{getMessageById(messages, field.labelId)} </strong>
-            </div>
-            <FilterItems
-                id={id}
-                items={field.items}
-                values={values}
-                onChange={onChange}
-            />
-        </>);
+        return (<Group
+            query={values}
+            title={field.labelId ? getMessageById(messages, field.labelId) : field.label}
+            {...field.loadItems && {loadItems: (params) => field.loadItems({...params, ...values})}}
+            items={field.items}
+            content={(groupItems) => (
+                <FilterItems
+                    id={id}
+                    items={groupItems}
+                    values={values}
+                    onChange={onChange}
+                    filters={filters}
+                    setFilters={setFilters}
+                />)
+            }
+        />);
     }
     if (field.type === 'divider') {
         return <div className="gn-filter-form-divider"></div>;
@@ -357,6 +363,8 @@ function FilterItem({
                     title: item.labelId ? getMessageById(messages, item.labelId) : item.label,
                     component: <FilterItems
                         {...item}
+                        extentProps={extentProps}
+                        timeDebounce={timeDebounce}
                         items={item.items}
                         values={values}
                         filters={filters}
@@ -381,7 +389,7 @@ function FilterItems({ items, ...props }) {
             {...props}
             field={{
                 ...field,
-                loadItems: (...args) => field.loadItems(...args, props.filters, props.setFilters)
+                ...(field.loadItems && {loadItems: (...args) => field.loadItems(...args, props.filters, props.setFilters)})
             }}
         />
     );

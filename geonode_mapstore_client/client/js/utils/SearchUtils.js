@@ -82,6 +82,7 @@ export const updateFilterFormItemsWithFacet = ({formItems, facetItems}) => {
         if (!!formItem.facet) {
             const filteredFacetItems = (facetItems || [])
                 .filter(f => f.type === formItem.facet)
+                .filter(f => formItem.include ? formItem.include?.includes(f.name) : formItem.exclude ? !formItem.exclude?.includes(f.name) : true)
                 .sort((a, b) => a.order - b.order);
             return [
                 ...acc,

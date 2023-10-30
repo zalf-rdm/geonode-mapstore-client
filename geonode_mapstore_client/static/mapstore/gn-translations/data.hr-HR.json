@@ -134,7 +134,8 @@
             "filter": "Filter",
             "noPreview": "A preview is not available for this resource",
             "na": "N/A",
-            "emptyAccordion": "No items to display"
+            "emptyFilterItems": "No items to display",
+            "loadingItems": "Loading items..."
         },
         "viewer": {
             "document": {

@@ -100,7 +100,25 @@ describe('FilterItems component', () => {
             }
         ];
         ReactDOM.render( <FilterItems items={items}/>, document.getElementById("container"));
-        const filterItemsGroupNode = document.querySelector('.gn-filter-form-group-title');
+        const filterItemsGroupNode = document.querySelector('.group-title-label');
+        expect(filterItemsGroupNode).toBeTruthy();
+    });
+    it('should render field of type group with facet items', () => {
+        const items = [
+            {
+                "type": "group",
+                "labelId": "gnhome.customFiltersTitle",
+                "items": [
+                    {
+                        "type": "filter",
+                        "style": "facet",
+                        "labelId": "gnhome.layers"
+                    }
+                ]
+            }
+        ];
+        ReactDOM.render( <FilterItems items={items}/>, document.getElementById("container"));
+        const filterItemsGroupNode = document.querySelector('.facet');
         expect(filterItemsGroupNode).toBeTruthy();
     });
     describe('test accordion field', () => {

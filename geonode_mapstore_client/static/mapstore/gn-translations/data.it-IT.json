@@ -138,7 +138,8 @@
             "filter": "Filtra",
             "noPreview": "Un'anteprima non è disponibile per questa risorsa",
             "na": "N/D",
-            "emptyAccordion": "Nessun elemento da visualizzare"
+            "emptyFilterItems": "Nessun elemento da visualizzare",
+            "loadingItems": "Caricamento elementi..."
         },
         "viewer": {
             "document": {

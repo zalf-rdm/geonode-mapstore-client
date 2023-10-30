@@ -27,7 +27,7 @@
         }
     }
 
-    .gn-accordion {
+    .gn-accordion, .gn-group {
         .border-color-var(@theme-vars[main-border-color]);
         .accordion-title {
             .color-var(@theme-vars[main-color]);
@@ -217,6 +217,47 @@
         }
     }
 }
+.gn-group {
+    margin: 0.5rem 0;
+    .group-title-label {
+        margin: 0.2rem 0;
+        font-weight: 700;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .group-body {
+        .group-items {
+            padding: 0 0 0.6rem 0.8rem;
+            overflow-y: auto;
+            > span {
+                font-weight: lighter;
+                font-size: 0.8rem;
+            }
+            .form-group {
+                margin-bottom: 0;
+                .checkbox {
+                    label {
+                        width: 100%;
+                    }
+                }
+            }
+            .gn-facet-wrapper {
+                padding: 0.25rem 0;
+                background: inherit;
+                border-bottom-width: 1px;
+                border-bottom-style: solid;
+                .facet {
+                    &.active {
+                        > span {
+                            font-weight: normal;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
 .gn-accordion {
     margin-bottom: 0.5rem;
@@ -232,6 +273,7 @@
             flex: 1;
             display: flex;
             padding-right: 1rem;
+            padding-left: 0.1rem;
         }
         button {
             display: block;
@@ -300,6 +342,11 @@
         img {
             object-fit: contain;
             width: 1.5rem;
+        }
+        > span {
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
     }
     .facet-count {
