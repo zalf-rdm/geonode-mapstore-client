@@ -50,7 +50,7 @@ const DownloadButton = ({
         return null;
     }
 
-    if (!isNotAjaxSafe) {
+    if (isNotAjaxSafe) {
         return (
             <Component
                 {...isButton && { variant, size }}
