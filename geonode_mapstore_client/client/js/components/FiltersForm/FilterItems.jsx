@@ -139,11 +139,20 @@ function FilterItem({
     }
     if (field.type === 'select' && field.loadItems) {
         const filterKey = field.key;
-        const currentValues = castArray(values[filterKey] || []);
+        const isFacet = field.style === 'facet';
+        const getFilterById = (value) => {
+            const filterValue = filters?.[filterKey + value];
+            if (isFacet && filterValue?.facetName) {
+                return field.name === filterValue.facetName ? filterValue : null;
+            }
+            return filterValue;
+        };
+        const filterValues = castArray(values[filterKey] || []);
+        const currentValues = filterValues.filter(v => getFilterById(v));
+        const otherValues = filterValues.filter(v => !getFilterById(v));
         const getLabelValue = (item) => item.labelId
             ? `${getMessageById(messages, item.labelId)} (${item.count})`
             : `${item.label || ''} (${item.count})`;
-        const getFilterById = (value) => filters?.[filterKey + value];
         return (
             <FormGroup
                 controlId={field.id}
@@ -160,8 +169,10 @@ function FilterItem({
                     multi
                     placeholder={field.placeholderId}
                     onChange={(selected) => {
+                        let _selected = selected.map(({ value }) => value);
+                        _selected = isFacet ? _selected.concat(otherValues) : _selected;
                         onChange({
-                            [filterKey]: selected.map(({ value }) => value)
+                            [filterKey]: _selected
                         });
                     }}
                     loadOptions={({ q, ...params }) => field.loadItems({
@@ -319,11 +330,10 @@ function FilterItem({
             );
     }
     if (field.type === 'accordion' && !field.facet && field.id) {
-        const key = `${id}-${field.id}`;
         return (<Accordion
             query={values}
             title={field.labelId ? getMessageById(messages, field.labelId) : field.label}
-            identifier={key}
+            identifier={field.id}
             loadItems={(params) => field.loadItems({...params, ...values})}
             items={field.items}
             content={(accordionItems) => (

@@ -104,12 +104,12 @@ describe('FilterItems component', () => {
         expect(filterItemsGroupNode).toBeTruthy();
     });
     describe('test accordion field', () => {
-        const isExpanded = () => window.localStorage.getItem("accordionsExpanded")?.includes('test-accordion');
+        const isExpanded = () => window.localStorage.getItem("accordionsExpanded")?.includes('accordion-1');
         it('should render field of type accordion of items filter with default style', () => {
             const items = [
                 {
                     "type": "accordion",
-                    "id": "accordion",
+                    "id": "accordion-1",
                     "labelId": "gnhome.accordion",
                     "loadItems": () => Promise.resolve(),
                     "items": [
@@ -138,7 +138,7 @@ describe('FilterItems component', () => {
             const items = [
                 {
                     "type": "accordion",
-                    "id": "accordion",
+                    "id": "accordion-1",
                     "labelId": "gnhome.accordion",
                     "loadItems": () => Promise.resolve(),
                     "items": [

@@ -772,8 +772,11 @@ export const getFacetItemsByFacetName = ({ name: facetName, style, filterKey, fi
         const isNextPageAvailable = (Math.ceil(Number(total) / Number(size)) - (page + 1)) !== 0;
 
         // Add filter values as item even when count is 0
-        const filterKeys = Object.keys(updatedParams)?.map(key => `${key}${updatedParams[key]}`)?.filter(param => param?.includes(data?.filter));
-        const filtersPresent = Object.values(pick(filters, filterKeys));
+        const filterKeys = Object.keys(updatedParams)
+            // filter params value can be array
+            ?.map(key => Array.isArray(updatedParams[key]) ? updatedParams[key].map(v => `${key}${v}`) : `${key}${updatedParams[key]}`)?.flat()
+            ?.filter(param => param?.includes(data?.filter));
+        const filtersPresent = Object.values(pick(filters, filterKeys))?.filter(f => f.facetName === data.name);
 
         const items = isEmpty(_items) && !isEmpty(filtersPresent)
             ? filtersPresent.map(item => ({
@@ -800,7 +803,7 @@ export const getFacetItemsByFacetName = ({ name: facetName, style, filterKey, fi
             });
 
         // Update filters
-        setFilters(items.map((item) => ({[item.filterKey + item.filterValue]: item})).reduce((f, c) => ({...f, ...c}), {}));
+        setFilters(items.map((item) => ({[item.filterKey + item.filterValue]: {...item, facetName}})).reduce((f, c) => ({...f, ...c}), {}));
 
         return {
             page,
@@ -813,7 +816,10 @@ export const getFacetItemsByFacetName = ({ name: facetName, style, filterKey, fi
 export const getFacetsByKey = (facet, filterParams) => {
     return axios
         .get(parseDevHostname(endpoints[FACETS] + `/${facet}`), {params: {...filterParams}, paramsSerializer})
-        .then(({ data } = {}) => data?.topics);
+        .then(({ data } = {}) => ({
+            ...data?.topics,
+            items: data?.topics?.items?.map(item => ({...item, facetName: facet}))
+        }));
 };
 
 export const getFacetItems = (customFilters) => {

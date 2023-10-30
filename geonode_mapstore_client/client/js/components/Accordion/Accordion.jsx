@@ -5,7 +5,7 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import React, {useEffect, useState} from "react";
+import React, { useState } from "react";
 import uniq from 'lodash/uniq';
 import isEmpty from 'lodash/isEmpty';
 import PropTypes from "prop-types";
@@ -16,6 +16,7 @@ import useLocalStorage from "@js/hooks/useLocalStorage";
 import Message from "@mapstore/framework/components/I18N/Message";
 import Spinner from "@js/components/Spinner";
 import useIsMounted from "@js/hooks/useIsMounted";
+import useDeepCompareEffect from "@js/hooks/useDeepCompareEffect";
 
 const AccordionTitle = ({
     expanded,
@@ -63,12 +64,12 @@ const Accordion = ({
         setAccordionsExpanded(expandedList);
     };
 
-    useEffect(()=>{
+    useDeepCompareEffect(() => {
         if (loadItems && typeof loadItems === 'function') {
             if (isExpanded && !loading) {
                 setLoading(true);
                 loadItems({ page_size: 999999 })
-                    .then((response) =>{
+                    .then((response) => {
                         isMounted(() => setAccordionItems(response.items));
                     })
                     .finally(()=> isMounted(() => setLoading(false)));

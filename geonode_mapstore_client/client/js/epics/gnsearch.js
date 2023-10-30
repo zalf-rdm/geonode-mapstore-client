@@ -12,6 +12,8 @@ import isEmpty from 'lodash/isEmpty';
 import isArray from 'lodash/isArray';
 import isNil from 'lodash/isNil';
 import pick from 'lodash/pick';
+import uniqBy from 'lodash/uniqBy';
+import castArray from 'lodash/castArray';
 import {
     getResources,
     getFeaturedResources,
@@ -359,8 +361,30 @@ export const gnWatchStopCopyProcessOnSearch = (action$, store) =>
                 });
         });
 
-const isKeyPresent = (filterKey, filterValue) =>
-    filterKey === (typeof filterKey === "string" ? filterValue : Number(filterValue));
+const isKeyPresent = (filterKey, filterValue) => {
+    if (Array.isArray(filterValue)) {
+        return filterValue.some(v => isKeyPresent(filterKey, v));
+    }
+    return filterKey === (typeof filterKey === "string" ? filterValue : Number(filterValue));
+};
+
+/**
+ * Filter facets by expanded accordion or selected filters
+ */
+const filterFacets = ({facet, queryFilters, topicQuery}) => {
+    if (facet?.config?.type === 'accordion') {
+        const filteredValues = JSON.parse(window.localStorage.getItem('accordionsExpanded'))?.map(f => f);
+        return filteredValues.includes(facet.name);
+    }
+    const filteredValues = queryFilters
+        ?.filter(qf => castArray(topicQuery?.[facet.filter] ?? [])
+            ?.map(tf => isNaN(Number(tf)) ? tf : Number(tf))
+            ?.includes(qf.key ?? (isNaN(Number(qf.filterValue)) ? qf.filterValue : Number(qf.filterValue)))
+        )
+        ?.map(f => f.facetName);
+    return !isEmpty(queryFilters) ? filteredValues?.includes(facet.name) : true;
+};
+
 /**
  * Set facet filter from topic items based on the query applied
  */
@@ -372,19 +396,25 @@ export const gnSetFacetFilter = (action$, {getState = () => {}}) =>
             const location = getState()?.router?.location;
             const { query } = url.parse((location?.search || ''), true);
             const stateFacetItems = getFacetsItems(getState());
+            const queryFilters = Object.values(getState()?.gnsearch?.filters ?? []);
 
             const facets = facetsItems || stateFacetItems;
             const topicQuery = pick(query, Object.keys(query).filter(q => facets.map(f => f.filter).includes(q)));
+
             const facetNames = facets
-                ?.filter(facet => topicQuery[facet.filter])
+                ?.filter(facet => !isEmpty(topicQuery[facet.filter]) && filterFacets({facet, topicQuery, queryFilters}))
                 ?.map(facet => ({facet: facet.name, key: topicQuery[facet.filter]})) ?? [];
             const queries = {...getQueryParams(query, customFilters), include_topics: true};
 
             return Observable.forkJoin(
+                // Get facet by key to get topic items even when count is '0'
                 facetNames.map(({facet, key} = {}) => Observable.defer(() => getFacetsByKey(facet, {...queries, key})))
             ).switchMap((topics) => {
                 let filters = {};
-                const updatedTopics = (topics ?? [])?.reduce((a, t) => t?.items?.concat(a), []);
+                let updatedTopics = (topics ?? [])?.reduce((a, t) => t?.items?.concat(a), []);
+                if (!isEmpty(updatedTopics)) {
+                    updatedTopics = uniqBy(updatedTopics, 'key');
+                }
                 const facetFilters = facets?.map((facet) => ({filter: facet.filter, value: query?.[facet.filter]}))?.filter(f => !isEmpty(f.value));
 
                 facetFilters.forEach(({filter, value} = {}) => {
