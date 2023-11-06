@@ -359,6 +359,7 @@ function FilterItem({
         return (
             <Tabs
                 identifier={key}
+                persistSelection={field.persistSelection}
                 tabs={(field?.items || [])?.map((item) => ({
                     title: item.labelId ? getMessageById(messages, item.labelId) : item.label,
                     component: <FilterItems
