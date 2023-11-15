@@ -11,7 +11,6 @@ import Message from '@mapstore/framework/components/I18N/Message';
 import moment from 'moment';
 import castArray from 'lodash/castArray';
 import isEmpty from 'lodash/isEmpty';
-import moment from 'moment';
 
 import Button from '@js/components/Button';
 import { Tabs, Tab } from "react-bootstrap";
@@ -19,7 +18,6 @@ import Table from '@js/components/Table';
 
 import DetailsAttributeTable from '@js/components/DetailsPanel/DetailsAttributeTable';
 import DetailsLinkedResources from '@js/components/DetailsPanel/DetailsLinkedResources';
-import Message from '@mapstore/framework/components/I18N/Message';
 
 const replaceTemplateString = (properties, str) => {
     return Object.keys(properties).reduce((updatedStr, key) => {
