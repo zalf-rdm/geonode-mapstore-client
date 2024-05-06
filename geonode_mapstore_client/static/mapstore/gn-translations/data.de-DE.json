@@ -15,6 +15,12 @@
                 "emptyList": "Keine Ergebnisse für diese Anfrage. Versuchen Sie, den Filter zu wechseln oder einen anderen Dienst aus der Eingabe in der oberen rechten Ecke auszuwählen."
             }
         },
+        "plugins": {
+            "VisualStyleEditor": {
+                "description": "Der Stileditor des Datensatzes",
+                "title": "Visueller Stil-Editor"
+            }
+        },
         "gnhome": {
             "description": "<h1>GeoNode</h1><p>Austausch von Geodaten und Karten.</p>",
             "orderBy": "Sortieren nach",
@@ -31,6 +37,7 @@
             "remoteServices": "Remote-Dienste",
             "maps": "Karten",
             "map": "Karte",
+            "mapviewers": "Kartenbetrachter",
             "geostory": "GeoStory",
             "geostories": "GeoStories",
             "createGeostory": "GeoStory erstellen",
@@ -50,6 +57,7 @@
             "viewImage": "Bild ansehen",
             "viewVideo": "Video ansehen",
             "viewDashboard": "Dashboard ansehen",
+            "viewMapViewer": "View map viewer",
             "viewMetadata": "Details anzeigen",
             "author": "Autor",
             "publication": "Veröffentlichung",
@@ -359,7 +367,41 @@
             "centerLat": "Lat",
             "centerLon": "Lon",
             "mapExtentHelpText": "<b>Sie können die Ausdehnung und Position dieser Ressource bearbeiten</b>. Shift-Klick und ziehen Sie, um eine neue Ausdehnung zu zeichnen, klicken Sie auf die Markierung und klicken und ziehen Sie dann, um ihre Position festzulegen",
-            "unadvertised": "Ressource wird nicht beworben. Es ist im Katalog und in den Suchergebnissen ausgeblendet"
+            "addWidget": "Widget hinzufügen",
+            "backToMap": "Zurück zur Karte",
+            "copyConfigurationFrom": "Konfiguration kopieren von",
+            "copyConfigurationFromTitle": "Map-Viewer-Konfiguration kopieren",
+            "selectLinkedMapViewer": "Kartenviewer auswählen",
+            "mapViewersCatalogFilterPlaceholder": "Maps-Viewer-Ressourcen filtern…",
+            "mapViewersCatalogEntriesNoResults": "Keine Ergebnisse entsprechen Ihrer Suche",
+            "linkToViewer": "Link zum Viewer",
+            "createNewViewer": "Neuen Viewer erstellen",
+            "manageViewerConfiguration": "Viewer-Konfiguration verwalten",
+            "previewCustomViewer": "Vorschau des benutzerdefinierten Viewers",
+            "editMapConfiguration": "Kartenkonfiguration bearbeiten",
+            "resource": "Ressource",
+            "deleteResourceWarning": {
+                "mapviewer": "Dieser Viewer könnte von einigen Karten verwendet werden. Sie können die Liste der Karten auf der Registerkarte „Verknüpfte Ressourcen“ dieses Kartenviewers anzeigen"
+            },
+            "unadvertised": "Ressource wird nicht beworben. Es ist im Katalog und in den Suchergebnissen ausgeblendet",
+            "linkedResource": {
+                "deleteTitle": "Möchten Sie den Viewer auch löschen?",
+                "deleteAndUnlinkWarning": {
+                    "mapviewer": "Der Viewer wird nur von dieser Karte verwendet. Mit dieser Aktion können Sie die Verknüpfung der Karte mit dem Viewer aufheben und sie auch löschen. Wenn Sie „Nein“ wählen, wird nur die Verknüpfung mit dem Viewer aufgehoben"
+                },
+                "remove": "Verlinkte Ressource entfernen",
+                "title": "Verlinkte Ressource",
+                "message": {
+                    "success": {
+                        "removeLinkedResource": "Die verknüpfte Ressource wurde erfolgreich entfernt",
+                        "linkResource": "Die verknüpfte Ressource wurde erfolgreich gespeichert"
+                    },
+                    "failure": {
+                        "removeLinkedResource": "Die verknüpfte Ressource konnte nicht entfernt werden",
+                        "linkResource": "Die verknüpfte Ressource konnte nicht gespeichert werden"
+                    }
+                }
+            }
         }
     }
 }

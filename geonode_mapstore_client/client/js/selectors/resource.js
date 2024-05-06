@@ -24,7 +24,7 @@ import isEqual from 'lodash/isEqual';
 import pick from 'lodash/pick';
 import isEmpty from 'lodash/isEmpty';
 import get from 'lodash/get';
-
+import { generateContextResource } from '@mapstore/framework/selectors/contextcreator';
 /**
 * @module selectors/resource
 */
@@ -144,6 +144,11 @@ export const getDataPayload = (state, resourceType) => {
     case ResourceTypes.DASHBOARD: {
         return widgetsConfig(state);
     }
+    case ResourceTypes.VIEWER: {
+        const { data } = generateContextResource(state) || {};
+        const { mapConfig, ...mapViewerConfig } = data || {};
+        return mapViewerConfig || {};
+    }
     default:
         return null;
     }
@@ -237,12 +242,27 @@ function isResourceDataEqual(state, initialData = {}, currentData = {}) {
             removeProperty(newCurrentData, currentListItemsToRemove)
         ) && !isWidgetMapCenterChanged;
     }
+    case ResourceTypes.VIEWER: {
+        return isEqual(
+            removeProperty(initialData, ['mapConfig']),
+            removeProperty(currentData, ['mapConfig'])
+        );
+    }
     default:
         return true;
     }
 }
 
+export const isNewMapViewerResource = (state) => {
+    const isNew = state?.gnresource?.params?.pk === "new";
+    const isMapViewer = state?.gnresource?.type === ResourceTypes.VIEWER;
+    return isNew && isMapViewer;
+};
+
 export const getResourceDirtyState = (state) => {
+    if (isNewMapViewerResource(state)) {
+        return true;
+    }
     const canEdit = canEditPermissions(state);
     const isDeleting = getCurrentResourceDeleteLoading(state);
     const isCopying = getCurrentResourceCopyLoading(state);

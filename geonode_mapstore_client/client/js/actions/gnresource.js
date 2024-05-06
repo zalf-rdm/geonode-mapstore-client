@@ -35,7 +35,9 @@ export const DOWNLOAD_RESOURCE = 'GEONODE_DOWNLOAD_RESOURCE';
 export const DOWNLOAD_COMPLETE = 'GEONODE_DOWNLOAD_COMPLETE';
 export const UPDATE_SINGLE_RESOURCE = 'GEONODE_UPDATE_SINGLE_RESOURCE';
 export const SET_RESOURCE_EXTENT = 'GEONODE_SET_RESOURCE_EXTENT';
-
+export const SET_RESOURCE_PATH_PARAMETERS = 'GEONODE:SET_RESOURCE_PATH_PARAMETERS';
+export const SET_MAP_VIEWER_LINKED_RESOURCE = 'GEONODE:SET_MAP_VIEWER_LINKED_RESOURCE';
+export const MANAGE_LINKED_RESOURCE = 'GEONODE:MANAGE_LINKED_RESOURCE';
 
 /**
 * Actions for GeoNode resource
@@ -243,10 +245,11 @@ export function requestResourceConfig(resourceType, pk, options) {
         options
     };
 }
-export function requestNewResourceConfig(resourceType) {
+export function requestNewResourceConfig(resourceType, options) {
     return {
         type: REQUEST_NEW_RESOURCE_CONFIG,
-        resourceType
+        resourceType,
+        options
     };
 }
 
@@ -317,5 +320,32 @@ export function setResourceExtent(coords) {
     return {
         type: SET_RESOURCE_EXTENT,
         coords
+    };
+}
+
+export function setResourcePathParameters(params) {
+    return {
+        type: SET_RESOURCE_PATH_PARAMETERS,
+        params
+    };
+}
+
+/**
+ * Manage linked resource by process type
+ */
+export function manageLinkedResource(payload) {
+    return {
+        type: MANAGE_LINKED_RESOURCE,
+        payload
+    };
+}
+
+/**
+ * Set map viewer linked resource
+ */
+export function setMapViewerLinkedResource(resource) {
+    return {
+        type: SET_MAP_VIEWER_LINKED_RESOURCE,
+        resource
     };
 }

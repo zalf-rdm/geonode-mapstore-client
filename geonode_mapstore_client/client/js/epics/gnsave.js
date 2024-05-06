@@ -8,6 +8,7 @@
 
 import axios from '@mapstore/framework/libs/ajax';
 import { Observable } from 'rxjs';
+import get from 'lodash/get';
 import { mapInfoSelector } from '@mapstore/framework/selectors/map';
 import { userSelector } from '@mapstore/framework/selectors/security';
 import {
@@ -32,7 +33,8 @@ import {
     updateResourceProperties,
     loadingResourceConfig,
     enableMapThumbnailViewer,
-    updateResource
+    updateResource,
+    manageLinkedResource
 } from '@js/actions/gnresource';
 import {
     getResourceByPk,
@@ -76,7 +78,6 @@ import {
     ProcessTypes,
     ProcessStatus
 } from '@js/utils/ResourceServiceUtils';
-import { setControlProperty } from '@mapstore/framework/actions/controls';
 
 function parseMapBody(body) {
     const geoNodeMap = toGeoNodeMapConfig(body.data);
@@ -119,6 +120,18 @@ const SaveAPI = {
     },
     [ResourceTypes.DATASET]: (state, id, body) => {
         return id ? updateDataset(id, body) : false;
+    },
+    [ResourceTypes.VIEWER]: (state, id, body) => {
+        const user = userSelector(state);
+        return id
+            ? updateGeoApp(id, body)
+            : createGeoApp({
+                'name': body.title + ' ' + uuid(),
+                'owner': user.name,
+                'resource_type': ResourceTypes.VIEWER,
+                'advertised': false,
+                ...body
+            });
     }
 };
 
@@ -139,13 +152,15 @@ export const gnSaveContent = (action$, store) =>
             return Observable.defer(() => SaveAPI[contentType](state, action.id, body, action.reload))
                 .switchMap((resource) => {
                     if (action.reload) {
+                        if (contentType === ResourceTypes.VIEWER) {
+                            const sourcepk = get(state, 'router.location.pathname', '').split('/').pop();
+                            return Observable.of(manageLinkedResource({resourceType: contentType, source: sourcepk, target: resource.pk, processType: ProcessTypes.LINK_RESOURCE}));
+                        }
                         window.location.href = parseDevHostname(resource?.detail_url);
                         window.location.reload();
                         return Observable.empty();
                     }
                     return Observable.of(
-                        // reset all pending changes from localStore
-                        setControlProperty('pendingChanges', 'value', null),
                         saveSuccess(resource),
                         setResource({
                             ...currentResource,

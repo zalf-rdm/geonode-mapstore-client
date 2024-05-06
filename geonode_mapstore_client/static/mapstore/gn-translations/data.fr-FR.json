@@ -15,6 +15,12 @@
                 "emptyList": "Aucun résultat pour cette demande. Essayez de changer le filtre ou sélectionnez un service différent à partir de l'entrée dans le coin supérieur droit."
             }
         },
+        "plugins": {
+            "VisualStyleEditor": {
+                "description": "Éditeur de style du jeu de données",
+                "title": "Éditeur de styles visuels"
+            }
+        },
         "gnhome": {
             "description": "<h1>GeoNode</h1><p>partager des données et des cartes géospatiales.</p>",
             "orderBy": "Commandé par",
@@ -31,6 +37,7 @@
             "remoteServices": "Web Services",
             "maps": "Cartes",
             "map": "Carte",
+            "mapviewers": "Visionneuses de cartes",
             "geostory": "GeoStory",
             "geostories": "GeoStories",
             "createGeostory": "Créer une geostory",
@@ -50,6 +57,7 @@
             "viewImage": "Voir images",
             "viewVideo": "Voir video",
             "viewDashboard": "Voir dashboard",
+            "viewMapViewer": "View map viewer",
             "viewMetadata": "Voir les détails",
             "author": "Auteur",
             "publication": "Publication",
@@ -359,7 +367,41 @@
             "centerLat": "Lat",
             "centerLon": "Lon",
             "mapExtentHelpText": "<b>Vous pouvez modifier l'étendue et la position de cette ressource</b>. Shift-clic et faites glisser pour dessiner une nouvelle étendue, cliquez sur le marqueur puis cliquez et faites glisser pour définir sa position",
-            "unadvertised": "La ressource n'est pas annoncée. Il est masqué du catalogue et des résultats de recherche"
+            "addWidget": "Ajouter un widget",
+            "backToMap": "Retour à la carte",
+            "copyConfigurationFrom": "Copier la configuration depuis",
+            "copyConfigurationFromTitle": "Copier la configuration de la visionneuse de carte",
+            "selectLinkedMapViewer": "Sélectionner la visionneuse de carte",
+            "mapViewersCatalogFilterPlaceholder": "Filtrer les ressources de la visionneuse de carte...",
+            "mapViewersCatalogEntriesNoResults": "Aucun résultat ne correspond à votre recherche",
+            "linkToViewer": "Lien vers le visualiseur",
+            "createNewViewer": "Créer une nouvelle visionneuse",
+            "manageViewerConfiguration": "Gérer la configuration de la visionneuse",
+            "previewCustomViewer": "Aperçu de la visionneuse personnalisée",
+            "editMapConfiguration": "Modifier la configuration de la carte",
+            "resource": "Ressource",
+            "deleteResourceWarning": {
+                "mapviewer": "Cette visionneuse pourrait être utilisée par certaines cartes. Vous pouvez afficher la liste des cartes dans l'onglet Ressources liées de cette visionneuse de cartes."
+            },
+            "unadvertised": "La ressource n'est pas annoncée. Il est masqué du catalogue et des résultats de recherche",
+            "linkedResource": {
+                "deleteTitle": "Voulez-vous également supprimer la visionneuse?",
+                "deleteAndUnlinkWarning": {
+                    "mapviewer": "Le visualiseur n'est utilisé que par cette carte. Avec cette action, vous pouvez dissocier la carte de la visionneuse et également la supprimer. Choisir «non» ne fera que dissocier la visionneuse."
+                },
+                "remove": "Supprimer la ressource liée",
+                "title": "Ressource liée",
+                "message": {
+                    "success": {
+                        "removeLinkedResource": "Ressource liée supprimée avec succès",
+                        "linkResource": "La ressource liée a été enregistrée avec succès"
+                    },
+                    "failure": {
+                        "removeLinkedResource": "Échec de la suppression de la ressource liée",
+                        "linkResource": "Échec de l'enregistrement de la ressource liée"
+                    }
+                }
+            }
         }
     }
 }

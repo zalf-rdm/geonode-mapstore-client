@@ -28,7 +28,6 @@ const mediaMap = {
     video: MediaComponent,
     pdf: PdfViewer,
     gltf: Scene3DViewer,
-    pcd: Scene3DViewer,
     ifc: Scene3DViewer,
     audio: MediaComponent,
     unsupported: UnsupportedViewer
@@ -73,6 +72,7 @@ const Media = ({ resource, ...props }) => {
                 src={resource.href}
                 url={resource ? metadataPreviewUrl(resource) : ''}
                 isExternalSource={isDocumentExternalSource(resource)}
+                bboxPolygon={resource?.ll_bbox_polygon}
             />
         </Suspense>);
     }
