@@ -211,7 +211,7 @@ const resourceTypes = {
                         const mapViewers = get(resource, 'linkedResources.linkedTo', [])
                             .find(({ resource_type: type } = {}) => type === ResourceTypes.VIEWER);
                         return mapViewers?.pk
-                            ? axios.all([{...resource}, getGeoAppByPk(mapViewers?.pk)])
+                            ? axios.all([{...resource}, getGeoAppByPk(mapViewers?.pk, {api_preset: 'catalog_list', include: ['data', 'linked_resources']})])
                             : Promise.resolve([{...resource}]);
                     })
                     .catch(() => null)

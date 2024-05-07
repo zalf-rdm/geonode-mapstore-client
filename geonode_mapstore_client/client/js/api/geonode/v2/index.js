@@ -374,12 +374,13 @@ export const createGeoApp = (body) => {
         .then(({ data }) => data.geoapp);
 };
 
-export const getGeoAppByPk = (pk) => {
+export const getGeoAppByPk = (pk, params) => {
     return axios.get(parseDevHostname(`${endpoints[GEOAPPS]}/${pk}`), {
         params: {
             full: true,
             api_preset: API_PRESET.VIEWER_COMMON,
-            include: ['data']
+            include: ['data'],
+            ...params
         }
     })
         .then(({ data }) => data.geoapp);
