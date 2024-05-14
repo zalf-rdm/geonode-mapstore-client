@@ -627,7 +627,6 @@ export const gnManageLinkedResource = (action$, store) =>
                 observable$ = resourceObservable?.removeLinkedResourceObservable;
                 linkedResourceFn = removeLinkedResourcesByPk;
             }
-            if (!observable$) Observable.empty();
             return Observable.concat(
                 ...(isLinkResource ? [Observable.of(setResourcePathParameters({ ...params, pk: target}))] : []),
                 Observable.defer(() => linkedResourceFn(source, target))
@@ -639,10 +638,10 @@ export const gnManageLinkedResource = (action$, store) =>
                                     title: "gnviewer.linkedResource.title",
                                     message: `gnviewer.linkedResource.message.success.${processType}`}
                                 ))
-                        ).catch(() => Observable.of(errorNotification({
+                        )).catch(() => Observable.of(errorNotification({
                             title: "gnviewer.linkedResource.title",
                             message: `gnviewer.linkedResource.message.failure.${processType}`
-                        }))))
+                        })))
                     .let(wrapStartStop(
                         setControlProperty(processType, 'loading', true),
                         setControlProperty(processType, 'loading', false)

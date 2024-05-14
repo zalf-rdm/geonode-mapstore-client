@@ -81,6 +81,10 @@
             "path": "gnresource.params"
         },
         {
+            "name": "gnResourceLinkedViewer",
+            "path": "gnresource.viewerLinkedResource"
+        },
+        {
             "name": "layers",
             "path": "layers"
         }
@@ -1535,7 +1539,8 @@
                                     "labelId": "gnviewer.editMetadata"
                                 },
                                 {
-                                    "type": "divider"
+                                    "type": "divider",
+                                    "disableIf": "{state('resourceParams')?.appPk}"
                                 },
                                 {
                                     "type": "link",
@@ -1544,13 +1549,17 @@
                                     "labelId": "gnviewer.addViewerConfiguration"
                                 },
                                 {
-                                    "type": "plugin",
-                                    "name": "EditMapViewer",
-                                    "disableIf": "{!state('resourceParams')?.appPk}"
+                                    "type": "divider",
+                                    "disableIf": "{!state('resourceParams')?.appPk || !context.resourceHasPermission(state('gnResourceLinkedViewer'), 'change_resourcebase')}"
                                 },
                                 {
                                     "type": "plugin",
-                                    "disableIf": "{!state('resourceParams')?.appPk}",
+                                    "disableIf": "{!state('resourceParams')?.appPk || !context.resourceHasPermission(state('gnResourceLinkedViewer'), 'change_resourcebase')}",
+                                    "name": "EditMapViewer"
+                                },
+                                {
+                                    "type": "plugin",
+                                    "disableIf": "{!state('resourceParams')?.appPk || !context.resourceHasPermission(state('gnResourceData'), 'delete_resourcebase') || !context.resourceHasPermission(state('gnResourceLinkedViewer'), 'delete_resourcebase')}",
                                     "name": "RemoveMapViewer"
                                 }
                             ]
