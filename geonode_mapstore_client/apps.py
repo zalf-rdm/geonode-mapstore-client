@@ -249,6 +249,24 @@ def run_setup_hooks(*args, **kwargs):
             "attribute_set"
         ]
     }
+    settings.PROXY_ALLOWED_PARAMS_NEEDLES += (
+        "request=getfeatureinfo",
+        "request=getcapabilities",
+    )
+    settings.PROXY_ALLOWED_PATH_NEEDLES += (
+        "tileset.json",
+        "glb",
+        "ifc",
+        "tms",
+        "wmts",
+        "wms",
+        "wfs",
+        "ows",
+        "wps",
+        "b3dm",
+        "i3dm",
+        "pnts",
+    )
 
 
 def connect_geoserver_style_visual_mode_signal():
