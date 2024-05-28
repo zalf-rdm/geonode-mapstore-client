@@ -18,11 +18,12 @@ import { getGeoApps } from '@js/api/geonode/v2';
 import { getDefaultPluginsConfig } from '@js/api/geonode/config';
 import { setControlProperty } from '@mapstore/framework/actions/controls';
 import datasetscatalogEpics from '@js/epics/datasetscatalog';
+import contextcreatorEpics from '@js/epics/contextcreator';
 import ResourcesCompactCatalog from '@js/components/ResourcesCompactCatalog';
 import ResizableModal from '@mapstore/framework/components/misc/ResizableModal';
 import Portal from '@mapstore/framework/components/misc/Portal';
 import { setResource as setContextCreatorResource } from '@mapstore/framework/actions/contextcreator';
-import { manageLinkedResource } from '@js/actions/gnresource';
+import { manageLinkedResource, setDefaultViewerPlugins } from '@js/actions/gnresource';
 import { ResourceTypes } from '@js/utils/ResourceUtils';
 import { ProcessTypes } from '@js/utils/ResourceServiceUtils';
 
@@ -32,9 +33,11 @@ function MapViewersCatalogPlugin({
     match,
     resourcesParams,
     location,
+    defaultViewerPlugins = ['Annotations', 'TOC', 'BackgroundSelector', 'Identify', 'QueryPanel', 'Measure', 'Print', 'MousePosition', 'Search', 'ScaleBox', 'GlobeViewSwitcher', 'ZoomAll', 'ZoomIn', 'ZoomOut', 'Timeline', 'MetadataExplorer', 'Widgets'],
     onReplaceLocation,
     onSetMapViewer,
     onManageLinkedResource,
+    onSetDefaultViewerPlugins,
     ...props
 }) {
     const [newViewerModal, setNewViewerModal] = useState('');
@@ -42,7 +45,11 @@ function MapViewersCatalogPlugin({
     useEffect(() => {
         if (pk === 'new' && mapPk) {
             setNewViewerModal('select');
+            onSetDefaultViewerPlugins(defaultViewerPlugins);
         }
+        return () => {
+            setNewViewerModal('');
+        };
     }, [pk, mapPk]);
     return (
         <>
@@ -145,7 +152,8 @@ const ConnectedMapViewersCatalogPlugin = connect(
         onSetControl: setControlProperty.bind(null, 'mapViewersCatalog', 'enabled'),
         onReplaceLocation: replace,
         onSetMapViewer: setContextCreatorResource,
-        onManageLinkedResource: manageLinkedResource
+        onManageLinkedResource: manageLinkedResource,
+        onSetDefaultViewerPlugins: setDefaultViewerPlugins
     }
 )(MapViewersCatalogPlugin);
 
@@ -185,6 +193,9 @@ export default createPlugin('MapViewersCatalog', {
             Component: ConnectedMapViewersCatalogButton
         }
     },
-    epics: datasetscatalogEpics,
+    epics: {
+        ...datasetscatalogEpics,
+        ...contextcreatorEpics
+    },
     reducers: {}
 });

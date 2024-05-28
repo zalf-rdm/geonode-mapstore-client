@@ -331,3 +331,8 @@ export const getGeoNodeResourceFromDashboard = (state) => get(originalDataSelect
         }
         return acc;
     }, { maps: [] });
+
+
+export const defaultViewerPluginsSelector = (state) => {
+    return state?.gnresource?.defaultViewerPlugins ?? [];
+};

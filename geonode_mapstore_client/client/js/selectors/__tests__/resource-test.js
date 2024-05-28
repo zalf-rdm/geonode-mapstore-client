@@ -17,7 +17,8 @@ import {
     isThumbnailChanged,
     canEditPermissions,
     canManageResourcePermissions,
-    isNewMapViewerResource
+    isNewMapViewerResource,
+    defaultViewerPluginsSelector
 } from '../resource';
 import { ResourceTypes } from '@js/utils/ResourceUtils';
 
@@ -96,5 +97,12 @@ describe('resource selector', () => {
         expect(isNewMapViewerResource(state)).toBeTruthy();
         state.gnresource.params.pk = '1';
         expect(isNewMapViewerResource(state)).toBeFalsy();
+    });
+    it('test defaultViewerPluginsSelector', () => {
+        let state = {...testState};
+        state.gnresource = {...state.gnresource, defaultViewerPlugins: ["TOC"]};
+        expect(defaultViewerPluginsSelector(state)).toEqual(["TOC"]);
+        state.gnresource = {...state.gnresource, defaultViewerPlugins: undefined};
+        expect(defaultViewerPluginsSelector(state)).toEqual([]);
     });
 });

@@ -34,6 +34,7 @@ import {
     SET_RESOURCE_EXTENT,
     SET_RESOURCE_PATH_PARAMETERS,
     SET_MAP_VIEWER_LINKED_RESOURCE,
+    SET_DEFAULT_VIEWER_PLUGINS,
     SET_SELECTED_LAYER_DATASET
 } from '@js/actions/gnresource';
 import {
@@ -239,6 +240,11 @@ function gnresource(state = defaultState, action) {
         return {
             ...state,
             viewerLinkedResource: action.resource
+        };
+    case SET_DEFAULT_VIEWER_PLUGINS:
+        return {
+            ...state,
+            defaultViewerPlugins: action.plugins
         };
     case SET_SELECTED_LAYER_DATASET:
         return {
