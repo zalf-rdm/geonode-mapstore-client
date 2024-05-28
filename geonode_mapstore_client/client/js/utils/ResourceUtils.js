@@ -286,7 +286,8 @@ export const getResourceTypesInfo = () => ({
         })),
         formatDetailUrl: (resource) => resource?.detail_url && parseDevHostname(resource.detail_url),
         name: 'Dataset',
-        formatMetadataUrl: (resource) => (`/datasets/${resource.store ? resource.store + ":" : ''}${resource.alternate}/metadata`)
+        formatMetadataUrl: (resource) => (`/datasets/${resource.store ? resource.store + ":" : ''}${resource.alternate}/metadata`),
+        catalogPageUrl: '/datasets'
     },
     [ResourceTypes.MAP]: {
         icon: 'map',
@@ -296,7 +297,8 @@ export const getResourceTypesInfo = () => ({
             config: 'map_preview'
         })),
         formatDetailUrl: (resource) => resource?.detail_url && parseDevHostname(resource.detail_url),
-        formatMetadataUrl: (resource) => (`/maps/${resource.pk}/metadata`)
+        formatMetadataUrl: (resource) => (`/maps/${resource.pk}/metadata`),
+        catalogPageUrl: '/maps'
     },
     [ResourceTypes.DOCUMENT]: {
         icon: 'file',
@@ -306,7 +308,8 @@ export const getResourceTypesInfo = () => ({
         formatEmbedUrl: (resource) => isDocumentExternalSource(resource) ? undefined : resource?.embed_url && parseDevHostname(resource.embed_url),
         formatDetailUrl: (resource) => resource?.detail_url && parseDevHostname(resource.detail_url),
         formatMetadataUrl: (resource) => (`/documents/${resource.pk}/metadata`),
-        metadataPreviewUrl: (resource) => (`/documents/${resource.pk}/metadata_detail?preview`)
+        metadataPreviewUrl: (resource) => (`/documents/${resource.pk}/metadata_detail?preview`),
+        catalogPageUrl: '/documents'
     },
     [ResourceTypes.GEOSTORY]: {
         icon: 'book',
@@ -314,7 +317,8 @@ export const getResourceTypesInfo = () => ({
         canPreviewed: (resource) => resourceHasPermission(resource, 'view_resourcebase'),
         formatEmbedUrl: (resource) => resource?.embed_url && parseDevHostname(resource.embed_url),
         formatDetailUrl: (resource) => resource?.detail_url && parseDevHostname(resource.detail_url),
-        formatMetadataUrl: (resource) => (`/apps/${resource.pk}/metadata`)
+        formatMetadataUrl: (resource) => (`/apps/${resource.pk}/metadata`),
+        catalogPageUrl: '/geostories'
     },
     [ResourceTypes.DASHBOARD]: {
         icon: 'dashboard',
@@ -322,7 +326,8 @@ export const getResourceTypesInfo = () => ({
         canPreviewed: (resource) => resourceHasPermission(resource, 'view_resourcebase'),
         formatEmbedUrl: (resource) => resource?.embed_url && parseDevHostname(resource.embed_url),
         formatDetailUrl: (resource) => resource?.detail_url && parseDevHostname(resource.detail_url),
-        formatMetadataUrl: (resource) => (`/apps/${resource.pk}/metadata`)
+        formatMetadataUrl: (resource) => (`/apps/${resource.pk}/metadata`),
+        catalogPageUrl: '/dashboards'
     },
     [ResourceTypes.VIEWER]: {
         icon: 'cogs',
@@ -330,7 +335,8 @@ export const getResourceTypesInfo = () => ({
         canPreviewed: (resource) => resourceHasPermission(resource, 'view_resourcebase'),
         formatEmbedUrl: () => false,
         formatDetailUrl: (resource) => resource?.detail_url && parseDevHostname(resource.detail_url),
-        formatMetadataUrl: (resource) => (`/apps/${resource.pk}/metadata`)
+        formatMetadataUrl: (resource) => (`/apps/${resource.pk}/metadata`),
+        catalogPageUrl: '/all'
     }
 });
 
@@ -760,7 +766,14 @@ export const getResourceWithLinkedResources = (resource = {}) => {
     return resource;
 };
 
-export const isDatasetLayer = (layersState) => {
-    const layer = layersState?.flat?.find(l => l.id === layersState?.selected?.[0]);
-    return layer?.extendedParams?.pk;
+export const onDeleteRedirectTo = (resources = []) => {
+    let redirectUrl = '/';
+    if (!isEmpty(resources) && resources?.length === 1) {
+        const types = getResourceTypesInfo();
+        const { catalogPageUrl } = types[resources[0].resource_type] ?? {};
+        if (catalogPageUrl) {
+            redirectUrl = catalogPageUrl;
+        }
+    }
+    return redirectUrl;
 };

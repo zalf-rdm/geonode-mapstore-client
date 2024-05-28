@@ -178,7 +178,8 @@ export const CATALOGUE_ROUTES = [
             '/search/',
             '/search/filter',
             '/detail/:pk',
-            '/detail/:ctype/:pk'
+            '/detail/:ctype/:pk',
+            '/:page'
         ],
         component: appRouteComponentTypes.CATALOGUE
     },

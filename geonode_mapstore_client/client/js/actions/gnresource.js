@@ -38,6 +38,7 @@ export const SET_RESOURCE_EXTENT = 'GEONODE_SET_RESOURCE_EXTENT';
 export const SET_RESOURCE_PATH_PARAMETERS = 'GEONODE:SET_RESOURCE_PATH_PARAMETERS';
 export const SET_MAP_VIEWER_LINKED_RESOURCE = 'GEONODE:SET_MAP_VIEWER_LINKED_RESOURCE';
 export const MANAGE_LINKED_RESOURCE = 'GEONODE:MANAGE_LINKED_RESOURCE';
+export const SET_SELECTED_LAYER_DATASET = 'GEONODE:SET_SELECTED_LAYER_DATASET';
 
 /**
 * Actions for GeoNode resource
@@ -347,5 +348,17 @@ export function setMapViewerLinkedResource(resource) {
     return {
         type: SET_MAP_VIEWER_LINKED_RESOURCE,
         resource
+    };
+}
+
+/**
+* Set selected layer type is from dataset
+* @param {Object} layer selected
+*/
+
+export function setSelectedLayerType(layer) {
+    return {
+        type: SET_SELECTED_LAYER_DATASET,
+        layer
     };
 }

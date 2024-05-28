@@ -149,7 +149,9 @@ const requestResourcesObservable = ({
 }, store) => {
     const state = store.getState();
     const customFilters = getCustomMenuFilters(state);
-    const requestParams = cleanParams({ ...params, ...state?.gnsearch?.config?.defaultQuery });
+    let { resource, f, ...defaultQuery } = state?.gnsearch?.config?.defaultQuery ?? {};
+    f = castArray(params.f ?? []).concat([...castArray(resource ?? []), ...castArray(f ?? [])]);
+    const requestParams = cleanParams({ ...params, ...defaultQuery, ...(!isEmpty(f) && {f}) });
     return Observable
         .defer(() => getResources({
             ...requestParams,

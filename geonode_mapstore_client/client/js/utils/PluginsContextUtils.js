@@ -12,8 +12,7 @@ import {
     resourceHasPermission,
     canCopyResource,
     isDocumentExternalSource,
-    getCataloguePath,
-    isDatasetLayer
+    getCataloguePath
 } from '@js/utils/ResourceUtils';
 import get from 'lodash/get';
 
@@ -47,6 +46,5 @@ export const getPluginsContext = () => ({
     getUserResourceName,
     getUserResourceNames,
     isDocumentExternalSource,
-    getCataloguePath,
-    isDatasetLayer
+    getCataloguePath
 });

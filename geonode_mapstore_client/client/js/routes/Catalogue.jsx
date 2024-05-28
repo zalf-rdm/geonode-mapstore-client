@@ -53,10 +53,15 @@ function getPluginsConfiguration(name, pluginsConfig) {
 
 const withRedirect = (Component) => {
     return (props) => {
+        const { pathname, search } = props.location ?? {};
         const catalogHomeRedirectsTo = getGeoNodeLocalConfig('geoNodeSettings.catalogHomeRedirectsTo');
+        const defaultCatalogPage = getGeoNodeLocalConfig('geoNodeSettings.defaultCatalogPage');
         if (!isEmpty(catalogHomeRedirectsTo)) {
-            const search = props.location?.search ?? "";
-            window.location.href = `${catalogHomeRedirectsTo}#/${search ? search : ""}`;
+            window.location.href = `${catalogHomeRedirectsTo}#/${!isEmpty(defaultCatalogPage) ? defaultCatalogPage : search ? search : ""}`;
+            return null;
+        }
+        if (!isEmpty(defaultCatalogPage) && pathname === '/' && isEmpty(search)) {
+            window.location.href = `#/${defaultCatalogPage ? defaultCatalogPage : ""}`;
             return null;
         }
         return <Component {...props}/>;

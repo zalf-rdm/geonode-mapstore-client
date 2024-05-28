@@ -43,6 +43,11 @@
             }
         }
     }
+    #gn-topbar {
+        .highlight-menu {
+            .border-bottom-color-var(@theme-vars[main-border-color]);
+        }
+    }
 }
 
 // **************
@@ -78,6 +83,9 @@ nav.hide-navigation#gn-topbar {
     position: sticky;
     top: 0;
     z-index: 100;
+    .highlight-menu {
+        border-width: 2px;
+    }
 }
 
 .gn-language-selector {

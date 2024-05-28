@@ -25,7 +25,7 @@ import Loader from '@mapstore/framework/components/misc/Loader';
 import controls from '@mapstore/framework/reducers/controls';
 import { isLoggedIn } from '@mapstore/framework/selectors/security';
 import { hashLocationToHref } from '@js/utils/SearchUtils';
-import { ResourceTypes } from '@js/utils/ResourceUtils';
+import { ResourceTypes, onDeleteRedirectTo } from '@js/utils/ResourceUtils';
 
 const simulateAClick = (href) => {
     const a = document.createElement('a');
@@ -70,7 +70,7 @@ function DeleteResourcePlugin({
     resources = [],
     onClose = () => {},
     onDelete = () => {},
-    redirectTo = '/',
+    redirectTo,
     loading,
     location,
     selectedResource
@@ -101,7 +101,7 @@ function DeleteResourcePlugin({
                                     excludeQueryKeys: ['d']
                                 }));
                             }
-                            onDelete(resources, redirectTo);
+                            onDelete(resources, onDeleteRedirectTo(resources));
                         }
                     }]
                 }
