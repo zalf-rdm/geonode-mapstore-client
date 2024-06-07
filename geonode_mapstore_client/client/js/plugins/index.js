@@ -434,6 +434,10 @@ export const plugins = {
     SettingsPlugin: toModulePlugin(
         'Settings',
         () => import(/* webpackChunkName: 'plugins/settings' */ '@mapstore/framework/plugins/Settings')
+    ),
+    TabularPreviewPlugin: toModulePlugin(
+        'TabularPreview',
+        () => import(/* webpackChunkName: 'plugins/tabular-preview-plugin' */ '@js/plugins/TabularPreview')
     )
 };
 

@@ -82,6 +82,7 @@
             "raster": "Raster",
             "remote": "Remote",
             "timeSeries": "Zeitserien",
+            "tabular": "Tabellarisch",
             "filtersCount": "{count, plural, =0 { Filter } other {Filter (#)}}",
             "admin": "Admin",
             "logOut": "Ausloggen",

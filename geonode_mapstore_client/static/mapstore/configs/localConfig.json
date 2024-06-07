@@ -514,6 +514,264 @@
                 "name": "MediaViewer"
             }
         ],
+        "tabular_viewer": [
+          {
+            "name": "ActionNavbar",
+            "cfg": {
+              "containerPosition": "header",
+              "titleItems": [
+                {
+                  "type": "plugin",
+                  "name": "DetailViewerButton"
+                }
+              ],
+              "leftMenuItems": [
+                {
+                  "labelId": "gnviewer.edit",
+                  "type": "dropdown",
+                  "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'change_resourcebase')}",
+                  "items": [
+                    {
+                      "type": "plugin",
+                      "name": "DetailViewerButton"
+                    },
+                    {
+                      "type": "link",
+                      "href": "{'#/dataset/' + (state('gnResourceData') || {}).pk + '/edit/data'}",
+                      "labelId": "gnviewer.editData",
+                      "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'change_dataset_data')}"
+                    },
+                    {
+                      "type": "link",
+                      "href": "{'#/dataset/' + (state('gnResourceData') || {}).pk + '/edit/style'}",
+                      "labelId": "gnviewer.editStyle",
+                      "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'change_dataset_style')}"
+                    },
+                    {
+                      "type": "link",
+                      "href": "{context.getMetadataUrl(state('gnResourceData'))}",
+                      "labelId": "gnviewer.editMetadata"
+                    },
+                    {
+                      "type": "link",
+                      "href": "{'/datasets/' + (state('gnResourceData') || {}).alternate + '/style_upload'}",
+                      "labelId": "gnviewer.styleUpload",
+                      "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'change_dataset_style')}"
+                    },
+                    {
+                      "type": "link",
+                      "href": "{'/datasets/' + (state('gnResourceData') || {}).alternate + '/metadata_upload'}",
+                      "labelId": "gnviewer.metadataUpload"
+                    }
+                  ]
+                },
+                {
+                  "labelId": "gnviewer.view",
+                  "type": "dropdown",
+                  "disableIf": "{context.resourceHasPermission(state('gnResourceData'), 'change_resourcebase')}",
+                  "items": [
+                    {
+                      "type": "link",
+                      "href": "{context.getMetadataDetailUrl(state('gnResourceData'))}",
+                      "labelId": "gnviewer.viewMetadata"
+                    },
+                    {
+                      "type": "link",
+                      "href": "{'#/dataset/' + (state('gnResourceData') || {}).pk + '/edit/data'}",
+                      "labelId": "gnviewer.viewData",
+                      "disableIf": "{state('gnResourceData') && (state('gnResourceData').subtype === 'raster' || state('gnResourceData').subtype === 'remote')}"
+                    }
+                  ]
+                },
+                {
+                  "type": "plugin",
+                  "name": "Share"
+                },
+                {
+                  "type": "plugin",
+                  "name": "DeleteResource",
+                  "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'delete_resourcebase')}"
+                },
+                {
+                  "type": "divider",
+                  "authenticated": true
+                },
+                {
+                  "type": "plugin",
+                  "name": "Print"
+                },
+                {
+                  "labelId": "gnviewer.download",
+                  "disablePluginIf": "{!state('selectedLayerPermissions').includes('download_resourcebase')}",
+                  "type": "dropdown",
+                  "items": [
+                    {
+                      "type": "plugin",
+                      "name": "LayerDownload"
+                    },
+                    {
+                      "type": "plugin",
+                      "name": "IsoDownload"
+                    },
+                    {
+                      "type": "plugin",
+                      "name": "DublinCoreDownload"
+                    }
+                  ]
+                }
+              ],
+              "rightMenuItems": [
+                {
+                  "type": "plugin",
+                  "name": "FullScreen"
+                }
+              ]
+            }
+          },
+          {
+            "name": "Share",
+            "cfg": {
+              "containerPosition": "rightOverlay",
+              "enableGeoLimits": true
+            }
+          },
+          {
+            "name": "DetailViewer",
+            "cfg": {
+              "containerPosition": "rightOverlay"
+            }
+          },
+          {
+            "name": "DeleteResource"
+          },
+          {
+            "name": "FullScreen"
+          },
+          {
+            "name": "IsoDownload"
+          },
+          {
+            "name": "DublinCoreDownload"
+          },
+          {
+            "name": "LayerDownload",
+            "cfg": {
+              "disablePluginIf": "{!state('selectedLayerPermissions').includes('download_resourcebase')}",
+              "formats": [
+                {
+                  "name": "application/json",
+                  "label": "GeoJSON",
+                  "type": "vector",
+                  "validServices": [
+                    "wps"
+                  ]
+                },
+                {
+                  "name": "application/arcgrid",
+                  "label": "ArcGrid",
+                  "type": "raster",
+                  "validServices": [
+                    "wps"
+                  ]
+                },
+                {
+                  "name": "image/tiff",
+                  "label": "TIFF",
+                  "type": "raster",
+                  "validServices": [
+                    "wps"
+                  ]
+                },
+                {
+                  "name": "image/png",
+                  "label": "PNG",
+                  "type": "raster",
+                  "validServices": [
+                    "wps"
+                  ]
+                },
+                {
+                  "name": "image/jpeg",
+                  "label": "JPEG",
+                  "type": "raster",
+                  "validServices": [
+                    "wps"
+                  ]
+                },
+                {
+                  "name": "application/wfs-collection-1.0",
+                  "label": "GML (FeatureCollection)",
+                  "type": "vector",
+                  "validServices": [
+                    "wps"
+                  ]
+                },
+                {
+                  "name": "application/wfs-collection-1.1",
+                  "label": "GML (WFS 1.1.0 FeatureCollection)",
+                  "type": "vector",
+                  "validServices": [
+                    "wps"
+                  ]
+                },
+                {
+                  "name": "application/zip",
+                  "label": "Shapefile",
+                  "type": "vector",
+                  "validServices": [
+                    "wps"
+                  ]
+                },
+                {
+                  "name": "text/csv",
+                  "label": "CSV",
+                  "type": "vector",
+                  "validServices": [
+                    "wps"
+                  ]
+                },
+                {
+                  "name": "application/geopackage+sqlite3",
+                  "label": "GeoPackage",
+                  "type": "vector",
+                  "validServices": [
+                    "wps"
+                  ]
+                },
+                {
+                  "name": "application/geopackage+sqlite3",
+                  "label": "GeoPackage",
+                  "type": "raster",
+                  "validServices": [
+                    "wps"
+                  ]
+                },
+                {
+                  "name": "application/vnd.google-earth.kml+xml",
+                  "label": "KML",
+                  "type": "vector",
+                  "validServices": [
+                    "wps"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "name": "FullScreen",
+            "override": {
+              "Toolbar": {
+                "alwaysVisible": true
+              }
+            }
+          },
+          {
+            "name": "Notifications"
+          },
+          {
+            "name": "TabularPreview"
+          }
+        ],
         "dataset_viewer": [
             {
                 "name": "ActionNavbar",
