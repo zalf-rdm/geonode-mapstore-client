@@ -463,6 +463,10 @@ export const plugins = {
     PrintCopyrightPlugin: toModulePlugin(
         'PrintCopyright',
         () => import(/* webpackChunkName: 'plugins/print-copyright' */ '@js/plugins/Print/Copyright')
+    ),
+    TabularPreviewPlugin: toModulePlugin(
+        'TabularPreview',
+        () => import(/* webpackChunkName: 'plugins/tabular-preview-plugin' */ '@js/plugins/TabularPreview')
     )
 };
 

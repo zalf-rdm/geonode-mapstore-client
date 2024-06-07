@@ -42,3 +42,32 @@
 .write-ms-theme(@gn-theme-vars);
 #gn-base-components-theme(@gn-theme-vars);
 #gn-components-theme(@gn-theme-vars);
+
+#tabular-preview {
+
+    div {
+        overflow: auto; /* make the table scrollable if height is more than 200 px  */
+        height: calc(100vh - 150px); /* gives an initial height of 200px to the table */
+        width: calc(100vw - 10px);
+    }
+
+    .tableFixHead thead th {
+        position: sticky; /* make the table heads sticky */
+        top: 0px; /* table head will be placed from the top of the table and sticks to it */
+    }
+
+    table {
+        border-collapse: collapse; /* make the table borders collapse to each other */
+        width: 100%;
+    }
+
+    th,
+    td {
+        padding: 8px 16px;
+        border: 1px solid #ccc;
+    }
+
+    th {
+        background: #eee;
+    }
+}
