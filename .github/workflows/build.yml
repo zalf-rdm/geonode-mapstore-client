@@ -70,17 +70,9 @@ jobs:
       - name: "Stage files"
         run: git add --all
         
-      - name: "Generate temp GitHub token"
-        uses: tibdex/github-app-token@v1
-        id: generate-token
-        with:
-          app_id: ${{ secrets.TOKEN_APP_ID }}
-          private_key: ${{ secrets.TOKEN_APP_PRIVATE_KEY }}
-        
       - name: "Create Pull Request"
         uses: peter-evans/create-pull-request@v3
         with:
-          token: ${{ steps.generate-token.outputs.token }}
-          delete-branch: true
           title: "[datapackage_tabular-data] new JS dist build"
           body: "CI build on branch `datapackage_tabular-data`"
+          delete-branch: true
