@@ -48,8 +48,10 @@ function TableComponent({ owsUrl, typeName }) {
                 setError(error)
             }
         }
-        getFeatures()
-    }, [])
+        if (owsUrl) {
+            getFeatures()
+        }
+    }, [owsUrl, typeName])
 
     if (error) {
         console.error(error);
@@ -68,9 +70,8 @@ function TableComponent({ owsUrl, typeName }) {
 };
 
 TableComponent.propTypes = {
-    header: PropTypes.array,
-    rows: PropTypes.array,
-    error: PropTypes.string
+    owsUrl: PropTypes.string,
+    typeName: PropTypes.string,
 };
 
 const TabularPreviewPlugin = connect(
