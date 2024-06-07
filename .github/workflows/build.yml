@@ -1,15 +1,15 @@
 # This is a basic workflow to help you get started with Actions
 
-name: GeoNode Client CI 4.3.x (build)
+name: "datapackage_tabular-data (build)"
 
 concurrency: 
-  group: "client_build"
+  group: "datapackage_tabular-data_build"
   cancel-in-progress: true
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push events but only for the 4.3.x branch
   push:
-    branches: [ 4.3.x ]
+    branches: [ datapackage_tabular-data ]
     paths: 
       - "VERSION"
       - "geonode_mapstore_client/client/**"
@@ -27,8 +27,8 @@ jobs:
     steps:
       - name: "Checking out"
         uses: actions/checkout@v4
-      - name: Checkout submodules
-        run: git submodule update --init --recursive
+        with:
+          submodules: "recursive"
 
       ###########
       # SET UP 
@@ -81,6 +81,6 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ steps.generate-token.outputs.token }}
-          base: "4.3.x"
-          title: "new client build"
-          body: "Automated client build from GeoNode Client CI"
+          delete-branch: true
+          title: "[datapackage_tabular-data] new JS dist build"
+          body: "CI build on branch `datapackage_tabular-data`"
