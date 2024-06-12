@@ -109,7 +109,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         geoNodePageConfig,
                         query,
                         configEpics,
-                        mapType = 'openlayers',
                         onStoreInit,
                         targetId = 'ms-container',
                         settings
@@ -134,68 +133,64 @@ document.addEventListener('DOMContentLoaded', function() {
 
                         storeEpicsNamesToExclude(appEpics);
 
-                        // register custom arcgis layer
-                        import('@js/map/' + mapType + '/plugins/ArcGisMapServer')
-                            .then(() => {
-                                main({
-                                    targetId,
-                                    enableExtensions: true,
-                                    appComponent: withRoutes(routes)(ConnectedRouter),
-                                    loaderComponent: MainLoader,
-                                    initialState: {
-                                        defaultState: {
-                                            ...securityState
-                                        }
-                                    },
-                                    themeCfg: null,
-                                    pluginsConfig: getPluginsConfigOverride(getPluginsConfiguration(localConfig.plugins, pluginsConfigKey)),
-                                    pluginsDef: {
-                                        plugins: {
-                                            ...pluginsDefinition.plugins
-                                        },
-                                        requires: {
-                                            ...requires,
-                                            ...pluginsDefinition.requires
-                                        }
-                                    },
-                                    printEnabled: true,
-                                    rootReducerFunc: standardRootReducerFunc,
-                                    onStoreInit,
-                                    appReducers: {
-                                        ...standardReducers,
-                                        gnresource,
-                                        gnsettings,
-                                        security,
-                                        maptype,
-                                        print,
-                                        maplayout,
-                                        controls,
-                                        timeline,
-                                        dimension,
-                                        playback,
-                                        mapPopups,
-                                        catalog,
-                                        searchconfig,
-                                        widgets,
-                                        context,
-                                        ...pluginsDefinition.reducers
-                                    },
-                                    appEpics,
-                                    geoNodeConfiguration,
-                                    initialActions: [
-                                    // add some settings in the global state to make them accessible in the monitor state
-                                    // later we could use expression in localConfig
-                                        updateGeoNodeSettings.bind(null, settings),
-                                        loadPrintCapabilities.bind(null, getConfigProp('printUrl')),
-                                        setControlProperty.bind(null, 'toolbar', 'expanded', false),
-                                        ...(resourceId !== undefined
-                                            ? [ requestResourceConfig.bind(null, geoNodePageConfig.resourceType || ResourceTypes.MAP, resourceId) ]
-                                            : []),
-                                        changeMapInfoFormat.bind(null, 'application/json')
-                                    ]
+                        main({
+                            targetId,
+                            enableExtensions: true,
+                            appComponent: withRoutes(routes)(ConnectedRouter),
+                            loaderComponent: MainLoader,
+                            initialState: {
+                                defaultState: {
+                                    ...securityState
+                                }
+                            },
+                            themeCfg: null,
+                            pluginsConfig: getPluginsConfigOverride(getPluginsConfiguration(localConfig.plugins, pluginsConfigKey)),
+                            pluginsDef: {
+                                plugins: {
+                                    ...pluginsDefinition.plugins
                                 },
-                                withExtensions(StandardApp));
-                            });
+                                requires: {
+                                    ...requires,
+                                    ...pluginsDefinition.requires
+                                }
+                            },
+                            printEnabled: true,
+                            rootReducerFunc: standardRootReducerFunc,
+                            onStoreInit,
+                            appReducers: {
+                                ...standardReducers,
+                                gnresource,
+                                gnsettings,
+                                security,
+                                maptype,
+                                print,
+                                maplayout,
+                                controls,
+                                timeline,
+                                dimension,
+                                playback,
+                                mapPopups,
+                                catalog,
+                                searchconfig,
+                                widgets,
+                                context,
+                                ...pluginsDefinition.reducers
+                            },
+                            appEpics,
+                            geoNodeConfiguration,
+                            initialActions: [
+                            // add some settings in the global state to make them accessible in the monitor state
+                            // later we could use expression in localConfig
+                                updateGeoNodeSettings.bind(null, settings),
+                                loadPrintCapabilities.bind(null, getConfigProp('printUrl')),
+                                setControlProperty.bind(null, 'toolbar', 'expanded', false),
+                                ...(resourceId !== undefined
+                                    ? [ requestResourceConfig.bind(null, geoNodePageConfig.resourceType || ResourceTypes.MAP, resourceId) ]
+                                    : []),
+                                changeMapInfoFormat.bind(null, 'application/json')
+                            ]
+                        },
+                        withExtensions(StandardApp));
                     });
 
             })
