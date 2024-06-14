@@ -71,7 +71,7 @@ jobs:
         run: git add --all
         
       - name: "Create Pull Request"
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v4
         with:
           title: "[datapackage_tabular-data] new JS dist build"
           body: "CI build on branch `datapackage_tabular-data`"
