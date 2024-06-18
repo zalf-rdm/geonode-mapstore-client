@@ -178,5 +178,5 @@ class MapStoreHookSet(BaseHookSet):
                 request, resource_identifier, "base.change_resourcebase", "Not allowed"
             )
         resource_identifier = resource.id
-        resource_type = resource.resource_type
+        resource_type = "tabular" if resource.subtype == "tabular" else resource.resource_type
         return resource_detail_url(resource_type, resource_identifier)
