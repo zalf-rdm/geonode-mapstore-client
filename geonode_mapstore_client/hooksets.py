@@ -193,6 +193,7 @@ class MapStoreHookSet(BaseHookSet):
         resource_type = resource.resource_type
         if resource.subtype == '3dtiles':
             return resource_detail_url(resource.subtype, resource_identifier)
+        resource_type = "tabular" if resource.subtype == "tabular" else resource.resource_type
         return resource_detail_url(resource_type, resource_identifier)
 
     def get_absolute_url(self, instance):
