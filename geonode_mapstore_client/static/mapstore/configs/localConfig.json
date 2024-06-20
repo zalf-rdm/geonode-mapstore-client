@@ -660,7 +660,7 @@
               "defaultSelectedService": "wfs",
               "hideServiceSelector": true,
               "formats": [
-                {"name": "excel", "label": "excel", "validServices": ["wfs"]},
+                {"name": "excel", "label": "Excel", "validServices": ["wfs"]},
                 {"name": "csv", "label": "CSV", "validServices": ["wfs"]}
               ]
             }
