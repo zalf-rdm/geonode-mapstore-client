@@ -124,7 +124,7 @@ function DetailsThumbnail({
                                 image={() => getResourceImageSource(resource?.thumbnail_url)}
                                 thumbnailUpdating={resourceThumbnailUpdating}
                             />
-                            {((resource.resource_type === ResourceTypes.MAP || resource.resource_type === ResourceTypes.DATASET)
+                            {((resource.resource_type === ResourceTypes.MAP || (resource.resource_type === ResourceTypes.DATASET && resource.subtype !== "tabular"))
                                 && (resource.ptype !== GXP_PTYPES.REST_IMG || resource.ptype !== GXP_PTYPES.REST_MAP)) ?
                                 <MapThumbnailButtonToolTip
                                     variant="default"
