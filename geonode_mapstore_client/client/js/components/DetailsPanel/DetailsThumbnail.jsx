@@ -115,6 +115,7 @@ function DetailsThumbnail({
         : resource.resource_type === ResourceTypes.DATASET
             && ![GXP_PTYPES.REST_IMG, GXP_PTYPES.REST_MAP].includes(resource.ptype)
             && isDefaultDatasetSubtype(resource.subtype)
+            && resource.subtype !== "tabular" // obsolete by above line?!
             ? true
             : false;
 
