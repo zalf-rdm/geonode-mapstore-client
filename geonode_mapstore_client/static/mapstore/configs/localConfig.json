@@ -797,7 +797,11 @@
             "cfg": {
               "disablePluginIf": "{!state('selectedLayerPermissions').includes('download_resourcebase')}",
               "defaultSelectedService": "wfs",
-              "hideServiceSelector": true
+              "hideServiceSelector": true,
+              "formats": [
+                {"name": "excel", "label": "Excel", "validServices": ["wfs"]},
+                {"name": "csv", "label": "CSV", "validServices": ["wfs"]}
+              ]
             }
           },
           {
