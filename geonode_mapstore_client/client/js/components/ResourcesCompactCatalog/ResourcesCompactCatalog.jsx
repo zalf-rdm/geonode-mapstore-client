@@ -74,7 +74,7 @@ function ResourcesCompactCatalog({
             })
                 .then((response) => {
                     if (isMounted.current) {
-                        const newEntries = responseToEntries(response).filter(res => res.subtype !== 'tabular');
+                        const newEntries = responseToEntries(response);
                         setIsNextPageAvailable(response.isNextPageAvailable);
                         setEntries(options.page === 1 ? newEntries : [...entries, ...newEntries]);
                         setLoading(false);
