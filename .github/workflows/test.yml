@@ -6,7 +6,7 @@ name: GeoNode Client CI (tests)
 on:
   # Triggers the workflow pull request events but only for the master branch
   pull_request:
-    branches: [ master ]
+    branches: [ 4.3.x ]
     paths: 
       - "geonode_mapstore_client/client/**"
 
