@@ -69,7 +69,6 @@ jobs:
           cd ../../
           cp -a ./geonode_mapstore_client/static/fonts/. ./docs/fonts/
           mv ./docs ../gh-pages/master
-           ../gh-pages/master
 
       - name: Setup Pages
         uses: actions/configure-pages@v2
