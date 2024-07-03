@@ -685,7 +685,6 @@ function validateGeometry(extent, projection) {
     }
     return extent;
 }
-
 export const gnZoomToFitBounds = (action$) =>
     action$.ofType(SET_CONTROL_PROPERTY)
         .filter(action => action.control === FIT_BOUNDS_CONTROL && !!action.value)
