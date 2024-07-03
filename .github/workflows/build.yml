@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: GeoNode Client CI (build)
+name: GeoNode Client CI 4.3.x (build)
 
 concurrency: 
   group: "client_build"
