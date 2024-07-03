@@ -4,7 +4,7 @@ name: GeoNode Client CI (tests)
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow pull request events but only for the master branch
+  # Triggers the workflow pull request events but only for the 4.3.x branch
   pull_request:
     branches: [ 4.3.x ]
     paths: 
