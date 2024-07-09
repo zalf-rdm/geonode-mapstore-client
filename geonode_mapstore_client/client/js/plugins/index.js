@@ -438,6 +438,10 @@ export const plugins = {
     TabularPreviewPlugin: toModulePlugin(
         'TabularPreview',
         () => import(/* webpackChunkName: 'plugins/tabular-preview-plugin' */ '@js/plugins/TabularPreview')
+    ),
+    TabularCollectionViewerPlugin: toModulePlugin(
+        'TabularCollectionViewer',
+        () => import(/* webpackChunkName: 'plugins/tabular-collection-plugin' */ '@js/plugins/TabularCollectionViewer')
     )
 };
 
