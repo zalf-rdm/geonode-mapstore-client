@@ -34,7 +34,7 @@ function rowsFromFeatures(data) {
 
 
 
-function TableComponent({ owsUrl, typeName }) {
+export function TableComponent({ owsUrl, typeName }) {
     const [header, setHeader] = useState();
     const [rows, setRows] = useState();
     const [error, setError] = useState();

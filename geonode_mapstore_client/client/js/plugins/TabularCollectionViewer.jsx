@@ -8,6 +8,8 @@ import { describeFeatureType, getFeatureSimple } from '@mapstore/framework/api/W
 
 import Table from '@js/components/Table';
 import resourceReducer from '@js/reducers/gnresource';
+import { layersSelector } from '@mapstore/framework/selectors/layers';
+import TabularPreview, { TableComponent } from './TabularPreview';
 
 function propertyToKey(property, index) {
     return `${property}`;
@@ -34,10 +36,18 @@ function rowsFromFeatures(data) {
 
 
 
-function TabbedTablesComponent({ owsUrl, typeNames }) {
+function TabbedTablesComponent({ owsUrl, tableLayers }) {
     const [header, setHeader] = useState();
     const [rows, setRows] = useState();
     const [error, setError] = useState();
+
+    if (tableLayers && tableLayers.length == 1) {
+        const typeName = tableLayers[0].name;
+        return (
+            <TableComponent owsUrl={owsUrl} typeName={typeName} />
+        )
+    }
+
     // useEffect(() => {
     //     const getFeatures = async () => {
     //         try {
@@ -72,17 +82,17 @@ function TabbedTablesComponent({ owsUrl, typeNames }) {
 
 TabbedTablesComponent.propTypes = {
     owsUrl: PropTypes.string,
-    typeName: PropTypes.string,
+    typeName: PropTypes.array,
 };
 
 const TabularCollectionViewerPlugin = connect(
     createSelector([
+        layersSelector,
         (state) => state?.gnsettings?.geoserverUrl,
-        (state) => state?.gnresource?.data
-    ], (geoserverUrl, map) => { 
+    ], (layers, geoserverUrl, map) => { 
         const owsUrl = `${geoserverUrl}ows`
-        const typeName = map.alternate || undefined
-        return { owsUrl, typeName };
+        const tableLayers = layers.filter(l => l.group !== "background")
+        return { owsUrl, tableLayers };
     })
 )(TabbedTablesComponent);
 
