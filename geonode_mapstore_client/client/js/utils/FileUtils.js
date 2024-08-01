@@ -1,7 +1,6 @@
 import axios from '@mapstore/framework/libs/ajax';
 import isEmpty from "lodash/isEmpty";
 import trim from 'lodash/trim';
-
 /**
 * @module utils/FileUtils
 */
@@ -89,10 +88,12 @@ export const getFileNameAndExtensionFromUrl = (url) => {
     if (isEmpty(url)) {
         return { fileName, ext };
     }
-    const parsedName = url?.split('?')?.[0]?.split('#')?.[0]?.split('/')?.pop();
+    const parts = url?.split('?')?.[0]?.split('#')?.[0]?.split('/');
+    const parsedName = parts?.pop();
     const period = parsedName?.lastIndexOf('.');
-    fileName = period !== -1 ? parsedName.substring(0, period) : parsedName;
-    ext = period !== -1 ? parsedName.substring(period + 1) : "";
+    const hasExtension = period !== -1;
+    fileName = hasExtension ? parsedName.substring(0, period) : parsedName;
+    ext = hasExtension ? parsedName.substring(period + 1) : "";
     return { fileName, ext: !isEmpty(ext) ? "." + ext : ext };
 };
 /**
