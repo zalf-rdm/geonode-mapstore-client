@@ -255,6 +255,16 @@
                 "name": "Playback"
             }
         ],
+        "tabular_embed": [
+            {
+              "name": "TabularPreview"
+            }
+        ],
+        "tabular-collection_embed": [
+            {
+                "name": "TabularCollectionViewer"
+            }
+        ],
         "dataset_embed": [
             {
                 "name": "Map",

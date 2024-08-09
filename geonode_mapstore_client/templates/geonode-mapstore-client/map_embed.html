@@ -1,6 +1,7 @@
 {% load static %}
 {% load client_lib_tags %}
 {% load client_version %}
+{% load tabular_utils %}
 <!DOCTYPE html>
 <html>
     <head>
@@ -25,7 +26,12 @@
     <body class="msgapi ms2" data-ms2-container="ms2" >
         <div class="gn-page-wrapper {% if request.user_agent.is_mobile %}gn-mobile{% else %}gn-desktop{% endif %}">
             {% block gn_config %}
+                {% is_tabular resource as tabular %}
+                {% if not tabular %}
                 {% include './_geonode_config.html' with plugins_config_key='map_embed' is_embed='true' %}
+                {% else %}
+                {% include './_geonode_config.html' with plugins_config_key="tabular-collection_embed" is_embed='true' %}
+                {% endif %}
             {% endblock %}
             <div class="gn-embed gn-theme">
                 {% block container %}
@@ -40,7 +46,11 @@
                 {% endblock %}
 
                 {% block ms_scripts %}
+                {% if resource.subtype != 'tabular' %}
                     <script id="gn-script" src="{% static 'mapstore/dist/js/gn-map.js' %}?{% client_version %}"></script>
+                {% else %}
+                    <script id="gn-script" src="{% static 'mapstore/dist/js/gn-tabular-collection.js' %}?{% client_version %}"></script>
+                {% endif %}
                 {% endblock %}
             </div>
         </div>
