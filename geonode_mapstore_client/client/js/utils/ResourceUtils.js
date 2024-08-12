@@ -126,6 +126,38 @@ export const resourceToLayerConfig = (resource) => {
         const { url: wmsUrl } = links.find(({ link_type: linkType }) => linkType === 'OGC:WMS') || {};
         const { url: wmtsUrl } = links.find(({ link_type: linkType }) => linkType === 'OGC:WMTS') || {};
 
+        if (resource.subtype === "tabular") {
+            return {
+                perms,
+                id: uuid(),
+                pk,
+                type: 'wfs',
+                name: alternate,
+                url: wfsUrl || '',
+                format: defaultLayerFormat,
+                ...(wfsUrl && {
+                    search: {
+                        type: 'wfs',
+                        url: wfsUrl
+                    }
+                }),
+                ...(bbox ? { bbox } : { bboxError: true }),
+                ...(template && {
+                    featureInfo: {
+                        format: FEATURE_INFO_FORMAT,
+                        template
+                    }
+                }),
+                style: defaultStyleParams?.defaultStyle?.name || '',
+                title,
+                tileSize: defaultTileSize,
+                visibility: true,
+                ...(params && { params }),
+                extendedParams,
+                ...(fields && { fields })
+            };
+        }
+    
         const dimensions = [
             ...(hasTime ? [{
                 name: 'time',
