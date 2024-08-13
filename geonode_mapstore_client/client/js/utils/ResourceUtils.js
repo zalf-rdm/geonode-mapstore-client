@@ -503,7 +503,8 @@ export function getGeoNodeMapLayers(data) {
         .map((layer, index) => {
             return {
                 ...(layer?.extendedParams?.mapLayer && {
-                    pk: layer.extendedParams.mapLayer.pk
+                    pk: layer.extendedParams.mapLayer.dataset.pk,
+                    subtype: layer.extendedParams.mapLayer.dataset.subtype
                 }),
                 extra_params: {
                     msId: layer.id,
@@ -528,6 +529,8 @@ export function toGeoNodeMapConfig(data) {
     const maplayers = getGeoNodeMapLayers(data);
     return {
         maplayers
+        //serializer field "thumbnail_url" is readonly :( 
+        //thumbnail_url: tabular ? "/static/importer_datapackage/table-icon.jpg" : undefined
     };
 }
 

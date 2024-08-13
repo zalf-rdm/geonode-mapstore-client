@@ -26,7 +26,9 @@ function DetailsResourcePreview({
         formatEmbedUrl = res => res?.embed_url,
         icon
     } = resource && (types[resource.subtype] || types[resource.resource_type]) || {};
-    const embedUrl = resource?.embed_url && formatEmbedUrl(resource);
+    const embedUrl = !resource.subtype?.includes("tabular")
+        ? resource?.embed_url && formatEmbedUrl(resource)
+        : false;
     return (
         <div className="gn-details-panel-preview">
             <div
