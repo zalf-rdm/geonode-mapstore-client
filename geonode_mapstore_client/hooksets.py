@@ -116,15 +116,7 @@ class MapStoreHookSet(BaseHookSet):
         return resource_detail_url(map_resource_type, resource.id)
 
     def get_map_resource_type(self, resource):
-        from geonode.maps.models import Map
-        map = Map.objects.get(id=resource.id)
-        # alternative route for tabular data collection
-        tabular_data_collection = False
-        for layer in map.datasets:
-            tabular_data_collection = layer.subtype == "tabular"
-            if not tabular_data_collection:
-                break
-        return "map" if not tabular_data_collection else "tabular-collection"
+        return "map" if resource.subtype != "tabular-collection" else "tabular-collection"
 
 
     # def map_download_template(self, context=None):
