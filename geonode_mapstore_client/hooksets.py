@@ -116,7 +116,7 @@ class MapStoreHookSet(BaseHookSet):
         return resource_detail_url(map_resource_type, resource.id)
 
     def get_map_resource_type(self, resource):
-        return "map" if resource.subtype != "tabular-collection" else "tabular-collection"
+        return "tabular-collection" if resource.subtype == "tabular-collection" else "map"
 
 
     # def map_download_template(self, context=None):
