@@ -18,13 +18,6 @@ function TabbedTablesComponent({ owsUrl, tableLayers }) {
     const [tabs, setTabs] = useState([])
     const [key, setKey] = useState(0);
 
-    if (tableLayers && tableLayers.length == 1) {
-        const typeName = tableLayers[0].name;
-        return (
-            <TableComponent owsUrl={owsUrl} typeName={typeName} />
-        )
-    }
-
     useEffect(() => {
         setTabs(tableLayers.map((layer, i) => {
             return (
@@ -34,6 +27,13 @@ function TabbedTablesComponent({ owsUrl, tableLayers }) {
             )
         }));
     }, [owsUrl, tableLayers]);
+
+    if (tableLayers && tableLayers.length == 1) {
+        const typeName = tableLayers[0].name;
+        return (
+            <TableComponent owsUrl={owsUrl} typeName={typeName} />
+        )
+    }
 
     return (
         <Tabs
