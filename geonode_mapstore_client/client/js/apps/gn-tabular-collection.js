@@ -35,7 +35,7 @@ const requires = {
     ReactSwipe,
     SwipeHeader
 };
-import { MAP_ROUTES, appRouteComponentTypes } from '@js/utils/AppRoutesUtils';
+import { TABULARCOLLECTION_ROUTES, appRouteComponentTypes } from '@js/utils/AppRoutesUtils';
 import '@js/observables/persistence';
 
 initializeApp();
@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 // later we could use expression in localConfig
                                 updateGeoNodeSettings.bind(null, settings),
                                 ...(geoNodePageConfig.resourceId !== undefined
-                                    ? [requestResourceConfig.bind(null, ResourceTypes.DATASET, geoNodePageConfig.resourceId, {
+                                    ? [requestResourceConfig.bind(null, ResourceTypes.MAP, geoNodePageConfig.resourceId, {
                                         readOnly: geoNodePageConfig.isEmbed
                                     })]
                                     : [])

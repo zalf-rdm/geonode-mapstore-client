@@ -35,7 +35,7 @@ const requires = {
     ReactSwipe,
     SwipeHeader
 };
-import { MAP_ROUTES, TABULAR_ROUTES, appRouteComponentTypes } from '@js/utils/AppRoutesUtils';
+import { TABULAR_ROUTES, appRouteComponentTypes } from '@js/utils/AppRoutesUtils';
 import '@js/observables/persistence';
 
 initializeApp();
