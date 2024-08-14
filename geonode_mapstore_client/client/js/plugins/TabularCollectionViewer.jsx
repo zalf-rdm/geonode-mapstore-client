@@ -7,12 +7,7 @@ import { Tabs, Tab } from 'react-bootstrap';
 import { createPlugin } from '@mapstore/framework/utils/PluginsUtils';
 
 import resourceReducer from '@js/reducers/gnresource';
-import { layersSelector } from '@mapstore/framework/selectors/layers';
 import { TableComponent } from './TabularPreview';
-
-function propertyToKey(property, index) {
-    return `${property}`;
-};
 
 function TabbedTablesComponent({ owsUrl, tableLayers }) {
     const [tabs, setTabs] = useState([])
@@ -55,11 +50,11 @@ TabbedTablesComponent.propTypes = {
 
 const TabularCollectionViewerPlugin = connect(
     createSelector([
-        layersSelector,
+        state => state?.gnresource?.data || null,
         (state) => state?.gnsettings?.geoserverUrl,
-    ], (layers, geoserverUrl, map) => { 
+    ], (resource, geoserverUrl) => { 
         const owsUrl = `${geoserverUrl}ows`
-        const tableLayers = layers.filter(l => l.group !== "background")
+        const tableLayers = resource.maplayers || []
         return { owsUrl, tableLayers };
     })
 )(TabbedTablesComponent);
