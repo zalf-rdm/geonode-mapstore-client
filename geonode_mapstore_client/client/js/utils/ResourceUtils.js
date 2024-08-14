@@ -477,8 +477,7 @@ export function getGeoNodeMapLayers(data) {
         .map((layer, index) => {
             return {
                 ...(layer?.extendedParams?.mapLayer && {
-                    pk: layer.extendedParams.mapLayer.dataset.pk,
-                    subtype: layer.extendedParams.mapLayer.dataset.subtype
+                    pk: layer.extendedParams.mapLayer.pk
                 }),
                 extra_params: {
                     msId: layer.id,
