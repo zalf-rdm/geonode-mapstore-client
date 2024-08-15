@@ -395,6 +395,24 @@ export const getResourceTypesInfo = () => ({
         formatEmbedUrl: () => false,
         formatDetailUrl: (resource) => resource?.detail_url && parseDevHostname(resource.detail_url),
         formatMetadataUrl: (resource) => (`/apps/${resource.pk}/metadata`)
+    },
+    ["tabular"]: {
+        icon: 'table',
+        name: 'Table',
+        canPreviewed: (resource) => resourceHasPermission(resource, 'view_resourcebase'),
+        formatEmbedUrl: () => false,
+        formatDetailUrl: (resource) => resource?.detail_url && parseDevHostname(resource.detail_url),
+        formatMetadataUrl: (resource) => (`/apps/${resource.pk}/metadata`),
+        catalogPageUrl: '/all'
+    },
+    ["tabular-collection"]: {
+        icon: 'files-o',
+        name: 'TableCollection',
+        canPreviewed: (resource) => resourceHasPermission(resource, 'view_resourcebase'),
+        formatEmbedUrl: () => false,
+        formatDetailUrl: (resource) => resource?.detail_url && parseDevHostname(resource.detail_url),
+        formatMetadataUrl: (resource) => (`/apps/${resource.pk}/metadata`),
+        catalogPageUrl: '/all'
     }
 });
 

@@ -60,6 +60,8 @@
             "viewDashboard": "Dashboard ansehen",
             "viewMapViewer": "View map viewer",
             "viewMetadata": "Details anzeigen",
+            "viewTable": "Tabelle anzeigen",
+            "viewTableCollection": "Tabelle(n) anzeigen",
             "author": "Autor",
             "publication": "Veröffentlichung",
             "creation": "Erstellungsdatum",
