@@ -258,7 +258,7 @@ function DetailsPanel({
                         enabled={!!editThumbnail}
                         resource={resource}
                         activeEditMode={activeEditMode}
-                        enableMapViewer={enableMapViewer}
+                        enableMapViewer={enableMapViewer && !resource.subtype?.includes("tabular")}
                         onResourceThumbnail={onResourceThumbnail}
                         editThumbnail={editThumbnail}
                         resourceThumbnailUpdating={resourceThumbnailUpdating}

@@ -60,6 +60,8 @@
             "viewDashboard": "View dashboard",
             "viewMapViewer": "View map viewer",
             "viewMetadata": "View details",
+            "viewTable": "View table",
+            "viewTableCollection": "View table(s)",
             "author": "Author",
             "publication": "Publication",
             "creation": "Creation",
