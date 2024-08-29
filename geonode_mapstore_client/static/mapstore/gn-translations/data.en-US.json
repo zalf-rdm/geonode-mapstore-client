@@ -43,7 +43,7 @@
             "createNew": "Create new",
             "addResource": "Add Resource",
             "new": "New",
-            "maps": "Maps",
+            "maps": "Data Collection",
             "mapviewers": "MapViewers",
             "about": "About",
             "people": "People",
@@ -243,12 +243,10 @@
             "legend": "Legend",
             "nodeTooltipContent": "Tooltip content",
             "nodeTooltipPlacement": "Tooltip placement",
-
             "zoomToLayer": "Zoom to layer extent",
             "applyCurrentStyleToLayer": "Apply current style to layer",
             "deleteCurrentStyle": "Delete current style",
             "createNewStyle": "Create new style",
-
             "createStyleTitle": "Add new style",
             "createStyleTitleInput": "Title:",
             "createStyleClose": "Close",
@@ -277,7 +275,6 @@
             "styleEditorCloseConfirm": "Yes, close",
             "metadataUpload": "Upload Metadata",
             "styleUpload": "Upload Style",
-
             "missingFiles": "Missing files",
             "invalidUploadMessageError": "Error",
             "invalidUploadMessageErrorTooltip": "The upload process failed. Please check the validity of the file and try to upload it again",
@@ -289,12 +286,10 @@
             "supportedFiles": "Supported file extensions",
             "unsupportedFiles": "Files not supported for the upload",
             "upload": "Upload",
-
             "uploadDataset": "Upload a dataset",
             "dragAndDropFile": "Drag and drop a file to upload",
             "filterPendingUploadDataset": "Filter pending uploads by name...",
             "filterNoMatchUploadDataset": "Filter does not match a pending upload",
-
             "filterPendingUploadDocument": "Filter uploads by name...",
             "filterNoMatchUploadDocument": "Filter does not match an upload",
             "uploadDocument": "Upload a document",
