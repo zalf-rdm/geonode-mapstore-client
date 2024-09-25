@@ -3,7 +3,7 @@
 name: GeoNode Client 4.4.x CI (build)
 
 concurrency: 
-  group: "client_build"
+  group: "client_build_4.4.x"
   cancel-in-progress: true
 # Controls when the workflow will run
 on:
@@ -83,4 +83,6 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
           base: "4.4.x"
           title: "[4.4.x] new client build"
-          body: "Automated client build from GeoNode Client CI"
+          body: "Automated client build from GeoNode Client 4.4.x CI"
+          branch: "4.4.x-create-pull-request/patch"
+
