@@ -427,7 +427,14 @@
             "publishResourceTooltip": "Pubblica questa risorsa (utilizzata dall' Advanced Workflow)",
             "featureResourceTooltip": "Aggiungi questa risorsa alle risorse in evidenza",
             "advertiseResourceTooltip": "Rendi questa risorsa ricercabile",
-            "includeFullscreen": "Includi fullscreen"
+            "includeFullscreen": "Includi fullscreen",
+            "reload": "Ricarica",
+            "uploadDatasetStyle": "Carica stile del dataset",
+            "uploadDatasetMetadata": "Carica i metadati del dataset",
+            "uploadName": "Nome",
+            "uploadCreated": "Data creazione",
+            "replaceDataset": "Sostituisci",
+            "replaceDatasetTitle": "Sostituisci dataset"
         }
     }
 }

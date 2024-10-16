@@ -424,7 +424,14 @@
             "publishResourceTooltip": "Publicar este recurso (utilizado por el flujo de trabajo avanzado)",
             "featureResourceTooltip": "Agregar este recurso a los recursos destacados",
             "advertiseResourceTooltip": "Hacer que este recurso sea buscable",
-            "includeFullscreen": "Incluir pantalla completa"
+            "includeFullscreen": "Incluir pantalla completa",
+            "reload": "Recargar",
+            "uploadDatasetStyle": "Estilo de conjunto de datos de carga",
+            "uploadDatasetMetadata": "Metadatos del conjunto de datos de carga",
+            "uploadName": "Nombre",
+            "uploadCreated": "Creado",
+            "replaceDataset": "Reemplazar",
+            "replaceDatasetTitle": "Reemplazar conjunto de datos"
         }
     }
 }

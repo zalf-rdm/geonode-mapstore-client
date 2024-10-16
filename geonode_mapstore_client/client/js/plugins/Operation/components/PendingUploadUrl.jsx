@@ -14,7 +14,7 @@ import Button from "@js/components/Button";
 import { isValidURL } from "@mapstore/framework/utils/URLUtils";
 import Message from '@mapstore/framework/components/I18N/Message';
 import { getFileNameAndExtensionFromUrl } from "@js/utils/FileUtils";
-import { isNotSupported, getErrorMessageId, hasExtensionInUrl  } from "@js/utils/UploadUtils";
+import { isNotSupported, getErrorMessageId  } from "@js/utils/UploadUtils";
 import withDebounceOnCallback from '@mapstore/framework/components/misc/enhancers/withDebounceOnCallback';
 import localizedProps from '@mapstore/framework/components/misc/enhancers/localizedProps';
 import ErrorMessageWithTooltip from './ErrorMessageWithTooltip';
@@ -26,40 +26,30 @@ const InputControlWithDebounce = withDebounceOnCallback('onChange', 'value')(Inp
 
 const PendingUploadUrl = ({
     data,
-    extensions,
-    serviceTypes,
     loading,
     progress,
-    onChange,
+    error,
+    onCancel,
     onRemove,
-    onAbort,
-    error
+    onChange,
+    remoteTypes,
+    remoteTypesPlaceholder = 'type',
+    remoteTypeFromUrl = false,
+    remoteTypeErrorMessageId = 'gnviewer.unsupportedUrlExtension',
+    isRemoteTypesDisabled = () => false
 } = {}) => {
 
-    const {
-        baseName,
-        extension,
-        remoteUrl,
-        serviceType,
-        validation,
-        edited
-    } = data || {};
-
     const updateProperty = (name, value) => {
-        if (name === 'remoteUrl') {
+        let remoteType = data?.remoteType;
+        if (remoteTypeFromUrl && name === 'url') {
             const { ext } = isValidURL(value)
                 ? getFileNameAndExtensionFromUrl(value)
                 : { fileName: '', ext: '' };
-            return {
-                ...data,
-                [name]: value,
-                baseName: value,
-                extension: ext,
-                edited: true
-            };
+            remoteType = ext;
         }
         return {
             ...data,
+            remoteType,
             [name]: value,
             edited: true
         };
@@ -71,7 +61,7 @@ const PendingUploadUrl = ({
     };
 
     function handleOnRemove() {
-        onRemove(data);
+        onRemove(data.id);
     }
 
     return (
@@ -79,53 +69,44 @@ const PendingUploadUrl = ({
             <div className="gn-upload-card-header">
                 <div className="gn-upload-input">
                     <InputControlWithDebounce
-                        value={remoteUrl || ""}
+                        value={data.url || ""}
                         placeholder="gnviewer.remoteResourceURLPlaceholder"
                         debounceTime={300}
                         onChange={(value) => handleOnChange({
-                            name: 'remoteUrl',
+                            name: 'url',
                             value
                         })}/>
-                    {edited && <>
+                    {data.edited && <>
                         {!isNotSupported(data) && error ? <ErrorMessageWithTooltip tooltipId={<Message msgId="gnviewer.invalidRemoteUploadMessageErrorTooltip" />} /> : null}
                         {isNotSupported(data) && <div className="gn-upload-error-inline"><FaIcon name="exclamation" /></div>}
                     </>}
                     {onRemove
-                        ? (!loading || !(progress?.[baseName]))
+                        ? (!loading || !(progress))
                             ? <Button size="xs" onClick={handleOnRemove}>
                                 <FaIcon name="trash" />
-                            </Button> : <Button size="xs" onClick={() => onAbort(baseName)}>
+                            </Button> : <Button size="xs" onClick={() => onCancel([data.id])}>
                                 <FaIcon name="stop" />
                             </Button>
                         : null
                     }
                 </div>
             </div>
-            {(edited && isNotSupported(data)) && <div className="gn-upload-card-body">
+            {(data.edited && isNotSupported(data)) && <div className="gn-upload-card-body">
                 <div className="text-danger">
-                    <Message msgId={getErrorMessageId(data)} />
+                    <Message msgId={getErrorMessageId(data, { remoteTypeErrorMessageId })} />
                 </div>
             </div>}
-            {extensions && <div className={"gn-upload-card-bottom"}>
-                <Select
-                    disabled={!validation?.isValidRemoteUrl || hasExtensionInUrl(data) }
-                    clearable={false}
-                    placeholder={"ext"}
-                    options={extensions}
-                    value={extension}
-                    onChange={(option) => handleOnChange({...option, name: 'extension'})}
-                />
-            </div>}
-            {serviceTypes && <div className={"gn-upload-card-bottom"}>
+            {remoteTypes && <div className={"gn-upload-card-bottom"}>
                 <Select
                     clearable={false}
-                    placeholder={"type"}
-                    options={serviceTypes}
-                    value={serviceType}
-                    onChange={(option) => handleOnChange({...option, name: 'serviceType'})}
+                    disabled={isRemoteTypesDisabled(data)}
+                    placeholder={remoteTypesPlaceholder}
+                    options={remoteTypes}
+                    value={data.remoteType}
+                    onChange={(option) => handleOnChange({...option, name: 'remoteType'})}
                 />
             </div>}
-            {loading && progress && progress?.[baseName] && <div style={{ position: 'relative' }}>
+            {(loading && progress) ? <div style={{ position: 'relative' }}>
                 <div
                     className="gn-upload-card-progress"
                     style={{
@@ -135,14 +116,14 @@ const PendingUploadUrl = ({
                 >
                     <div
                         style={{
-                            width: `${progress[baseName]}%`,
+                            width: `${progress}%`,
                             height: 2,
                             transition: '0.3s all'
                         }}
                     >
                     </div>
                 </div>
-            </div>}
+            </div> : null}
         </div>
     );
 };

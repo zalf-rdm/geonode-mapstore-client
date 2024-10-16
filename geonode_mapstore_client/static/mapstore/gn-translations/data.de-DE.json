@@ -425,7 +425,14 @@
             "publishResourceTooltip": "Diese Ressource veröffentlichen (wird vom erweiterten Workflow verwendet)",
             "featureResourceTooltip": "Diese Ressource zu den vorgestellten Ressourcen hinzufügen",
             "advertiseResourceTooltip": "Diese Ressource durchsuchbar machen",
-            "includeFullscreen": "Vollbild einschließen"
+            "includeFullscreen": "Vollbild einschließen",
+            "reload": "Neu laden",
+            "uploadDatasetStyle": "Datensatzstil hochladen",
+            "uploadDatasetMetadata": "Datensatzmetadaten hochladen",
+            "uploadName": "Name",
+            "uploadCreated": "Erstellt",
+            "replaceDataset": "Ersetzen",
+            "replaceDatasetTitle": "Datensatz ersetzen"
         }
     }
 }

@@ -425,7 +425,14 @@
             "publishResourceTooltip": "Publier cette ressource (utilisé par le flux de travail avancé)",
             "featureResourceTooltip": "Ajouter cette ressource aux ressources en vedette",
             "advertiseResourceTooltip": "Rendre cette ressource consultable",
-            "includeFullscreen": "Inclure le plein écran"
+            "includeFullscreen": "Inclure le plein écran",
+            "reload": "Recharge",
+            "uploadDatasetStyle": "Télécharger le style du jeu de données",
+            "uploadDatasetMetadata": "Télécharger les métadonnées du jeu de données",
+            "uploadName": "Nom",
+            "uploadCreated": "Créé",
+            "replaceDataset": "Remplacer",
+            "replaceDatasetTitle": "Remplacer l'ensemble de données"
         }
     }
 }

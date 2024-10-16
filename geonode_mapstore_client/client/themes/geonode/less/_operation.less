@@ -1,0 +1,62 @@
+// **************
+// Layout
+// **************
+
+.gn-operation {
+    position: absolute;
+    z-index: 5000;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    .gn-upload-panel {
+        background-color: rgba(0, 0, 0, 0.85);
+        .gn-main-event-container {
+            color: #eeeeee;
+            background-color: transparent;
+        }
+    }
+    .gn-upload-processing {
+        color: #eeeeee;
+        .gn-spinner {
+            --gn-loader-color: #eeeeee;
+            --gn-loader-fade-color: rgba(240, 240, 240, 0.2);
+        }
+        .table > thead > tr > th {
+            border-bottom-color: #555555;
+        }
+        .table > tbody > tr > td {
+            border-top-color: #555555
+        }
+        .table > tbody > tr.danger > td {
+            background-color: rgba(187, 73, 64, 0.2);
+        }
+    }
+    .gn-upload-list-cover {
+        background-color: rgba(0, 0, 0, 0.6);
+    }
+    .gn-upload-processing,
+    .gn-viewer-right-column {
+        --gn-button-color: #eeeeee;
+        --gn-button-bg: transparent;
+        --gn-button-action-border-color: transparent;
+        --gn-button-border-color: transparent;
+        --gn-button-focus-color: #ffffff;
+        --gn-button-focus-bg: transparent;
+        --gn-button-focus-border-color: transparent;
+        --gn-button-hover-color: #ffffff;
+        --gn-button-hover-bg: transparent;
+        --gn-button-hover-border-color: transparent;
+        --gn-button-active-color: #ffffff;
+        --gn-button-active-bg: transparent;
+        --gn-button-active-border-color: transparent;
+        --gn-button-active-hover-color: #ffffff;
+        --gn-button-active-hover-bg: transparent;
+        --gn-button-active-hover-border-color: transparent;
+        --gn-button-disabled-color: #555555;
+        --gn-button-disabled-bg: transparent;
+        --gn-button-disabled-border-color: transparent;
+        --gn-button-badge-color: #eeeeee;
+        --gn-button-badge-bg: transparent;
+    }
+}

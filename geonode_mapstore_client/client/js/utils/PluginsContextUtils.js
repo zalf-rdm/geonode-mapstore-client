@@ -14,8 +14,14 @@ import {
     isDocumentExternalSource,
     getCataloguePath
 } from '@js/utils/ResourceUtils';
+import {
+    getUploadMainFile,
+    getSupportedFilesByResourceType,
+    getUploadProperty
+} from '@js/utils/UploadUtils';
 import get from 'lodash/get';
 import isNil from 'lodash/isNil';
+import { getEndpointUrl } from '@js/api/geonode/v2/constants';
 
 function getUserResourceName(user) {
     return user?.first_name !== '' && user?.last_name !== ''
@@ -67,5 +73,9 @@ export const getPluginsContext = () => ({
     getCataloguePath,
     getCreateNewMapLink,
     hasDefaultSettings,
-    canManageResourceSettings
+    canManageResourceSettings,
+    getUploadMainFile,
+    getEndpointUrl,
+    getSupportedFilesByResourceType,
+    getUploadProperty
 });

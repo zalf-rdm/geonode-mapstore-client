@@ -13,7 +13,7 @@ import omit from 'lodash/omit';
 import { getConfigProp, convertFromLegacy, normalizeConfig } from '@mapstore/framework/utils/ConfigUtils';
 import { getGeoNodeLocalConfig, parseDevHostname } from '@js/utils/APIUtils';
 import { ProcessTypes, ProcessStatus } from '@js/utils/ResourceServiceUtils';
-import { uniqBy, orderBy, isString, isObject, pick, difference } from 'lodash';
+import { uniqBy, orderBy, isString, isObject } from 'lodash';
 import { excludeGoogleBackground, extractTileMatrixFromSources } from '@mapstore/framework/utils/LayersUtils';
 import { determineResourceType } from '@js/utils/FileUtils';
 import { isImageServerUrl } from '@mapstore/framework/utils/ArcGISUtils';
@@ -736,45 +736,6 @@ export const cleanUrl = (targetUrl) => {
         ...(hash && { hash })
     });
 };
-
-export const parseUploadFiles = (data) => {
-    const { uploadFiles = {}, supportedDatasetTypes = [], supportedOptionalExtensions = [], supportedRequiresExtensions = [] } = data;
-    const mainFileTypes = supportedDatasetTypes.filter(file => !file.needsFiles);
-    const mainFileTypeKeys = mainFileTypes.map(({ id }) => id);
-
-    return Object.keys(uploadFiles)
-        .reduce((acc, baseName) => {
-            const uploadFile = uploadFiles[baseName] || {};
-            const { requires = [], ext = [], optional = [], needsFiles = [] } = supportedDatasetTypes.find(({ id }) => id === uploadFile.type) || {};
-            const cleanedFiles = pick(uploadFile.files, [...requires, ...ext, ...optional, ...needsFiles]);
-            const filesKeys = Object.keys(cleanedFiles);
-            const files = requires.length > 0
-                ? cleanedFiles
-                : filesKeys.length > 1
-                    ? pick(cleanedFiles, supportedOptionalExtensions.includes(ext[0]) ? [...needsFiles, ext[0]] : ext[0])
-                    : cleanedFiles;
-            const newFileKeys = Object.keys(files);
-            const requiredFilesIncluded = newFileKeys.filter((id) => supportedRequiresExtensions.includes(id)) || [];
-            const missingExt = requires.length > 0
-                ? requires.filter((fileExt) => !filesKeys.includes(fileExt))
-                : requiredFilesIncluded.length > 0 ? difference(supportedRequiresExtensions, requiredFilesIncluded) : [];
-
-            const mainExt = filesKeys.find(key => ext.includes(key));
-            const addMissingFiles = supportedOptionalExtensions.includes(mainExt) && missingExt?.length === 0 && !(mainFileTypeKeys.some((type) => newFileKeys.includes(type)));
-
-            return {
-                ...acc,
-                [baseName]: {
-                    ...uploadFile,
-                    mainExt,
-                    files,
-                    missingExt,
-                    addMissingFiles
-                }
-            };
-        }, {});
-};
-
 
 export const getResourceImageSource = (image) => {
     return image ? image : 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPAAAADICAIAAABZHvsFAAAACXBIWXMAAC4jAAAuIwF4pT92AAABiklEQVR42u3SAQ0AAAjDMMC/5+MAAaSVsKyTFHwxEmBoMDQYGgyNocHQYGgwNBgaQ4OhwdBgaDA0hgZDg6HB0GBoDA2GBkODocHQGBoMDYYGQ4OhMTQYGgwNhgZDY2gwNBgaDI2hwdBgaDA0GBpDg6HB0GBoMDSGBkODocHQYGgMDYYGQ4OhwdAYGgwNhgZDg6ExNBgaDA2GBkNjaDA0GBoMDYbG0GBoMDQYGkODocHQYGgwNIYGQ4OhwdBgaAwNhgZDg6HB0BgaDA2GBkODoTE0GBoMDYYGQ2NoMDQYGgwNhsbQYGgwNBgaQ4OhwdBgaDA0hgZDg6HB0GBoDA2GBkODocHQGBoMDYYGQ4OhMTQYGgwNhgZDY2gwNBgaDA2GxtBgaDA0GBoMjaHB0GBoMDSGBkODocHQYGgMDYYGQ4OhwdAYGgwNhgZDg6ExNBgaDA2GBkNjaDA0GBoMDYbG0GBoMDQYGgyNocHQYGgwNIYGQ4OhwdBgaAwNhgZDg6HB0BgaDA2GBkPDbQH4OQSN0W8qegAAAABJRU5ErkJggg==';
