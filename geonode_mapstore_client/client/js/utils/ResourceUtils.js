@@ -181,7 +181,10 @@ export const resourceToLayerConfig = (resource) => {
                 visibility: true,
                 ...(params && { params }),
                 extendedParams,
-                ...(fields && { fields })
+                ...(fields && { fields }),
+                ...(sourcetype === SOURCE_TYPES.REMOTE && !wmsUrl.includes('/geoserver/') && {
+                    serverType: ServerTypes.NO_VENDOR
+                })
             };
         }
     
