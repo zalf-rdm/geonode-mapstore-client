@@ -598,18 +598,6 @@
                     ]
                   },
                   {
-                    "labelId": "gnviewer.view",
-                    "type": "dropdown",
-                    "disableIf": "{context.resourceHasPermission(state('gnResourceData'), 'change_resourcebase')}",
-                    "items": [
-                      {
-                        "type": "link",
-                        "href": "{context.getMetadataDetailUrl(state('gnResourceData'))}",
-                        "labelId": "gnviewer.viewMetadata"
-                      }
-                    ]
-                  },
-                  {
                     "labelId": "gnviewer.download",
                     "disablePluginIf": "{!state('selectedLayerPermissions').includes('download_resourcebase')}",
                     "type": "dropdown",
