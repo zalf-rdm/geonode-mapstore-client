@@ -346,7 +346,7 @@ export const getResourceTypesInfo = () => ({
     [ResourceTypes.DATASET]: {
         icon: 'database',
         canPreviewed: (resource) => resourceHasPermission(resource, 'view_resourcebase'),
-        formatEmbedUrl: (resource) => resource.embed_url && parseDevHostname(updateUrlQueryParameter(resource.embed_url, {
+        formatEmbedUrl: (resource) => resource?.subtype !== "tabular" && resource.embed_url && parseDevHostname(updateUrlQueryParameter(resource.embed_url, {
             config: 'dataset_preview'
         })),
         formatDetailUrl: (resource) => resource?.detail_url && parseDevHostname(resource.detail_url),
