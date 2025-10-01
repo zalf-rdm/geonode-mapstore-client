@@ -286,6 +286,7 @@
       ],
       "autoEnableChildren": [
         "PrintScale",
+        "PrintGraticule",
         "PrintAuthor",
         "PrintCopyright"
       ]
