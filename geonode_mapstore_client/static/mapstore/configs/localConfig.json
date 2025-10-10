@@ -2194,6 +2194,11 @@
                             ]
                         },
                         {
+                            "type": "plugin",
+                            "name": "PublishDataCollection",
+                            "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'change_resourcebase') && !state('isNewResource')}"
+                        },
+                        {
                             "type": "divider",
                             "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'change_resourcebase') && !state('isNewResource')}"
                         },
@@ -2810,6 +2815,13 @@
             {
                 "mandatory": true,
                 "name": "DatasetsCatalog"
+            },
+            {
+                "mandatory": true,
+                "name": "PublishDataCollection",
+                "cfg": {
+                    "showText": false
+                }                
             },
             {
                 "name": "VisualStyleEditor",

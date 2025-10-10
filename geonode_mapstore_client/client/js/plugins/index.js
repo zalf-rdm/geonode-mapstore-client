@@ -471,7 +471,11 @@ export const plugins = {
     TabularCollectionViewerPlugin: toModulePlugin(
         'TabularCollectionViewer',
         () => import(/* webpackChunkName: 'plugins/tabular-collection-plugin' */ '@js/plugins/TabularCollectionViewer')
-    )
+    ),
+    PublishDataCollectionPlugin: toModulePlugin(
+        'PublishDataCollection',
+        () => import(/* webpackChunkName: 'plugins/publish-data-collection-plugin' */ '@js/plugins/PublishDataCollection')
+    ),
 };
 
 const pluginsDefinition = {

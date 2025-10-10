@@ -19,6 +19,12 @@
             "VisualStyleEditor": {
                 "description": "Der Stileditor des Datensatzes",
                 "title": "Visueller Stil-Editor"
+            },
+            "PublishDataCollection": {
+                "button": "Publizieren",
+                "buttonTooltip": "Datensammlung publizieren",
+                "title": "Datensammlung publizieren",
+                "description": "Wählen Sie die zu publizierenden Datensätze für die Datensammlung {title}"
             }
         },
         "gnhome": {
