@@ -24,7 +24,8 @@
                 "button": "Publizieren",
                 "buttonTooltip": "Datensammlung publizieren",
                 "title": "Datensammlung publizieren",
-                "description": "Wählen Sie die zu publizierenden Datensätze für die Datensammlung {title}"
+                "description": "Wählen Sie die zu publizierenden Datensätze für die Datensammlung {title}",
+                "publish": "Datenpublikation starten"
             }
         },
         "gnhome": {

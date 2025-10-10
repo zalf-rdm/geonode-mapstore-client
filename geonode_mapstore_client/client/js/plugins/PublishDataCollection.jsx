@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { FormGroup, Checkbox } from 'react-bootstrap';
 import { createStructuredSelector } from 'reselect';
 import { createPlugin } from '@mapstore/framework/utils/PluginsUtils';
 import { GXP_PTYPES, SOURCE_TYPES } from '@js/utils/ResourceUtils';
@@ -39,10 +39,36 @@ const PublishDataCollectionComponent = (props) => {
                 </span>
                 <div role="body">
                     <Message { ...i18n("description", { title }) } />
-                    <ul>
-                        { maplayers.map(layer => <li>{layer.name}</li>) }
-                    </ul>
 
+                    <FormGroup className="mb-3">
+                        {
+                            maplayers.map(layer =>
+                                <>
+                                    <Checkbox
+                                        // checked={enabled}
+                                        type="switch"
+                                        // id="gn-filter-by-extent-switch"
+                                        // onChange={handleOnSwitch}
+                                    >
+                                        {layer.name}
+                                    </Checkbox>
+                                </>
+                            )
+                        }
+
+                    </FormGroup>
+
+
+
+                </div>
+                <div role="footer">
+                    <Button
+                        variant="primary"
+                        //disabled={!this.props.downloadOptions.selectedFormat || this.props.loading}
+                        //</div>onClick={this.handleExport}
+                    >
+                        <span><i class="fa fa-cog"></i></span> <Message { ...i18n("publish") } />
+                    </Button>
                 </div>
             </Dialog>
         </Portal>
