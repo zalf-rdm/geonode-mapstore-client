@@ -2195,6 +2195,11 @@
                         },
                         {
                             "type": "plugin",
+                            "name": "ApproveDataCollection",
+                            "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'change_resourcebase') && !state('isNewResource')}"
+                        },
+                        {
+                            "type": "plugin",
                             "name": "PublishDataCollection",
                             "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'change_resourcebase') && !state('isNewResource')}"
                         },
@@ -2815,6 +2820,13 @@
             {
                 "mandatory": true,
                 "name": "DatasetsCatalog"
+            },
+             {
+                "mandatory": true,
+                "name": "ApproveDataCollection",
+                "cfg": {
+                    "showText": false
+                }                
             },
             {
                 "mandatory": true,

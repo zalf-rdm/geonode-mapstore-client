@@ -20,13 +20,12 @@ import {
 
 
 const i18n = (shortId, msgParams={}) => {
-    const msgId = `plugins.PublishDataCollection.${shortId}`;
+    const msgId = `plugins.ApproveDataCollection.${shortId}`;
     return { msgId, msgParams };
 }
 
-const PublishDataCollectionComponent = (props) => {
-    console.log(`Rendering PublishDataCollectionDialog`);
-    const { open, onClose, style, closeGlyph } = props;
+const ApproveDataCollectionComponent = (props) => {
+    const { open, onClose, style={"white-space": "pre-line"}, closeGlyph } = props;
     const { title, maplayers=[], linkedResources={} } = props.resourceData;
     const { linkedTo=[], linkedBy=[] } = linkedResources;
     return (
@@ -39,7 +38,7 @@ const PublishDataCollectionComponent = (props) => {
                 <div role="body">
                     <Message { ...i18n("description", { title }) } />
 
-                    <FormGroup className="mb-3">
+                    {/* <FormGroup className="mb-3">
                         {
                             maplayers.map(layer =>
                                 <>
@@ -55,7 +54,7 @@ const PublishDataCollectionComponent = (props) => {
                             )
                         }
 
-                    </FormGroup>
+                    </FormGroup> */}
 
 
 
@@ -66,7 +65,7 @@ const PublishDataCollectionComponent = (props) => {
                         //disabled={!this.props.downloadOptions.selectedFormat || this.props.loading}
                         //</div>onClick={this.handleExport}
                     >
-                        <span><i class="fa fa-cog"></i></span> <Message { ...i18n("publish") } />
+                        <span><i class="fa fa-cog"></i></span> <Message { ...i18n("approve") } />
                     </Button>
                 </div>
             </Dialog>
@@ -74,7 +73,7 @@ const PublishDataCollectionComponent = (props) => {
     )
 }
 
-const OpenDialogButton = ({
+const ApproveDataCollectionDialogButton = ({
     variant,
     size,
     enabled,
@@ -84,9 +83,7 @@ const OpenDialogButton = ({
     const [isDialogOpen, setDialogOpen] = useState(false);
     const toggleDialog = () => setDialogOpen(!isDialogOpen);
 
-    // TODO disable or confirmation 
-    //   - when map state is dirty
-    //   - shall a dataset be set read_only somehow?
+    // TODO disable or confirmation when map state is dirty
 
     const TooltipButton = tooltip(Button);
     const props = {
@@ -97,60 +94,37 @@ const OpenDialogButton = ({
     return (
         <>
             <TooltipButton
-                id="publish-data-collection"
+                id="approve-data-collection"
                 tooltipPosition={enabled ? "left" : "top"}
                 tooltip={ showText ? undefined : <Message { ...i18n("buttonTooltip") } /> }
                 variant={variant}
                 size={size}
                 onClick={toggleDialog}
             >
-                {showText ? <Message { ...i18n("button") } /> : <FaIcon name="bookmark" />}
+                {showText ? <Message { ...i18n("button") } /> : <FaIcon name="thumbs-up" />}
             </TooltipButton>
-            { isDialogOpen && <PublishDataCollectionComponent {...props} /> }
+            { isDialogOpen && <ApproveDataCollectionComponent {...props} /> }
         </>
     );
 }
 
-const ConnectedOpenDialogButton = connect(
+const ConnectedApproveDataCollectionDialogButton = connect(
     createStructuredSelector({
         resourceData: getResourceData,
         userPermissions: getResourcePerms,
         compactPermissions: getCompactPermissions,
     })
-)(OpenDialogButton);
+)(ApproveDataCollectionDialogButton);
 
-export default createPlugin('PublishDataCollection', {
-    component: PublishDataCollectionComponent,
+export default createPlugin('ApproveDataCollection', {
+    component: ApproveDataCollectionComponent,
     containers: {
         ActionNavbar: {
-            name: 'PublishDataCollection',
-            Component: ConnectedOpenDialogButton,
+            name: 'ApproveDataCollection',
+            Component: ConnectedApproveDataCollectionDialogButton,
             priority: 1
         },
     },
-    epics: {
-        // openpublishDataCollectionDialog: (action$, { getState }) => {
-        //     action$.ofType("publishdatacollectiondialog")
-        //         .switchMap(props => {
-        //             console.log("It is going to be epic ..")
-        //             return Rx.Observable.empty()
-        //         });
-        // }
-    },
-    reducers: {
-        // toggleDialog: (state = { open: false }, action) => {
-        //     switch (action.type) {
-        //         case (SET_CONTROL_PROPERTY): {
-        //             const { property, value } = action.payload;
-        //             console.log(`Control propery '${property}' changed to '${value}'`)
-        //             return {
-        //                 ...state,
-        //                 [property]: value
-        //             };
-        //         }
-        //         default:
-        //             return state;
-        //     }
-        // }
-    }
+    epics: {},
+    reducers: {}
 });
