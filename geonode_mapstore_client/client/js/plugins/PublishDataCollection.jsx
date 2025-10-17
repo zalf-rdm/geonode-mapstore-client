@@ -7,11 +7,12 @@ import { createPlugin } from '@mapstore/framework/utils/PluginsUtils';
 import { GXP_PTYPES, SOURCE_TYPES } from '@js/utils/ResourceUtils';
 import Message from '@mapstore/framework/components/I18N/Message';
 import Button from '@js/components/Button';
-import { setControlProperty, SET_CONTROL_PROPERTY } from '@mapstore/framework/actions/controls';
 import Dialog from '@mapstore/framework/components/misc/Dialog';
 import Portal from '@mapstore/framework/components/misc/Portal';
 import tooltip from '@mapstore/framework/components/misc/enhancers/tooltip';
+import axios from '@mapstore/framework/libs/ajax';
 import FaIcon from '@js/components/FaIcon';
+import { parseDevHostname } from '@js/utils/APIUtils';
 import {
     getResourceData,
     getResourcePerms,
@@ -29,6 +30,36 @@ const PublishDataCollectionComponent = (props) => {
     const { open, onClose, style, closeGlyph } = props;
     const { title, maplayers=[], linkedResources={} } = props.resourceData;
     const { linkedTo=[], linkedBy=[] } = linkedResources;
+
+    const [ iconPublishButton, setIconPublishButton ] = useState("thumbs-up");
+    const [ transform, setTransform ] = useState({});
+
+    const onPublish = function () {
+        const pk = props.resourceData.pk;
+        const url = parseDevHostname(`/api/v2/publish/${pk}/`);
+        setIconPublishButton("cog fa-spin");
+
+        const resourceIds = linkedTo
+            .filter(lr => !lr.internal)
+            .map(lr => lr.pk);
+        const payload = {
+            "doi_prefix": undefined,
+            "resources": resourceIds
+        }
+
+        axios.post(url, payload).then(response => {
+            setIconPublishButton("check");
+            const data = response.data;
+
+            // TODO reload resource status
+
+            setTimeout(onClose, 200);
+        }).catch(error => {
+            setIconPublishButton("exclamation-circle");
+            console.error(`An error occured during publish: ${error}`);
+        });
+    }
+
     return (
         <Portal>
             <Dialog style={style} show={open} onHide={onClose} modal>
@@ -61,12 +92,15 @@ const PublishDataCollectionComponent = (props) => {
 
                 </div>
                 <div role="footer">
+                    <Button variant="secondary" onClick={onClose}>
+                        <span></span> <Message { ...i18n("cancel") } />
+                    </Button>
                     <Button
-                        variant="primary"
+                        variant="primary" onClick={onPublish}
                         //disabled={!this.props.downloadOptions.selectedFormat || this.props.loading}
                         //</div>onClick={this.handleExport}
                     >
-                        <span><i class="fa fa-cog"></i></span> <Message { ...i18n("publish") } />
+                        <span><i class={"fa fa-" + iconPublishButton}></i></span> <Message { ...i18n("publish") } />
                     </Button>
                 </div>
             </Dialog>
