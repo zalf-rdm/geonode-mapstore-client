@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { FormGroup, Checkbox } from 'react-bootstrap';
 import { createStructuredSelector } from 'reselect';
 import { createPlugin } from '@mapstore/framework/utils/PluginsUtils';
 import { GXP_PTYPES, SOURCE_TYPES } from '@js/utils/ResourceUtils';
@@ -11,7 +10,9 @@ import { setControlProperty, SET_CONTROL_PROPERTY } from '@mapstore/framework/ac
 import Dialog from '@mapstore/framework/components/misc/Dialog';
 import Portal from '@mapstore/framework/components/misc/Portal';
 import tooltip from '@mapstore/framework/components/misc/enhancers/tooltip';
+import axios from '@mapstore/framework/libs/ajax';
 import FaIcon from '@js/components/FaIcon';
+import { parseDevHostname } from '@js/utils/APIUtils';
 import {
     getResourceData,
     getResourcePerms,
@@ -28,6 +29,23 @@ const ApproveDataCollectionComponent = (props) => {
     const { open, onClose, style={"white-space": "pre-line"}, closeGlyph } = props;
     const { title, maplayers=[], linkedResources={} } = props.resourceData;
     const { linkedTo=[], linkedBy=[] } = linkedResources;
+
+    const [ iconApproveButton, setIconApproveButton ] = useState("thumbs-up");
+
+    const onApprove = function () {
+        const pk = props.resourceData.pk;
+        const url = parseDevHostname(`/api/v2/approve/${pk}/`);
+        setIconApproveButton("cog");
+        axios.post(url).then(response => {
+            setIconApproveButton("check");
+            const data = response.data;
+            setTimeout(onClose, 200);
+        }).catch(error => {
+            setIconApproveButton("circle-exclamation");
+            console.error(`An error occured during approval: ${error}`);
+        });
+    }
+
     return (
         <Portal>
             <Dialog style={style} show={open} onHide={onClose} modal>
@@ -37,35 +55,13 @@ const ApproveDataCollectionComponent = (props) => {
                 </span>
                 <div role="body">
                     <Message { ...i18n("description", { title }) } />
-
-                    {/* <FormGroup className="mb-3">
-                        {
-                            maplayers.map(layer =>
-                                <>
-                                    <Checkbox
-                                        // checked={enabled}
-                                        type="switch"
-                                        // id="gn-filter-by-extent-switch"
-                                        // onChange={handleOnSwitch}
-                                    >
-                                        {layer.name}
-                                    </Checkbox>
-                                </>
-                            )
-                        }
-
-                    </FormGroup> */}
-
-
-
                 </div>
                 <div role="footer">
-                    <Button
-                        variant="primary"
-                        //disabled={!this.props.downloadOptions.selectedFormat || this.props.loading}
-                        //</div>onClick={this.handleExport}
-                    >
-                        <span><i class="fa fa-cog"></i></span> <Message { ...i18n("approve") } />
+                    <Button variant="secondary" onClick={onClose}>
+                        <span></span> <Message { ...i18n("cancel") } />
+                    </Button>
+                    <Button variant="primary" onClick={onApprove}>
+                        <span><i class={"fa fa-" + iconApproveButton}></i></span> <Message { ...i18n("approve") } />
                     </Button>
                 </div>
             </Dialog>
