@@ -34,6 +34,8 @@
                 "buttonTooltip": "Datensammlung publizieren",
                 "title": "Datensammlung publizieren",
                 "description": "Wählen Sie die zu publizierenden Datensätze für die Datensammlung {title}",
+                "selectDoiPrefix": "Wählen Sie einen DOI-Präfix",
+                "skipDoiPrefix": "Ohne DOI publizieren",
                 "publish": "Datenpublikation starten"
             }
         },

@@ -1,7 +1,8 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { FormGroup, Checkbox } from 'react-bootstrap';
+import { Observable } from 'rxjs';
+import { FormGroup, Checkbox, FormControl, ControlLabel } from 'react-bootstrap';
 import { createStructuredSelector } from 'reselect';
 import { createPlugin } from '@mapstore/framework/utils/PluginsUtils';
 import { GXP_PTYPES, SOURCE_TYPES } from '@js/utils/ResourceUtils';
@@ -13,6 +14,7 @@ import tooltip from '@mapstore/framework/components/misc/enhancers/tooltip';
 import axios from '@mapstore/framework/libs/ajax';
 import FaIcon from '@js/components/FaIcon';
 import { parseDevHostname } from '@js/utils/APIUtils';
+import { updateResourceProperties } from '@js/actions/gnresource';
 import {
     getResourceData,
     getResourcePerms,
@@ -25,44 +27,118 @@ const i18n = (shortId, msgParams={}) => {
     return { msgId, msgParams };
 }
 
-const PublishDataCollectionComponent = (props) => {
-    console.log(`Rendering PublishDataCollectionDialog`);
-    const { open, onClose, style, closeGlyph } = props;
-    const { title, maplayers=[], linkedResources={} } = props.resourceData;
+const PublishDataCollectionComponent = ({
+    resourceData,
+    doiPrefixes=[],
+    open,
+    onClose,
+    style,
+    closeGlyph,
+    dispatch 
+}) => {
+
+    const { title, pk, owner, maplayers=[], linkedResources={} } = resourceData;
     const { linkedTo=[], linkedBy=[] } = linkedResources;
 
-    const [ iconPublishButton, setIconPublishButton ] = useState("thumbs-up");
-    const [ transform, setTransform ] = useState({});
+    const doiResourceCandidates = [
+        ...maplayers
+            .map(ml => {
+                return {
+                    pk: ml.dataset.pk,
+                    title: ml.dataset.title,
+                    source: "maplayer",
+                }
+            }),
+        ...linkedTo
+            .map(lt => {
+                return {
+                    pk: lt.pk,
+                    title: lt.title,
+                    source: "linked " + lt.resource_type,
+                }
+            })
+            .filter(((lt, i) => {
+                const unique = i === linkedTo.findIndex(test => test.pk === lt.pk);
+                const maplayer = maplayers.findIndex(test => test.pk === lt.pk) >= 0;
+                return !maplayer && unique;
+            }))
+    ];
+    
+    const doiResourceCandidatesUnique = Object.assign({},
+        doiResourceCandidates.reduce((acc, value) => ({...acc, [value.pk]: value}), {})
+    );
+    const [ checkedItems, setCheckedItems ] = useState({});
+    const handleSelectionChange = (event) => {
+        // we use resource pk as name
+        const { name, checked } = event.target;
+        setCheckedItems(prev => ({
+            ...prev,
+            [name]: checked,
+        }));
+    };
 
-    const onPublish = function () {
-        const pk = props.resourceData.pk;
-        const url = parseDevHostname(`/api/v2/publish/${pk}/`);
-        setIconPublishButton("cog fa-spin");
-
-        const resourceIds = linkedTo
-            .filter(lr => !lr.internal)
-            .map(lr => lr.pk);
-        const payload = {
-            "doi_prefix": undefined,
-            "resources": resourceIds
+    useEffect(() => {
+        // example: ?id__in=3,2&filter{owner}=1000&exclude[]=*&include[]=owner&include[]=pk
+        const params = {
+            "id__in": Object.keys(doiResourceCandidatesUnique).join(","),
+            "filter{owner}": owner.pk,
+            "exclude[]": "*",
+            "include[]": "owner",
+            "include[]": "pk"
         }
 
+        const url = "/api/v2/resources";
+        axios.get(url, { params }).then(response => {
+            const ownedResources = (response.data.resources || []);
+            setCheckedItems( prev => ({
+                    ...prev,
+                    ...ownedResources.reduce((acc, value) => ({ ...acc, [value.pk]: true}), {})
+                })
+            );
+        }).catch(e => console.error(`Could not send request! ${e}`));
+    }, [maplayers, linkedResources])
+
+    const [ iconPublishButton, setIconPublishButton ] = useState("bookmark");
+    
+    const [ doiPrefix, setDoiPrefix ] = useState();
+    const [ skipDoiPrefix, setSkipDoiPrefix ] = useState(false);
+    const toggleSkipDoiPrefix = () => setSkipDoiPrefix(prev => !prev);
+
+    const onPublish = function () {
+        setIconPublishButton("cog fa-spin");
+
+        const payload = {
+            "owner": owner.pk,
+            "doi_prefix": doiPrefix,
+            "resources": Object.keys(checkedItems)
+        }
+
+        const url = parseDevHostname(`/api/v2/publish/${pk}/`);
         axios.post(url, payload).then(response => {
             setIconPublishButton("check");
             const data = response.data;
 
-            // TODO reload resource status
-
+            if (data?.success) {
+                dispatch(updateResourceProperties({
+                    resourceData,
+                    // TODO upstream bug? Status seems not reactive
+                    // see https://github.com/GeoNode/geonode-mapstore-client/blob/18986963cf435b963dcb98be25a7b65674741b95/geonode_mapstore_client/client/js/components/ResourceStatus/ResourceStatus.jsx#L20-L27
+                    // Unfortunately, handling of ResourceStatus will change in next versions 
+                    // so we may just accept the status flag not being updated
+                    is_published: true
+                }));
+            }
+            
             setTimeout(onClose, 200);
         }).catch(error => {
             setIconPublishButton("exclamation-circle");
-            console.error(`An error occured during publish: ${error}`);
+            console.error(`An error occured during publish: ${error.statusText}`);
         });
     }
 
     return (
         <Portal>
-            <Dialog style={style} show={open} onHide={onClose} modal>
+            <Dialog id="publish-dialog" bsStyle={style} show={open} onHide={onClose} modal>
                 <span role="header">
                     <span className="about-panel-title"><Message { ...i18n("title") } /></span>
                     <button onClick={onClose} className="settings-panel-close close">{closeGlyph ? <Glyphicon glyph={closeGlyph}/> : <span>×</span>}</button>
@@ -72,27 +148,54 @@ const PublishDataCollectionComponent = (props) => {
 
                     <FormGroup className="mb-3">
                         {
-                            maplayers.map(layer =>
+                            Object.values(doiResourceCandidatesUnique).map(resource =>
                                 <>
                                     <Checkbox
                                         // checked={enabled}
                                         type="switch"
+                                        key={resource.pk}
+                                        name={resource.pk}
+                                        checked={!!checkedItems[resource.pk]}
                                         // id="gn-filter-by-extent-switch"
-                                        // onChange={handleOnSwitch}
+                                        onChange={handleSelectionChange}
                                     >
-                                        {layer.name}
+                                        {resource.title + " (" + resource.source + ")"}
                                     </Checkbox>
                                 </>
                             )
                         }
-
                     </FormGroup>
-
-
+                    
+                    <FormGroup className="mb-3">
+                        <ControlLabel>
+                            <Message { ...i18n("selectDoiPrefix") } />
+                        </ControlLabel>
+                        <Checkbox
+                            checked={skipDoiPrefix}
+                            type="switch"
+                            onChange={toggleSkipDoiPrefix}
+                        >
+                             <Message { ...i18n("skipDoiPrefix") } />
+                        </Checkbox>
+                        <FormControl id="doi-select" 
+                            componentClass="select"
+                            onChange={setDoiPrefix}
+                            // TODO allow "empty"/"undefined" select for random DOI prefixes
+                            disabled={ doiPrefixes.length===0 || skipDoiPrefix }
+                        >
+                            {
+                                doiPrefixes.map((doiPrefix, i) => 
+                                    <>
+                                        <option key={i} value={doiPrefix}>{doiPrefix}</option>
+                                    </>
+                                )
+                            }
+                        </FormControl>
+                    </FormGroup>
 
                 </div>
                 <div role="footer">
-                    <Button variant="secondary" onClick={onClose}>
+                    <Button onClick={onClose}>
                         <span></span> <Message { ...i18n("cancel") } />
                     </Button>
                     <Button
@@ -100,7 +203,7 @@ const PublishDataCollectionComponent = (props) => {
                         //disabled={!this.props.downloadOptions.selectedFormat || this.props.loading}
                         //</div>onClick={this.handleExport}
                     >
-                        <span><i class={"fa fa-" + iconPublishButton}></i></span> <Message { ...i18n("publish") } />
+                        <span><i className={"fa fa-" + iconPublishButton}></i></span> <Message { ...i18n("publish") } />
                     </Button>
                 </div>
             </Dialog>

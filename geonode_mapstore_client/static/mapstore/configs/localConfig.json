@@ -2832,7 +2832,10 @@
                 "mandatory": true,
                 "name": "PublishDataCollection",
                 "cfg": {
-                    "showText": false
+                    "showText": false,
+                    "doiPrefixes": [
+                        "zalf/hui-boo"
+                    ]
                 }                
             },
             {
