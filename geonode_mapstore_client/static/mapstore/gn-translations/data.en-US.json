@@ -19,6 +19,24 @@
             "VisualStyleEditor": {
                 "description": "Dataset's style editor",
                 "title": "Visual Style Editor"
+            },
+            "ApproveDataCollection": {
+                "button": "Approve dataset",
+                "cancel": "Cancel",
+                "buttonTooltip": "Approve data collection",
+                "title": "Approve data collection",
+                "description": "You have to verify the data before a data steward can publish this data collection. Please make sure everything is set and click on 'Approve'. \n\n Do you with to approve the data collection '{title}'?",
+                "approve": "Approve"
+            },
+            "PublishDataCollection": {
+                "button": "Publish data collection",
+                "cancel": "Cancel",
+                "buttonTooltip": "Publish data collection",
+                "title": "Publish data collection",
+                "description": "Select the data to publish along with this collection {title}",
+                "selectDoiPrefix": "Choose a DOI prefix",
+                "skipDoiPrefix": "Publish without registereing a DOI",
+                "publish": "Start data publication"
             }
         },
         "gnhome": {

@@ -2169,6 +2169,20 @@
                                 },
                                 {
                                     "type": "divider",
+                                    "disableIf": "{state('resourceParams')?.appPk && (context.get(state('gnResourceData'), 'is_published') || context.get(state('gnResourceData'), 'is_approved'))}"
+                                },
+                                {
+                                    "type": "plugin",
+                                    "name": "ApproveDataCollection",
+                                    "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'change_resourcebase') && !state('isNewResource')  || context.get(state('gnResourceData'), 'is_approved')}"
+                                },
+                                {
+                                    "type": "plugin",
+                                    "name": "PublishDataCollection",
+                                    "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'change_resourcebase') && !state('isNewResource') || context.get(state('gnResourceData'), 'is_published')}"
+                                },
+                                {
+                                    "type": "divider",
                                     "disableIf": "{state('resourceParams')?.appPk}"
                                 },
                                 {
@@ -2192,16 +2206,6 @@
                                     "name": "RemoveMapViewer"
                                 }
                             ]
-                        },
-                        {
-                            "type": "plugin",
-                            "name": "ApproveDataCollection",
-                            "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'change_resourcebase') && !state('isNewResource')}"
-                        },
-                        {
-                            "type": "plugin",
-                            "name": "PublishDataCollection",
-                            "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'change_resourcebase') && !state('isNewResource')}"
                         },
                         {
                             "type": "divider",
@@ -2825,14 +2829,14 @@
                 "mandatory": true,
                 "name": "ApproveDataCollection",
                 "cfg": {
-                    "showText": false
+                    "showText": true
                 }                
             },
             {
                 "mandatory": true,
                 "name": "PublishDataCollection",
                 "cfg": {
-                    "showText": false,
+                    "showText": true,
                     "doiPrefixes": [
                         "zalf/hui-boo"
                     ]
