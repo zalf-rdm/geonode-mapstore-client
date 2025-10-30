@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
+import { Glyphicon } from 'react-bootstrap';
 import { createStructuredSelector } from 'reselect';
 import { createPlugin } from '@mapstore/framework/utils/PluginsUtils';
 import Message from '@mapstore/framework/components/I18N/Message';
@@ -25,8 +26,7 @@ const i18n = (shortId, msgParams={}) => {
 
 const ApproveDataCollectionComponent = (props) => {
     const { open, onClose, style={"white-space": "pre-line"}, closeGlyph } = props;
-    const { title, owner, maplayers=[], linkedResources={} } = props.resourceData;
-    const { linkedTo=[], linkedBy=[] } = linkedResources;
+    const { title, owner } = props.resourceData;
 
     const [ iconApproveButton, setIconApproveButton ] = useState("thumbs-up");
 
@@ -36,7 +36,7 @@ const ApproveDataCollectionComponent = (props) => {
         setIconApproveButton("cog");
         axios.post(url, { owner: owner.pk }).then(response => {
             setIconApproveButton("check");
-            const data = response.data;
+            //const data = response.data;
             setTimeout(onClose, 200);
         }).catch(error => {
             setIconApproveButton("circle-exclamation");
@@ -59,7 +59,7 @@ const ApproveDataCollectionComponent = (props) => {
                         <span></span> <Message { ...i18n("cancel") } />
                     </Button>
                     <Button variant="primary" onClick={onApprove}>
-                        <span><i class={"fa fa-" + iconApproveButton}></i></span> <Message { ...i18n("approve") } />
+                        <span><i className={"fa fa-" + iconApproveButton}></i></span> <Message { ...i18n("approve") } />
                     </Button>
                 </div>
             </Dialog>

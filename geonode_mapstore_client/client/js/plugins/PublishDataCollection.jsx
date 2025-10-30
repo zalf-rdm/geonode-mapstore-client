@@ -1,11 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Observable } from 'rxjs';
-import { FormGroup, Checkbox, FormControl, ControlLabel } from 'react-bootstrap';
+import { FormGroup, Checkbox, FormControl, ControlLabel, Glyphicon } from 'react-bootstrap';
 import { createStructuredSelector } from 'reselect';
 import { createPlugin } from '@mapstore/framework/utils/PluginsUtils';
-import { GXP_PTYPES, SOURCE_TYPES } from '@js/utils/ResourceUtils';
 import Message from '@mapstore/framework/components/I18N/Message';
 import Button from '@js/components/Button';
 import Dialog from '@mapstore/framework/components/misc/Dialog';
@@ -38,7 +36,7 @@ const PublishDataCollectionComponent = ({
 }) => {
 
     const { title, pk, owner, maplayers=[], linkedResources={} } = resourceData;
-    const { linkedTo=[], linkedBy=[] } = linkedResources;
+    const { linkedTo=[] } = linkedResources;
 
     const doiResourceCandidates = [
         ...maplayers
