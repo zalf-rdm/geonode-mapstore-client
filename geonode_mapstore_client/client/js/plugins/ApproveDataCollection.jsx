@@ -25,7 +25,7 @@ const i18n = (shortId, msgParams={}) => {
 
 const ApproveDataCollectionComponent = (props) => {
     const { open, onClose, style={"white-space": "pre-line"}, closeGlyph } = props;
-    const { title, maplayers=[], linkedResources={} } = props.resourceData;
+    const { title, owner, maplayers=[], linkedResources={} } = props.resourceData;
     const { linkedTo=[], linkedBy=[] } = linkedResources;
 
     const [ iconApproveButton, setIconApproveButton ] = useState("thumbs-up");
@@ -34,7 +34,7 @@ const ApproveDataCollectionComponent = (props) => {
         const pk = props.resourceData.pk;
         const url = parseDevHostname(`/api/v2/approve/${pk}/`);
         setIconApproveButton("cog");
-        axios.post(url).then(response => {
+        axios.post(url, { owner: owner.pk }).then(response => {
             setIconApproveButton("check");
             const data = response.data;
             setTimeout(onClose, 200);
