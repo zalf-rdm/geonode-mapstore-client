@@ -23,7 +23,7 @@ function TabbedTablesComponent({ owsUrl, tableLayers }) {
         }));
     }, [owsUrl, tableLayers]);
 
-    if (tableLayers && tableLayers.length == 1) {
+    if (tableLayers && tableLayers.length === 1) {
         const typeName = tableLayers[0].name;
         return (
             <TableComponent owsUrl={owsUrl} typeName={typeName} />

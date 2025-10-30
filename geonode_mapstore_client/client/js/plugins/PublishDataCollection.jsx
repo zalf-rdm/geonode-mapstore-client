@@ -81,7 +81,6 @@ const PublishDataCollectionComponent = ({
             "id__in": Object.keys(doiResourceCandidatesUnique).join(","),
             "filter{owner}": owner.pk,
             "exclude[]": "*",
-            "include[]": "owner",
             "include[]": "pk"
         }
 
@@ -182,9 +181,9 @@ const PublishDataCollectionComponent = ({
                             disabled={ doiPrefixes.length===0 || skipDoiPrefix }
                         >
                             {
-                                doiPrefixes.map((doiPrefix, i) => 
+                                doiPrefixes.map((prefix, i) => 
                                     <>
-                                        <option key={i} value={doiPrefix}>{doiPrefix}</option>
+                                        <option key={i} value={prefix}>{prefix}</option>
                                     </>
                                 )
                             }

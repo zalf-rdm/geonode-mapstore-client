@@ -34,7 +34,7 @@ const ApproveDataCollectionComponent = (props) => {
         const pk = props.resourceData.pk;
         const url = parseDevHostname(`/api/v2/approve/${pk}/`);
         setIconApproveButton("cog");
-        axios.post(url, { owner: owner.pk }).then(response => {
+        axios.post(url, { owner: owner.pk }).then(() => {
             setIconApproveButton("check");
             //const data = response.data;
             setTimeout(onClose, 200);
