@@ -5,7 +5,7 @@
 {% load get_search_services %}
 {% load static %}
 {% comment %}
-    app and map configuration need to be normalized
+app and map configuration need to be normalized
 {% endcomment %}
 
 {% comment %} setting.py variables {% endcomment %}
@@ -22,7 +22,7 @@
 {% mapbox_access_token as MAPBOX_ACCESS_TOKEN %}
 
 <script>
-    (function(){
+    (function () {
 
         function checkBoolean(value) {
             if (value === 'true') {
@@ -50,7 +50,7 @@
         let defaultMapCenterY = geoNodeSettings.DEFAULT_MAP_CENTER_Y || 0;
         let defaultMapZoom = geoNodeSettings.DEFAULT_MAP_ZOOM || 0;
         let defaultTileSize = geoNodeSettings.DEFAULT_TILE_SIZE || 512;
-        let defaultThumbnailSize = geoNodeSettings.DEFAULT_THUMBNAIL_SIZE || {'width': 500, 'height': 200};
+        let defaultThumbnailSize = geoNodeSettings.DEFAULT_THUMBNAIL_SIZE || { 'width': 500, 'height': 200 };
         let datasetMaxUploadSize = geoNodeSettings.DATASET_MAX_UPLOAD_SIZE;
         let documentMaxUploadSize = geoNodeSettings.DOCUMENT_MAX_UPLOAD_SIZE;
         let maxParallelUploads = geoNodeSettings.MAX_PARALLEL_UPLOADS
@@ -64,7 +64,7 @@
         let allowedDocumentTypes = geoNodeSettings.ALLOWED_DOCUMENT_TYPES || [];
         let languages = geoNodeSettings.LANGUAGES;
         let projectionDefs = geoNodeSettings.PROJECTION_DEFS || [];
-        let pluginsConfigPatchRules  = geoNodeSettings.PLUGINS_CONFIG_PATCH_RULES || [];
+        let pluginsConfigPatchRules = geoNodeSettings.PLUGINS_CONFIG_PATCH_RULES || [];
         let translationsPath = geoNodeSettings.TRANSLATIONS_PATH;
         let extensionsFolder = geoNodeSettings.EXTENSIONS_FOLDER_PATH;
         let supportedDatasetFileTypes = geoNodeSettings.SUPPORTED_DATASET_FILE_TYPES;
@@ -132,125 +132,126 @@
         let geoServerPublicLocation = '{{ GEOSERVER_PUBLIC_LOCATION }}' || '';
         let isMobile = '{{ request.user_agent.is_mobile }}' === 'True' ? true : false;
 
-        const searchServicesPayload =  {{SEARCH_SERVICES_PAYLOAD|safe}};
-        let searchServicesPatchRules = searchServicesPayload.length ? ['map_viewer', 'dataset_viewr', 'map_viewer_mobile', 'dataset_viewer_mobile'].map(
-            (v, i) => ({
-                "op": "replace",
-                "jsonpath": `$.${v}..[?(@.name == 'Search')].cfg`,
-                "value": {"searchOptions": {"services": searchServicesPayload}}
-            })
-        ) : [];
+        const searchServicesPayload = {{ SEARCH_SERVICES_PAYLOAD| safe
+    }};
+    let searchServicesPatchRules = searchServicesPayload.length ? ['map_viewer', 'dataset_viewr', 'map_viewer_mobile', 'dataset_viewer_mobile'].map(
+        (v, i) => ({
+            "op": "replace",
+            "jsonpath": `$.${v}..[?(@.name == 'Search')].cfg`,
+            "value": { "searchOptions": { "services": searchServicesPayload } }
+        })
+    ) : [];
 
-        {% block override_settings %}
-        {% endblock %}
-        window.__GEONODE_CONFIG__ = {
-            languageCode: '{{ LANGUAGE_CODE }}',
-            languages: languages,
-            translationsPath: translationsPath,
-            resourceId: '{{ resource.pk|default:"" }}',
-            resourceType: '{{ resource.resource_type|default:"" }}',
-            resourceSubtype: '{{ resource.subtype|default:"" }}',
-            isEmbed: isEmbed,
-            pluginsConfigKey: pluginsConfigKey,
-            pluginsConfigPatchRules: [...searchServicesPatchRules, ...pluginsConfigPatchRules],
-            apikey: '{%if user_apikey %}{{user_apikey}}{% else %}{% endif %}',
-            localConfig: {
-                proxyUrl: {
-                    url: '{{UPDATED_PROXY_URL|safe }}',
-                    useCORS: []
-                },
-                useAuthenticationRules: true,
-                authenticationRules: [
-                    {
-                        urlPattern: geoServerPublicLocation + '.*',
-                        authkeyParamName: 'access_token',
-                        method: 'authkey'
-                    },
-                    {
-                        urlPattern: siteUrl + 'gs.*',
-                        authkeyParamName: 'access_token',
-                        method: 'authkey'
-                    },
-                    {
-                        urlPattern: siteUrl + 'api/v2.*',
-                        method: 'bearer'
-                    }
-                ],
-                extensionsFolder: extensionsFolder,
-                printUrl: geoServerPublicLocation + 'pdf/info.json',
-                bingApiKey: '{% bing_api_key %}',
-                mapboxAccessToken: '{{ MAPBOX_ACCESS_TOKEN }}',
-                geoNodeApi: {
-                    endpointV1: siteUrl + 'api',
-                    endpointV2: siteUrl + 'api/v2/'
-                },
-                projectionDefs: projectionDefs,
-                geoNodeCustomFilters: customFilters,
-                geoNodeCardsMenuItems: cardsMenuItems,
-                // the properties inside geoNodeSettings are stored in the state
-                // and accessible by the monitored state with state('settings')
-                geoNodeSettings: {
-                    catalogueSelectedService: catalogueSelectedService,
-                    catalogueServices: catalogueServices,
-                    dashboardCatalogueServices: dashboardCatalogueServices,
-                    dashboardCatalogueSelectedService: dashboardCatalogueSelectedService,
-                    createLayer: createLayer,
-                    geonodeUrl: siteUrl,
-                    geoserverUrl: geoServerPublicLocation,
-                    siteName: siteName,
-                    defaultTileSize: defaultTileSize,
-                    defaultLayerFormat: defaultLayerFormat,
-                    timeEnabled: timeEnabled,
-                    allowedDocumentTypes: allowedDocumentTypes,
-                    isMobile: isMobile,
-                    datasetMaxUploadSize: datasetMaxUploadSize,
-                    documentMaxUploadSize: documentMaxUploadSize,
-                    maxParallelUploads: maxParallelUploads,
-                    defaultThumbnailSize: defaultThumbnailSize,
-                    upload: {
-                        supportedDatasetFileTypes: supportedDatasetFileTypes
-                    },
-                    staticPath: "{% static '' %}",
-                    catalogHomeRedirectsTo: catalogHomeRedirectsTo,
-                    defaultCatalogPage: defaultCatalogPage,
-                    catalogPagePath: catalogPagePath
-                }
+    {% block override_settings %}
+    {% endblock %}
+    window.__GEONODE_CONFIG__ = {
+        languageCode: '{{ LANGUAGE_CODE }}',
+        languages: languages,
+        translationsPath: translationsPath,
+        resourceId: '{{ resource.pk|default:"" }}',
+        resourceType: '{{ resource.resource_type|default:"" }}',
+        resourceSubtype: '{{ resource.subtype|default:"" }}',
+        isEmbed: isEmbed,
+        pluginsConfigKey: pluginsConfigKey,
+        pluginsConfigPatchRules: [...searchServicesPatchRules, ...pluginsConfigPatchRules],
+        apikey: '{%if user_apikey %}{{user_apikey}}{% else %}{% endif %}',
+        localConfig: {
+            proxyUrl: {
+                url: '{{UPDATED_PROXY_URL|safe }}',
+                useCORS: []
             },
-        };
+            useAuthenticationRules: true,
+            authenticationRules: [
+                {
+                    urlPattern: geoServerPublicLocation + '.*',
+                    authkeyParamName: 'access_token',
+                    method: 'authkey'
+                },
+                {
+                    urlPattern: siteUrl + 'gs.*',
+                    authkeyParamName: 'access_token',
+                    method: 'authkey'
+                },
+                {
+                    urlPattern: siteUrl + 'api/v2.*',
+                    method: 'bearer'
+                }
+            ],
+            extensionsFolder: extensionsFolder,
+            printUrl: geoServerPublicLocation + 'pdf/info.json',
+            bingApiKey: '{% bing_api_key %}',
+            mapboxAccessToken: '{{ MAPBOX_ACCESS_TOKEN }}',
+            geoNodeApi: {
+                endpointV1: siteUrl + 'api',
+                endpointV2: siteUrl + 'api/v2/'
+            },
+            projectionDefs: projectionDefs,
+            geoNodeCustomFilters: customFilters,
+            geoNodeCardsMenuItems: cardsMenuItems,
+            // the properties inside geoNodeSettings are stored in the state
+            // and accessible by the monitored state with state('settings')
+            geoNodeSettings: {
+                catalogueSelectedService: catalogueSelectedService,
+                catalogueServices: catalogueServices,
+                dashboardCatalogueServices: dashboardCatalogueServices,
+                dashboardCatalogueSelectedService: dashboardCatalogueSelectedService,
+                createLayer: createLayer,
+                geonodeUrl: siteUrl,
+                geoserverUrl: geoServerPublicLocation,
+                siteName: siteName,
+                defaultTileSize: defaultTileSize,
+                defaultLayerFormat: defaultLayerFormat,
+                timeEnabled: timeEnabled,
+                allowedDocumentTypes: allowedDocumentTypes,
+                isMobile: isMobile,
+                datasetMaxUploadSize: datasetMaxUploadSize,
+                documentMaxUploadSize: documentMaxUploadSize,
+                maxParallelUploads: maxParallelUploads,
+                defaultThumbnailSize: defaultThumbnailSize,
+                upload: {
+                    supportedDatasetFileTypes: supportedDatasetFileTypes
+                },
+                staticPath: "{% static '' %}",
+                catalogHomeRedirectsTo: catalogHomeRedirectsTo,
+                defaultCatalogPage: defaultCatalogPage,
+                catalogPagePath: catalogPagePath
+            }
+        },
+    };
 
-        // override maps configuration with properties from setting.py
-        window.overrideNewMapConfig = function(config) {
-            if (config && config.map && config.map.layers) {
-                config.map.layers.push(...baseLayers);
-            }
-            config.map.sources = baseLayersSources;
-            config.map.projection = defaultMapCRS;
-            config.map.center = {
-                x: defaultMapCenterX,
-                y: defaultMapCenterY,
-                crs: defaultMapCRS
-            };
-            config.map.zoom = defaultMapZoom;
-
-            config.catalogServices = config.catalogServices || { services: {} };
-            if (catalogueServices) {
-                config.catalogServices.services = Object.assign(config.catalogServices.services || {}, catalogueServices);
-            }
-            if (catalogueSelectedService) {
-                config.catalogServices.selectedService = catalogueSelectedService;
-            }
-            return config;
+    // override maps configuration with properties from setting.py
+    window.overrideNewMapConfig = function (config) {
+        if (config && config.map && config.map.layers) {
+            config.map.layers.push(...baseLayers);
+        }
+        config.map.sources = baseLayersSources;
+        config.map.projection = defaultMapCRS;
+        config.map.center = {
+            x: defaultMapCenterX,
+            y: defaultMapCenterY,
+            crs: defaultMapCRS
         };
+        config.map.zoom = defaultMapZoom;
+
+        config.catalogServices = config.catalogServices || { services: {} };
+        if (catalogueServices) {
+            config.catalogServices.services = Object.assign(config.catalogServices.services || {}, catalogueServices);
+        }
+        if (catalogueSelectedService) {
+            config.catalogServices.selectedService = catalogueSelectedService;
+        }
+        return config;
+    };
 
         // override new geostory configuration
         // window.overrideNewGeoStoryConfig = function(config) { return config; };
 
-    })();
+    }) ();
 </script>
 {% block override_local_config %}
 {% comment %}
 <script>
-    window.__GEONODE_CONFIG__.overrideLocalConfig = function(localConfig, _) {
+    window.__GEONODE_CONFIG__.overrideLocalConfig = function (localConfig, _) {
         /*
         _ is a subset of lodash and contains following functions
         {
@@ -265,7 +266,7 @@
         */
         return _.mergeWith(localConfig, {
             // ...my override config
-        }, function(objValue, srcValue, key) {
+        }, function (objValue, srcValue, key) {
             if (_.isArray(objValue)) {
                 return srcValue;
             }
@@ -278,4 +279,10 @@
     };
 </script>
 {% endcomment %}
+<script>
+    window.__GEONODE_CONFIG__.overrideLocalConfig = function (localConfig) {
+        localConfig.plugins.catalogue.push({ name: 'Footer' });
+        return localConfig;
+    };
+</script>
 {% endblock %}
