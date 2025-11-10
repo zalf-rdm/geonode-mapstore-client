@@ -1,0 +1,77 @@
+/* ---------------------------------------------------
+   ZALF Theme — Typography, palette, branding
+   Integrates with Bootstrap 3 / MapStore LESS build
+---------------------------------------------------- */
+
+/* === Google Fonts === */
+@import (css) url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans:wght@300;400;500;700&display=swap');
+
+/* === Font stacks === */
+@font-family-inter: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+@font-family-noto:  'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+/* === Brand colors (ZALF palette suggestion) === */
+@brand-primary:  #3b7a57;  // green
+@brand-secondary: #94bfa2;
+@brand-dark:     #0b0b0b;
+@brand-light:    #f4f4f4;
+@brand-accent:   #397AAB;
+@link-color:     @brand-accent;
+
+/* === Typography === */
+body {
+  font-family: @font-family-inter;
+  font-weight: 400;
+  color: #333;
+  background-color: #fff;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: @font-family-inter;
+  font-weight: 600;
+}
+
+p, li {
+  font-family: @font-family-noto;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+/* === Font helpers === */
+.font-inter { font-family: @font-family-inter !important; }
+.font-noto  { font-family: @font-family-noto !important; }
+
+.font-light    { font-weight: 300 !important; }
+.font-regular  { font-weight: 400 !important; }
+.font-medium   { font-weight: 500 !important; }
+.font-semibold { font-weight: 600 !important; }
+.font-bold     { font-weight: 700 !important; }
+
+/* === Footer Styling (optional) === */
+footer.footer {
+  font-family: @font-family-inter;
+  background-color: @brand-dark;
+  color: #f2f2f2;
+  padding: 40px 0;
+}
+
+footer.footer a {
+  color: #f2f2f2;
+  text-decoration: none;
+}
+
+footer.footer a:hover {
+  color: @brand-accent;
+}
+
+/* === Buttons === */
+.btn-primary {
+  background-color: @brand-primary;
+  border-color: @brand-primary;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: darken(@brand-primary, 10%);
+  border-color: darken(@brand-primary, 10%);
+}
