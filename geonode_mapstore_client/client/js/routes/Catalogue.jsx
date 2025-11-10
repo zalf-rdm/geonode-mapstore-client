@@ -64,7 +64,7 @@ const withRedirect = (Component) => {
             window.location.href = `#/${defaultCatalogPage ? defaultCatalogPage : ""}`;
             return null;
         }
-        return <Component {...props}/>;
+        return <Component {...props} />;
     };
 };
 
@@ -88,18 +88,18 @@ function CatalogueRoute({
     return (
         <>
             {!pending && (
-            <div>
-            <ConnectedPluginsContainer
-                key={className}
-                id={className}
-                className={className}
-                pluginsConfig={pluginsConfig}
-                plugins={parsedPlugins}
-                allPlugins={plugins}
-                params={params}
-            />
-            </div>
-        )}
+                <div>
+                    <ConnectedPluginsContainer
+                        key={className}
+                        id={className}
+                        className={className}
+                        pluginsConfig={pluginsConfig}
+                        plugins={parsedPlugins}
+                        allPlugins={plugins}
+                        params={params}
+                    />
+                </div>
+            )}
         </>
     );
 }
