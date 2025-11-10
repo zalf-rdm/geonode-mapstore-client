@@ -87,7 +87,9 @@ function CatalogueRoute({
 
     return (
         <>
-            {!pending && <ConnectedPluginsContainer
+            {!pending && (
+            <div>
+            <ConnectedPluginsContainer
                 key={className}
                 id={className}
                 className={className}
@@ -95,7 +97,9 @@ function CatalogueRoute({
                 plugins={parsedPlugins}
                 allPlugins={plugins}
                 params={params}
-            />}
+            />
+            </div>
+        )}
         </>
     );
 }

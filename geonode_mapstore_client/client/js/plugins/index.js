@@ -472,6 +472,11 @@ export const plugins = {
         'TabularCollectionViewer',
         () => import(/* webpackChunkName: 'plugins/tabular-collection-plugin' */ '@js/plugins/TabularCollectionViewer')
     )
+    ,
+    FooterPlugin: toModulePlugin(
+        'Footer',
+        () => import(/* webpackChunkName: 'plugins/tabular-collection-plugin' */ '@js/plugins/Footer')
+    )
 };
 
 const pluginsDefinition = {
