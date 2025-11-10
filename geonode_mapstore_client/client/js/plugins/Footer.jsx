@@ -2,7 +2,7 @@ import React from 'react';
 import { createPlugin } from '@mapstore/framework/utils/PluginsUtils';
 
 const Footer = () => (
-    <div className="ui-zalf ms-footer">
+    <div className="ms-footer">
 
 
         <footer className="footer font-inter bg-dark text-white py-5" role="contentinfo">
@@ -60,11 +60,10 @@ const Footer = () => (
 
                         {/* Icons: centered on mobile, left-aligned on md+ */}
                         <div className="d-flex justify-content-center justify-content-md-start gap-3 mb-4">
-                            <a href="https://www.linkedin.com/company/zalf-leibniz" class="fs-5 text-light" title="LinkedIn" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
-                            <a href="https://www.youtube.com/@ZALF_Leibniz" class="fs-5 text-light" title="Youtube" aria-label="'Youtube"><i class="bi bi-youtube"></i></a>
-                            <a href="https://www.instagram.com/querfeldein.blog/" class="fs-5 text-light" title="Instagram" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-                            <a href="https://bsky.app/profile/zalf.bsky.social" class="fs-5 text-light" title="Bluesky" aria-label="Bluesky"><i class="bi bi-bluesky"></i></a>
-                            <a href="https://github.com/zalf-rdm" class="fs-5 text-light" title="GitHub" aria-label="GitHub"><i class="bi bi-github"></i></a>
+                            <a href="#" className="fs-5 text-light" title="Twitter" aria-label="Twitter"><i className="bi bi-twitter"></i></a>
+                            <a href="#" className="fs-5 text-light" title="GitHub" aria-label="GitHub"><i className="bi bi-github"></i></a>
+                            <a href="#" className="fs-5 text-light" title="LinkedIn" aria-label="LinkedIn"><i className="bi bi-linkedin"></i></a>
+                            <a href="#" className="fs-5 text-light" title="Email" aria-label="Email"><i className="bi bi-envelope"></i></a>
                         </div>
 
                         {/* Logo: centered on mobile, left-aligned on md+ */}
