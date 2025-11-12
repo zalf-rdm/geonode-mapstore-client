@@ -59,22 +59,16 @@ const Footer = () => (
 
                     {/* Social Media */}
                     <div className="col-6 col-md-6 col-lg-3">
-                        <h3 className="fs-5 fw-bold mb-3 text-light">Follow Us</h3>
-
                         {/* Icons: centered on mobile, left-aligned on md+ */}
-                        <div className="d-flex justify-content-center justify-content-md-start gap-3 mb-4">
-                            <a href="#" className="fs-5 text-light" title="Twitter" aria-label="Twitter"><i className="bi bi-twitter"></i></a>
-                            <a href="#" className="fs-5 text-light" title="GitHub" aria-label="GitHub"><i className="bi bi-github"></i></a>
-                            <a href="#" className="fs-5 text-light" title="LinkedIn" aria-label="LinkedIn"><i className="bi bi-linkedin"></i></a>
-                            <a href="#" className="fs-5 text-light" title="Email" aria-label="Email"><i className="bi bi-envelope"></i></a>
+                        <div className="text-start text-md-start">
+                            <h4 className="fw-semibold mb-2 fs-7 text-light">Certified by</h4>
+                            <img src="/static/img/logo_core_trust_seal.png" alt="Core Trust Seal" className="img-fluid mx-auto mx-md-0" style={{ maxHeight: '50px' }} />
                         </div>
 
                         {/* Logo: centered on mobile, left-aligned on md+ */}
                         <div className="text-start text-md-start">
                             <h4 className="fw-semibold mb-2 fs-7 text-light">Powered by</h4>
                             <img src="/static/img/logo_zalf_square.jpg" alt="ZALF" className="img-fluid mx-auto mx-md-0" style={{ maxHeight: '50px' }} />
-                            <img src="/static/img/logo_core_trust_seal.png" alt="Core Trust Seal" className="img-fluid mx-auto mx-md-0" style={{ maxHeight: '50px' }} />
-
                         </div>
                     </div>
                 </div>
