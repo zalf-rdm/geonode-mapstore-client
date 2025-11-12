@@ -8,15 +8,15 @@
 
 /* === Font stacks === */
 @font-inter: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-@font-noto:  'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+@font-noto: 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
 /* === Brand colors (ZALF palette suggestion) === */
-@brand-primary:  #3b7a57;  // green
+@brand-primary: #3b7a57; // green
 @brand-secondary: #94bfa2;
-@brand-dark:     #0b0b0b;
-@brand-light:    #f4f4f4;
-@brand-accent:   #3b7a57;
-@link-color:     @brand-accent;
+@brand-dark: #0b0b0b;
+@brand-light: #f4f4f4;
+@brand-accent: #3b7a57;
+@link-color: @brand-accent;
 
 /* === Typography === */
 body {
@@ -26,26 +26,33 @@ body {
   background-color: #fff;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: @font-inter;
   font-weight: 600;
 }
 
-p, li {
+p,
+li {
   font-family: @font-noto;
   font-weight: 400;
   line-height: 1.6;
 }
 
 /* === Font helpers === */
-.font-inter { font-family: @font-inter !important; }
-.font-noto  { font-family: @font-noto !important; }
+.font-inter {
+  font-family: @font-inter !important;
+}
 
-.font-light    { font-weight: 300 !important; }
-.font-regular  { font-weight: 400 !important; }
-.font-medium   { font-weight: 500 !important; }
-.font-semibold { font-weight: 600 !important; }
-.font-bold     { font-weight: 700 !important; }
+.font-noto {
+  font-family: @font-noto !important;
+}
+
+
 
 /* === Footer Styling (optional) === */
 footer.footer {
@@ -61,7 +68,7 @@ footer.footer a {
 }
 
 footer.footer a:hover {
-  color: @brand-accent;
+  color: @brand-accent !important;
 }
 
 /* === Buttons === */

@@ -9,7 +9,7 @@ const Footer = () => (
             <div className="container pb-5">
                 <div className="row gy-4 text-start text-md-start">
                     {/* Company Info */}
-                    <div className="col-12 col-md-6 col-lg-3">
+                    <div className="col-6 col-md-6 col-lg-3">
                         <h3 className="fs-5 fw-bold mb-3 text-light">ZALF Repository</h3>
                         <p className="mb-0 fs-7 text-gray-3">
                             Discover, visualize, and share high-quality datasets powering open science, policy, and innovation.
@@ -29,7 +29,7 @@ const Footer = () => (
                             <li className="mb-2">
                                 <a href="#" className="link-light text-decoration-none">OGC Services and API</a>
                             </li>
-                            <li>
+                            <li className="mb-2">
                                 <a href="#" className="link-light text-decoration-none">Research Data Management</a>
                             </li>
                         </ul>
@@ -40,25 +40,25 @@ const Footer = () => (
                         <h3 className="fs-5 fw-bold mb-3 text-light">Resources</h3>
                         <ul className="list-unstyled fs-6 fw-normal m-0">
                             <li className="mb-2">
-                                <a href="#" className="link-light text-decoration-none">Publications</a>
+                                <a href="#" className="link-light">Publications</a>
                             </li>
                             <li className="mb-2">
-                                <a href="#" className="link-light text-decoration-none">Data Policy</a>
+                                <a href="#" className="link-light">Data Policy</a>
                             </li>
                             <li className="mb-2">
-                                <a href="#" className="link-light text-decoration-none">How to Cite Us</a>
+                                <a href="#" className="link-light">How to Cite Us</a>
                             </li>
                             <li>
-                                <a href="#" className="link-light text-decoration-none">Imprint</a>
+                                <a href="#" className="link-light">Imprint</a>
                             </li>
                             <li>
-                                <a href="#" className="link-light text-decoration-none">Privacity</a>
+                                <a href="#" className="link-light ">Privacy</a>
                             </li>
                         </ul>
                     </nav>
 
                     {/* Social Media */}
-                    <div className="col-12 col-md-6 col-lg-3">
+                    <div className="col-6 col-md-6 col-lg-3">
                         <h3 className="fs-5 fw-bold mb-3 text-light">Follow Us</h3>
 
                         {/* Icons: centered on mobile, left-aligned on md+ */}
@@ -72,15 +72,16 @@ const Footer = () => (
                         {/* Logo: centered on mobile, left-aligned on md+ */}
                         <div className="text-start text-md-start">
                             <h4 className="fw-semibold mb-2 fs-7 text-light">Powered by</h4>
-                            <img src="/static/ui_zalf/img/logos/logo_zalf_white.png" alt="ZALF" className="img-fluid mx-auto mx-md-0" style={{ maxHeight: '50px' }} />
+                            <img src="/static/img/logo_zalf_square.jpg" alt="ZALF" className="img-fluid mx-auto mx-md-0" style={{ maxHeight: '50px' }} />
+
                         </div>
                     </div>
                 </div>
             </div>
 
             {/* Bottom bar */}
-            <div className="fs-6 border-top border-gray mt-5 pt-4 text-start text-gray-3">
-                &copy; {new Date().getFullYear()} ZALF Repository
+            <div className="fs-6 border-top border-gray mt-5 pt-4 text-center text-gray-3">
+                ZALF Repository
             </div>
         </footer>
 
