@@ -73,6 +73,7 @@ const Footer = () => (
                         <div className="text-start text-md-start">
                             <h4 className="fw-semibold mb-2 fs-7 text-light">Powered by</h4>
                             <img src="/static/img/logo_zalf_square.jpg" alt="ZALF" className="img-fluid mx-auto mx-md-0" style={{ maxHeight: '50px' }} />
+                            <img src="/static/img/logo_core_trust_seal.png" alt="Core Trust Seal" className="img-fluid mx-auto mx-md-0" style={{ maxHeight: '50px' }} />
 
                         </div>
                     </div>

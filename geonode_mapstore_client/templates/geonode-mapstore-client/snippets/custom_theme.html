@@ -17,6 +17,7 @@
 <link rel="shortcut icon" href="{% static 'geonode/img/favicon.ico' %}" />
 
 <!-- example of custom theme -->
+{% comment %}  
 <style>
     /* structure of the selector for a custom theme .gn-theme-{variant} */
     .msgapi .gn-theme-custom {
@@ -218,6 +219,12 @@
         --gn-main-bg: #ffffff;
         --gn-main-border-color: #dddddd;
     }
-</style>
-
+</style> {% endcomment %}
+<style>
+    .msgapi .gn-theme {
+        --gn-main-color: #FF;
+        --gn-main-bg: #ff;
+        --gn-main-border-color: #dddddd;
+    }
+</style>    
 {% endblock %}
