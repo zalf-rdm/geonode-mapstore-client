@@ -7,7 +7,7 @@ const Footer = () => (
 
         <footer className="footer font-inter bg-dark text-white py-5" role="contentinfo">
             <div className="container pb-5">
-                <div className="row gy-4 text-center text-md-start">
+                <div className="row gy-4 text-start text-md-start">
                     {/* Company Info */}
                     <div className="col-12 col-md-6 col-lg-3">
                         <h3 className="fs-5 fw-bold mb-3 text-light">ZALF Repository</h3>
@@ -24,13 +24,13 @@ const Footer = () => (
                                 <a href="#explore" className="link-light text-decoration-none">About</a>
                             </li>
                             <li className="mb-2">
-                                <a href="#" className="link-light text-decoration-none">Publishing</a>
+                                <a href="#" className="link-light text-decoration-none">Upload</a>
                             </li>
                             <li className="mb-2">
-                                <a href="#" className="link-light text-decoration-none">API Documentation</a>
+                                <a href="#" className="link-light text-decoration-none">OGC Services and API</a>
                             </li>
                             <li>
-                                <a href="#" className="link-light text-decoration-none">Data Management</a>
+                                <a href="#" className="link-light text-decoration-none">Research Data Management</a>
                             </li>
                         </ul>
                     </nav>
@@ -46,10 +46,13 @@ const Footer = () => (
                                 <a href="#" className="link-light text-decoration-none">Data Policy</a>
                             </li>
                             <li className="mb-2">
-                                <a href="#" className="link-light text-decoration-none">Contact Us</a>
+                                <a href="#" className="link-light text-decoration-none">How to Cite Us</a>
                             </li>
                             <li>
-                                <a href="#" className="link-light text-decoration-none">FAQ</a>
+                                <a href="#" className="link-light text-decoration-none">Imprint</a>
+                            </li>
+                            <li>
+                                <a href="#" className="link-light text-decoration-none">Privacity</a>
                             </li>
                         </ul>
                     </nav>
@@ -67,7 +70,7 @@ const Footer = () => (
                         </div>
 
                         {/* Logo: centered on mobile, left-aligned on md+ */}
-                        <div className="text-center text-md-start">
+                        <div className="text-start text-md-start">
                             <h4 className="fw-semibold mb-2 fs-7 text-light">Powered by</h4>
                             <img src="/static/ui_zalf/img/logos/logo_zalf_white.png" alt="ZALF" className="img-fluid mx-auto mx-md-0" style={{ maxHeight: '50px' }} />
                         </div>
@@ -76,8 +79,8 @@ const Footer = () => (
             </div>
 
             {/* Bottom bar */}
-            <div className="fs-6 border-top border-gray mt-5 pt-4 text-center text-gray-3">
-                &copy; {new Date().getFullYear()} ZALF Repository. All rights reserved.
+            <div className="fs-6 border-top border-gray mt-5 pt-4 text-start text-gray-3">
+                &copy; {new Date().getFullYear()} ZALF Repository
             </div>
         </footer>
 
