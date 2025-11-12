@@ -24,7 +24,7 @@ const Footer = () => (
                                 <a href="#explore" className="link-light text-decoration-none">About</a>
                             </li>
                             <li className="mb-2">
-                                <a href="#" className="link-light text-decoration-none">Upload</a>
+                                <a href="/upload" className="link-light text-decoration-none">Upload</a>
                             </li>
                             <li className="mb-2">
                                 <a href="#" className="link-light text-decoration-none">OGC Services and API</a>
@@ -58,28 +58,18 @@ const Footer = () => (
                     </nav>
 
                     {/* Social Media */}
-                    <div className="col-6 col-md-6 col-lg-3">
+                    <div className="col-6 col-md-6 col-lg-3" aria-label="Certified">
+                        <h3 className="fs-5 fw-bold mb-3 text-light">Certified By</h3>
                         {/* Icons: centered on mobile, left-aligned on md+ */}
-<<<<<<< HEAD
-                        <div className="text-start text-md-start">
-                            <h4 className="fw-semibold mb-2 fs-7 text-light">Certified by</h4>
-                            <img src="/static/img/logo_core_trust_seal.png" alt="Core Trust Seal" className="img-fluid mx-auto mx-md-0" style={{ maxHeight: '50px' }} />
-=======
-                        <div className="d-flex justify-content-center justify-content-md-start gap-3 mb-4">
-                            <h4 className="fw-semibold mb-2 fs-7 text-light">Certified by</h4>
+                        <div className="text-start text-md-start mb-2">
                             <img src="/static/img/logo_core_trust_seal_white.png" alt="Core Trust Seal" className="img-fluid mx-auto mx-md-0" style={{ maxHeight: '50px' }} />
->>>>>>> c1b118d1dc446355880e36fee9fe4d7163b558c3
                         </div>
 
                         {/* Logo: centered on mobile, left-aligned on md+ */}
-                        <div className="text-start text-md-start">
+                        <div className="text-start text-md-start mb-2">
                             <h4 className="fw-semibold mb-2 fs-7 text-light">Powered by</h4>
-<<<<<<< HEAD
-                            <img src="/static/img/logo_zalf_square.jpg" alt="ZALF" className="img-fluid mx-auto mx-md-0" style={{ maxHeight: '50px' }} />
-=======
-                            <img src="/static/img/logo_zalf_white.jpg" alt="ZALF" className="img-fluid mx-auto mx-md-0" style={{ maxHeight: '50px' }} />
+                            <img src="/static/img/logo_zalf_white.png" alt="ZALF" className="img-fluid mx-auto mx-md-0" style={{ maxHeight: '50px' }} />
 
->>>>>>> c1b118d1dc446355880e36fee9fe4d7163b558c3
                         </div>
                     </div>
                 </div>

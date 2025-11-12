@@ -1,3 +1,484 @@
+// Bootstrap 5 Grid Utilities (.row, .g-*, .g-sm-*, .g-md-*, .g-lg-*, .g-xl-*)
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -0.75rem;
+    margin-left: -0.75rem;
+}
+
+.row>[class*="col-"] {
+    padding-right: 0.75rem;
+    padding-left: 0.75rem;
+}
+
+.g-0 {
+    --bs-gutter-x: 0;
+    --bs-gutter-y: 0;
+}
+
+.g-1 {
+    --bs-gutter-x: 0.25rem;
+    --bs-gutter-y: 0.25rem;
+}
+
+.g-2 {
+    --bs-gutter-x: 0.5rem;
+    --bs-gutter-y: 0.5rem;
+}
+
+.g-3 {
+    --bs-gutter-x: 1rem;
+    --bs-gutter-y: 1rem;
+}
+
+.g-4 {
+    --bs-gutter-x: 1.5rem;
+    --bs-gutter-y: 1.5rem;
+}
+
+.g-5 {
+    --bs-gutter-x: 3rem;
+    --bs-gutter-y: 3rem;
+}
+
+@media (min-width: 576px) {
+    .g-sm-0 {
+        --bs-gutter-x: 0;
+        --bs-gutter-y: 0;
+    }
+
+    .g-sm-1 {
+        --bs-gutter-x: 0.25rem;
+        --bs-gutter-y: 0.25rem;
+    }
+
+    .g-sm-2 {
+        --bs-gutter-x: 0.5rem;
+        --bs-gutter-y: 0.5rem;
+    }
+
+    .g-sm-3 {
+        --bs-gutter-x: 1rem;
+        --bs-gutter-y: 1rem;
+    }
+
+    .g-sm-4 {
+        --bs-gutter-x: 1.5rem;
+        --bs-gutter-y: 1.5rem;
+    }
+
+    .g-sm-5 {
+        --bs-gutter-x: 3rem;
+        --bs-gutter-y: 3rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .g-md-0 {
+        --bs-gutter-x: 0;
+        --bs-gutter-y: 0;
+    }
+
+    .g-md-1 {
+        --bs-gutter-x: 0.25rem;
+        --bs-gutter-y: 0.25rem;
+    }
+
+    .g-md-2 {
+        --bs-gutter-x: 0.5rem;
+        --bs-gutter-y: 0.5rem;
+    }
+
+    .g-md-3 {
+        --bs-gutter-x: 1rem;
+        --bs-gutter-y: 1rem;
+    }
+
+    .g-md-4 {
+        --bs-gutter-x: 1.5rem;
+        --bs-gutter-y: 1.5rem;
+    }
+
+    .g-md-5 {
+        --bs-gutter-x: 3rem;
+        --bs-gutter-y: 3rem;
+    }
+}
+
+@media (min-width: 992px) {
+    .g-lg-0 {
+        --bs-gutter-x: 0;
+        --bs-gutter-y: 0;
+    }
+
+    .g-lg-1 {
+        --bs-gutter-x: 0.25rem;
+        --bs-gutter-y: 0.25rem;
+    }
+
+    .g-lg-2 {
+        --bs-gutter-x: 0.5rem;
+        --bs-gutter-y: 0.5rem;
+    }
+
+    .g-lg-3 {
+        --bs-gutter-x: 1rem;
+        --bs-gutter-y: 1rem;
+    }
+
+    .g-lg-4 {
+        --bs-gutter-x: 1.5rem;
+        --bs-gutter-y: 1.5rem;
+    }
+
+    .g-lg-5 {
+        --bs-gutter-x: 3rem;
+        --bs-gutter-y: 3rem;
+    }
+}
+
+@media (min-width: 1200px) {
+    .g-xl-0 {
+        --bs-gutter-x: 0;
+        --bs-gutter-y: 0;
+    }
+
+    .g-xl-1 {
+        --bs-gutter-x: 0.25rem;
+        --bs-gutter-y: 0.25rem;
+    }
+
+    .g-xl-2 {
+        --bs-gutter-x: 0.5rem;
+        --bs-gutter-y: 0.5rem;
+    }
+
+    .g-xl-3 {
+        --bs-gutter-x: 1rem;
+        --bs-gutter-y: 1rem;
+    }
+
+    .g-xl-4 {
+        --bs-gutter-x: 1.5rem;
+        --bs-gutter-y: 1.5rem;
+    }
+
+    .g-xl-5 {
+        --bs-gutter-x: 3rem;
+        --bs-gutter-y: 3rem;
+    }
+}
+
+// Bootstrap 5 Grid Utilities (col-*, col-sm-*, col-md-*, col-lg-*, col-xl-*)
+.col-1 {
+    width: 8.33333333%;
+    float: left;
+}
+
+.col-2 {
+    width: 16.66666667%;
+    float: left;
+}
+
+.col-3 {
+    width: 25%;
+    float: left;
+}
+
+.col-4 {
+    width: 33.33333333%;
+    float: left;
+}
+
+.col-5 {
+    width: 41.66666667%;
+    float: left;
+}
+
+.col-6 {
+    width: 50%;
+    float: left;
+}
+
+.col-7 {
+    width: 58.33333333%;
+    float: left;
+}
+
+.col-8 {
+    width: 66.66666667%;
+    float: left;
+}
+
+.col-9 {
+    width: 75%;
+    float: left;
+}
+
+.col-10 {
+    width: 83.33333333%;
+    float: left;
+}
+
+.col-11 {
+    width: 91.66666667%;
+    float: left;
+}
+
+.col-12 {
+    width: 100%;
+    float: left;
+}
+
+@media (min-width: 576px) {
+    .col-sm-1 {
+        width: 8.33333333%;
+        float: left;
+    }
+
+    .col-sm-2 {
+        width: 16.66666667%;
+        float: left;
+    }
+
+    .col-sm-3 {
+        width: 25%;
+        float: left;
+    }
+
+    .col-sm-4 {
+        width: 33.33333333%;
+        float: left;
+    }
+
+    .col-sm-5 {
+        width: 41.66666667%;
+        float: left;
+    }
+
+    .col-sm-6 {
+        width: 50%;
+        float: left;
+    }
+
+    .col-sm-7 {
+        width: 58.33333333%;
+        float: left;
+    }
+
+    .col-sm-8 {
+        width: 66.66666667%;
+        float: left;
+    }
+
+    .col-sm-9 {
+        width: 75%;
+        float: left;
+    }
+
+    .col-sm-10 {
+        width: 83.33333333%;
+        float: left;
+    }
+
+    .col-sm-11 {
+        width: 91.66666667%;
+        float: left;
+    }
+
+    .col-sm-12 {
+        width: 100%;
+        float: left;
+    }
+}
+
+@media (min-width: 768px) {
+    .col-md-1 {
+        width: 8.33333333%;
+        float: left;
+    }
+
+    .col-md-2 {
+        width: 16.66666667%;
+        float: left;
+    }
+
+    .col-md-3 {
+        width: 25%;
+        float: left;
+    }
+
+    .col-md-4 {
+        width: 33.33333333%;
+        float: left;
+    }
+
+    .col-md-5 {
+        width: 41.66666667%;
+        float: left;
+    }
+
+    .col-md-6 {
+        width: 50%;
+        float: left;
+    }
+
+    .col-md-7 {
+        width: 58.33333333%;
+        float: left;
+    }
+
+    .col-md-8 {
+        width: 66.66666667%;
+        float: left;
+    }
+
+    .col-md-9 {
+        width: 75%;
+        float: left;
+    }
+
+    .col-md-10 {
+        width: 83.33333333%;
+        float: left;
+    }
+
+    .col-md-11 {
+        width: 91.66666667%;
+        float: left;
+    }
+
+    .col-md-12 {
+        width: 100%;
+        float: left;
+    }
+}
+
+@media (min-width: 992px) {
+    .col-lg-1 {
+        width: 8.33333333%;
+        float: left;
+    }
+
+    .col-lg-2 {
+        width: 16.66666667%;
+        float: left;
+    }
+
+    .col-lg-3 {
+        width: 25%;
+        float: left;
+    }
+
+    .col-lg-4 {
+        width: 33.33333333%;
+        float: left;
+    }
+
+    .col-lg-5 {
+        width: 41.66666667%;
+        float: left;
+    }
+
+    .col-lg-6 {
+        width: 50%;
+        float: left;
+    }
+
+    .col-lg-7 {
+        width: 58.33333333%;
+        float: left;
+    }
+
+    .col-lg-8 {
+        width: 66.66666667%;
+        float: left;
+    }
+
+    .col-lg-9 {
+        width: 75%;
+        float: left;
+    }
+
+    .col-lg-10 {
+        width: 83.33333333%;
+        float: left;
+    }
+
+    .col-lg-11 {
+        width: 91.66666667%;
+        float: left;
+    }
+
+    .col-lg-12 {
+        width: 100%;
+        float: left;
+    }
+}
+
+@media (min-width: 1200px) {
+    .col-xl-1 {
+        width: 8.33333333%;
+        float: left;
+    }
+
+    .col-xl-2 {
+        width: 16.66666667%;
+        float: left;
+    }
+
+    .col-xl-3 {
+        width: 25%;
+        float: left;
+    }
+
+    .col-xl-4 {
+        width: 33.33333333%;
+        float: left;
+    }
+
+    .col-xl-5 {
+        width: 41.66666667%;
+        float: left;
+    }
+
+    .col-xl-6 {
+        width: 50%;
+        float: left;
+    }
+
+    .col-xl-7 {
+        width: 58.33333333%;
+        float: left;
+    }
+
+    .col-xl-8 {
+        width: 66.66666667%;
+        float: left;
+    }
+
+    .col-xl-9 {
+        width: 75%;
+        float: left;
+    }
+
+    .col-xl-10 {
+        width: 83.33333333%;
+        float: left;
+    }
+
+    .col-xl-11 {
+        width: 91.66666667%;
+        float: left;
+    }
+
+    .col-xl-12 {
+        width: 100%;
+        float: left;
+    }
+}
+
+
 // Extra Bootstrap 5 Utility Classes usadas no Footer
 
 // Gutters (Bootstrap 5)
