@@ -1,86 +1,143 @@
-{% load static %}
+{% load static i18n %}
 {% load get_menu_json %}
 {% get_user_menu as USER_MENU %}
 
-{% block extra_style %}
-{% endblock %}
+<nav class="ui-zalf navbar navbar-expand-lg shadow-sm border-bottom font-inter">
+    <div class="container-fluid">
 
-<style>
-    #{{ id|default:'' }}-bottom {
-        display: none;
-        margin-bottom: 0;
-    }
-    @media (max-width: 748px) {
-        #{{ id|default:'' }} .gn-menu-content-center > * {
-            display: none;
-        }
-        #{{ id|default:'' }}-bottom {
-            display: flex;
-            width: calc(100% - 16px);
-            margin: 8px;
-        }
-    }
-</style>
+        <!-- Logo -->
+        <a class="navbar-brand p-0 m-0" href="{% url 'home' %}">
+            <img src="/static/img/logo_zalf_half.png" 
+                     alt="Zalf Repository" 
+                     class="img-fluid" 
+                     style="max-height: 45px;">
+        </a>
 
-<nav id="{{ id|default:'' }}" class="gn-menu gn-menu-symmetric">
-    <div class="gn-menu-container">
-        <div class="gn-menu-content">
-            <div class="gn-menu-content-left">
-                {% block left_menu %}
-                <ul class="gn-menu-list">
-                    <li>
-                        <a href="/">
-                            {% if custom_theme.logo and custom_theme.logo.url %}
-                                <img src="{{ custom_theme.logo.url }}">
-                            {% else %}
-                                <img src="{% block logo_src %}/static/mapstore/img/geonode-logo.svg{% endblock %}">
-                            {% endif %}
+        <!-- Mobile toggle -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+                        aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navbar content -->
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <div class="d-flex justify-content-between w-100 align-items-center">
+
+                <!-- Left menu -->
+                <ul class="navbar-nav mb-2 mb-lg-0">
+    <!-- Data -->
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navData"
+             role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {% trans "Data" %}
+            <i class="fa fa-angle-down ms-1"></i>
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="navData">
+            <li><a class="dropdown-item" href="/catalogue">{% trans "Data Catalog" %}</a></li>
+            <li><a class="dropdown-item" href="#">{% trans "Collections" %}</a></li>
+            <li><a class="dropdown-item" href="#">{% trans "Projects" %}</a></li>
+        </ul>
+    </li>
+
+    <!-- Topics -->
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navTopics"
+             role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {% trans "Topics" %}
+            <i class="fa fa-angle-down ms-1"></i>
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="navTopics">
+            <li><a class="dropdown-item" href="#">{% trans "Atmosphere" %}</a></li>
+            <li><a class="dropdown-item" href="#">{% trans "Biosphere" %}</a></li>
+            <li><a class="dropdown-item" href="#">{% trans "Climate Indicators" %}</a></li>
+        </ul>
+                </li>
+
+                <!-- Tools & Services -->
+                <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navTools"
+                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {% trans "Tools & Services" %}
+                        <i class="fa fa-angle-down ms-1"></i>
                         </a>
-                    </li>
+                        <ul class="dropdown-menu" aria-labelledby="navTools">
+                        <li><a class="dropdown-item" href="#">{% trans "API" %}</a></li>
+                        <li><a class="dropdown-item" href="#">{% trans "Geonode CTL" %}</a></li>
+                        <li><a class="dropdown-item" href="#">{% trans "Metadata AI" %}</a></li>
+                        </ul>
+                </li>
+
+                <!-- Learn -->
+                <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navLearn"
+                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {% trans "Learn" %}
+                        <i class="fa fa-angle-down ms-1"></i>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navLearn">
+                        <li><a class="dropdown-item" href="#">{% trans "..." %}</a></li>
+                        </ul>
+                </li>
+
+                <!-- News & Events -->
+                <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navNews"
+                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {% trans "News & Events" %}
+                        <i class="fa fa-angle-down ms-1"></i>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navNews">
+                        <li><a class="dropdown-item" href="#">{% trans "..." %}</a></li>
+                        </ul>
+                </li>
+
+                <!-- About -->
+                <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navAbout"
+                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {% trans "About" %}
+                        <i class="fa fa-angle-down ms-1"></i>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navAbout">
+                        <li><a class="dropdown-item" href="#">{% trans "FAQ" %}</a></li>
+                        <li><a class="dropdown-item" href="#">{% trans "Contact Us" %}</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">{% trans "Version 2.0.1" %}</a></li>
+                        </ul>
+                </li>
                 </ul>
-                {% endblock %}
-            </div>
-            <div class="gn-menu-content-center">
-                {% block center_menu %}
-                    {% include './search_bar.html' with search_bar_id='gn-search-bar' %}
-                {% endblock %}
-            </div>
-            <div class="gn-menu-content-right">
-                {% block right_menu %}
-                <ul class="gn-menu-list">
-                    {% for menu_item in USER_MENU %}
-                        {% include './menu_item.html' with menu_item=menu_item align_right=True %}
-                    {% endfor %}
-                </ul>
-                {% endblock %}
+
+
+                <!-- Right side (search + user menu) -->
+                <div class="d-flex align-items-center">
+                    <div class="me-3 d-none d-lg-block">
+                        {% include './search_bar.html' with search_bar_id='gn-search-bar' %}
+                    </div>
+                    <ul class="navbar-nav mb-2 mb-lg-0">
+                        {% for menu_item in USER_MENU %}
+                            {% include './menu_item.html' with menu_item=menu_item align_right=True %}
+                        {% endfor %}
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
 </nav>
-<div id="{{ id|default:'' }}-bottom">
-    {% block bottom_menu %}
-        {% include './search_bar.html' with search_bar_id='gn-search-bar-bottom' %}
-    {% endblock %}
+
+<!-- Optional mobile search below nav -->
+<div class="d-lg-none py-2 px-3 border-bottom">
+    {% include './search_bar.html' with search_bar_id='gn-search-bar-bottom' %}
 </div>
-{% block extra_script %}
-    <script type="text/javascript">
-        (function() {
-            function manageUrlChange() {
-                var signInElement = document.getElementById("sign-in");
-                if (signInElement){
-                    if (window.location.pathname === '/account/login/'){
-                        signInElement.setAttribute("href", window.location.href)
-                    }
-                    else {
-                        var href = signInElement.getAttribute("href").split("next=")[0];
-                        var url_parts = window.location.href.split(window.location.pathname);
-                        var path_name = encodeURIComponent(window.location.pathname + url_parts[url_parts.length-1]);
-                        signInElement.setAttribute("href", href.concat("next=".concat(path_name)));
-                    }
-                }
-            }
-            window.addEventListener('DOMContentLoaded', manageUrlChange);
-            window.addEventListener('hashchange', manageUrlChange, false);
-        })();
-    </script>
-{% endblock extra_script %}
+
+
+<script>
+    // Ensures "next" param updates correctly for login links
+    document.addEventListener('DOMContentLoaded', () => {
+        const signIn = document.getElementById('sign-in');
+        if (signIn) {
+            const href = signIn.getAttribute('href').split('next=')[0];
+            const path = encodeURIComponent(window.location.pathname + window.location.search + window.location.hash);
+            signIn.href = href + 'next=' + path;
+        }
+    });
+</script>
