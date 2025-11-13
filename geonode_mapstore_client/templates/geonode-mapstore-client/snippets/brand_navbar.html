@@ -79,7 +79,9 @@
               {% endblock %}
 
             </ul>
-            
+            <div class="me-3 d-none d-lg-block">
+            {% include './search_bar.html' with search_bar_id='gn-search-bar' %}
+          </div>
             <ul class="nav navbar-nav navbar-right">
 
                 {% block my_extra_right_tab %}
