@@ -11,15 +11,15 @@
 @font-noto: 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
 /* === Brand palette (ZALF-inspired) === */
-@brand-primary:   #3B7A57;  // deep green
-@brand-secondary: #94BFA2;  // soft sage
-@brand-dark:      #0B0B0B;  // neutral dark
-@brand-light:     #F4F4F4;  // neutral light
-@brand-accent:    #4D9B70;  // medium green accent
-@brand-warning:   #EBBC35;
-@brand-danger:    #BB4940;
-@brand-success:   #58CF80;
-@brand-info:      #94BFA2;
+@brand-primary: #3B7A57; // deep green
+@brand-secondary: #94BFA2; // soft sage
+@brand-dark: #0B0B0B; // neutral dark
+@brand-light: #F4F4F4; // neutral light
+@brand-accent: #4D9B70; // medium green accent
+@brand-warning: #EBBC35;
+@brand-danger: #BB4940;
+@brand-success: #58CF80;
+@brand-info: #94BFA2;
 
 /* === Core overrides === */
 @link-color: @brand-accent;
@@ -55,13 +55,19 @@ body {
   background-color: var(--gn-main-bg);
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: @font-inter;
   font-weight: 600;
   color: @brand-dark;
 }
 
-p, li {
+p,
+li {
   font-family: @font-noto;
   font-weight: 400;
   line-height: 1.6;
@@ -69,8 +75,13 @@ p, li {
 }
 
 /* === Font helpers === */
-.font-inter { font-family: @font-inter !important; }
-.font-noto  { font-family: @font-noto !important; }
+.font-inter {
+  font-family: @font-inter !important;
+}
+
+.font-noto {
+  font-family: @font-noto !important;
+}
 
 /* === Buttons === */
 .btn-primary {
@@ -100,4 +111,47 @@ footer.footer a {
 
 footer.footer a:hover {
   color: var(--gn-footer-link-hover-color) !important;
+}
+
+
+/* ---------------------------------------------
+   7) Navbar (glassy, sticky)
+   --------------------------------------------- */
+.navbar {
+  border: none;
+  border-bottom: 1px solid rgba(230, 236, 240, .8);
+  /* background: rgba(181, 255, 197, 0.75); */
+  background: rgba(68, 151, 12, 0.95) !important;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .9), rgba(255, 255, 255, .72));
+  backdrop-filter: var(--gn-blur);
+  -webkit-backdrop-filter: var(--gn-blur);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, .04);
+}
+
+.navbar .navbar-brand,
+.navbar-nav>li>a {
+  font-weight: 600;
+  color: var(--gn-txt-1);
+}
+
+.navbar-nav>li>a {
+  position: relative;
+}
+
+.navbar-nav>li>a:after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 6px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gn-primary-1), var(--gn-primary-2));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--gn-fast) var(--gn-ease);
+}
+
+.navbar-nav>li>a:hover:after,
+.navbar-nav>li.active>a:after {
+  transform: scaleX(1);
 }
