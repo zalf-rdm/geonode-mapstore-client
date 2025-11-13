@@ -120,100 +120,104 @@ footer.footer a:hover {
 }
 
 
-// ---------------------------------------------
-// 7) TopNavbar (glassy, sticky) — scoped to .topnavbar
-// ---------------------------------------------
-
-@navbar-bg: rgba(68, 151, 12, 0.95);
-@navbar-hover-bg: rgba(43, 97, 7, 0.27);
-@dropdown-hover-bg: rgba(68, 151, 12, 0.15);
-@navbar-link-color: #fff;
-@dropdown-link-color: @brand-primary;
-@underline-gradient: linear-gradient(90deg, var(--gn-primary-1), var(--gn-primary-2));
-@underline-height: 2px;
-@underline-offset: 6px;
-@underline-transition: var(--gn-fast, 0.2s) var(--gn-ease, ease);
-
+/* ---------------------------------------------
+   7) TopNavbar (glassy, sticky) — scoped to .topnavbar
+   --------------------------------------------- */
 .topnavbar {
   border: none;
-  background: @navbar-bg;
+  // border-bottom: 1px solid rgba(230, 236, 240, .8);
+  /* background: rgba(181, 255, 197, 0.75); */
+  background: rgba(68, 151, 12, 0.95);
   backdrop-filter: var(--gn-blur);
   -webkit-backdrop-filter: var(--gn-blur);
   box-shadow: 0 2px 10px rgba(0, 0, 0, .04);
+}
 
-  .navbar .navbar-brand,
-  .navbar-nav>li>a {
-    font-weight: 500;
-    color: @navbar-link-color;
-    position: relative;
+.topnavbar .navbar .navbar-brand,
+.topnavbar .navbar-nav>li>a {
+  font-weight: 500;
+  color: #ffffff;
+}
 
-    &:after {
-      content: "";
-      position: absolute;
-      left: 12px;
-      right: 12px;
-      bottom: @underline-offset;
-      height: @underline-height;
-      background: @underline-gradient;
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform @underline-transition;
-    }
+.topnavbar .navbar-nav>li>a {
+  position: relative;
+}
 
-    &:hover:after,
-    &.active:after {
-      transform: scaleX(1);
-    }
+.topnavbar .navbar-nav>li>a:after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 6px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gn-primary-1), var(--gn-primary-2));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--gn-fast) var(--gn-ease);
+}
 
-    &:hover,
-    &.active {
-      background: @navbar-hover-bg;
-      color: @navbar-link-color;
-    }
-  }
+.topnavbar .navbar-nav>li>a:hover:after,
+.navbar-nav>li.active>a:after {
+  transform: scaleX(1);
+}
 
-  .dropdown-menu>li>a,
-  .dropdown-menu>li>a:visited {
-    background: transparent;
-    color: @dropdown-link-color;
-    transition: background @underline-transition, color @underline-transition;
+.topnavbar .navbar-nav>li>a:hover,
+.topnavbar .navbar-nav>li.active>a {
+  background: rgba(43, 97, 7, 0.274); // ou transparente, ou outra cor desejada
+  color: #fff !important;
+}
 
-    &:hover,
-    &:focus {
-      background: transparent;
-      color: @dropdown-link-color;
-    }
-  }
 
-  .dropdown-toggle {
-    position: relative;
-    z-index: 2;
+.topnavbar .dropdown-menu {
+  background: @brand-primary;
+  color: #fff;
+  border-radius: 6px;
+  box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.08);
+  padding: 8px 0;
+}
 
-    &:hover,
-    &:focus {
-      background: @dropdown-hover-bg;
-      color: @dropdown-link-color;
-    }
+.topnavbar .dropdown-menu>li>a,
+.topnavbar .dropdown-menu>li>a:visited {
+  background: transparent;
+  color: #fff;
+  transition: background var(--gn-fast, 0.2s) var(--gn-ease, ease), color var(--gn-fast, 0.2s) var(--gn-ease, ease);
+}
 
-    &:after {
-      content: "";
-      position: absolute;
-      left: 12px;
-      right: 12px;
-      bottom: @underline-offset;
-      height: @underline-height;
-      background: @underline-gradient;
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform @underline-transition;
-      z-index: 2;
-      border: 0;
-    }
+.topnavbar .dropdown-menu>li>a:hover,
+.topnavbar .dropdown-menu>li>a:focus {
+  background: transparent;
+  // background: rgba(68, 151, 12, 0.15); // ou transparente, ou outra cor desejada
+  color: var(--gn-primary-1); // ou #fff, se quiser branco
+}
 
-    &:hover:after,
-    &:focus:after,
-    &.active:after {
-      transform: scaleX(1);
-    }
-  }
+.topnavbar .dropdown-toggle {
+  position: relative;
+  z-index: 2;
+}
+
+.topnavbar .dropdown-toggle:hover,
+.topnavbar .dropdown-toggle:focus {
+  background: rgba(68, 151, 12, 0.15) !important;
+  color: var(--gn-primary-1);
+}
+
+.topnavbar .dropdown-toggle:after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 6px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gn-primary-1), var(--gn-primary-2));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--gn-fast, 0.2s) var(--gn-ease, ease);
+  z-index: 2;
+  border: 0;
+}
+
+.topnavbar .dropdown-toggle:hover:after,
+.topnavbar .dropdown-toggle:focus:after,
+.topnavbar .navbar-nav>li.active>.dropdown-toggle:after {
+  transform: scaleX(1);
 }
