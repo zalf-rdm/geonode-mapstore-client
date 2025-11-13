@@ -1,90 +1,80 @@
+
 {% load static i18n %}
 {% load get_menu_json %}
 {% get_user_menu as USER_MENU %}
 
-<nav class="navbar navbar-expand-lg shadow-sm border-bottom font-inter">
-    <div class="container-fluid">
-        <!-- Logo -->
-        <a class="navbar-brand p-0 m-0" href="{% url 'home' %}">
-            <img src="/static/img/logo_zalf_half.png" alt="Zalf Repository" class="img-fluid" style="max-height: 45px;">
-        </a>
-        <!-- Mobile toggle -->
-        {% comment %} <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
-        aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-        </button> {% endcomment %}
+<nav class="navbar navbar-default navbar-static-top font-inter w-100 " role="navigation">
+    <div class=" w-100">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#mainNavbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <img src="/static/img/logo_zalf_half.png" alt="Zalf Repository" style="max-height: 45px;">
+            </a>
+        </div>
         <div class="collapse navbar-collapse" id="mainNavbar">
-            <div class="d-flex justify-content-between w-100 align-items-center">
-                <ul class="navbar-nav mb-2 mb-lg-0 list-unstyled">
-                    <!-- Data -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navData" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            {% trans "Data" %}
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navData">
-                            <li><a class="dropdown-item" href="/catalogue">{% trans "Data Catalog" %}</a></li>
-                            <li><a class="dropdown-item" href="#">{% trans "Collections" %}</a></li>
-                            <li><a class="dropdown-item" href="#">{% trans "Projects" %}</a></li>
-                        </ul>
-                    </li>
-                    <!-- Topics -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navTopics" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            {% trans "Topics" %}
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navTopics">
-                            <li><a class="dropdown-item" href="#">{% trans "Atmosphere" %}</a></li>
-                            <li><a class="dropdown-item" href="#">{% trans "Biosphere" %}</a></li>
-                            <li><a class="dropdown-item" href="#">{% trans "Climate Indicators" %}</a></li>
-                        </ul>
-                    </li>
-                    <!-- Tools & Services -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navTools" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            {% trans "Tools & Services" %}
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navTools">
-                            <li><a class="dropdown-item" href="#">{% trans "API" %}</a></li>
-                            <li><a class="dropdown-item" href="#">{% trans "Geonode CTL" %}</a></li>
-                            <li><a class="dropdown-item" href="#">{% trans "Metadata AI" %}</a></li>
-                        </ul>
-                    </li>
-                    <!-- Learn -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navTools" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            {% trans "Learn" %}
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navTools">
-                            <li><a class="dropdown-item" href="#">{% trans "API" %}</a></li>
-                            <li><a class="dropdown-item" href="#">{% trans "Geonode CTL" %}</a></li>
-                            <li><a class="dropdown-item" href="#">{% trans "Metadata AI" %}</a></li>
-                        </ul>
-                    </li>
-                    <!-- About -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navTools" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            {% trans "About" %}
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navTools">
-                            <li><a class="dropdown-item" href="#">{% trans "API" %}</a></li>
-                            <li><a class="dropdown-item" href="#">{% trans "Geonode CTL" %}</a></li>
-                            <li><a class="dropdown-item" href="#">{% trans "Metadata AI" %}</a></li>
-                        </ul>
-                    </li>
-                </ul>
-                <!-- Right side (search + user menu) -->
-                <div class="d-flex align-items-center">
-                    <div class="me-3 d-none d-lg-block">
-                        {% include './search_bar.html' with search_bar_id='gn-search-bar' %}
-                    </div>
-                    <!-- Menu do usuário -->
-                    <ul class="navbar-nav mb-2 mb-lg-0 list-unstyled align-self-stretch d-flex align-items-center">
-                        {% for menu_item in USER_MENU %}
-                            {% include './menu_item.html' with menu_item=menu_item align_right=True %}
-                        {% endfor %}
+            <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        {% trans "Data" %} </span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/catalogue">{% trans "Data Catalog" %}</a></li>
+                        <li><a href="#">{% trans "Collections" %}</a></li>
+                        <li><a href="#">{% trans "Projects" %}</a></li>
                     </ul>
-                </div>
-            </div>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        {% trans "Topics" %} </span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">{% trans "Atmosphere" %}</a></li>
+                        <li><a href="#">{% trans "Biosphere" %}</a></li>
+                        <li><a href="#">{% trans "Climate Indicators" %}</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        {% trans "Tools & Services" %} </span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">{% trans "API" %}</a></li>
+                        <li><a href="#">{% trans "Geonode CTL" %}</a></li>
+                        <li><a href="#">{% trans "Metadata AI" %}</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        {% trans "Learn" %} </span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">{% trans "API" %}</a></li>
+                        <li><a href="#">{% trans "Geonode CTL" %}</a></li>
+                        <li><a href="#">{% trans "Metadata AI" %}</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        {% trans "About" %} </span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">{% trans "API" %}</a></li>
+                        <li><a href="#">{% trans "Geonode CTL" %}</a></li>
+                        <li><a href="#">{% trans "Metadata AI" %}</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>{% include './search_bar.html' with search_bar_id='gn-search-bar' %}</li>
+                {% for menu_item in USER_MENU %}
+                    <li>{% include './menu_item.html' with menu_item=menu_item align_right=True %}</li>
+                {% endfor %}
+            </ul>
         </div>
     </div>
 </nav>
