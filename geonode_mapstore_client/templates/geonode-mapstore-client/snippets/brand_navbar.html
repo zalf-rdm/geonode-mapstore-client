@@ -4,7 +4,7 @@
 {% get_user_menu as USER_MENU %}
 <!-- Navbar -->
     {% block header %}
-      <nav class="topnavbar navbar-inverse" role="navigation">
+      <nav class="topnavbar" role="navigation">
         <div class="nav-container">
             <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -81,11 +81,11 @@
               {% endblock %}
 
             </ul>
-            <div class="me-3 d-none d-lg-block">
-            {% include './search_bar.html' with search_bar_id='gn-search-bar' %}
-          </div>
+            
             <ul class="nav navbar-nav navbar-right">
-
+                <div class="d-none d-flex">
+                    {% include './search_bar.html' with search_bar_id='gn-search-bar' %}
+                </div>
                 {% block my_extra_right_tab %}
                   {% comment %} {% render_nav_menu 'TOPBAR_MENU' %} {% endcomment %}
                 {% endblock my_extra_right_tab %}
