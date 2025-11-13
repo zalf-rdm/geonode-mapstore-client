@@ -1,4 +1,4 @@
-<div class="ui-zalf search d-flex justify-content-end">
+<div class="search d-flex justify-content-end">
 
   <div id="{{ search_bar_id }}" class="d-flex justify-content-center align-items-center bg-transparent">
     <div class="position-relative">
@@ -39,55 +39,56 @@
 </style>
 
 <script>
-(function() {
-  window.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.querySelector('#{{ search_bar_id }}-input');
-    const searchApply = document.querySelector('#{{ search_bar_id }}-apply');
-    const searchClear = document.querySelector('#{{ search_bar_id }}-clear');
+// Refatorado para funcionar com múltiplas instâncias e ids dinâmicos
+document.addEventListener('DOMContentLoaded', function() {
+  var searchBarId = '{{ search_bar_id }}';
+  var searchInput = document.getElementById(searchBarId + '-input');
+  var searchApply = document.getElementById(searchBarId + '-apply');
+  var searchClear = document.getElementById(searchBarId + '-clear');
 
-    function onSearch(q) {
-      if (!q) return;
-      const catalogPagePath = window.__GEONODE_CONFIG__.localConfig.geoNodeSettings.catalogPagePath;
-      const searchPath = '/catalogue/#/search';
-      const baseCatalogPath = catalogPagePath ? searchPath.replace('/catalogue/', catalogPagePath) : searchPath;
+  if (!searchInput || !searchApply || !searchClear) return;
 
-      {% block searchbar_search_href %}
-      location.href = baseCatalogPath + '?q=' + encodeURIComponent(q);
-      {% endblock %}
-    }
+  function onSearch(q) {
+    if (!q) return;
+    var catalogPagePath = (window.__GEONODE_CONFIG__ && window.__GEONODE_CONFIG__.localConfig && window.__GEONODE_CONFIG__.localConfig.geoNodeSettings && window.__GEONODE_CONFIG__.localConfig.geoNodeSettings.catalogPagePath) || '';
+    var searchPath = '/catalogue/#/search';
+    var baseCatalogPath = catalogPagePath ? searchPath.replace('/catalogue/', catalogPagePath) : searchPath;
+    {% block searchbar_search_href %}
+    location.href = baseCatalogPath + '?q=' + encodeURIComponent(q);
+    {% endblock %}
+  }
 
-    // Show/hide "X" only after typing and leaving focus
-    searchInput.addEventListener('focus', function() {
-      searchClear.style.display = 'none';
-    });
-
-    searchInput.addEventListener('blur', function() {
-      if (this.value.trim() !== '') {
-        searchClear.style.display = 'block';
-      } else {
-        searchClear.style.display = 'none';
-      }
-    });
-
-    // Clear input when clicking "X"
-    searchClear.addEventListener('click', function() {
-      searchInput.value = '';
-      searchClear.style.display = 'none';
-      searchInput.focus();
-    });
-
-    // Trigger search on Enter
-    searchInput.addEventListener('keyup', function(event) {
-      if (event.key === 'Enter') {
-        event.preventDefault();
-        onSearch(searchInput.value.trim());
-      }
-    });
-
-    // Trigger search on button click
-    searchApply.addEventListener('click', function() {
-      onSearch(searchInput.value.trim());
-    });
+  // Show/hide "X" only after typing and leaving focus
+  searchInput.addEventListener('focus', function() {
+    searchClear.style.display = 'none';
   });
-})();
+
+  searchInput.addEventListener('blur', function() {
+    if (this.value.trim() !== '') {
+      searchClear.style.display = 'block';
+    } else {
+      searchClear.style.display = 'none';
+    }
+  });
+
+  // Clear input when clicking "X"
+  searchClear.addEventListener('click', function() {
+    searchInput.value = '';
+    searchClear.style.display = 'none';
+    searchInput.focus();
+  });
+
+  // Trigger search on Enter
+  searchInput.addEventListener('keyup', function(event) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      onSearch(searchInput.value.trim());
+    }
+  });
+
+  // Trigger search on button click
+  searchApply.addEventListener('click', function() {
+    onSearch(searchInput.value.trim());
+  });
+});
 </script>
