@@ -80,13 +80,13 @@
                     </ul>
                 </li>
             </ul>
-            <div class="d-flex align-items-center ms-auto">
+            <div class="d-flex align-items-center ms-auto gap-3">
                 <!-- Search bar: só em telas grandes -->
-                <div class="me-3 d-none d-lg-block">
+                <div class="d-none d-lg-block align-self-stretch d-flex align-items-center">
                     {% include './search_bar.html' with search_bar_id='gn-search-bar' %}
                 </div>
                 <!-- Menu do usuário -->
-                <ul class="navbar-nav mb-2 mb-lg-0 list-unstyled">
+                <ul class="navbar-nav mb-2 mb-lg-0 list-unstyled align-self-stretch d-flex align-items-center">
                     {% for menu_item in USER_MENU %}
                         {% include './menu_item.html' with menu_item=menu_item align_right=True %}
                     {% endfor %}
