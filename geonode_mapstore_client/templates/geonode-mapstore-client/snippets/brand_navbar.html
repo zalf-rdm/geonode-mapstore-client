@@ -6,32 +6,13 @@
 {% block extra_style %}
 {% endblock %}
 
-<style>
-    #{{ id|default:'' }}-bottom {
-        display: none;
-        margin-bottom: 0;
-    }
-    @media (max-width: 748px) {
-        #{{ id|default:'' }} .gn-menu-content-center > * {
-            display: none;
-        }
-        #{{ id|default:'' }}-bottom {
-            display: flex;
-            width: calc(100% - 16px);
-            margin: 8px;
-        }
-    }
-</style>
 
     
 <nav class="topnavbar navbar navbar-expand-lg shadow-sm border-bottom font-inter">
   <div class="container-fluid">
     <!-- Logo -->
-    <a class="navbar-brand p-0 m-0" href="{% url 'home' %}">
-      <img src="{% static 'ui_zalf/img/logos/logo_zalf_half.png' %}"
-           alt="GeoNode Logo"
-           class="img-fluid"
-           style="max-height: 45px;">
+    <a class="p-0 m-0" href="{% url 'home' %}">
+      <img src="/static/img/logo_zalf_white_half.png" alt="Zalf Repository" style="max-height: 45px;">
     </a>
     <!-- Mobile toggle -->
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
