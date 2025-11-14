@@ -271,3 +271,16 @@ footer.footer a:hover {
   margin: 0;
   padding: 0;
 }
+
+/* Garante que dropdown-item dentro de colunas também receba o estilo do menu principal */
+.topnavbar .dropdown-menu .dropdown-item {
+  background: transparent;
+  color: #fff;
+  transition: background var(--gn-fast, 0.2s) var(--gn-ease, ease), color var(--gn-fast, 0.2s) var(--gn-ease, ease);
+}
+
+.topnavbar .dropdown-menu .dropdown-item:hover,
+.topnavbar .dropdown-menu .dropdown-item:focus {
+  background: rgba(91, 228, 0, 0.274);
+  color: var(--gn-primary-1);
+}

@@ -42,9 +42,23 @@
                     <i class="fa fa-angle-down ms-1"></i>
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navTopics">
-                    <li><a class="dropdown-item" href="#">{% trans "Atmosphere" %}</a></li>
-                    <li><a class="dropdown-item" href="#">{% trans "Biosphere" %}</a></li>
-                    <li><a class="dropdown-item" href="#">{% trans "Climate Indicators" %}</a></li>
+                    <div class="row g-0 " style="min-width: 320px;">
+                        <div class="col-6 pe-2">
+                            <li><a class="dropdown-item" href="#">{% trans "Animals" %}</a></li>
+                            <li><a class="dropdown-item" href="#">{% trans "Atmosphere" %}</a></li>
+                            <li><a class="dropdown-item" href="#">{% trans "Climate" %}</a></li>
+                            <li><a class="dropdown-item" href="#">{% trans "Forest" %}</a></li>
+                            <li><a class="dropdown-item" href="#">{% trans "Hydrology" %}</a></li>
+                        </div>
+                        <div class="col-6 ps-2 position-relative">
+                            <div class="position-absolute top-0 bottom-0 start-0" style="width:2px; background:#fff; opacity:0.8;"></div>
+                            <li><a class="dropdown-item" href="#">{% trans "Landscape" %}</a></li>
+                            <li><a class="dropdown-item" href="#">{% trans "Long Term Field Experiment" %}</a></li>
+                            <li><a class="dropdown-item" href="#">{% trans "Plants" %}</a></li>
+                            <li><a class="dropdown-item" href="#">{% trans "Soil Profiles" %}</a></li>
+                            <li><a class="dropdown-item" href="#">{% trans "Water" %}</a></li>
+                        </div>
+                    </div>
                     </ul>
                 </li>
 
