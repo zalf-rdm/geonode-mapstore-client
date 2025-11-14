@@ -125,8 +125,6 @@ footer.footer a:hover {
    --------------------------------------------- */
 .topnavbar {
   border: none;
-  // border-bottom: 1px solid rgba(230, 236, 240, .8);
-  /* background: rgba(181, 255, 197, 0.75); */
   background: rgba(68, 151, 12, 0.95);
   backdrop-filter: var(--gn-blur);
   -webkit-backdrop-filter: var(--gn-blur);
@@ -163,7 +161,7 @@ footer.footer a:hover {
 
 .topnavbar .navbar-nav>li>a:hover,
 .topnavbar .navbar-nav>li.active>a {
-  background: rgba(43, 97, 7, 0.274); // ou transparente, ou outra cor desejada
+  background: rgba(91, 228, 0, 0.274);
   color: #fff !important;
 }
 
@@ -176,8 +174,7 @@ footer.footer a:hover {
   padding: 8px 0;
 }
 
-.topnavbar .dropdown-menu>li>a,
-.topnavbar .dropdown-menu>li>a:visited {
+.topnavbar .dropdown-menu>li>a {
   background: transparent;
   color: #fff;
   transition: background var(--gn-fast, 0.2s) var(--gn-ease, ease), color var(--gn-fast, 0.2s) var(--gn-ease, ease);
@@ -185,9 +182,8 @@ footer.footer a:hover {
 
 .topnavbar .dropdown-menu>li>a:hover,
 .topnavbar .dropdown-menu>li>a:focus {
-  background: transparent;
-  // background: rgba(68, 151, 12, 0.15); // ou transparente, ou outra cor desejada
-  color: var(--gn-primary-1); // ou #fff, se quiser branco
+  background: rgba(91, 228, 0, 0.274);
+  color: var(--gn-primary-1);
 }
 
 .topnavbar .dropdown-toggle {
@@ -197,11 +193,12 @@ footer.footer a:hover {
 
 .topnavbar .dropdown-toggle:hover,
 .topnavbar .dropdown-toggle:focus {
-  background: rgba(68, 151, 12, 0.15) !important;
-  color: var(--gn-primary-1);
+  background: rgba(91, 228, 0, 0.274);
+  color: #fff;
 }
 
 .topnavbar .dropdown-toggle:after {
+  color: #000;
   content: "";
   position: absolute;
   left: 12px;
@@ -220,4 +217,11 @@ footer.footer a:hover {
 .topnavbar .dropdown-toggle:focus:after,
 .topnavbar .navbar-nav>li.active>.dropdown-toggle:after {
   transform: scaleX(1);
+}
+
+.topnavbar li.open>.dropdown-toggle,
+.topnavbar li.active>.dropdown-toggle {
+  /* Exemplo: */
+  background: rgba(68, 151, 12, 0.15) !important;
+  color: @brand-warning;
 }
