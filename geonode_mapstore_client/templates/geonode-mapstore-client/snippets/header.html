@@ -1,5 +1,5 @@
 {% load static %}
-<header class="gn-main-header">
+<header class="gn-main-header" style="height: 68px;">
     {% include './brand_navbar.html'  with id='gn-brand-navbar' %}
     
 </header>
@@ -17,10 +17,10 @@
         const topbar = document.querySelector('#gn-topbar');
         function resize() {
             if (mainHeaderPlaceholder && mainHeader) {
-                mainHeaderPlaceholder.style.height = mainHeader.clientHeight + 'px';
+                mainHeaderPlaceholder.style.height = mainHeader.clientHeight-4 + 'px';
             }
             if (topbar && mainHeader) {
-                topbar.style.top = mainHeader.clientHeight + 'px';
+                topbar.style.top = mainHeader.clientHeight-4 + 'px';
             }
         }
         window.addEventListener('resize', resize);
