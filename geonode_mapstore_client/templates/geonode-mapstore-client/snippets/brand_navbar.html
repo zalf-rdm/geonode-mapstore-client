@@ -1,4 +1,5 @@
 {% load static i18n %}
+{% load avatar_tags %}
 {% load get_menu_json %}
 {% get_user_menu as USER_MENU %}
 
@@ -101,13 +102,13 @@
             </ul>
             <!-- Right side (search + user menu) -->
             <div class="d-flex flex-column flex-lg-row align-items-center justify-content-end ms-3 flex-shrink-0">
-                <div class="w-100 ">
-                </div>
-                <div class="navbar-nav flex-row flex-lg-row align-items-center j">
+                
+                <div class="navbar-nav flex-row flex-lg-row align-items-center ms-auto" >
                     {% include './search_bar.html' with search_bar_id='gn-search-bar' %}
-                    {% for menu_item in USER_MENU %}
+                    {% include './new_login.html' with search_bar_id='gn-search-bar' %}
+                    {% comment %} {% for menu_item in USER_MENU %}
                         {% include './menu_item.html' with menu_item=menu_item align_right=True %}
-                    {% endfor %}
+                    {% endfor %} {% endcomment %}
                 </div>
             </div>
         </div>
