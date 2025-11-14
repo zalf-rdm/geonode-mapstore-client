@@ -21,17 +21,10 @@
             <!-- Left menu -->
             <ul class="navbar-nav mb-2 mb-lg-0 flex-column flex-lg-row flex-grow-1 ms-3">
                 <!-- Data -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navData"
-                    role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    {% trans "Data" %}
-                    <i class="fa fa-angle-down ms-1"></i>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="/catalogue" id="navData" role="button">
+                        {% trans "All Data" %}
                     </a>
-                    <ul class="dropdown-menu" aria-labelledby="navData">
-                    <li><a class="dropdown-item" href="/catalogue">{% trans "Data Catalog" %}</a></li>
-                    <li><a class="dropdown-item" href="#">{% trans "Collections" %}</a></li>
-                    <li><a class="dropdown-item" href="#">{% trans "Projects" %}</a></li>
-                    </ul>
                 </li>
 
                 <!-- Topics -->
@@ -42,23 +35,25 @@
                     <i class="fa fa-angle-down ms-1"></i>
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navTopics">
-                    <div class="row g-0 " style="min-width: 320px;">
-                        <div class="col-6 pe-2">
-                            <li><a class="dropdown-item" href="#">{% trans "Animals" %}</a></li>
-                            <li><a class="dropdown-item" href="#">{% trans "Atmosphere" %}</a></li>
-                            <li><a class="dropdown-item" href="#">{% trans "Climate" %}</a></li>
-                            <li><a class="dropdown-item" href="#">{% trans "Forest" %}</a></li>
-                            <li><a class="dropdown-item" href="#">{% trans "Hydrology" %}</a></li>
-                        </div>
-                        <div class="col-6 ps-2 position-relative">
-                            <div class="position-absolute top-0 bottom-0 start-0" style="width:2px; background:#fff; opacity:0.8;"></div>
-                            <li><a class="dropdown-item" href="#">{% trans "Landscape" %}</a></li>
-                            <li><a class="dropdown-item" href="#">{% trans "Long Term Field Experiment" %}</a></li>
-                            <li><a class="dropdown-item" href="#">{% trans "Plants" %}</a></li>
-                            <li><a class="dropdown-item" href="#">{% trans "Soil Profiles" %}</a></li>
-                            <li><a class="dropdown-item" href="#">{% trans "Water" %}</a></li>
-                        </div>
-                    </div>
+                        <li class="p-0 m-0">
+                            <div class="row g-0" style="min-width: 320px;">
+                                <div class="col-6 pe-2">
+                                    <a class="dropdown-item" href="#">{% trans "Animals" %}</a>
+                                    <a class="dropdown-item" href="#">{% trans "Atmosphere" %}</a>
+                                    <a class="dropdown-item" href="#">{% trans "Climate" %}</a>
+                                    <a class="dropdown-item" href="#">{% trans "Forest" %}</a>
+                                    <a class="dropdown-item" href="#">{% trans "Hydrology" %}</a>
+                                </div>
+                                <div class="col-6 ps-2 position-relative">
+                                    <div class="position-absolute top-0 bottom-0 start-0" style="width:2px; background:#fff; opacity:0.8;"></div>
+                                    <a class="dropdown-item" href="#">{% trans "Landscape" %}</a>
+                                    <a class="dropdown-item" href="#">{% trans "Long Term Field Experiment" %}</a>
+                                    <a class="dropdown-item" href="#">{% trans "Plants" %}</a>
+                                    <a class="dropdown-item" href="#">{% trans "Soil Profiles" %}</a>
+                                    <a class="dropdown-item" href="#">{% trans "Water" %}</a>
+                                </div>
+                            </div>
+                        </li>
                     </ul>
                 </li>
 
