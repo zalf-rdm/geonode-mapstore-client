@@ -37,9 +37,9 @@
 <style>
 
 </style>
-
+{% block extra_script %}
 <script>
-// Refatorado para funcionar com múltiplas instâncias e ids dinâmicos
+
 document.addEventListener('DOMContentLoaded', function() {
   var searchBarId = '{{ search_bar_id }}';
   var searchInput = document.getElementById(searchBarId + '-input');
@@ -92,3 +92,5 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 </script>
+{% endblock extra_script %}
+

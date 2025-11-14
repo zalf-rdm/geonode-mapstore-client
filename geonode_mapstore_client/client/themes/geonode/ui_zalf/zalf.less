@@ -225,3 +225,43 @@ footer.footer a:hover {
   background: rgba(68, 151, 12, 0.15) !important;
   color: @brand-warning;
 }
+
+/* === Search Bar (Navbar) === */
+.topnavbar .search input[type="text"],
+.topnavbar input#gn-search-bar,
+.topnavbar .navbar-form input[type="text"] {
+  background: transparent !important;
+  border: 1.5px solid #fff !important;
+  color: #fff !important;
+  border-radius: 4px;
+  box-shadow: none;
+  outline: none;
+  padding: 6px 12px;
+  transition: border-color 0.2s;
+}
+
+.topnavbar .search input[type="text"]::placeholder,
+.topnavbar input#gn-search-bar::placeholder,
+.topnavbar .navbar-form input[type="text"]::placeholder {
+  color: #fff;
+  opacity: 0.7;
+}
+
+.topnavbar .search input[type="text"]:focus,
+.topnavbar input#gn-search-bar:focus,
+.topnavbar .navbar-form input[type="text"]:focus {
+  border-color: var(--gn-primary-1);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.topnavbar .search input[type="text"] {
+  width: 130px;
+  transition: width 0.3s;
+}
+
+.topnavbar .search input[type="text"]:focus {
+  width: 260px; // ou o valor desejado
+  transition: width 0.3s;
+}
+

@@ -212,7 +212,7 @@
             </div>
         </nav> {% endcomment %}
 
-
+{% block extra_script %}
 <script>
     // Ensures "next" param updates correctly for login links
     document.addEventListener('DOMContentLoaded', () => {
@@ -224,3 +224,4 @@
         }
     });
 </script>
+{% endblock extra_script %}
