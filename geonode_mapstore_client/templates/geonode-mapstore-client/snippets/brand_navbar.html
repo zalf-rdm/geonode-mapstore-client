@@ -24,136 +24,125 @@
 </style>
 
     
-<nav id="{{ id|default:'' }}" class="topnavbar" role="navigation">
-    <div class="nav-container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                <i class="fa fa-navicon fa-lg"></i>
-            </button>
-            <a class="navbar-brand" href="{% url 'home' %}">
-                        <img src="/static/img/logo_zalf_white_half.png" alt="Zalf Repository" style="max-height: 45px;">
-                    </a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-            <ul class="nav navbar-nav toolbar">
+<nav class="topnavbar navbar navbar-expand-lg shadow-sm border-bottom font-inter">
+  <div class="container-fluid">
+    <!-- Logo -->
+    <a class="navbar-brand p-0 m-0" href="{% url 'home' %}">
+      <img src="{% static 'ui_zalf/img/logos/logo_zalf_half.png' %}"
+           alt="GeoNode Logo"
+           class="img-fluid"
+           style="max-height: 45px;">
+    </a>
+    <!-- Mobile toggle -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+            aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <!-- Navbar content -->
+    <div class="collapse navbar-collapse" id="mainNavbar">
+      <div class="row w-100 m-0">
+        <!-- Left menu -->
+        <div class="col-12 col-lg-8 p-0">
+          <ul class="navbar-nav mb-2 mb-lg-0 flex-column flex-lg-row">
+  <!-- Data -->
+  <li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navData"
+       role="button" data-bs-toggle="dropdown" aria-expanded="false">
+      {% trans "Data" %}
+      <i class="fa fa-angle-down ms-1"></i>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="navData">
+      <li><a class="dropdown-item" href="/catalogue">{% trans "Data Catalog" %}</a></li>
+      <li><a class="dropdown-item" href="#">{% trans "Collections" %}</a></li>
+      <li><a class="dropdown-item" href="#">{% trans "Projects" %}</a></li>
+    </ul>
+  </li>
 
-                {% block tabs %}
+  <!-- Topics -->
+  <li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navTopics"
+       role="button" data-bs-toggle="dropdown" aria-expanded="false">
+      {% trans "Topics" %}
+      <i class="fa fa-angle-down ms-1"></i>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="navTopics">
+      <li><a class="dropdown-item" href="#">{% trans "Atmosphere" %}</a></li>
+      <li><a class="dropdown-item" href="#">{% trans "Biosphere" %}</a></li>
+      <li><a class="dropdown-item" href="#">{% trans "Climate Indicators" %}</a></li>
+    </ul>
+        </li>
 
-                <li id="nav_layers">
-                    <a href="#" class="dropdown-toggle pe-1" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{% trans "Data" %}<i class="ps-2 fa fa-angle-down fa-lg"></i></a>
-                    <ul class="dropdown-menu">
-                    <li><a href="">{% trans "Datasets" %}</a></li>
-                    <li><a href="">{% trans "Documents" %}</a></li>
-                    <li><a href="{% url "services" %}?limit={{ CLIENT_RESULTS_LIMIT }}">{% trans "Remote Services" %}</a></li>
-                    {% if user.is_superuser or user.is_staff %}
-                        {%  if "add_resource" in user.perms %}
-                        <li><a href="{% url "register_service" %}">{% trans "Add Remote Service" %}</a></li>
-                        {% endif %}
-                    {% endif %}
-                    </ul>
-                </li>
-                <li id="nav_maps">
-                    {% if user.is_authenticated %}
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{% trans "Maps" %}<i class="ps-2 fa fa-angle-down fa-lg"></i></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="">{% trans "Explore Maps" %}</a></li>
-                    </ul>
-                    {% else %}
-                    <a href="">{% trans "Maps" %}</a>
-                    {% endif %}
-                </li>
-                {% if GEONODE_APPS_ENABLE and GEONODE_APPS_NAV_MENU_ENABLE %}
-                <li id="nav_maps">
-                {% if user.is_authenticated %}
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{% blocktrans %}{{GEONODE_APPS_NAME}}{% endblocktrans %}<i class="fa fa-angle-down fa-lg"></i></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="   ">{% trans "Explore" %} {% blocktrans %}{{GEONODE_APPS_NAME}}{% endblocktrans %}</a></li>
-                    </ul>
-                {% else %}
-                    <a href="   ">{% blocktrans %}{{GEONODE_APPS_NAME}}{% endblocktrans %}</a>
-                {% endif %}
-                </li>
-                {% endif %}
-                <li>
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{% trans "About" %}<i class="ps-2 fa fa-angle-down fa-lg"></i></a>
-                    <ul class="dropdown-menu">
-                    <li><a href="{% url "profile_browse" %}">{% trans "People" %}</a></li>
-                    <li><a href="{% url "group_list" %}">{% trans "Groups" %}</a></li>
-                    <li><a href="{% url "group_category_list" %}">{% trans "Group Categories" %}</a></li>
-                    {% if perms.announcements.can_manage %}
-                        <li><a href="{% url "announcements_list" %}">{% trans "Announcements" %}</a></li>
-                    {% endif %}
-                    {% if user.is_authenticated and not READ_ONLY_MODE %}
-                        <li role="separator" class="divider"></li>
-                        <li><a href="{% url "geonode.invitations:geonode-send-invite" %}">{% trans "Invite Users" %}</a></li>
-                    {% endif %}
-                    {% if user.is_superuser and not READ_ONLY_MODE %}
-                        <li><a href="{% if SITEURL|default:""|slice:"-1:" == "/" %}{{SITEURL}}{% else %}{{SITEURL}}/{% endif %}admin/people/profile/add/">{% trans "Add User" %}</a></li>
-                        <li><a href="{% url "group_create" %}">{% trans "Create Group" %}</a></li>
-                    {% endif %}
-                    </ul>
-                </li>
-
-                {% block extra_tab %}
-
-                {% endblock %}
-
-                {% endblock %}
-
+        <!-- Tools & Services -->
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navTools"
+            role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {% trans "Tools & Services" %}
+            <i class="fa fa-angle-down ms-1"></i>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navTools">
+            <li><a class="dropdown-item" href="#">{% trans "API" %}</a></li>
+            <li><a class="dropdown-item" href="#">{% trans "Geonode CTL" %}</a></li>
+            <li><a class="dropdown-item" href="#">{% trans "Metadata AI" %}</a></li>
             </ul>
+        </li>
 
-            <ul class="nav navbar-nav navbar-right">
-                <div class="d-none d-flex">
-                    {% include './search_bar.html' with search_bar_id='gn-search-bar' %}
-                </div>
-                {% block my_extra_right_tab %}
-                    {% comment %} {% render_nav_menu 'TOPBAR_MENU' %} {% endcomment %}
-                {% endblock my_extra_right_tab %}
-
-                {% if not user.is_authenticated and ACCOUNT_OPEN_SIGNUP and not READ_ONLY_MODE %}
-                    <li><a href="{% url "account_signup" %}">{% trans "Register" %}</a></li>
-                {% endif %}
-                {% if user.is_authenticated %}
-                <li>
-                    <a href="#" class="dropdown-toggle avatar" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                    {% comment %} {% autoescape off %}{% avatar user 40 %}{% endautoescape %} {% endcomment %}
-                    {% with full_name=user.first_name|add:' '|add:user.last_name %}
-                        {% if full_name.strip %}
-                        {{ full_name | truncatechars:20 }}
-                        {% else %}
-                        {{ user.username | truncatechars:20 }}
-                        {% endif %}
-                    {% endwith %}
-                    <i class="fa fa-angle-down fa-lg"></i>
-                    </a>
-                    <ul class="dropdown-menu">
-                    <li><a href="{{ user.get_absolute_url }}">{% trans "Profile" %}</a></li>
-                    <li><a href="{% url "recent-activity" %}">{% trans "Recent Activity" %}</a></li>
-                    <li><a href="{% url "messages_inbox" %}">{% trans "Inbox" %}</a></li>
-                    {% if user.is_superuser or user.is_staff %}
-                        <li role="separator" class="divider"></li>
-                        <li><a href="{% url "admin:index" %}">{% trans "Admin" %}</a></li>
-                        {% if 'geonode.geoserver' in INSTALLED_APPS %}
-                        <li><a href="{{ OGC_SERVER.default.WEB_UI_LOCATION }}">GeoServer</a></li>
-                        {% endif %}
-                        {% if USE_MONITORING %}
-                        <li role="separator" class="divider"></li>
-                        <li><a href="{% url "monitoring:index" %}">{% trans "Monitoring & Analytics" %}</a></li>
-                        {% endif %}
-                    {% endif %}
-                    <li role="separator" class="divider"></li>
-                    <li><a href="{% url "help" %}">{% trans "Help" %}</a></li>
-                    <li role="separator" class="divider"></li>
-                    <li><a href="{% if SITEURL|default:""|slice:"-1:" == "/" %}{{SITEURL}}{% else %}{{SITEURL}}/{% endif %}account/logout/">{% trans "Log out" %}</a></li>
-                    </ul>
-                    </li>
-                {% else %}
-                    <li><a href="#" data-toggle="modal" data-target="#SigninModal" role="button" >{% trans "Sign in" %} </a></li>
-                {% endif %}
+        <!-- Learn -->
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navLearn"
+            role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {% trans "Learn" %}
+            <i class="fa fa-angle-down ms-1"></i>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navLearn">
+            <li><a class="dropdown-item" href="#">{% trans "..." %}</a></li>
             </ul>
+        </li>
+
+        <!-- News & Events -->
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navNews"
+            role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {% trans "News & Events" %}
+            <i class="fa fa-angle-down ms-1"></i>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navNews">
+            <li><a class="dropdown-item" href="#">{% trans "..." %}</a></li>
+            </ul>
+        </li>
+
+        <!-- About -->
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navAbout"
+            role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {% trans "About" %}
+            <i class="fa fa-angle-down ms-1"></i>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navAbout">
+            <li><a class="dropdown-item" href="#">{% trans "FAQ" %}</a></li>
+            <li><a class="dropdown-item" href="#">{% trans "Contact Us" %}</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#">{% trans "Version 2.0.1" %}</a></li>
+            </ul>
+        </li>
+
+          </ul>
         </div>
+        <!-- Right side (search + user menu) -->
+        <div class="col-12 col-lg-4 p-0 d-flex flex-column flex-lg-row justify-content-lg-end align-items-center mt-2 mt-lg-0 gap-2 gap-lg-0">
+          <div class="me-lg-3 w-100 w-lg-auto">
+            {% include './search_bar.html' with search_bar_id='gn-search-bar' %}
+          </div>
+          <ul class="navbar-nav mb-2 mb-lg-0 flex-row flex-lg-row">
+            {% for menu_item in USER_MENU %}
+              {% include './menu_item.html' with menu_item=menu_item align_right=True %}
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
     </div>
+  </div>
 </nav>
+
     
 
 <script>
