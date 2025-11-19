@@ -1,6 +1,6 @@
 /* ---------------------------------------------------
-   ZALF Theme — Typography, Palette & Branding
-   Integrates with Bootstrap 3 / MapStore LESS build
+  ZALF Theme — Typography, Palette & Branding
+  Compatible with Bootstrap 3
 ---------------------------------------------------- */
 
 /* === Google Fonts === */
@@ -24,7 +24,7 @@
 /* === Core overrides === */
 @link-color: @brand-accent;
 
-/* === Root Variables (GeoNode expects these) === */
+/* === Root Variables (GeoNode / MapStore) === */
 :root {
   /* --- Core --- */
   --gn-main-color: #1a1a1a;
@@ -42,9 +42,9 @@
 
   /* --- Navbar Gradient Colors --- */
   --gn-primary-1: #c7d406;
-  /* verde principal */
+  /* main green */
   --gn-primary-2: #4D9B70;
-  /* verde secundário */
+  /* secondary green */
 
   /* --- Footer --- */
   --gn-footer-color: @brand-light;
@@ -89,7 +89,7 @@ li {
   font-family: @font-noto !important;
 }
 
-/* === Buttons === */
+/* === Buttons (Bootstrap 3 override) === */
 .btn-primary {
   background-color: @brand-primary;
   border-color: @brand-primary;
@@ -119,10 +119,9 @@ footer.footer a:hover {
   color: var(--gn-footer-link-hover-color) !important;
 }
 
-
 /* ---------------------------------------------
-   7) TopNavbar (glassy, sticky) — scoped to .topnavbar
-   --------------------------------------------- */
+  TopNavbar (Bootstrap 3 style)
+--------------------------------------------- */
 .topnavbar {
   border: none;
   background: rgba(68, 151, 12, 0.95);
@@ -130,9 +129,10 @@ footer.footer a:hover {
   -webkit-backdrop-filter: var(--gn-blur);
   box-shadow: 0 2px 10px rgba(0, 0, 0, .04);
   height: 70px !important;
+  margin-bottom: 0; // default .navbar from BS3
 }
 
-.topnavbar .navbar .navbar-brand,
+.topnavbar .navbar-brand,
 .topnavbar .navbar-nav>li>a {
   font-weight: 500;
   color: #ffffff;
@@ -140,7 +140,6 @@ footer.footer a:hover {
 
 .topnavbar .navbar-nav>li>a {
   position: relative;
-
 }
 
 .topnavbar .navbar-nav>li>a:after {
@@ -153,11 +152,11 @@ footer.footer a:hover {
   background: linear-gradient(90deg, var(--gn-primary-1), var(--gn-primary-2));
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform var(--gn-fast) var(--gn-ease);
+  transition: transform var(--gn-fast, 0.2s) var(--gn-ease, ease);
 }
 
 .topnavbar .navbar-nav>li>a:hover:after,
-.navbar-nav>li.active>a:after {
+.topnavbar .navbar-nav>li.active>a:after {
   transform: scaleX(1);
 }
 
@@ -167,28 +166,40 @@ footer.footer a:hover {
   color: #fff !important;
 }
 
-
+/* === Dropdown (Bootstrap 3 structure) === */
 .topnavbar .dropdown-menu {
   background: @brand-primary;
   color: #fff;
   border-radius: 6px;
   box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.08);
   padding: 8px 0;
-  z-index: 10;
+  z-index: 1000;
 }
 
-.topnavbar .dropdown-menu>li>a {
+/* Links inside dropdown: BS3 default → .dropdown-menu > li > a */
+.topnavbar .dropdown-menu>li>a,
+.topnavbar .dropdown-menu .row a {
   background: transparent;
   color: #fff;
-  transition: background var(--gn-fast, 0.2s) var(--gn-ease, ease), color var(--gn-fast, 0.2s) var(--gn-ease, ease);
+  display: block;
+  padding: 5px 20px;
+  clear: both;
+  font-weight: normal;
+  line-height: 1.42857143;
+  white-space: nowrap;
+  transition: background var(--gn-fast, 0.2s) var(--gn-ease, ease),
+    color var(--gn-fast, 0.2s) var(--gn-ease, ease);
 }
 
 .topnavbar .dropdown-menu>li>a:hover,
-.topnavbar .dropdown-menu>li>a:focus {
+.topnavbar .dropdown-menu>li>a:focus,
+.topnavbar .dropdown-menu .row a:hover,
+.topnavbar .dropdown-menu .row a:focus {
   background: rgba(91, 228, 0, 0.274);
   color: var(--gn-primary-1);
 }
 
+/* Dropdown toggle (BS3 uses .dropdown-toggle + data-toggle="dropdown") */
 .topnavbar .dropdown-toggle {
   position: relative;
   z-index: 10;
@@ -201,6 +212,7 @@ footer.footer a:hover {
 }
 
 .topnavbar .dropdown-toggle:after {
+  /* highlight line under active/hover item */
   color: #000;
   content: "";
   position: absolute;
@@ -224,15 +236,15 @@ footer.footer a:hover {
 
 .topnavbar li.open>.dropdown-toggle,
 .topnavbar li.active>.dropdown-toggle {
-  /* Exemplo: */
   background: rgba(68, 151, 12, 0.15) !important;
   color: @brand-warning;
 }
 
-/* === Search Bar (Navbar) === */
+/* === Search Bar (Navbar, compatible with Bootstrap 3) === */
 .topnavbar .search input[type="text"],
 .topnavbar input#gn-search-bar,
-.topnavbar .navbar-form input[type="text"] {
+.topnavbar .navbar-form input[type="text"],
+.topnavbar .navbar-form .form-control {
   background: transparent !important;
   border: 1.5px solid #fff !important;
   color: #fff !important;
@@ -264,24 +276,11 @@ footer.footer a:hover {
 }
 
 .topnavbar .search input[type="text"]:focus {
-  width: 260px; // ou o valor desejado
-  transition: width 0.3s;
+  width: 260px; // or the desired value
 }
 
+/* Reset default margin/padding from BS3 .navbar */
 .navbar {
   margin: 0;
   padding: 0;
-}
-
-/* Garante que dropdown-item dentro de colunas também receba o estilo do menu principal */
-.topnavbar .dropdown-menu .dropdown-item {
-  background: transparent;
-  color: #fff;
-  transition: background var(--gn-fast, 0.2s) var(--gn-ease, ease), color var(--gn-fast, 0.2s) var(--gn-ease, ease);
-}
-
-.topnavbar .dropdown-menu .dropdown-item:hover,
-.topnavbar .dropdown-menu .dropdown-item:focus {
-  background: rgba(91, 228, 0, 0.274);
-  color: var(--gn-primary-1);
 }
