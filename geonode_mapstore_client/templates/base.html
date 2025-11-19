@@ -7,8 +7,8 @@
 {% block extra_head %}
     
     <link href="{% static 'mapstore/dist/themes/geonode.css' %}?{% client_version %}" rel="stylesheet" />
-    {% comment %} <link href="{% static 'lib/css/bootstrap-select.css' %}?{% client_version %}" rel="stylesheet" /> {% endcomment %}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="{% static 'lib/css/bootstrap-select.css' %}?{% client_version %}" rel="stylesheet" />
+    
     {% include './geonode-mapstore-client/snippets/custom_theme.html' %}
     
     
@@ -26,9 +26,9 @@
 {% endblock %}
 
 {% block extra_script %}
-    {% comment %} <script type="text/javascript">
+    <script type="text/javascript">
         // enable dropdown functionalities
         $('.dropdown-toggle').dropdown();
-    </script> {% endcomment %}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    {% endcomment %}
+    
 {% endblock extra_script %}
