@@ -102,10 +102,7 @@
                 
                 <div class="navbar-nav flex-row flex-lg-row align-items-center ms-auto" >
                     {% include './search_bar.html' with search_bar_id='gn-search-bar' %}
-                    {% comment %} {% include './new_login.html' with search_bar_id='gn-search-bar' %} {% endcomment %}
-                    {% comment %} {% for menu_item in USER_MENU %}
-                        {% include './menu_item.html' with menu_item=menu_item align_right=True %}
-                    {% endfor %} {% endcomment %}
+                    {% include './new_login.html' with search_bar_id='gn-search-bar' %}
                 </div>
             </div>
         </div>
