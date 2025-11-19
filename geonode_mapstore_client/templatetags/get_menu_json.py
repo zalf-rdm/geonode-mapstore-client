@@ -74,12 +74,12 @@ def get_base_right_topbar_menu(context):
         return []
 
     about = {
-        "label": "About",
-        "type": "dropdown",
-        "items": [
-            {"type": "link", "href": "/people/", "label": "People"},
-            {"type": "link", "href": "/groups/", "label": "Groups"},
-        ],
+        # "label": "About",
+        # "type": "dropdown",
+        # "items": [
+        #     {"type": "link", "href": "/people/", "label": "People"},
+        #     {"type": "link", "href": "/groups/", "label": "Groups"},
+        # ],
     }
 
     user = _get_request_user(context)
