@@ -17,42 +17,45 @@ const Footer = () => (
                     </div>
 
                     {/* Quick Links */}
-                    <nav className="col-6 col-md-6 col-lg-3" aria-label="Quick Links">
-                        <h3 className="fs-5 fw-bold mb-3 text-light">Quick Links</h3>
-                        <ul className="list-unstyled fs-6 fw-normal m-0">
-                            <li className="mb-2">
-                                <a href="#explore" className="link-light text-decoration-none">About</a>
+                    <nav class="col-6 col-md-6 col-lg-3" aria-label="Quick Links">
+                        <h3 class="fs-5 fw-bold mb-3 text-light">Quick Links</h3>
+                        <ul class="list-unstyled fs-6 fw-normal m-0">
+                            <li class="mb-2">
+                                <a href="/about" class="link-light text-decoration-none">About</a>
                             </li>
-                            <li className="mb-2">
-                                <a href="/upload" className="link-light text-decoration-none">Upload</a>
+                            <li class="mb-2">
+                                <a href="/upload" class="link-light text-decoration-none">Upload</a>
                             </li>
-                            <li className="mb-2">
-                                <a href="#" className="link-light text-decoration-none">OGC Services and API</a>
+                            <li class="mb-2">
+                                <a href="/ogc_and_api" class="link-light text-decoration-none">OGC Services and API</a>
                             </li>
-                            <li className="mb-2">
-                                <a href="#" className="link-light text-decoration-none">Research Data Management</a>
+                            <li class="mb-2">
+                                <a href="https://www.zalf.de/en/struktur/cdp/fdm/Pages/default.aspx" class="link-light text-decoration-none">Research Data Management</a>
                             </li>
                         </ul>
                     </nav>
 
+
+
+
                     {/* Resources */}
-                    <nav className="col-6 col-md-6 col-lg-3" aria-label="Resources">
-                        <h3 className="fs-5 fw-bold mb-3 text-light">Resources</h3>
-                        <ul className="list-unstyled fs-6 fw-normal m-0">
-                            <li className="mb-2">
-                                <a href="#" className="link-light">Publications</a>
+                    <nav class="col-6 col-md-6 col-lg-3" aria-label="Resources">
+                        <h3 class="fs-5 fw-bold mb-3 text-light">Resources</h3>
+                        <ul class="list-unstyled fs-6 fw-normal m-0">
+                            <li class="mb-2">
+                                <a href="/publications" class="link-light">Publications</a>
                             </li>
-                            <li className="mb-2">
-                                <a href="#" className="link-light">Data Policy</a>
+                            <li class="mb-2">
+                                <a href="/data_policy" class="link-light">Data Policy</a>
                             </li>
-                            <li className="mb-2">
-                                <a href="#" className="link-light">How to Cite Us</a>
+                            <li class="mb-2">
+                                <a href="/how_to_cite" class="link-light">How to Cite Us</a>
                             </li>
-                            <li className="mb-2">
-                                <a href="#" className="link-light">Imprint</a>
+                            <li class="mb-2">
+                                <a href="/imprint" class="link-light">Imprint</a>
                             </li>
-                            <li className="mb-2">
-                                <a href="#" className="link-light ">Privacy</a>
+                            <li class="mb-2">
+                                <a href="/privacy" class="link-light">Privacy</a>
                             </li>
                         </ul>
                     </nav>
