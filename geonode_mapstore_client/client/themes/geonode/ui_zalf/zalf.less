@@ -174,11 +174,17 @@ footer.footer a:hover {
   box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.08);
   padding: 8px 0;
   z-index: 1000;
+  min-width: 320px;
+  width: auto;
+  max-width: 95vw;
+  word-break: break-word;
+  white-space: normal;
 }
 
 /* Links inside dropdown: BS3 default → .dropdown-menu > li > a */
 .topnavbar .dropdown-menu>li>a,
-.topnavbar .dropdown-menu .row a {
+.topnavbar .dropdown-menu .row a,
+.topnavbar .dropdown-item {
   background: transparent;
   color: #fff;
   display: block;
@@ -186,7 +192,8 @@ footer.footer a:hover {
   clear: both;
   font-weight: normal;
   line-height: 1.42857143;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: break-word;
   transition: background var(--gn-fast, 0.2s) var(--gn-ease, ease),
     color var(--gn-fast, 0.2s) var(--gn-ease, ease);
 }
@@ -310,6 +317,16 @@ footer.footer a:hover {
   z-index: 99990 !important;
 }
 
-.dropdown-menu .dropdown-item {
+.topnavbar .dropdown-menu {
+  min-width: 320px;
+  width: auto;
+  max-width: 90vw; // evita estourar a tela em telas pequenas
+  word-break: break-word;
   white-space: normal;
+}
+
+.topnavbar .dropdown-item {
+  white-space: normal;
+  word-break: break-word;
+  // padding padrão do Bootstrap já é suficiente
 }
