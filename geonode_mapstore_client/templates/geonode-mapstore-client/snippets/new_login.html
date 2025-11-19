@@ -1,112 +1,58 @@
+
 {% load i18n avatar_tags socialaccount %}
+<div>
+  <ul class="navbar-nav ms-auto">
+    {% comment %} {% block my_extra_right_tab %}
+      {% render_nav_menu 'TOPBAR_MENU' %}
+    {% endblock my_extra_right_tab %} {% endcomment %}
 
-<ul class="navbar-nav ms-auto">
-
-            {% comment %} {% block my_extra_right_tab %}
-               {% render_nav_menu 'TOPBAR_MENU' %}
-            {% endblock my_extra_right_tab %} {% endcomment %}
-
-            {% if not user.is_authenticated and ACCOUNT_OPEN_SIGNUP and not READ_ONLY_MODE %}
-              <li class="nav-item"><a class="nav-link" href="{% url "account_signup" %}">{% trans "Register" %}</a></li>
+    {% if not user.is_authenticated and ACCOUNT_OPEN_SIGNUP and not READ_ONLY_MODE %}
+      <li class="nav-item">
+        <a class="nav-link" href="{% url "account_signup" %}">{% trans "Register" %}</a>
+      </li>
+    {% endif %}
+    {% if user.is_authenticated %}
+      <li class="nav-item dropdown">
+        <a href="#" class="nav-link dropdown-toggle avatar d-flex align-items-center" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          {% autoescape off %}{% avatar user 40 %}{% endautoescape %}
+          <span class="ms-2">
+            {% with full_name=user.first_name|add:' '|add:user.last_name %}
+              {% if full_name|length > 1 %}
+                {{ full_name|truncatechars:20 }}
+              {% else %}
+                {{ user.username|truncatechars:20 }}
+              {% endif %}
+            {% endwith %}
+          </span>
+          <i class="fa fa-angle-down fa-lg ms-1"></i>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+          <li><a class="dropdown-item" href="{{ user.get_absolute_url }}">{% trans "Profile" %}</a></li>
+          <li><a class="dropdown-item" href="{% url "recent-activity" %}">{% trans "Recent Activity" %}</a></li>
+          <li><a class="dropdown-item" href="{% url "messages_inbox" %}">{% trans "Inbox" %}</a></li>
+          {% if user.is_superuser or user.is_staff %}
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{% url "admin:index" %}">{% trans "Admin" %}</a></li>
+            {% if 'geonode.geoserver' in INSTALLED_APPS %}
+              <li><a class="dropdown-item" href="{{ OGC_SERVER.default.WEB_UI_LOCATION }}">GeoServer</a></li>
             {% endif %}
-            {% if user.is_authenticated %}
-              <li class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle avatar d-flex align-items-center" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  {% autoescape off %}{% avatar user 40 %}{% endautoescape %}
-                  <span class="ms-2">
-                  {% with full_name=user.first_name|add:' '|add:user.last_name %}
-                    {% if full_name.strip %}
-                      {{ full_name | truncatechars:20 }}
-                    {% else %}
-                      {{ user.username | truncatechars:20 }}
-                    {% endif %}
-                  {% endwith %}
-                  </span>
-                  <i class="fa fa-angle-down fa-lg ms-1"></i>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                  <li><a class="dropdown-item" href="{{ user.get_absolute_url }}">{% trans "Profile" %}</a></li>
-                  <li><a class="dropdown-item" href="{% url "recent-activity" %}">{% trans "Recent Activity" %}</a></li>
-                  <li><a class="dropdown-item" href="{% url "messages_inbox" %}">{% trans "Inbox" %}</a></li>
-                  {% if user.is_superuser or user.is_staff %}
-                      <li><hr class="dropdown-divider"></li>
-                      <li><a class="dropdown-item" href="{% url "admin:index" %}">{% trans "Admin" %}</a></li>
-                      {% if 'geonode.geoserver' in INSTALLED_APPS %}
-                      <li><a class="dropdown-item" href="{{ OGC_SERVER.default.WEB_UI_LOCATION }}">GeoServer</a></li>
-                      {% endif %}
-                      {% if USE_MONITORING %}
-                      <li><hr class="dropdown-divider"></li>
-                      <li><a class="dropdown-item" href="{% url "monitoring:index" %}">{% trans "Monitoring & Analytics" %}</a></li>
-                      {% endif %}
-                  {% endif %}
-                  <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item" href="{% url "help" %}">{% trans "Help" %}</a></li>
-                  <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item" href="{% if SITEURL|default:""|slice:"-1:" == "/" %}{{SITEURL}}{% else %}{{SITEURL}}/{% endif %}account/logout/">{% trans "Log out" %}</a></li>
-                </ul>
-              </li>
-            {% else %}
-              <li class="nav-item"><a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#SigninModal" role="button">{% trans "Sign in" %}</a></li>
+            {% if USE_MONITORING %}
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="{% url "monitoring:index" %}">{% trans "Monitoring & Analytics" %}</a></li>
             {% endif %}
-        </ul>
-
-        <!-- Modal must stay outside the navbar -->
-   {% if not user.is_authenticated %}
-<div class="modal fade" id="SigninModal" tabindex="-1" aria-labelledby="SigninModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
-
-      <div class="modal-header">
-        <h5 class="modal-title" id="SigninModalLabel">{% trans "Sign in" %}</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Close' %}"></button>
-      </div>
-
-      <form class="form-signin" action="{% url 'account_login' %}?next={{ request.path }}" method="post">
-        <div class="modal-body">
-          {% csrf_token %}
-
-          {% get_providers as socialaccount_providers %}
-          {% if socialaccount_providers %}
-            {% include "socialaccount/snippets/provider_list.html" with process="login" %}
-            {% include "socialaccount/snippets/login_extra.html" %}
-            <hr>
           {% endif %}
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="{% url "help" %}">{% trans "Help" %}</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="{% if SITEURL|default:""|slice:"-1:" == "/" %}{{SITEURL}}{% else %}{{SITEURL}}/{% endif %}account/logout/">{% trans "Log out" %}</a></li>
+        </ul>
+      </li>
+    {% else %}
+      <li class="nav-item">
+        <a class="nav-link" href="#" data-toggle="modal" data-target="#SigninModal" role="button">{% trans "Sign in" %}</a>
+      </li>
+    {% endif %}
+  </ul>
 
-          <div class="mb-3">
-            <label for="id_username" class="form-label">{% trans "Username" %}</label>
-            <input id="id_username" class="form-control" name="login" type="text"
-                   placeholder="{% trans 'Username' %}">
-          </div>
 
-          <div class="mb-3">
-            <label for="id_password" class="form-label">{% trans "Password" %}</label>
-            <input id="id_password" class="form-control" name="password" type="password"
-                   autocomplete="off" placeholder="{% trans 'Password' %}">
-          </div>
-
-          <div class="form-check mb-2">
-            <input class="form-check-input" type="checkbox" id="rememberMe">
-            <label class="form-check-label" for="rememberMe">
-              {% trans "Remember Me" %}
-            </label>
-          </div>
-
-          <p>
-            <a href="{% url 'account_reset_password' %}">
-              {% trans "Forgot Password?" %}
-            </a>
-          </p>
-
-        </div>
-
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-primary w-100">{% trans "Sign in" %}</button>
-        </div>
-      </form>
-
-    </div>
-  </div>
 </div>
-{% endif %}
-
-    <!-- End of Modal -->
