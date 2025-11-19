@@ -445,10 +445,15 @@
     font-family: 'Inter', sans-serif;
 }
 
-.align-items-center {
-    align-items: center !important;
-}
+.align-items-start { align-items: flex-start !important; }
+.align-items-center { align-items: center !important; }
+.align-items-end { align-items: flex-end !important; }
 
+@media (min-width: 992px) {
+    .align-items-lg-start { align-items: flex-start !important; }
+    .align-items-lg-center { align-items: center !important; }
+    .align-items-lg-end { align-items: flex-end !important; }
+}
 .d-none {
     display: none !important;
 }
