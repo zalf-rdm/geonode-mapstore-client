@@ -51,59 +51,57 @@
                     </div>
                 {% endblock %}
 
-                <script>
-                    window.addEventListener('mapstore:ready', function(event) {
-                        const catalogPagePath = window.__GEONODE_CONFIG__.localConfig.geoNodeSettings.catalogPagePath;
-                        const pagePath = catalogPagePath ? catalogPagePath : '/catalogue/';
-                        const msAPI = event.detail;
-                        msAPI.setPluginsConfig([
-                            {
-                                name: 'FeaturedResourcesGrid',
-                                cfg: {
-                                    targetSelector: '#gn-home-featured-resources-grid',
-                                    pagePath: pagePath
-                                }
-                            },
-                            {
-                                name: 'ResourcesGrid',
-                                cfg: {
-                                    targetSelector: '#gn-home-resources-grid',
-                                    containerSelector: '#gn-home-resources-grid',
-                                    pagination: false,
-                                    pagePath: pagePath,
-                                    disableFilters: true,
-                                    disableDetailPanel: true,
-                                    enableGeoNodeCardsMenuItems: true
-                                }
-                            },
-                            { name: 'SaveAs', cfg: { closeOnSave: true } },
-                            { name: 'DeleteResource' },
-                            { name: 'DownloadResource' },
-                            { name: 'Notifications' }
-                        ]);
-                    });
-                </script>
-    
-                {% block ms_scripts %}
-                    <script id="gn-script" src="{% static 'mapstore/dist/js/gn-components.js' %}?{% client_version %}"></script>
-                {% endblock %}
-    
-                {% block footer %}
-                    {% include './geonode-mapstore-client/snippets/footer.html' %}
-                {% endblock %}
-    
-                {% block scripts %}
-                    <script src="{% static 'lib/js/jquery.min.js' %}"></script>
-<script src="{% static 'lib/js/bootstrap.min.js' %}"></script>
-<script type="text/javascript">
-    // habilita dropdown do Bootstrap 3
-    $('.dropdown-toggle').dropdown();
+
+
+<script>
+    window.addEventListener('mapstore:ready', function(event) {
+        const catalogPagePath = window.__GEONODE_CONFIG__.localConfig.geoNodeSettings.catalogPagePath;
+        const pagePath = catalogPagePath ? catalogPagePath : '/catalogue/';
+        const msAPI = event.detail;
+        msAPI.setPluginsConfig([
+            {
+                name: 'FeaturedResourcesGrid',
+                cfg: {
+                    targetSelector: '#gn-home-featured-resources-grid',
+                    pagePath: pagePath
+                }
+            },
+            {
+                name: 'ResourcesGrid',
+                cfg: {
+                    targetSelector: '#gn-home-resources-grid',
+                    containerSelector: '#gn-home-resources-grid',
+                    pagination: false,
+                    pagePath: pagePath,
+                    disableFilters: true,
+                    disableDetailPanel: true,
+                    enableGeoNodeCardsMenuItems: true
+                }
+            },
+            { name: 'SaveAs', cfg: { closeOnSave: true } },
+            { name: 'DeleteResource' },
+            { name: 'DownloadResource' },
+            { name: 'Notifications' }
+        ]);
+    });
 </script>
 
-                    
-                    
-                {% endblock %}
-            </div>
-        </div>
-    </body>
+{% block ms_scripts %}
+<script id="gn-script" src="{% static 'mapstore/dist/js/gn-components.js' %}?{% client_version %}"></script>
+{% endblock %}
+
+{% block footer %}
+{% include './geonode-mapstore-client/snippets/footer.html' %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'lib/js/jquery.min.js' %}"></script>
+<script src="{% static 'lib/js/bootstrap.min.js' %}"></script>
+<script type="text/javascript">
+$('.dropdown-toggle').dropdown();
+</script>
+{% endblock %}
+</div>
+</div>
+</body>
 </html>
