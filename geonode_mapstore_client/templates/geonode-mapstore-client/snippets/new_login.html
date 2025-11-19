@@ -49,3 +49,64 @@
               <li class="nav-item"><a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#SigninModal" role="button">{% trans "Sign in" %}</a></li>
             {% endif %}
         </ul>
+
+        <!-- Modal must stay outside the navbar -->
+   {% if not user.is_authenticated %}
+<div class="modal fade" id="SigninModal" tabindex="-1" aria-labelledby="SigninModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="SigninModalLabel">{% trans "Sign in" %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Close' %}"></button>
+      </div>
+
+      <form class="form-signin" action="{% url 'account_login' %}?next={{ request.path }}" method="post">
+        <div class="modal-body">
+          {% csrf_token %}
+
+          {% get_providers as socialaccount_providers %}
+          {% if socialaccount_providers %}
+            {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+            {% include "socialaccount/snippets/login_extra.html" %}
+            <hr>
+          {% endif %}
+
+          <div class="mb-3">
+            <label for="id_username" class="form-label">{% trans "Username" %}</label>
+            <input id="id_username" class="form-control" name="login" type="text"
+                   placeholder="{% trans 'Username' %}">
+          </div>
+
+          <div class="mb-3">
+            <label for="id_password" class="form-label">{% trans "Password" %}</label>
+            <input id="id_password" class="form-control" name="password" type="password"
+                   autocomplete="off" placeholder="{% trans 'Password' %}">
+          </div>
+
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" id="rememberMe">
+            <label class="form-check-label" for="rememberMe">
+              {% trans "Remember Me" %}
+            </label>
+          </div>
+
+          <p>
+            <a href="{% url 'account_reset_password' %}">
+              {% trans "Forgot Password?" %}
+            </a>
+          </p>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary w-100">{% trans "Sign in" %}</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+{% endif %}
+
+    <!-- End of Modal -->
