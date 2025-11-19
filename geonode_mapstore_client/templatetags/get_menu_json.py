@@ -68,10 +68,10 @@ def get_base_left_topbar_menu():
 
 @register.simple_tag(takes_context=True)
 def get_base_right_topbar_menu(context):
-    is_mobile = _is_mobile_device(context)
+    # is_mobile = _is_mobile_device(context)
 
-    if is_mobile:
-        return []
+    # if is_mobile:
+    #     return []
 
     about = {
         # "label": "About",
@@ -82,29 +82,29 @@ def get_base_right_topbar_menu(context):
         # ],
     }
 
-    user = _get_request_user(context)
+    # user = _get_request_user(context)
 
-    if user and user.is_authenticated and not Configuration.load().read_only:
-        about["items"].extend(
-            [
-                {"type": "divider"},
-                {
-                    "type": "link",
-                    "href": "/invitations/geonode-send-invite/",
-                    "label": "Invite users",
-                },
-                {
-                    "type": "link",
-                    "href": "/admin/people/profile/add/",
-                    "label": "Add user",
-                }
-                if user.is_superuser
-                else None,
-                {"type": "link", "href": "/groups/create/", "label": "Create group"}
-                if user.is_superuser
-                else None,
-            ]
-        )
+    # if user and user.is_authenticated and not Configuration.load().read_only:
+    #     about["items"].extend(
+    #         [
+    #             {"type": "divider"},
+    #             {
+    #                 "type": "link",
+    #                 "href": "/invitations/geonode-send-invite/",
+    #                 "label": "Invite users",
+    #             },
+    #             {
+    #                 "type": "link",
+    #                 "href": "/admin/people/profile/add/",
+    #                 "label": "Add user",
+    #             }
+    #             if user.is_superuser
+    #             else None,
+    #             {"type": "link", "href": "/groups/create/", "label": "Create group"}
+    #             if user.is_superuser
+    #             else None,
+    #         ]
+    #     )
     return [about]
 
 
