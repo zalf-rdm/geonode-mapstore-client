@@ -9,7 +9,7 @@ concurrency:
 on:
   # Triggers the workflow on push events but only for the main branch
   push:
-    branches: [ main ]
+    branches: [ main, main-ui ]
     paths: 
       - "VERSION"
       - "geonode_mapstore_client/client/**"
@@ -73,6 +73,6 @@ jobs:
       - name: "Create Pull Request"
         uses: peter-evans/create-pull-request@v6
         with:
-          title: "[main] new JS dist build"
-          body: "CI build on branch `main`"
+          title: "[${{ github.ref_name }}] new JS dist build"
+          body: "CI build on branch `${{ github.ref_name }}`"
           delete-branch: true
