@@ -1,5 +1,4 @@
-
-{% load i18n avatar_tags socialaccount %}
+{% load i18n avatar_tags socialaccount zalf_social %}
 <div>
   <ul class="navbar-nav ms-auto">
     {% comment %} {% block my_extra_right_tab %}
@@ -49,10 +48,12 @@
       </li>
     {% else %}
       <li class="nav-item">
-        <a class="nav-link" href="/account/oidc/identiy-e.dataservice.zalf.de/login/?process=login&next={{ request.path }}" role="button">{% trans "Sign in" %}</a>
-      </li>
+        {% get_primary_social_provider as provider_id %}
+        <form method="POST" action="{% provider_login_url provider_id %}" novalidate="novalidate">
+            {% csrf_token %}
+            <button type="submit" class="nav-link">{% trans 'Register/Login via ORCID' %}</button>
+        </form>
+    </li>
     {% endif %}
   </ul>
-
-
 </div>
