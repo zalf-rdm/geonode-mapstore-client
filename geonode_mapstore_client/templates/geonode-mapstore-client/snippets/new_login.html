@@ -44,7 +44,7 @@
           <li><hr class="dropdown-divider"></li>
           <li><a class="dropdown-item" href="{% url "help" %}">{% trans "Help" %}</a></li>
           <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item" href="{% if SITEURL|default:""|slice:"-1:" == "/" %}{{SITEURL}}{% else %}{{SITEURL}}/{% endif %}account/logout/">{% trans "Log out" %}</a></li>
+          <li><a class="dropdown-item" href="{% url 'account_logout' %}">{% trans "Log out" %}</a></li>
         </ul>
       </li>
     {% else %}
