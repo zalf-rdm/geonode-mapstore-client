@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-22 12:32+0100\n"
+"POT-Creation-Date: 2026-02-19 17:05+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,91 +18,189 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: mapstore2_adapter/api/models.py:74
-msgid "String"
+#: geonode_mapstore_client/apps.py:46 geonode_mapstore_client/apps.py:54
+#: geonode_mapstore_client/apps.py:62
+msgid "None"
 msgstr ""
 
-#: mapstore2_adapter/api/models.py:75
-msgid "Number"
+#: geonode_mapstore_client/apps.py:47 geonode_mapstore_client/apps.py:55
+#: geonode_mapstore_client/apps.py:63
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/resource_card.html:48
+msgid "View"
 msgstr ""
 
-#: mapstore2_adapter/api/models.py:76
-msgid "Integer"
+#: geonode_mapstore_client/apps.py:48 geonode_mapstore_client/apps.py:56
+#: geonode_mapstore_client/apps.py:64
+msgid "Download"
 msgstr ""
 
-#: mapstore2_adapter/api/models.py:77
-msgid "Boolean"
+#: geonode_mapstore_client/apps.py:49 geonode_mapstore_client/apps.py:57
+#: geonode_mapstore_client/apps.py:65
+msgid "Edit"
 msgstr ""
 
-#: mapstore2_adapter/api/models.py:78
-msgid "Binary"
+#: geonode_mapstore_client/apps.py:50 geonode_mapstore_client/apps.py:58
+#: geonode_mapstore_client/apps.py:66
+msgid "Manage"
 msgstr ""
 
-#: mapstore2_adapter/apps.py:30
-msgid "Django MapStore2 Adapter"
+#: geonode_mapstore_client/apps.py:51 geonode_mapstore_client/apps.py:59
+#: geonode_mapstore_client/apps.py:67
+msgid "Owner"
 msgstr ""
 
-#: mapstore2_adapter/geoapps/apps.py:28
-msgid "MapStore2 Geonode Apps Plugins"
+#: geonode_mapstore_client/models.py:15
+msgid "Search Service"
 msgstr ""
 
-#: mapstore2_adapter/geoapps/geostories/__init__.py:32
-msgid "GeoStory Created"
+#: geonode_mapstore_client/templates/geonode-mapstore-client/legacy/app_list.html:6
+msgid "apps explore"
 msgstr ""
 
-#: mapstore2_adapter/geoapps/geostories/__init__.py:32
-msgid "A GeoStory was created"
+#: geonode_mapstore_client/templates/geonode-mapstore-client/legacy/app_list.html:13
+msgid "Create New"
 msgstr ""
 
-#: mapstore2_adapter/geoapps/geostories/__init__.py:33
-msgid "GeoStory Updated"
-msgstr ""
-
-#: mapstore2_adapter/geoapps/geostories/__init__.py:33
-msgid "A GeoStory was updated"
-msgstr ""
-
-#: mapstore2_adapter/geoapps/geostories/__init__.py:34
-msgid "GeoStory Approved"
-msgstr ""
-
-#: mapstore2_adapter/geoapps/geostories/__init__.py:34
-msgid "A GeoStory was approved by a Manager"
-msgstr ""
-
-#: mapstore2_adapter/geoapps/geostories/__init__.py:35
-msgid "GeoStory Published"
-msgstr ""
-
-#: mapstore2_adapter/geoapps/geostories/__init__.py:35
-msgid "A GeoStory was published"
-msgstr ""
-
-#: mapstore2_adapter/geoapps/geostories/__init__.py:36
-msgid "GeoStory Deleted"
-msgstr ""
-
-#: mapstore2_adapter/geoapps/geostories/__init__.py:36
-msgid "A GeoStory was deleted"
-msgstr ""
-
-#: mapstore2_adapter/geoapps/geostories/__init__.py:37
-msgid "Comment on GeoStory"
-msgstr ""
-
-#: mapstore2_adapter/geoapps/geostories/__init__.py:37
-msgid "A GeoStory was commented on"
-msgstr ""
-
-#: mapstore2_adapter/geoapps/geostories/__init__.py:38
-msgid "Rating for GeoStory"
-msgstr ""
-
-#: mapstore2_adapter/geoapps/geostories/__init__.py:38
-msgid "A rating was given to a GeoStory"
-msgstr ""
-
-#: mapstore2_adapter/geoapps/geostories/models.py:36
+#: geonode_mapstore_client/templates/geonode-mapstore-client/legacy/app_list.html:13
+#: geonode_mapstore_client/templates/geonode-mapstore-client/legacy/app_list.html:27
 #, python-format
-msgid "%s Type"
+msgid "%(GEONODE_APPS_NAME)s"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/legacy/app_list.html:20
+#, python-format
+msgid "%(item)s"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/legacy/app_list.html:27
+msgid "Explore"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/brand_navbar.html:32
+msgid "All Data"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/brand_navbar.html:41
+msgid "Topics"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/brand_navbar.html:49
+msgid "Animals"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/brand_navbar.html:50
+msgid "Atmosphere"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/brand_navbar.html:51
+msgid "Climate"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/brand_navbar.html:52
+msgid "Forest"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/brand_navbar.html:53
+msgid "Hydrology"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/brand_navbar.html:58
+msgid "Landscape"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/brand_navbar.html:59
+msgid "Long Term Field Experiment"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/brand_navbar.html:60
+msgid "Plants"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/brand_navbar.html:61
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/brand_navbar.html:79
+msgid "Soil Profiles"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/brand_navbar.html:62
+msgid "Water"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/brand_navbar.html:74
+msgid "Tools & Services"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/brand_navbar.html:78
+msgid "LTE Maps"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/brand_navbar.html:80
+msgid "DQ Kit"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/brand_navbar.html:87
+msgid "Upload"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/brand_navbar.html:96
+msgid "About"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/brand_navbar.html:100
+msgid "Development"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/brand_navbar.html:101
+msgid "OGC Services and API"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/brand_navbar.html:102
+msgid "FAQ"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/brand_navbar.html:103
+msgid "Contact Us"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/brand_navbar.html:105
+msgid "Version 2.0.1"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/new_login.html:31
+msgid "Profile"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/new_login.html:32
+msgid "Recent Activity"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/new_login.html:33
+msgid "Inbox"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/new_login.html:36
+msgid "Admin"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/new_login.html:42
+msgid "Monitoring & Analytics"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/new_login.html:46
+msgid "Help"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/new_login.html:48
+msgid "Log out"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/new_login.html:56
+msgid "Register/Login via ORCID"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/resources_grid.html:19
+msgid "Resource found"
+msgstr ""
+
+#: geonode_mapstore_client/templates/geonode-mapstore-client/snippets/resources_grid.html:21
+msgid "Resources found"
 msgstr ""
