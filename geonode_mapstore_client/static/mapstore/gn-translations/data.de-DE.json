@@ -350,6 +350,7 @@
             "embeddashboard": "Betten Sie dieses Dashboard ein",
             "directLink": "Direkte Verbindung",
             "iso": "ISO -Metadaten",
+            "dataCite": "DataCite Metadaten",
             "dublinCore": "Dublin Core Metadaten",
             "owner": "Eigentümer",
             "creation": "Erstellungsdatum",

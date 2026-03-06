@@ -25,7 +25,7 @@
                 "cancel": "Cancel",
                 "buttonTooltip": "Approve data collection",
                 "title": "Approve data collection",
-                "description": "You have to verify the data before a data steward can publish this data collection. Please make sure everything is set and click on 'Approve'. \n\n Do you with to approve the data collection '{title}'?",
+                "description": "You have to verify your dataset before a data steward can publish the dataset in the repository. Please make sure everything is set and click on 'Approve'. \n\n Do you wish to approve the data collection '{title}'?",
                 "approve": "Approve"
             },
             "PublishDataCollection": {
@@ -350,6 +350,7 @@
             "embeddashboard": "Embed this Dashboard",
             "directLink": "Direct Link",
             "iso": "ISO Metadata",
+            "dataCite": "DataCite Metadata",
             "dublinCore": "Dublin Core Metadata",
             "owner": "Owner",
             "creation": "Creation",
