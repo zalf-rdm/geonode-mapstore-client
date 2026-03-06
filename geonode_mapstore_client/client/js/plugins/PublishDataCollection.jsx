@@ -107,7 +107,7 @@ const PublishDataCollectionComponent = ({
 
         const payload = {
             "owner": owner.pk,
-            "doi_prefix": doiPrefix,
+            "doi_prefix": skipDoiPrefix ? undefined : (doiPrefix || doiPrefixes?.[0]),
             "resources": Object.keys(checkedItems)
         }
 
@@ -177,7 +177,7 @@ const PublishDataCollectionComponent = ({
                         </Checkbox>
                         <FormControl id="doi-select" 
                             componentClass="select"
-                            onChange={setDoiPrefix}
+                            onChange={(e) => setDoiPrefix(e.target.value)}
                             // TODO allow "empty"/"undefined" select for random DOI prefixes
                             disabled={ doiPrefixes.length===0 || skipDoiPrefix }
                         >

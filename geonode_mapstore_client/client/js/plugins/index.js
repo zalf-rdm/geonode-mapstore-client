@@ -424,6 +424,10 @@ export const plugins = {
         'DublinCoreDownload',
         () => import(/* webpackChunkName: 'plugins/iso-download-plugin' */ '@js/plugins/downloads/DublinCoreDownload')
     ),
+    DataCiteDownloadPlugin: toModulePlugin(
+        'DataCiteDownload',
+        () => import(/* webpackChunkName: 'plugins/iso-download-plugin' */ '@js/plugins/downloads/DataCiteDownload')
+    ),
     ResourcesGridPlugin: toModulePlugin(
         'ResourcesGrid',
         () => import(/* webpackChunkName: 'plugins/resources-grid' */ '@js/plugins/ResourcesGrid')

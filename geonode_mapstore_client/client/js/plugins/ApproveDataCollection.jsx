@@ -80,6 +80,7 @@ const ApproveDataCollectionDialogButton = ({
     size,
     enabled,
     showText,
+    resourceData,
     ...rest
 }) => {
     const [isDialogOpen, setDialogOpen] = useState(false);
