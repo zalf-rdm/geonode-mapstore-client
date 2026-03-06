@@ -11,6 +11,7 @@ import Portal from '@mapstore/framework/components/misc/Portal';
 import tooltip from '@mapstore/framework/components/misc/enhancers/tooltip';
 import axios from '@mapstore/framework/libs/ajax';
 import FaIcon from '@js/components/FaIcon';
+import Dropdown from '@js/components/Dropdown';
 import { parseDevHostname } from '@js/utils/APIUtils';
 import { updateResourceProperties } from '@js/actions/gnresource';
 import {
@@ -213,10 +214,15 @@ const OpenDialogButton = ({
     size,
     enabled,
     showText,
+    resourceData,
     ...rest
 }) => {
     const [isDialogOpen, setDialogOpen] = useState(false);
     const toggleDialog = () => setDialogOpen(!isDialogOpen);
+
+    if (resourceData?.is_published || !resourceData?.is_approved || !resourceData?.perms?.includes('change_resourcebase')) {
+        return null;
+    }
 
     // TODO disable or confirmation 
     //   - when map state is dirty
@@ -226,6 +232,7 @@ const OpenDialogButton = ({
     const props = {
         onClose: toggleDialog,
         open: isDialogOpen,
+        resourceData,
         ...rest
     }
     return (
@@ -253,6 +260,36 @@ const ConnectedOpenDialogButton = connect(
     })
 )(OpenDialogButton);
 
+const PublishDataCollectionMenuItem = ({
+    resource,
+    ...rest
+}) => {
+    const [isDialogOpen, setDialogOpen] = useState(false);
+    const toggleDialog = () => setDialogOpen(!isDialogOpen);
+    const props = {
+        onClose: toggleDialog,
+        open: isDialogOpen,
+        resourceData: resource,
+        ...rest
+    };
+
+    if (!resource?.perms?.includes('change_resourcebase') || resource?.is_published || !resource?.is_approved) {
+        return null;
+    }
+
+    return (
+        <>
+            <Dropdown.Item onClick={toggleDialog}>
+                <FaIcon name="bookmark" />{' '}
+                <Message { ...i18n("button") } />
+            </Dropdown.Item>
+            { isDialogOpen && <PublishDataCollectionComponent {...props} /> }
+        </>
+    );
+};
+
+const ConnectedPublishDataCollectionMenuItem = connect()(PublishDataCollectionMenuItem);
+
 export default createPlugin('PublishDataCollection', {
     component: PublishDataCollectionComponent,
     containers: {
@@ -261,6 +298,11 @@ export default createPlugin('PublishDataCollection', {
             Component: ConnectedOpenDialogButton,
             priority: 1
         },
+        ResourcesGrid: {
+            name: 'PublishDataCollection',
+            target: 'cardOptions',
+            Component: ConnectedPublishDataCollectionMenuItem
+        }
     },
     epics: {
         // openpublishDataCollectionDialog: (action$, { getState }) => {

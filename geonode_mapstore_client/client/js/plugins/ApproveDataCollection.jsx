@@ -11,7 +11,9 @@ import Portal from '@mapstore/framework/components/misc/Portal';
 import tooltip from '@mapstore/framework/components/misc/enhancers/tooltip';
 import axios from '@mapstore/framework/libs/ajax';
 import FaIcon from '@js/components/FaIcon';
+import Dropdown from '@js/components/Dropdown';
 import { parseDevHostname } from '@js/utils/APIUtils';
+import { updateResourceProperties } from '@js/actions/gnresource';
 import {
     getResourceData,
     getResourcePerms,
@@ -25,7 +27,7 @@ const i18n = (shortId, msgParams={}) => {
 }
 
 const ApproveDataCollectionComponent = (props) => {
-    const { open, onClose, style={"white-space": "pre-line"}, closeGlyph } = props;
+    const { open, onClose, style={"white-space": "pre-line"}, closeGlyph, dispatch } = props;
     const { title, owner } = props.resourceData;
 
     const [ iconApproveButton, setIconApproveButton ] = useState("thumbs-up");
@@ -36,6 +38,12 @@ const ApproveDataCollectionComponent = (props) => {
         setIconApproveButton("cog");
         axios.post(url, { owner: owner.pk }).then(() => {
             setIconApproveButton("check");
+            if (dispatch) {
+                dispatch(updateResourceProperties({
+                    resourceData: props.resourceData,
+                    is_approved: true
+                }));
+            }
             //const data = response.data;
             setTimeout(onClose, 200);
         }).catch(error => {
@@ -83,6 +91,7 @@ const ApproveDataCollectionDialogButton = ({
     const props = {
         onClose: toggleDialog,
         open: isDialogOpen,
+        resourceData,
         ...rest
     }
     return (
@@ -110,6 +119,35 @@ const ConnectedApproveDataCollectionDialogButton = connect(
     })
 )(ApproveDataCollectionDialogButton);
 
+const ApproveDataCollectionMenuItem = ({
+    resource,
+    ...rest
+}) => {
+    const [isDialogOpen, setDialogOpen] = useState(false);
+    const toggleDialog = () => setDialogOpen(!isDialogOpen);
+    const props = {
+        onClose: toggleDialog,
+        open: isDialogOpen,
+        resourceData: resource,
+        ...rest
+    };
+    if (resourceData?.is_approved || !resourceData?.perms?.includes('change_resourcebase')) {
+        return null;
+    }
+
+    return (
+        <>
+            <Dropdown.Item onClick={toggleDialog}>
+                <FaIcon name="thumbs-up" />{' '}
+                <Message { ...i18n("button") } />
+            </Dropdown.Item>
+            { isDialogOpen && <ApproveDataCollectionComponent {...props} /> }
+        </>
+    );
+};
+
+const ConnectedApproveDataCollectionMenuItem = connect()(ApproveDataCollectionMenuItem);
+
 export default createPlugin('ApproveDataCollection', {
     component: ApproveDataCollectionComponent,
     containers: {
@@ -118,6 +156,11 @@ export default createPlugin('ApproveDataCollection', {
             Component: ConnectedApproveDataCollectionDialogButton,
             priority: 1
         },
+        ResourcesGrid: {
+            name: 'ApproveDataCollection',
+            target: 'cardOptions',
+            Component: ConnectedApproveDataCollectionMenuItem
+        }
     },
     epics: {},
     reducers: {}
