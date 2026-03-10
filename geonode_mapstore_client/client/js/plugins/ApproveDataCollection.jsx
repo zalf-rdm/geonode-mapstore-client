@@ -132,7 +132,7 @@ const ApproveDataCollectionMenuItem = ({
         resourceData: resource,
         ...rest
     };
-    if (resourceData?.is_approved || !resourceData?.perms?.includes('change_resourcebase')) {
+    if (resource?.is_approved || !resource?.perms?.includes('change_resourcebase')) {
         return null;
     }
 
