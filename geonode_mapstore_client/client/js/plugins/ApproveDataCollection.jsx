@@ -19,6 +19,7 @@ import {
     getResourcePerms,
     getCompactPermissions,
 } from '@js/selectors/resource';
+import useDatacitePrefixes from '@js/hooks/useDatacitePrefixes';
 
 
 const i18n = (shortId, msgParams={}) => {
@@ -85,6 +86,13 @@ const ApproveDataCollectionDialogButton = ({
 }) => {
     const [isDialogOpen, setDialogOpen] = useState(false);
     const toggleDialog = () => setDialogOpen(!isDialogOpen);
+    const { canPublish } = useDatacitePrefixes();
+
+    // Only show the approve button to users who belong to an allowed group
+    // (canPublish = true means the datacite/prefixes/ API returned ≥1 prefix for this user).
+    if (!canPublish || resourceData?.is_approved) {
+        return null;
+    }
 
     // TODO disable or confirmation when map state is dirty
 
@@ -126,13 +134,14 @@ const ApproveDataCollectionMenuItem = ({
 }) => {
     const [isDialogOpen, setDialogOpen] = useState(false);
     const toggleDialog = () => setDialogOpen(!isDialogOpen);
+    const { canPublish } = useDatacitePrefixes();
     const props = {
         onClose: toggleDialog,
         open: isDialogOpen,
         resourceData: resource,
         ...rest
     };
-    if (resource?.is_approved || !resource?.perms?.includes('change_resourcebase')) {
+    if (!canPublish || resource?.is_approved) {
         return null;
     }
 

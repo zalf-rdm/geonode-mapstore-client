@@ -28,7 +28,6 @@ const i18n = (shortId, msgParams={}) => {
 
 const PublishDataCollectionComponent = ({
     resourceData,
-    doiPrefixes=[],
     open,
     onClose,
     style,
@@ -75,6 +74,26 @@ const PublishDataCollectionComponent = ({
             [name]: checked,
         }));
     };
+
+    // Fetch DOI prefixes available to the authenticated user from the backend.
+    const [ doiPrefixes, setDoiPrefixes ] = useState([]);
+    const [ prefixesLoading, setPrefixesLoading ] = useState(true);
+
+    useEffect(() => {
+        const url = parseDevHostname("/api/v2/datacite/prefixes/");
+        setPrefixesLoading(true);
+        axios.get(url)
+            .then(response => {
+                const prefixes = response.data?.prefixes;
+                if (Array.isArray(prefixes) && prefixes.length > 0) {
+                    setDoiPrefixes(prefixes);
+                }
+            })
+            .catch(e => {
+                console.warn(`Could not fetch DOI prefixes from API, using fallback config: ${e}`);
+            })
+            .finally(() => setPrefixesLoading(false));
+    }, []);
 
     useEffect(() => {
         // example: ?id__in=3,2&filter{owner}=1000&exclude[]=*&include[]=owner&include[]=pk
@@ -147,19 +166,17 @@ const PublishDataCollectionComponent = ({
                     <FormGroup className="mb-3">
                         {
                             Object.values(doiResourceCandidatesUnique).map(resource =>
-                                <>
-                                    <Checkbox
-                                        // checked={enabled}
-                                        type="switch"
-                                        key={resource.pk}
-                                        name={resource.pk}
-                                        checked={!!checkedItems[resource.pk]}
-                                        // id="gn-filter-by-extent-switch"
-                                        onChange={handleSelectionChange}
-                                    >
-                                        {resource.title + " (" + resource.source + ")"}
-                                    </Checkbox>
-                                </>
+                                <Checkbox
+                                    // checked={enabled}
+                                    type="switch"
+                                    key={resource.pk}
+                                    name={resource.pk}
+                                    checked={!!checkedItems[resource.pk]}
+                                    // id="gn-filter-by-extent-switch"
+                                    onChange={handleSelectionChange}
+                                >
+                                    {resource.title + " (" + resource.source + ")"}
+                                </Checkbox>
                             )
                         }
                     </FormGroup>
@@ -179,14 +196,14 @@ const PublishDataCollectionComponent = ({
                             componentClass="select"
                             onChange={(e) => setDoiPrefix(e.target.value)}
                             // TODO allow "empty"/"undefined" select for random DOI prefixes
-                            disabled={ doiPrefixes.length===0 || skipDoiPrefix }
+                            disabled={ prefixesLoading || doiPrefixes.length===0 || skipDoiPrefix }
                         >
                             {
-                                doiPrefixes.map((prefix, i) => 
-                                    <>
+                                prefixesLoading
+                                    ? <option value="">Loading...</option>
+                                    : doiPrefixes.map((prefix, i) => 
                                         <option key={i} value={prefix}>{prefix}</option>
-                                    </>
-                                )
+                                    )
                             }
                         </FormControl>
                     </FormGroup>
