@@ -15,7 +15,7 @@ import Spinner from '@js/components/Spinner';
 import Message from '@mapstore/framework/components/I18N/Message';
 import tooltip from '@mapstore/framework/components/misc/enhancers/tooltip';
 import moment from 'moment';
-import { getResourceTypesInfo, getMetadataDetailUrl } from '@js/utils/ResourceUtils';
+import { getResourceTypesInfo, getMetadataDetailUrl, getMetadataUrl, resourceHasPermission } from '@js/utils/ResourceUtils';
 import debounce from 'lodash/debounce';
 import CopyToClipboardCmp from 'react-copy-to-clipboard';
 import ResourceStatus from '@js/components/ResourceStatus';
@@ -27,6 +27,34 @@ import DetailsThumbnail from './DetailsThumbnail';
 import Unadvertised from '@js/components/Unadvertised';
 
 const CopyToClipboard = tooltip(CopyToClipboardCmp);
+
+const getDateValue = (value) => value ? moment(value).format('MMM DD, YYYY') : null;
+const toArray = (value) => Array.isArray(value) ? value : value ? [value] : [];
+const getReadableSize = (value) => {
+    if (!value) {
+        return null;
+    }
+    if (typeof value === 'string') {
+        return value;
+    }
+    if (typeof value === 'number') {
+        const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+        let size = value;
+        let unitIndex = 0;
+        while (size >= 1024 && unitIndex < units.length - 1) {
+            size /= 1024;
+            unitIndex += 1;
+        }
+        return `${size.toFixed(size >= 10 || unitIndex === 0 ? 0 : 1)} ${units[unitIndex]}`;
+    }
+    return null;
+};
+const getTagValue = (item) => {
+    if (typeof item === 'string') {
+        return item;
+    }
+    return item?.label || item?.name || item?.identifier || item?.title || item?.value;
+};
 
 const EditTitle = ({ title, onEdit, disabled }) => {
     const [textValue, setTextValue] = React.useState(title);
@@ -81,8 +109,7 @@ const DetailsPanelTools = ({
     resourceCanPreviewed,
     canView,
     metadataDetailUrl,
-    name,
-    toolbarItems = []
+    name
 }) => {
     const isMounted = useRef();
     const [copiedUrl, setCopiedUrl] = useState({
@@ -120,9 +147,6 @@ const DetailsPanelTools = ({
                 onClick={debounce(() => handleFavorite(favorite), 500)}>
                 <FaIcon name={favorite ? 'star' : 'star-o'} />
             </Button>}
-            {toolbarItems.map(({ Component, name: toolbarItemName }, index) => {
-                return (<Component key={toolbarItemName || index} showIcon />);
-            })}
             <CopyToClipboard
                 tooltipPosition="top"
                 tooltipId={
@@ -168,6 +192,7 @@ function DetailsPanel({
     formatHref,
     linkHref,
     sectionStyle,
+    pageLayout,
     loading,
     downloading,
     getTypesInfo,
@@ -189,7 +214,8 @@ function DetailsPanel({
     onClose,
     tabs,
     pathname,
-    toolbarItems,
+    canDownload,
+    onAction,
     onSetExtent
 }) {
     const detailsContainerNode = useRef();
@@ -210,6 +236,47 @@ function DetailsPanel({
     const resourceCanPreviewed = resource?.pk && canPreviewed && canPreviewed(resource);
     const canView = resource?.pk && hasPermission && hasPermission(resource);
     const metadataDetailUrl = resource?.pk && getMetadataDetailUrl(resource);
+    const metadataEditUrl = resource?.pk && getMetadataUrl(resource);
+    const canEditMetadata = resourceHasPermission(resource, 'change_resourcebase') && metadataEditUrl;
+    const createdDate = getDateValue(resource?.date || resource?.created);
+    const updatedDate = getDateValue(resource?.last_updated || resource?.date);
+    const previewDetailUrl = (resourceCanPreviewed || canView) ? detailUrl : metadataDetailUrl;
+    const taxonomyTags = [
+        ...toArray(resource?.regions),
+        ...toArray(resource?.places),
+        ...toArray(resource?.category),
+        ...toArray(resource?.keywords)
+    ]
+        .map(getTagValue)
+        .filter(Boolean)
+        .slice(0, 6);
+    const assetItems = [
+        ...toArray(resource?.download_urls).map((download, index) => ({
+            id: `download-${index}`,
+            label: download?.name || download?.label || download?.format || download?.mime || download?.type || 'Download',
+            size: getReadableSize(download?.size || download?.filesize),
+            href: download?.url,
+            icon: 'download'
+        })),
+        ...toArray(resource?.links)
+            .filter(link => link?.href || link?.url)
+            .map((link, index) => ({
+                id: `link-${index}`,
+                label: link?.title || link?.name || link?.link_type || link?.extension || 'Resource link',
+                size: getReadableSize(link?.filesize || link?.size),
+                href: link?.href || link?.url,
+                icon: 'file-o'
+            }))
+    ].filter(item => item?.href && item?.label).slice(0, 3);
+    const stats = [
+        resource?.popular_count ? { icon: 'eye', label: `${resource.popular_count} Views` } : null,
+        resource?.download_count ? { icon: 'download', label: `${resource.download_count} Downloads` } : null
+    ].filter(Boolean);
+    const breadcrumbs = [
+        { label: 'Home', href: formatHref({ pathname: '/' }) },
+        { label: name || resource?.resource_type || 'Resource', href: formatHref({ pathname, query: { f: resource?.resource_type } }) },
+        { label: resource?.title || resource?.name }
+    ];
     const tools = (
         <DetailsPanelTools
             name={name}
@@ -222,77 +289,324 @@ function DetailsPanel({
             resourceCanPreviewed={resourceCanPreviewed}
             canView={canView}
             metadataDetailUrl={metadataDetailUrl}
-            toolbarItems={toolbarItems}
         />
     );
+    if (pageLayout) {
+        return (
+            <div
+                ref={detailsContainerNode}
+                className={`gn-details-panel${loading ? ' loading' : ''} page-layout`}
+                style={{ width: sectionStyle?.width }}
+            >
+                <section style={sectionStyle}>
+                    <div className="gn-details-panel-shell">
+                        <div className="gn-details-panel-main">
+                            <div className="gn-details-panel-hero">
+                                <nav className="gn-details-panel-breadcrumbs">
+                                    {breadcrumbs.map((item, idx) => (
+                                        <React.Fragment key={`${item.label}-${idx}`}>
+                                            {idx > 0 && <span className="gn-details-panel-breadcrumb-sep"><FaIcon name="angle-right" /></span>}
+                                            {item.href
+                                                ? <a href={item.href}>{item.label}</a>
+                                                : <span className="current">{item.label}</span>}
+                                        </React.Fragment>
+                                    ))}
+                                </nav>
+                                <div className="gn-details-panel-preview-card">
+                                    <DetailsResourcePreview
+                                        resource={resource}
+                                        getTypesInfo={getTypesInfo}
+                                        loading={loading}
+                                        enabled={!!(resourceCanPreviewed && !activeEditMode && !editThumbnail)}
+                                    />
+                                    <DetailsThumbnail
+                                        enabled={!!editThumbnail}
+                                        resource={resource}
+                                        activeEditMode={activeEditMode}
+                                        enableMapViewer={enableMapViewer && !resource.subtype?.includes("tabular")}
+                                        onResourceThumbnail={onResourceThumbnail}
+                                        editThumbnail={editThumbnail}
+                                        resourceThumbnailUpdating={resourceThumbnailUpdating}
+                                        isThumbnailChanged={isThumbnailChanged}
+                                        layers={layers}
+                                        onMapThumbnail={onMapThumbnail}
+                                        onClose={onClose}
+                                        savingThumbnailMap={savingThumbnailMap}
+                                        initialBbox={initialBbox}
+                                        icon={icon}
+                                    />
+                                </div>
+                                <div className="gn-details-panel-map-actions">
+                                    {canDownload && (
+                                        <Button
+                                            variant="primary"
+                                            disabled={!!downloading}
+                                            onClick={() => downloading ? null : onAction(resource)}
+                                        >
+                                            <FaIcon name="download" />
+                                            {' '}
+                                            <Message msgId="gnviewer.download" />
+                                        </Button>
+                                    )}
+                                    {canEditMetadata && (
+                                        <Button
+                                            variant="default"
+                                            href={metadataEditUrl}
+                                            rel="noopener noreferrer"
+                                        >
+                                            <FaIcon name="pencil-square-o" />
+                                            {' '}
+                                            <Message msgId="gnviewer.editMetadata" />
+                                        </Button>
+                                    )}
+                                    <CopyToClipboard
+                                        tooltipPosition="top"
+                                        tooltipId="gnviewer.shareThisResource"
+                                        text={formatResourceLinkUrl(resource)}
+                                    >
+                                        <Button variant="default">
+                                            <FaIcon name="share-alt" />
+                                            {' '}
+                                            <Message msgId="gnviewer.share" />
+                                        </Button>
+                                    </CopyToClipboard>
+                                    {previewDetailUrl && !editThumbnail && (
+                                        <Button
+                                            variant="default"
+                                            href={previewDetailUrl}
+                                            rel="noopener noreferrer"
+                                        >
+                                            <FaIcon name="external-link" />
+                                            {' '}
+                                            Explore on Map
+                                        </Button>
+                                    )}
+                                </div>
+                            </div>
+                            <aside className="gn-details-panel-summary">
+                                <div className="gn-details-panel-summary-head">
+                                    <div className="gn-details-panel-summary-pills">
+                                        {name ? <span className="gn-details-panel-pill">{name}</span> : null}
+                                        {resource?.srid ? <span className="gn-details-panel-pill is-muted">{resource.srid}</span> : null}
+                                    </div>
+                                    <div className="gn-details-panel-summary-title-block">
+                                        {activeEditMode
+                                            ? <EditTitle disabled={!activeEditMode} title={resource?.title} onEdit={editTitle} />
+                                            : <h2 className="gn-details-panel-summary-title">{resource?.title}</h2>}
+                                    </div>
+                                    <div className="gn-details-panel-summary-owner">
+                                        {resource?.owner?.avatar &&
+                                            <img src={resource?.owner.avatar} alt={getUserName(resource?.owner)} className="gn-card-author-image" />
+                                        }
+                                        <div>
+                                            <span className="gn-details-panel-summary-label">Owner</span>
+                                            <div className="gn-details-panel-summary-value">
+                                                <AuthorInfo resource={resource} formatHref={formatHref} pathname={pathname} style={{ margin: 0 }} detailsPanel />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="gn-details-panel-summary-body stitch">
+                                    {resource?.abstract
+                                        ? <div className="gn-details-panel-summary-section">
+                                            <h3>Abstract</h3>
+                                            <div className="gn-details-text gn-details-panel-description-modern">
+                                                <span className="gn-details-text-body" dangerouslySetInnerHTML={{ __html: resource.abstract }} />
+                                            </div>
+                                        </div>
+                                        : null}
+                                    <div className="gn-details-panel-summary-grid stitch">
+                                        {createdDate && (
+                                            <div className="gn-details-panel-summary-item">
+                                                <span className="gn-details-panel-summary-label">Created</span>
+                                                <span className="gn-details-panel-summary-value with-icon"><FaIcon name="calendar" />{createdDate}</span>
+                                            </div>
+                                        )}
+                                        {updatedDate && (
+                                            <div className="gn-details-panel-summary-item">
+                                                <span className="gn-details-panel-summary-label">Last Update</span>
+                                                <span className="gn-details-panel-summary-value with-icon"><FaIcon name="refresh" />{updatedDate}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                    {assetItems.length > 0 && (
+                                        <div className="gn-details-panel-summary-section">
+                                            <h3>Assets &amp; Formats</h3>
+                                            <div className="gn-details-panel-assets-list">
+                                                {assetItems.map(asset => (
+                                                    <a key={asset.id} href={asset.href} className="gn-details-panel-asset" target="_blank" rel="noopener noreferrer">
+                                                        <span className="gn-details-panel-asset-main">
+                                                            <FaIcon name={asset.icon} />
+                                                            <span>{asset.label}</span>
+                                                        </span>
+                                                        {asset.size ? <span className="gn-details-panel-asset-size">{asset.size}</span> : null}
+                                                    </a>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                    {taxonomyTags.length > 0 && (
+                                        <div className="gn-details-panel-summary-section">
+                                            <h3>Region</h3>
+                                            <div className="gn-details-panel-tags">
+                                                {taxonomyTags.map((tag, idx) => (
+                                                    <span key={`${tag}-${idx}`} className="gn-details-panel-tag">{tag}</span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                                {stats.length > 0 && (
+                                    <div className="gn-details-panel-summary-footer">
+                                        {stats.map(stat => (
+                                            <span key={stat.label} className="gn-details-panel-stat">
+                                                <FaIcon name={stat.icon} />
+                                                {stat.label}
+                                            </span>
+                                        ))}
+                                    </div>
+                                )}
+                            </aside>
+                        </div>
+                        <div className="gn-details-panel-info-section">
+                            <DetailsInfo tabs={tabs} formatHref={formatHref} allowEdit={activeEditMode} resourceTypesInfo={types} resource={resource} onSetExtent={onSetExtent}/>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        );
+    }
     return (
         <div
             ref={detailsContainerNode}
-            className={`gn-details-panel${loading ? ' loading' : ''}`}
+            className={`gn-details-panel${loading ? ' loading' : ''}${pageLayout ? ' page-layout' : ''}`}
             style={{ width: sectionStyle?.width }}
         >
             <section style={sectionStyle}>
-                <div className="gn-details-panel-header">
-                    {(!titleInView && resource?.title) ? <FaIcon name={icon} /> : null}
-                    <div className="gn-details-panel-header-title">
-                        {(!titleInView && resource?.title) ? resource.title : null}
-                    </div>
-                    {(!titleInView && resource?.title) ? tools : null}
-                    <Button
-                        variant="default"
-                        href={linkHref ? linkHref() : undefined}
-                        onClick={closePanel}
-                        className="square-button">
-                        <Glyphicon glyph="1-close" />
-                    </Button>
-                </div>
-                <DetailsResourcePreview
-                    resource={resource}
-                    getTypesInfo={getTypesInfo}
-                    loading={loading}
-                    enabled={!!(resourceCanPreviewed && !activeEditMode && !editThumbnail)}
-                />
-                <div className="gn-details-panel-content">
-                    <DetailsThumbnail
-                        enabled={!!editThumbnail}
-                        resource={resource}
-                        activeEditMode={activeEditMode}
-                        enableMapViewer={enableMapViewer && !resource.subtype?.includes("tabular")}
-                        onResourceThumbnail={onResourceThumbnail}
-                        editThumbnail={editThumbnail}
-                        resourceThumbnailUpdating={resourceThumbnailUpdating}
-                        isThumbnailChanged={isThumbnailChanged}
-                        layers={layers}
-                        onMapThumbnail={onMapThumbnail}
-                        onClose={onClose}
-                        savingThumbnailMap={savingThumbnailMap}
-                        initialBbox={initialBbox}
-                        icon={icon}
-                    />
-                    <div className="gn-details-panel-content-text">
-                        <div ref={titleNodeRef} className="gn-details-panel-title" >
-                            <span className="gn-details-panel-title-icon" >{!downloading ? <FaIcon name={icon} /> : <Spinner />} </span> <EditTitle disabled={!activeEditMode}  title={resource?.title} onEdit={editTitle} >
-                            </EditTitle>
-                            {tools}
+                {!pageLayout && (
+                    <div className="gn-details-panel-header">
+                        {(!titleInView && resource?.title) ? <FaIcon name={icon} /> : null}
+                        <div className="gn-details-panel-header-title">
+                            {(!titleInView && resource?.title) ? resource.title : null}
                         </div>
-                        {<p className="gn-details-panel-meta-text">
-                            {resource?.owner &&  <>{resource?.owner.avatar &&
-                            <img src={resource?.owner.avatar} alt={getUserName(resource?.owner)} className="gn-card-author-image" />
-                            }
-                            <ResourceMessage type={resource?.resource_type} pathname={pathname} formatHref={formatHref} />
-                            <AuthorInfo resource={resource} formatHref={formatHref} pathname={pathname} style={{ margin: 0 }} detailsPanel /></>}
-                            {(resource?.date_type && resource?.date)
-                            && <>{' '}/{' '}{moment(resource.date).format('MMMM Do YYYY')}</>}
-                        </p>
-                        }
-                        {resource?.abstract
-                            ? <div className="gn-details-text">
-                                <span className="gn-details-text-body" dangerouslySetInnerHTML={{ __html: resource.abstract }} />
+                        {(!titleInView && resource?.title) ? tools : null}
+                        <Button
+                            variant="default"
+                            href={linkHref ? linkHref() : undefined}
+                            onClick={closePanel}
+                            className="square-button">
+                            <Glyphicon glyph="1-close" />
+                        </Button>
+                    </div>
+                )}
+                <div className="gn-details-panel-shell">
+                    <div className="gn-details-panel-main">
+                        <div className="gn-details-panel-hero">
+                            <div className="gn-details-panel-preview-card">
+                                <DetailsResourcePreview
+                                    resource={resource}
+                                    getTypesInfo={getTypesInfo}
+                                    loading={loading}
+                                    enabled={!!(resourceCanPreviewed && !activeEditMode && !editThumbnail)}
+                                />
+                                <DetailsThumbnail
+                                    enabled={!!editThumbnail}
+                                    resource={resource}
+                                    activeEditMode={activeEditMode}
+                                    enableMapViewer={enableMapViewer && !resource.subtype?.includes("tabular")}
+                                    onResourceThumbnail={onResourceThumbnail}
+                                    editThumbnail={editThumbnail}
+                                    resourceThumbnailUpdating={resourceThumbnailUpdating}
+                                    isThumbnailChanged={isThumbnailChanged}
+                                    layers={layers}
+                                    onMapThumbnail={onMapThumbnail}
+                                    onClose={onClose}
+                                    savingThumbnailMap={savingThumbnailMap}
+                                    initialBbox={initialBbox}
+                                    icon={icon}
+                                />
                             </div>
-                            : null}
+                            <div className="gn-details-panel-primary-actions">
+                                {(detailUrl || metadataDetailUrl) && !editThumbnail && (
+                                    <Button
+                                        variant="primary"
+                                        href={(resourceCanPreviewed || canView) ? detailUrl : metadataDetailUrl}
+                                        rel="noopener noreferrer"
+                                    >
+                                        <FaIcon name={resourceCanPreviewed ? 'external-link' : 'file-text-o'} />
+                                        {' '}
+                                        {resourceCanPreviewed
+                                            ? 'Explore on Map'
+                                            : <Message msgId="gnviewer.viewMetadata" />}
+                                    </Button>
+                                )}
+                            </div>
+                        </div>
+
+                        <aside className="gn-details-panel-summary">
+                            <div className="gn-details-panel-summary-head">
+                                <div className="gn-details-panel-summary-pills">
+                                    {name ? <span className="gn-details-panel-pill">{name}</span> : null}
+                                    {resource?.srid ? <span className="gn-details-panel-pill is-muted">{resource.srid}</span> : null}
+                                </div>
+                                <div ref={titleNodeRef} className="gn-details-panel-title">
+                                    <span className="gn-details-panel-title-icon">{!downloading ? <FaIcon name={icon} /> : <Spinner />}</span>
+                                    <EditTitle disabled={!activeEditMode} title={resource?.title} onEdit={editTitle} />
+                                </div>
+                                <div className="gn-details-panel-summary-owner">
+                                    {resource?.owner?.avatar &&
+                                        <img src={resource?.owner.avatar} alt={getUserName(resource?.owner)} className="gn-card-author-image" />
+                                    }
+                                    <div>
+                                        <span className="gn-details-panel-summary-label">Owner</span>
+                                        <div className="gn-details-panel-summary-value">
+                                            <AuthorInfo resource={resource} formatHref={formatHref} pathname={pathname} style={{ margin: 0 }} detailsPanel />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="gn-details-panel-summary-body">
+                                <div className="gn-details-panel-tools-wrap">
+                                    {tools}
+                                </div>
+                                <div className="gn-details-panel-meta-text">
+                                    {resource?.owner && <ResourceMessage type={resource?.resource_type} pathname={pathname} formatHref={formatHref} />}
+                                </div>
+                                {resource?.abstract
+                                    ? <div className="gn-details-text gn-details-panel-description-modern">
+                                        <span className="gn-details-text-body" dangerouslySetInnerHTML={{ __html: resource.abstract }} />
+                                    </div>
+                                    : null}
+                                <div className="gn-details-panel-summary-grid">
+                                    {createdDate && (
+                                        <div className="gn-details-panel-summary-item">
+                                            <span className="gn-details-panel-summary-label">Created</span>
+                                            <span className="gn-details-panel-summary-value">{createdDate}</span>
+                                        </div>
+                                    )}
+                                    {updatedDate && (
+                                        <div className="gn-details-panel-summary-item">
+                                            <span className="gn-details-panel-summary-label">Last Update</span>
+                                            <span className="gn-details-panel-summary-value">{updatedDate}</span>
+                                        </div>
+                                    )}
+                                </div>
+                                {taxonomyTags.length > 0 && (
+                                    <div className="gn-details-panel-tags">
+                                        {taxonomyTags.map((tag, idx) => (
+                                            <span key={`${tag}-${idx}`} className="gn-details-panel-tag">{tag}</span>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div className="gn-details-panel-info-section">
+                        <DetailsInfo tabs={tabs} formatHref={formatHref} allowEdit={activeEditMode} resourceTypesInfo={types} resource={resource} onSetExtent={onSetExtent}/>
                     </div>
                 </div>
-                <DetailsInfo tabs={tabs} formatHref={formatHref} allowEdit={activeEditMode} resourceTypesInfo={types} resource={resource} onSetExtent={onSetExtent}/>
             </section>
         </div>
     );
@@ -303,9 +617,11 @@ DetailsPanel.defaultProps = {
     formatHref: () => '#',
     linkHref: () => '#',
     onResourceThumbnail: () => '#',
+    onAction: () => {},
     width: 696,
     getTypesInfo: getResourceTypesInfo,
-    isThumbnailChanged: false
+    isThumbnailChanged: false,
+    pageLayout: false
 };
 
 export default DetailsPanel;

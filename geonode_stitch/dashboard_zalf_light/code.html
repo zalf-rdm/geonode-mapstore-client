@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ZALF GeoNode Management Portal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0d7ff2",
+                        "zalf-green": "#0bda5b",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark px-6 md:px-10 py-3 sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3 text-primary">
+<div class="size-8 bg-primary/10 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">public</span>
+</div>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-tight">GeoNode Admin</h2>
+</div>
+<div class="hidden md:flex flex-col min-w-40 h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full bg-slate-100 dark:bg-slate-800">
+<div class="text-slate-500 dark:text-slate-400 flex items-center justify-center pl-3">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="w-full bg-transparent border-none focus:ring-0 text-sm placeholder:text-slate-500 dark:placeholder:text-slate-400" placeholder="Search datasets..." value=""/>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4 lg:gap-8">
+<nav class="hidden lg:flex items-center gap-6">
+<a class="text-primary text-sm font-semibold" href="#">Dashboard</a>
+<a class="text-slate-600 dark:text-slate-300 text-sm font-medium hover:text-primary transition-colors" href="#">Layers</a>
+<a class="text-slate-600 dark:text-slate-300 text-sm font-medium hover:text-primary transition-colors" href="#">Maps</a>
+<a class="text-slate-600 dark:text-slate-300 text-sm font-medium hover:text-primary transition-colors" href="#">Users</a>
+</nav>
+<div class="flex gap-2">
+<button class="flex items-center justify-center rounded-lg size-10 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-primary/10 hover:text-primary transition-all">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="flex items-center justify-center rounded-lg size-10 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-primary/10 hover:text-primary transition-all">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+<div class="bg-primary/20 border-2 border-primary/30 rounded-full size-10 flex items-center justify-center overflow-hidden" data-alt="User profile avatar with professional look">
+<span class="material-symbols-outlined text-primary">person</span>
+</div>
+</div>
+</header>
+<div class="flex flex-1 flex-col lg:flex-row">
+<aside class="w-full lg:w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark p-4 flex flex-col gap-6">
+<div class="flex flex-col px-2">
+<h1 class="text-slate-900 dark:text-white text-base font-bold">ZALF GeoNode</h1>
+<p class="text-slate-500 dark:text-slate-400 text-xs font-medium uppercase tracking-wider">Management Portal</p>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary font-semibold" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm">Overview</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">database</span>
+<span class="text-sm">Data Management</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">monitoring</span>
+<span class="text-sm">Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">verified_user</span>
+<span class="text-sm">User Permissions</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">health_and_safety</span>
+<span class="text-sm">System Health</span>
+</a>
+</nav>
+<div class="mt-auto p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+<div class="flex items-center gap-2 mb-2">
+<div class="size-2 rounded-full bg-zalf-green animate-pulse"></div>
+<span class="text-xs font-bold text-slate-600 dark:text-slate-300">System Online</span>
+</div>
+<p class="text-[11px] text-slate-500 dark:text-slate-400">All services are running optimally.</p>
+</div>
+</aside>
+<main class="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark p-6 md:p-8">
+<div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h2 class="text-3xl font-black text-slate-900 dark:text-white tracking-tight">System Overview</h2>
+<p class="text-slate-600 dark:text-slate-400 mt-1">Real-time monitoring and ZALF GeoNode statistics.</p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+                            Last 30 Days
+                        </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:brightness-110 transition-all">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                            Export Report
+                        </button>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+<div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
+<div class="flex justify-between items-start">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Total Layers</p>
+<span class="material-symbols-outlined text-primary bg-primary/10 rounded p-1">layers</span>
+</div>
+<p class="text-2xl font-bold mt-2 text-slate-900 dark:text-white">1,284</p>
+<div class="flex items-center gap-1 mt-2 text-zalf-green text-sm font-bold">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+                            +12%
+                        </div>
+</div>
+<div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
+<div class="flex justify-between items-start">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Active Users</p>
+<span class="material-symbols-outlined text-primary bg-primary/10 rounded p-1">group</span>
+</div>
+<p class="text-2xl font-bold mt-2 text-slate-900 dark:text-white">452</p>
+<div class="flex items-center gap-1 mt-2 text-zalf-green text-sm font-bold">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+                            +5.2%
+                        </div>
+</div>
+<div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
+<div class="flex justify-between items-start">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Storage Used</p>
+<span class="material-symbols-outlined text-primary bg-primary/10 rounded p-1">hard_drive</span>
+</div>
+<p class="text-2xl font-bold mt-2 text-slate-900 dark:text-white">84.2 GB</p>
+<div class="flex items-center gap-1 mt-2 text-orange-500 text-sm font-bold">
+<span class="material-symbols-outlined text-[16px]">trending_flat</span>
+                            -2.1%
+                        </div>
+</div>
+<div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
+<div class="flex justify-between items-start">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">API Requests</p>
+<span class="material-symbols-outlined text-primary bg-primary/10 rounded p-1">bolt</span>
+</div>
+<p class="text-2xl font-bold mt-2 text-slate-900 dark:text-white">24.5k</p>
+<div class="flex items-center gap-1 mt-2 text-zalf-green text-sm font-bold">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+                            +18.4%
+                        </div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
+<div class="flex justify-between items-center mb-6">
+<div>
+<h3 class="text-lg font-bold text-slate-900 dark:text-white">Data Upload Trends</h3>
+<p class="text-slate-500 text-sm">Layer activity over the last 30 days</p>
+</div>
+<div class="text-right">
+<p class="text-2xl font-black text-zalf-green">520</p>
+<p class="text-[10px] uppercase font-bold text-slate-400">Total Uploads</p>
+</div>
+</div>
+<div class="h-64 flex flex-col justify-end">
+<svg class="w-full h-full" fill="none" preserveaspectratio="none" viewbox="0 0 478 150" xmlns="http://www.w3.org/2000/svg">
+<path d="M0 109C18.1538 109 18.1538 21 36.3077 21C54.4615 21 54.4615 41 72.6154 41C90.7692 41 90.7692 93 108.923 93C127.077 93 127.077 33 145.231 33C163.385 33 163.385 101 181.538 101C199.692 101 199.692 61 217.846 61C236 61 236 45 254.154 45C272.308 45 272.308 121 290.462 121C308.615 121 308.615 149 326.769 149C344.923 149 344.923 1 363.077 1C381.231 1 381.231 81 399.385 81C417.538 81 417.538 129 435.692 129C453.846 129 453.846 25 472 25V149H0V109Z" fill="url(#zalfGradient)"></path>
+<path d="M0 109C18.1538 109 18.1538 21 36.3077 21C54.4615 21 54.4615 41 72.6154 41C90.7692 41 90.7692 93 108.923 93C127.077 93 127.077 33 145.231 33C163.385 33 163.385 101 181.538 101C199.692 101 199.692 61 217.846 61C236 61 236 45 254.154 45C272.308 45 272.308 121 290.462 121C308.615 121 308.615 149 326.769 149C344.923 149 344.923 1 363.077 1C381.231 1 381.231 81 399.385 81C417.538 81 417.538 129 435.692 129C453.846 129 453.846 25 472 25" stroke="#0bda5b" stroke-linecap="round" stroke-width="3"></path>
+<defs>
+<lineargradient id="zalfGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#0bda5b" stop-opacity="0.2"></stop>
+<stop offset="100%" stop-color="#0bda5b" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+</svg>
+<div class="flex justify-between mt-4 px-2">
+<span class="text-xs font-bold text-slate-400">Mon</span>
+<span class="text-xs font-bold text-slate-400">Wed</span>
+<span class="text-xs font-bold text-slate-400">Fri</span>
+<span class="text-xs font-bold text-slate-400">Sun</span>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
+<div class="flex justify-between items-center mb-6">
+<div>
+<h3 class="text-lg font-bold text-slate-900 dark:text-white">User Activity</h3>
+<p class="text-slate-500 text-sm">Session distribution weekly</p>
+</div>
+<div class="text-right">
+<p class="text-2xl font-black text-primary">3.2k</p>
+<p class="text-[10px] uppercase font-bold text-slate-400">Active Sessions</p>
+</div>
+</div>
+<div class="h-64 grid grid-cols-4 items-end gap-6 px-4">
+<div class="relative group">
+<div class="bg-slate-100 dark:bg-slate-700 rounded-t-lg w-full h-[60%] transition-all hover:bg-primary/20"></div>
+<div class="absolute inset-0 bg-primary w-full h-[40%] rounded-t-lg transition-all group-hover:h-[45%]"></div>
+<p class="text-[10px] font-bold text-slate-400 mt-4 text-center">Week 1</p>
+</div>
+<div class="relative group">
+<div class="bg-slate-100 dark:bg-slate-700 rounded-t-lg w-full h-[40%] transition-all hover:bg-primary/20"></div>
+<div class="absolute inset-0 bg-primary w-full h-[70%] rounded-t-lg transition-all group-hover:h-[75%]"></div>
+<p class="text-[10px] font-bold text-slate-400 mt-4 text-center">Week 2</p>
+</div>
+<div class="relative group">
+<div class="bg-slate-100 dark:bg-slate-700 rounded-t-lg w-full h-[30%] transition-all hover:bg-primary/20"></div>
+<div class="absolute inset-0 bg-primary w-full h-[55%] rounded-t-lg transition-all group-hover:h-[60%]"></div>
+<p class="text-[10px] font-bold text-slate-400 mt-4 text-center">Week 3</p>
+</div>
+<div class="relative group">
+<div class="bg-slate-100 dark:bg-slate-700 rounded-t-lg w-full h-[80%] transition-all hover:bg-primary/20"></div>
+<div class="absolute inset-0 bg-primary w-full h-[25%] rounded-t-lg transition-all group-hover:h-[30%]"></div>
+<p class="text-[10px] font-bold text-slate-400 mt-4 text-center">Week 4</p>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-8">
+<div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden">
+<div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
+<h3 class="text-lg font-bold text-slate-900 dark:text-white">Recent Datasets</h3>
+<button class="text-sm font-bold text-primary hover:underline">View All</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-slate-50 dark:bg-slate-800/50">
+<th class="px-6 py-4 text-xs font-bold uppercase text-slate-400 tracking-wider">Dataset Name</th>
+<th class="px-6 py-4 text-xs font-bold uppercase text-slate-400 tracking-wider">Type</th>
+<th class="px-6 py-4 text-xs font-bold uppercase text-slate-400 tracking-wider">Status</th>
+<th class="px-6 py-4 text-xs font-bold uppercase text-slate-400 tracking-wider">Owner</th>
+<th class="px-6 py-4 text-xs font-bold uppercase text-slate-400 tracking-wider text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-slate-700">
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="size-8 rounded bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-sm">map</span>
+</div>
+<span class="text-sm font-semibold text-slate-900 dark:text-slate-100">Agricultural_Soil_Quality_2023</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-slate-500">Vector Layer</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-zalf-green/10 text-zalf-green uppercase tracking-wide">Published</span>
+</td>
+<td class="px-6 py-4 text-sm text-slate-500">Dr. Schmidt</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="size-8 rounded bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-sm">photo_library</span>
+</div>
+<span class="text-sm font-semibold text-slate-900 dark:text-slate-100">Lidar_Forest_Scan_North</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-slate-500">Raster Layer</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-500 uppercase tracking-wide">Processing</span>
+</td>
+<td class="px-6 py-4 text-sm text-slate-500">GIS Team Alpha</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="size-8 rounded bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-sm">description</span>
+</div>
+<span class="text-sm font-semibold text-slate-900 dark:text-slate-100">Regional_Water_Usage_Metadata</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-slate-500">Document</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-700 text-slate-400 uppercase tracking-wide">Private</span>
+</td>
+<td class="px-6 py-4 text-sm text-slate-500">Admin</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ZALF GeoNode - UI Component Kit</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#22c55e", // ZALF Green Branding
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#0a1118",
+                        "surface": "#16202a",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass {
+            background: rgba(22, 32, 42, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+<!-- Top Navigation -->
+<header class="flex items-center justify-between border-b border-white/10 bg-surface/50 backdrop-blur-md px-6 py-3 sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3">
+<div class="size-8 bg-primary rounded-lg flex items-center justify-center text-background-dark">
+<span class="material-symbols-outlined font-bold">public</span>
+</div>
+<h2 class="text-xl font-bold tracking-tight text-slate-100">ZALF <span class="text-primary">GeoNode</span></h2>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-sm font-medium text-slate-300 hover:text-primary transition-colors" href="#">Layers</a>
+<a class="text-sm font-medium text-slate-300 hover:text-primary transition-colors" href="#">Maps</a>
+<a class="text-sm font-medium text-slate-300 hover:text-primary transition-colors" href="#">Data</a>
+<a class="text-sm font-medium text-primary border-b-2 border-primary pb-1" href="#">MapStore Kit</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+<input class="bg-slate-800/50 border-none rounded-full pl-10 pr-4 py-1.5 text-sm w-64 focus:ring-1 focus:ring-primary" placeholder="Search layers..." type="text"/>
+</div>
+<button class="p-2 rounded-full hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="size-8 rounded-full bg-primary/20 border border-primary/40 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="User profile avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCC7wFJ9FuVt-xe0cff-jHD98D8bEzpJgimwO3zqzgSoYQZhSLiYJCGs8Rkf4OqWc7Od3rmAaJHJ93Ryo-aeqL_fXuHCYCR-a0zmXXou8sSqmaGAyAje42lL1vmQv9zrigblC_JcbZwTG3L4QUEx5HJEykbvySX4k_gvTzlp_Mn67a4t_B3_2KYsp8UgfQQSYXLJd9wmmcZd5ljyk0Ps6whTc5kJoW67izGS04M4C9YA4kIQ1HexZs2bI4YCOR70Fqokj0GJdzbX6DX"/>
+</div>
+</div>
+</header>
+<main class="flex-1 p-6 lg:p-10 grid grid-cols-12 gap-8 max-w-7xl mx-auto w-full">
+<!-- Left Column: Layer Manager & Filters -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-8">
+<!-- 1. Layer Manager (Tree Structure) -->
+<section class="glass rounded-xl p-5 flex flex-col gap-4">
+<div class="flex items-center justify-between mb-2">
+<h3 class="font-semibold text-slate-100 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">layers</span>
+                            Layer Manager
+                        </h3>
+<button class="text-xs bg-primary/10 text-primary px-2 py-1 rounded border border-primary/20 hover:bg-primary/20 transition-all">
+                            Add New
+                        </button>
+</div>
+<div class="flex flex-col gap-1 custom-scrollbar overflow-y-auto max-h-[400px]">
+<!-- Group Header -->
+<div class="flex items-center gap-2 py-1.5 text-slate-400 text-xs font-bold uppercase tracking-wider mt-2">
+<span class="material-symbols-outlined text-sm">keyboard_arrow_down</span>
+                            Soil Data (Raster)
+                        </div>
+<!-- Layer Item: Active -->
+<div class="bg-primary/5 border border-primary/20 rounded-lg p-3 flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<input checked="" class="rounded border-slate-600 bg-transparent text-primary focus:ring-primary focus:ring-offset-background-dark" type="checkbox"/>
+<div>
+<p class="text-sm font-medium text-slate-100">Soil Erosion Map 2023</p>
+<p class="text-[10px] text-primary">Visible • Raster</p>
+</div>
+</div>
+<div class="flex items-center gap-1">
+<button class="p-1 hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">settings</span></button>
+<button class="p-1 hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">info</span></button>
+</div>
+</div>
+<div class="flex items-center gap-3 px-1">
+<span class="material-symbols-outlined text-xs text-slate-500">opacity</span>
+<div class="flex-1 h-1 bg-slate-700 rounded-full relative">
+<div class="absolute left-0 top-0 h-full w-[75%] bg-primary rounded-full"></div>
+<div class="absolute left-[75%] top-1/2 -translate-y-1/2 size-3 bg-white rounded-full shadow-lg cursor-pointer"></div>
+</div>
+<span class="text-[10px] text-slate-400 font-mono">75%</span>
+</div>
+</div>
+<!-- Layer Item: Normal -->
+<div class="hover:bg-white/5 border border-transparent rounded-lg p-3 flex flex-col gap-3 transition-colors">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<input class="rounded border-slate-600 bg-transparent text-primary focus:ring-primary focus:ring-offset-background-dark" type="checkbox"/>
+<div>
+<p class="text-sm font-medium text-slate-300">Biomass Potential (DE)</p>
+<p class="text-[10px] text-slate-500">Hidden • Raster</p>
+</div>
+</div>
+<button class="p-1 hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">more_vert</span></button>
+</div>
+</div>
+<!-- Group Header -->
+<div class="flex items-center gap-2 py-1.5 text-slate-400 text-xs font-bold uppercase tracking-wider mt-4">
+<span class="material-symbols-outlined text-sm">keyboard_arrow_right</span>
+                            Environmental Assets
+                        </div>
+</div>
+</section>
+<!-- 2. Advanced Filter/Query Builder -->
+<section class="glass rounded-xl p-5">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-semibold text-slate-100 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">filter_alt</span>
+                            Query Builder
+                        </h3>
+</div>
+<div class="flex flex-col gap-4">
+<div class="flex flex-col gap-2">
+<label class="text-xs text-slate-400 font-medium">Select Attribute</label>
+<select class="bg-slate-800 border-slate-700 rounded-lg text-sm text-slate-200 focus:ring-primary">
+<option>Nitrogen_Level (mg/kg)</option>
+<option>Soil_Type</option>
+<option>pH_Value</option>
+</select>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="flex flex-col gap-2">
+<label class="text-xs text-slate-400 font-medium">Operator</label>
+<select class="bg-slate-800 border-slate-700 rounded-lg text-sm text-slate-200 focus:ring-primary">
+<option>is greater than</option>
+<option>is less than</option>
+<option>equals</option>
+<option>between</option>
+</select>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-xs text-slate-400 font-medium">Value</label>
+<input class="bg-slate-800 border-slate-700 rounded-lg text-sm text-slate-200 focus:ring-primary" type="number" value="45.5"/>
+</div>
+</div>
+<div class="flex items-center justify-center py-2">
+<button class="text-xs text-primary font-medium flex items-center gap-1 hover:underline">
+<span class="material-symbols-outlined text-sm">add_circle</span> Add logical operator
+                            </button>
+</div>
+<button class="w-full bg-primary text-background-dark font-bold py-2 rounded-lg hover:bg-primary/90 transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">play_arrow</span> Apply Filter
+                        </button>
+</div>
+</section>
+</div>
+<!-- Right Column: Map, Time Slider, Modal -->
+<div class="col-span-12 lg:col-span-8 flex flex-col gap-8">
+<!-- Map Placeholder & Time Slider Overlay -->
+<section class="glass rounded-xl overflow-hidden relative min-h-[500px] flex items-center justify-center border border-white/5 shadow-2xl">
+<!-- Fake Map Image -->
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover opacity-60" data-alt="Dynamic topographical map of agricultural land" data-location="Brandenburg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3Mjqr1zoWA0eMan35l0kouTdeveKEoNxenDhcOFOqeyGV4h6l1pYPrxa845RjAdg06TVsVcry_uL9j1KKIZ4CLoeeEtPE9y4ZH1y0-GKjuudb-D0IlD1vKBWbjDRBkIAjDB-sZvfjq19f2Q910QGOLpn3tR0CMrSeOkdAtMUGcPYxaLd7wcNmwNsMmeD4Q2g8KtZM8dVfCXMYNN7u6u3EoRVoVDrIt3iRJgvQKJ6-8HJv58WPbOF_ZMECLN5mTTpG_22lW-Ifwt8y"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark/80 via-transparent to-transparent"></div>
+</div>
+<!-- Map Legend Overlay (Top Right) -->
+<div class="absolute top-4 right-4 glass p-3 rounded-lg flex flex-col gap-2 text-[10px] w-32">
+<p class="font-bold text-slate-300 uppercase">Soil Moisture</p>
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center gap-2">
+<div class="size-2 bg-blue-500 rounded-full"></div> <span>High (&gt;80%)</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="size-2 bg-green-500 rounded-full"></div> <span>Normal (40-80%)</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="size-2 bg-yellow-500 rounded-full"></div> <span>Low (&lt;40%)</span>
+</div>
+</div>
+</div>
+<!-- 3. Time Slider (Bottom Control) -->
+<div class="absolute bottom-6 left-6 right-6 glass rounded-xl p-4 flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-4">
+<button class="size-8 bg-primary rounded-full flex items-center justify-center text-background-dark hover:scale-105 transition-transform shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined fill-1">play_arrow</span>
+</button>
+<div>
+<p class="text-xs font-bold text-slate-100">Playback Range</p>
+<p class="text-[10px] text-slate-400">Mar 2023 — Oct 2023</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="px-3 py-1 bg-white/5 rounded-full text-[10px] text-slate-300 border border-white/10">1x Speed</div>
+<span class="material-symbols-outlined text-slate-400 cursor-pointer hover:text-white">settings</span>
+</div>
+</div>
+<div class="relative pt-2 pb-1">
+<!-- Timeline Track -->
+<div class="h-1 w-full bg-slate-700/50 rounded-full flex">
+<div class="h-full w-[40%] bg-transparent"></div>
+<div class="h-full w-[30%] bg-primary shadow-[0_0_10px_rgba(34,197,94,0.4)]"></div>
+</div>
+<!-- Markers -->
+<div class="flex justify-between mt-2 text-[9px] text-slate-500 font-medium px-1">
+<span>Jan</span><span>Feb</span><span class="text-primary font-bold">Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span class="text-primary font-bold">Oct</span><span>Nov</span><span>Dec</span>
+</div>
+<!-- Handle -->
+<div class="absolute left-[40%] top-1 size-4 bg-white rounded-full border-2 border-primary shadow-xl"></div>
+<div class="absolute left-[70%] top-1 size-4 bg-white rounded-full border-2 border-primary shadow-xl"></div>
+</div>
+</div>
+</section>
+<!-- 4. Modal/Dialog Preview -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Layer Style Modal -->
+<div class="glass rounded-xl overflow-hidden flex flex-col shadow-2xl">
+<div class="p-4 border-b border-white/10 flex items-center justify-between bg-white/5">
+<h4 class="font-semibold text-sm">Layer Styling: Erosion</h4>
+<span class="material-symbols-outlined text-slate-500 text-sm cursor-pointer">close</span>
+</div>
+<div class="p-5 flex flex-col gap-5">
+<div class="flex items-center justify-between">
+<span class="text-xs text-slate-400">Classification Method</span>
+<select class="bg-slate-800 border-slate-700 rounded text-xs text-slate-200 py-1">
+<option>Quantile</option>
+<option>Equal Interval</option>
+</select>
+</div>
+<div class="flex flex-col gap-2">
+<span class="text-xs text-slate-400">Color Palette</span>
+<div class="flex h-5 w-full rounded overflow-hidden">
+<div class="flex-1 bg-red-900"></div>
+<div class="flex-1 bg-red-700"></div>
+<div class="flex-1 bg-red-500"></div>
+<div class="flex-1 bg-orange-400"></div>
+<div class="flex-1 bg-yellow-200"></div>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex-1 bg-slate-700 hover:bg-slate-600 text-xs font-bold py-2 rounded transition-colors">Reset</button>
+<button class="flex-1 bg-primary text-background-dark hover:bg-primary/90 text-xs font-bold py-2 rounded transition-colors shadow-lg shadow-primary/10">Apply Style</button>
+</div>
+</div>
+</div>
+<!-- Metadata Info Card -->
+<div class="glass rounded-xl overflow-hidden flex flex-col">
+<div class="p-4 border-b border-white/10 flex items-center justify-between bg-white/5">
+<h4 class="font-semibold text-sm">Metadata Details</h4>
+<span class="material-symbols-outlined text-primary text-sm">verified_user</span>
+</div>
+<div class="p-5 flex flex-col gap-4">
+<div class="flex flex-col gap-1">
+<span class="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Source Entity</span>
+<span class="text-xs text-slate-200">ZALF - Institute for Soil Landscape Research</span>
+</div>
+<div class="flex flex-col gap-1">
+<span class="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Projection (CRS)</span>
+<span class="text-xs text-slate-200">EPSG:25833 (ETRS89 / UTM zone 33N)</span>
+</div>
+<div class="flex items-center gap-4 mt-2">
+<div class="flex-1 p-2 bg-white/5 rounded text-center">
+<p class="text-[9px] text-slate-500">Resolution</p>
+<p class="text-xs font-bold">10m x 10m</p>
+</div>
+<div class="flex-1 p-2 bg-white/5 rounded text-center">
+<p class="text-[9px] text-slate-500">Updated</p>
+<p class="text-xs font-bold">2 days ago</p>
+</div>
+</div>
+<button class="text-[10px] text-primary hover:underline flex items-center gap-1 justify-center mt-2">
+<span class="material-symbols-outlined text-xs">download</span> Download GeoTIFF
+                            </button>
+</div>
+</div>
+</section>
+</div>
+</main>
+<footer class="mt-auto border-t border-white/5 py-6 px-10 flex flex-col md:flex-row justify-between items-center gap-4">
+<div class="text-xs text-slate-500">
+                © 2024 Leibniz Centre for Agricultural Landscape Research (ZALF)
+            </div>
+<div class="flex gap-6">
+<a class="text-xs text-slate-400 hover:text-primary transition-colors" href="#">Documentation</a>
+<a class="text-xs text-slate-400 hover:text-primary transition-colors" href="#">API Reference</a>
+<a class="text-xs text-slate-400 hover:text-primary transition-colors" href="#">System Status</a>
+</div>
+</footer>
+</div>
+</body></html>

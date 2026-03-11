@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ZALF GeoNode Design System Guide</title>
+<!-- Tailwind CSS v3 CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            zalf: {
+              brand: '#76b82a',
+              dark: '#5a8d20',
+              light: '#a3d36c',
+            },
+            dark: {
+              bg: '#121921',
+              surface: '#1a232e',
+            },
+            light: {
+              bg: '#f8f9fa',
+              surface: '#ffffff',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+<!-- BEGIN: Custom Styles -->
+<style data-purpose="typography">
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .section-title {
+      @apply text-sm font-bold uppercase tracking-widest text-zalf-brand mb-4;
+    }
+  </style>
+<style data-purpose="glassmorphism">
+    .glass-panel {
+      background: rgba(26, 35, 46, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .light-theme .glass-panel {
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+  </style>
+<style data-purpose="layout-helpers">
+    .theme-container {
+      transition: all 0.3s ease;
+    }
+  </style>
+<!-- END: Custom Styles -->
+</head>
+<body class="bg-slate-50 text-slate-900">
+<!-- BEGIN: Global Header -->
+<header class="bg-white border-b border-slate-200 sticky top-0 z-50 px-8 py-4 flex justify-between items-center">
+<div class="flex items-center space-x-4">
+<div class="w-10 h-10 bg-zalf-brand rounded flex items-center justify-center text-white font-bold text-xl">Z</div>
+<div>
+<h1 class="text-xl font-bold tracking-tight">ZALF GeoNode Design System</h1>
+<p class="text-xs text-slate-500">v4.4.3 Integration Guide (MapStore)</p>
+</div>
+</div>
+<nav class="flex space-x-6 text-sm font-medium">
+<a class="hover:text-zalf-brand" href="#colors">Colors</a>
+<a class="hover:text-zalf-brand" href="#typography">Typography</a>
+<a class="hover:text-zalf-brand" href="#components">Components</a>
+<a class="hover:text-zalf-brand" href="#themes">Themes</a>
+</nav>
+</header>
+<!-- END: Global Header -->
+<main class="max-w-7xl mx-auto p-8 space-y-16">
+<!-- BEGIN: Brand Colors Section -->
+<section id="colors">
+<h2 class="section-title">01. Brand Identity &amp; Colors</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- ZALF Brand Green -->
+<div class="space-y-3">
+<div class="h-32 rounded-xl bg-zalf-brand shadow-lg flex items-end p-4 text-white font-mono text-sm">#76b82a</div>
+<div>
+<p class="font-semibold">Brand Green</p>
+<p class="text-xs text-slate-500 italic">Primary Accent / Call to Action</p>
+</div>
+</div>
+<!-- ZALF Dark Green -->
+<div class="space-y-3">
+<div class="h-32 rounded-xl bg-zalf-dark shadow-lg flex items-end p-4 text-white font-mono text-sm">#5a8d20</div>
+<div>
+<p class="font-semibold">Dark Green</p>
+<p class="text-xs text-slate-500 italic">Hover / Active States</p>
+</div>
+</div>
+<!-- ZALF Light Green -->
+<div class="space-y-3">
+<div class="h-32 rounded-xl bg-zalf-light shadow-lg flex items-end p-4 text-white font-mono text-sm">#a3d36c</div>
+<div>
+<p class="font-semibold">Light Green</p>
+<p class="text-xs text-slate-500 italic">Subtle Backgrounds / Badges</p>
+</div>
+</div>
+</div>
+</section>
+<!-- END: Brand Colors Section -->
+<!-- BEGIN: Component Previews -->
+<section class="space-y-12" id="components">
+<h2 class="section-title">02. Component UI Kit</h2>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+<!-- BEGIN: Dark Theme Preview -->
+<div class="bg-dark-bg p-8 rounded-3xl theme-container" id="dark-theme-preview">
+<span class="inline-block px-3 py-1 rounded-full bg-slate-800 text-slate-400 text-[10px] font-bold uppercase mb-6 border border-slate-700">Dark Mode (Default)</span>
+<div class="space-y-8">
+<!-- Glassmorphism Card -->
+<div class="glass-panel p-4 rounded-2xl shadow-2xl transition-all hover:border-zalf-brand group cursor-pointer">
+<div class="aspect-video bg-slate-800 rounded-lg mb-4 overflow-hidden relative">
+<img alt="Preview Placeholder" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWtAad5AwwtjhhfX1bUDQqtURguWKcLgQvZQmpgywWURyPDezMUBJmJPlmMGkTTS5TjxwsYb82HDvpHq0vQwXuvMj--0ywY1XP7mb3r_y1hDUvmqebRF8jQuQmUS9ASg2wdTq0q_-MNyz52oTKDWkSuL1N5Il6dZDf91KO3I6zSwuwroGFnfNX_UYOJ10wxnmnORz7Z6RX-tT_8p-c8Q1JUXcTomJLY9WwN_o1KN-Y-o-1UM4OUvcaXHed9lIwYlRNd8HIM__9XVvS"/>
+<span class="absolute top-3 left-3 bg-zalf-brand text-white text-[10px] font-bold px-2 py-1 rounded">VECTOR</span>
+</div>
+<h3 class="text-white font-semibold mb-1 group-hover:text-zalf-brand transition-colors">Brandenburg Soil Moisture 2023</h3>
+<p class="text-slate-400 text-xs">By Admin • Updated 2 days ago</p>
+<div class="mt-4 flex space-x-2">
+<button class="flex-1 bg-zalf-brand text-white text-xs font-bold py-2 rounded-md hover:bg-zalf-dark transition-colors">View Data</button>
+<button class="p-2 border border-slate-700 rounded-md text-slate-400 hover:text-white"><svg class="w-4 h-4" fill="currentColor" viewbox="0 0 20 20"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"></path></svg></button>
+</div>
+</div>
+<!-- Search and Inputs -->
+<div class="space-y-4">
+<div class="relative">
+<input class="w-full bg-[#1a232e] border-slate-700 text-white rounded-lg pl-10 focus:ring-zalf-brand focus:border-zalf-brand text-sm" placeholder="Search resources..." type="text"/>
+<svg class="w-4 h-4 text-slate-500 absolute left-3 top-3" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<div class="flex items-center space-x-2">
+<input checked="" class="rounded border-slate-700 bg-slate-800 text-zalf-brand focus:ring-zalf-brand" type="checkbox"/>
+<label class="text-slate-300 text-xs">Filter by Extent</label>
+</div>
+</div>
+</div>
+</div>
+<!-- END: Dark Theme Preview -->
+<!-- BEGIN: Light Theme Preview -->
+<div class="bg-light-bg p-8 rounded-3xl border border-slate-200 theme-container light-theme" id="light-theme-preview">
+<span class="inline-block px-3 py-1 rounded-full bg-slate-200 text-slate-600 text-[10px] font-bold uppercase mb-6 border border-slate-300">Light Mode</span>
+<div class="space-y-8">
+<!-- Shadow Card -->
+<div class="bg-white p-4 rounded-2xl shadow-md border border-slate-100 transition-all hover:shadow-xl hover:border-zalf-brand group cursor-pointer">
+<div class="aspect-video bg-slate-100 rounded-lg mb-4 overflow-hidden relative">
+<img alt="Preview Placeholder" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDi2eGFc41Kb4ig3RQr4RE8I8vgB2iQ-ufDdkZGvsAzU7GxIrP42eeSfTqI75FW6ZVd0mHYZYoRiqXCDScjtu44aKhFE-qMdi6u-UrRWHErWxhLIdkwVIgwLTEixLpg7UScmgAK1nLsAhL9kLOFVR_x25cbQsJKeqvn2gqk5F-NuMPGRsquAhSBpQ3YJ3HmKfCGbHXxM-BAM35ezEIs6KZqoC2kioyVV6VYQAi69nNJefLfOP290nYz5W0bk-yZTlY5m8aiadUIu9Sd"/>
+<span class="absolute top-3 left-3 bg-zalf-brand text-white text-[10px] font-bold px-2 py-1 rounded">MAP</span>
+</div>
+<h3 class="text-slate-900 font-semibold mb-1 group-hover:text-zalf-brand transition-colors">Erosion Risk Analysis</h3>
+<p class="text-slate-500 text-xs">By Research Dept • Updated 1 week ago</p>
+<div class="mt-4 flex space-x-2">
+<button class="flex-1 bg-zalf-brand text-white text-xs font-bold py-2 rounded-md hover:bg-zalf-dark transition-colors">Explore Map</button>
+<button class="p-2 border border-slate-200 rounded-md text-slate-400 hover:text-zalf-brand"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button>
+</div>
+</div>
+<!-- Form Layout (Metadata Editor) -->
+<div class="space-y-4 bg-white p-6 rounded-xl border border-slate-200">
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Metadata Segment</p>
+<div class="space-y-4">
+<div>
+<label class="block text-[10px] font-bold text-slate-500 mb-1 uppercase">Resource Title</label>
+<input class="w-full border-slate-200 rounded-lg text-sm focus:ring-zalf-brand focus:border-zalf-brand" type="text" value="Study Area Alpha"/>
+</div>
+<div>
+<label class="block text-[10px] font-bold text-slate-500 mb-1 uppercase">License</label>
+<select class="w-full border-slate-200 rounded-lg text-sm focus:ring-zalf-brand focus:border-zalf-brand">
+<option>Creative Commons</option>
+<option>Public Domain</option>
+</select>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- END: Light Theme Preview -->
+</div>
+</section>
+<!-- END: Component Previews -->
+<!-- BEGIN: Map Viewer Tools -->
+<section class="space-y-8 pb-16">
+<h2 class="section-title">03. MapStore Integrated Tools</h2>
+<div class="relative h-[400px] w-full rounded-3xl overflow-hidden bg-slate-900 shadow-2xl">
+<!-- Mock Map Background -->
+<div class="absolute inset-0 bg-[url('https://placehold.co/1200x800/121921/334155?text=Interactive+Map+Canvas')] bg-cover opacity-50"></div>
+<!-- Floating Zoom Controls -->
+<div class="absolute left-6 top-1/2 -translate-y-1/2 flex flex-col space-y-2">
+<button class="w-10 h-10 glass-panel rounded-full flex items-center justify-center text-white hover:bg-zalf-brand transition-all border-white/20">+</button>
+<button class="w-10 h-10 glass-panel rounded-full flex items-center justify-center text-white hover:bg-zalf-brand transition-all border-white/20">-</button>
+</div>
+<!-- Floating Sidebar/Legend (Minimally Invasive) -->
+<div class="absolute right-6 top-6 w-64 glass-panel rounded-2xl p-4 text-white">
+<div class="flex justify-between items-center mb-4">
+<h4 class="text-xs font-bold uppercase tracking-wider">Layers &amp; Legend</h4>
+<button class="text-slate-400 hover:text-white"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button>
+</div>
+<div class="space-y-3">
+<div class="flex items-center space-x-3">
+<div class="w-3 h-3 bg-zalf-brand rounded-full"></div>
+<span class="text-xs">Forest Areas</span>
+</div>
+<div class="flex items-center space-x-3">
+<div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+<span class="text-xs">Water Bodies</span>
+</div>
+<div class="flex items-center space-x-3">
+<div class="w-3 h-3 bg-orange-500 rounded-full"></div>
+<span class="text-xs">Agricultural zones</span>
+</div>
+</div>
+</div>
+<!-- Measure Toolbar -->
+<div class="absolute bottom-6 left-1/2 -translate-x-1/2 glass-panel rounded-full px-4 py-2 flex space-x-4 border-white/20">
+<button class="p-2 text-slate-300 hover:text-zalf-brand" data-purpose="tool-measurement">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M11 3v2h2V3h-2zm-6 2h2v2H5V5zm12 2h2V5h-2v2zm-2 12v-2h-2v2h2zm-6 0h2v-2h-2v2zm-4-2H5v2h2v-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+<button class="p-2 text-slate-300 hover:text-zalf-brand" data-purpose="tool-draw">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+<div class="w-px bg-white/20 h-8 self-center"></div>
+<button class="p-2 text-zalf-brand">
+<svg class="w-5 h-5" fill="currentColor" viewbox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"></path></svg>
+</button>
+</div>
+</div>
+</section>
+<!-- END: Map Viewer Tools -->
+</main>
+<!-- BEGIN: Navigation Footer -->
+<footer class="bg-white border-t border-slate-200 mt-20 py-12 px-8">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-slate-400 text-sm">
+<div class="flex items-center space-x-4 mb-4 md:mb-0">
+<span class="font-bold text-slate-600">ZALF GeoNode Design System</span>
+<span class="h-4 w-px bg-slate-200"></span>
+<span>Version 1.0.0</span>
+</div>
+<div class="flex space-x-8">
+<a class="hover:text-zalf-brand transition-colors" href="#">Documentation</a>
+<a class="hover:text-zalf-brand transition-colors" href="#">Styleguide Repository</a>
+<a class="hover:text-zalf-brand transition-colors" href="#">Support</a>
+</div>
+</div>
+</footer>
+<!-- END: Navigation Footer -->
+<script data-purpose="interactivity-mock">
+    // Visual-only interactivity for design system showcase
+    document.querySelectorAll('[data-purpose="tool-measurement"], [data-purpose="tool-draw"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        alert('Design System Preview: This interactive tool would trigger MapStore spatial operations.');
+      });
+    });
+  </script>
+</body></html>

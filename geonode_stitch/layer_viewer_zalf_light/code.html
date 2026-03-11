@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec5b13",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#221610",
+                        "zalf-green": "#5de619",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Public Sans', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased overflow-hidden">
+<div class="relative flex h-screen w-full flex-col">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark px-6 py-3 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3 text-primary">
+<span class="material-symbols-outlined text-3xl">hub</span>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-tight">ZALF Layer Viewer</h2>
+</div>
+<div class="relative hidden md:block">
+<div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+<span class="material-symbols-outlined text-sm">search</span>
+</div>
+<input class="block w-64 pl-10 pr-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 text-sm focus:ring-primary focus:border-primary" placeholder="Search data layers..." type="text"/>
+</div>
+</div>
+<nav class="flex items-center gap-6">
+<div class="hidden lg:flex items-center gap-6 border-r border-slate-200 dark:border-slate-800 pr-6">
+<a class="text-slate-600 dark:text-slate-300 text-sm font-medium hover:text-primary transition-colors" href="#">Catalog</a>
+<a class="text-slate-600 dark:text-slate-300 text-sm font-medium hover:text-primary transition-colors" href="#">Analysis</a>
+<a class="text-slate-600 dark:text-slate-300 text-sm font-medium hover:text-primary transition-colors" href="#">Workflows</a>
+</div>
+<div class="flex items-center gap-3">
+<button class="p-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<button class="p-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold overflow-hidden border border-primary/30">
+<img class="w-full h-full object-cover" data-alt="User profile avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkMFrLTUGUaV6URRC6B1xiEHOtK2uA5zAfCrrOzAQ9092O1mXFuG0idkOhu4JS7xLIAu2jcn_838RYEEJ08Sx7Q5nplCZQAiht9-nfi-XFipkpFn88dxBc3agcJwqyS6koSPVnpg1f6XOdi4bQ0S7UHNPq8lEu2ecvuBseB-wJ2p5_nJZw1KHLg-c2WxAozYS1D4ZsT88wMDMFJmEJ0i3SShPBU8cuci67LK16baKDR8iRIPjfEbQUzLB_lwoc6lmipCkuixurZWfD"/>
+</div>
+</div>
+</nav></header></div>
+<main class="flex flex-1 overflow-hidden">
+<!-- Left Sidebar: MapStore Controls -->
+<aside class="w-72 bg-white dark:bg-background-dark border-r border-slate-200 dark:border-slate-800 flex flex-col z-40">
+<div class="p-4 border-b border-slate-100 dark:border-slate-800">
+<h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Data Management</h3>
+<div class="space-y-1">
+<button class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-[20px]">folder</span>
+<span class="text-sm font-medium">Data Catalog</span>
+</button>
+<button class="w-full flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">layers</span>
+<span class="text-sm font-bold">Active Layers</span>
+</button>
+<button class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-[20px]">palette</span>
+<span class="text-sm font-medium">Styling</span>
+</button>
+<button class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-[20px]">table_chart</span>
+<span class="text-sm font-medium">Attributes</span>
+</button>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto p-4">
+<div class="flex items-center justify-between mb-3">
+<h4 class="text-sm font-bold text-slate-900 dark:text-white">Selected Layers</h4>
+<span class="text-[10px] bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded text-slate-500">3 Active</span>
+</div>
+<div class="space-y-3">
+<!-- Layer Item 1 -->
+<div class="p-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-xl">
+<div class="flex items-start justify-between mb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-zalf-green text-sm">visibility</span>
+<span class="text-xs font-bold text-slate-800 dark:text-slate-200">Soil Moisture Index</span>
+</div>
+<span class="material-symbols-outlined text-slate-400 text-sm cursor-pointer">more_vert</span>
+</div>
+<div class="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+<div class="h-full bg-zalf-green w-3/4"></div>
+</div>
+</div>
+<!-- Layer Item 2 -->
+<div class="p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm">
+<div class="flex items-start justify-between mb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-zalf-green text-sm">visibility</span>
+<span class="text-xs font-bold text-slate-800 dark:text-slate-200">Crop Type Map 2023</span>
+</div>
+<span class="material-symbols-outlined text-slate-400 text-sm cursor-pointer">more_vert</span>
+</div>
+<div class="mt-2 flex flex-wrap gap-1">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-blue-100 text-blue-800">Raster</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-purple-100 text-purple-800">NDVI</span>
+</div>
+</div>
+<!-- Layer Item 3 -->
+<div class="p-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-xl opacity-60">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-400 text-sm">visibility_off</span>
+<span class="text-xs font-bold text-slate-800 dark:text-slate-200">Historical Hydrology</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 border-t border-slate-200 dark:border-slate-800">
+<button class="w-full flex items-center justify-center gap-2 py-2.5 bg-primary text-white rounded-xl font-bold text-sm shadow-lg shadow-primary/20 hover:brightness-110 transition-all">
+<span class="material-symbols-outlined">add_box</span>
+                        Add New Data
+                    </button>
+</div>
+</aside>
+<!-- Map View Area -->
+<div class="flex-1 relative bg-slate-200 flex flex-col">
+<!-- Map Background Placeholder -->
+<div class="absolute inset-0 z-0 bg-slate-300 dark:bg-slate-900 overflow-hidden" data-alt="Detailed satellite map view of agricultural fields" data-location="Brandenburg, Germany" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuACyxtUB91Cor6VPLrXmFYpYDqN1X43C-XxAg-66JbYeHjmPG6ZVxg-BpCF234dKhW8Lp2yu2z6fz3UrhXzco5HJOXSzXD234eI8XRRxbTAUon7cTs4lOnFu8h5eNG1a-gcvsAwZhVVkPc0aWKHo-sIfaqvtRfExhFuqQIFVhqhyeX5_2c9M9__dMM0REH9AFDePn8KSk0AUeqvmcJxgZCI8kfLVb6aco7oKL2X6PCUM4jcCrbWDZfD95Ic4E2JUAFDHZ4_Zqb0wsSe'); background-size: cover; background-position: center;">
+<!-- Map Graticule Overlay -->
+<div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px); background-size: 80px 80px;"></div>
+</div>
+<!-- Floating Map Tools (Top Left) -->
+<div class="absolute top-6 left-6 z-30 flex flex-col gap-2">
+<div class="flex items-stretch bg-white dark:bg-background-dark rounded-xl shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+<div class="flex items-center px-4 border-r border-slate-100 dark:border-slate-800 text-slate-400">
+<span class="material-symbols-outlined text-lg">search</span>
+</div>
+<input class="border-none bg-transparent text-sm w-72 focus:ring-0" placeholder="Search coordinates or parcel IDs..." type="text"/>
+</div>
+</div>
+<!-- Map Filter Pills (Top Center) -->
+<div class="absolute top-6 inset-x-0 z-30 flex justify-center pointer-events-none">
+<div class="flex gap-2 p-1 bg-white/90 dark:bg-background-dark/90 backdrop-blur rounded-full shadow-lg pointer-events-auto border border-white/20">
+<button class="px-4 py-1.5 rounded-full bg-zalf-green text-slate-900 text-xs font-bold flex items-center gap-2">
+<span>Agriculture</span>
+<span class="material-symbols-outlined text-sm">keyboard_arrow_down</span>
+</button>
+<button class="px-4 py-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold flex items-center gap-2">
+<span>Soil Data</span>
+<span class="material-symbols-outlined text-sm">keyboard_arrow_down</span>
+</button>
+<button class="px-4 py-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold flex items-center gap-2">
+<span>Climate</span>
+<span class="material-symbols-outlined text-sm">keyboard_arrow_down</span>
+</button>
+</div>
+</div>
+<!-- Map Controls (Right Sidebar) -->
+<div class="absolute right-6 top-6 z-30 flex flex-col gap-4">
+<div class="flex flex-col rounded-xl bg-white dark:bg-background-dark shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+<button class="p-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 border-b border-slate-100 dark:border-slate-800">
+<span class="material-symbols-outlined">add</span>
+</button>
+<button class="p-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+<span class="material-symbols-outlined">remove</span>
+</button>
+</div>
+<button class="p-3 rounded-xl bg-white dark:bg-background-dark shadow-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+<span class="material-symbols-outlined">my_location</span>
+</button>
+<button class="p-3 rounded-xl bg-white dark:bg-background-dark shadow-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+<span class="material-symbols-outlined">layers_clear</span>
+</button>
+</div>
+<!-- Bottom Analysis Bar -->
+<div class="absolute bottom-6 inset-x-6 z-30 pointer-events-none flex justify-between items-end">
+<div class="flex gap-3 pointer-events-auto">
+<div class="bg-white dark:bg-background-dark p-3 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xl flex items-center gap-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-400">square_foot</span>
+<div class="flex flex-col">
+<span class="text-[10px] text-slate-400 uppercase font-bold">Area</span>
+<span class="text-sm font-bold">142.5 ha</span>
+</div>
+</div>
+<div class="flex items-center gap-2 border-l border-slate-100 dark:border-slate-800 pl-6">
+<span class="material-symbols-outlined text-slate-400">location_on</span>
+<div class="flex flex-col">
+<span class="text-[10px] text-slate-400 uppercase font-bold">Coords</span>
+<span class="text-sm font-bold">52.5° N, 14.1° E</span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2 pointer-events-auto">
+<div class="bg-white dark:bg-background-dark rounded-xl border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden flex">
+<button class="p-3 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 border-r border-slate-100 dark:border-slate-800" title="Attribute Table">
+<span class="material-symbols-outlined">table_rows</span>
+</button>
+<button class="p-3 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 border-r border-slate-100 dark:border-slate-800" title="Print Map">
+<span class="material-symbols-outlined">print</span>
+</button>
+<button class="p-3 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 border-r border-slate-100 dark:border-slate-800" title="Export Data">
+<span class="material-symbols-outlined">ios_share</span>
+</button>
+<button class="p-3 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800" title="Compare Layers">
+<span class="material-symbols-outlined">compare</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Legend Panel (Bottom Right) -->
+<div class="absolute bottom-24 right-6 z-30 w-48 bg-white/95 dark:bg-background-dark/95 backdrop-blur rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xl p-4 overflow-hidden">
+<div class="flex items-center justify-between mb-3 border-b border-slate-100 dark:border-slate-800 pb-2">
+<span class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Legend</span>
+<span class="material-symbols-outlined text-sm text-slate-400 cursor-pointer">close</span>
+</div>
+<div class="space-y-3">
+<div class="flex flex-col gap-1.5">
+<span class="text-[10px] text-slate-500 font-medium">Soil Moisture (%)</span>
+<div class="h-2 w-full rounded-full bg-gradient-to-r from-red-500 via-yellow-400 to-blue-600"></div>
+<div class="flex justify-between text-[10px] text-slate-400">
+<span>0%</span>
+<span>50%</span>
+<span>100%</span>
+</div>
+</div>
+<div class="space-y-1.5 pt-1">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded bg-green-700"></span>
+<span class="text-[10px] text-slate-700 dark:text-slate-300">Forest</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded bg-yellow-400"></span>
+<span class="text-[10px] text-slate-700 dark:text-slate-300">Wheat Fields</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded bg-blue-400"></span>
+<span class="text-[10px] text-slate-700 dark:text-slate-300">Water Bodies</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Status Bar -->
+<footer class="bg-white dark:bg-background-dark border-t border-slate-200 dark:border-slate-800 px-4 py-1.5 flex items-center justify-between z-50">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-zalf-green animate-pulse"></div>
+<span class="text-[10px] font-medium text-slate-500">System Live: Geoserver connected</span>
+</div>
+<div class="text-[10px] font-medium text-slate-400">
+                    EPSG:4326 | WGS 84
+                </div>
+</div>
+<div class="flex items-center gap-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+<span>MapStore v2.4.1</span>
+<span>ZALF Research Portal</span>
+</div>
+</footer>
+</body></html>

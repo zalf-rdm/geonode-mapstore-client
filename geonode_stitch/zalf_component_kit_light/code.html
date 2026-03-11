@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ZALF GeoNode Component Kit</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#008234", // ZALF Green
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#221610",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: "Public Sans", sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<!-- Navigation -->
+<header class="sticky top-0 z-50 w-full bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 lg:px-10 py-3">
+<div class="max-w-7xl mx-auto flex items-center justify-between gap-8">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3 text-primary">
+<span class="material-symbols-outlined text-3xl">database</span>
+<h1 class="text-slate-900 dark:text-white text-xl font-bold tracking-tight">ZALF GeoNode</h1>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-primary text-sm font-semibold border-b-2 border-primary pb-1" href="#">Layers</a>
+<a class="text-slate-600 dark:text-slate-300 text-sm font-medium hover:text-primary transition-colors" href="#">Maps</a>
+<a class="text-slate-600 dark:text-slate-300 text-sm font-medium hover:text-primary transition-colors" href="#">Documents</a>
+<a class="text-slate-600 dark:text-slate-300 text-sm font-medium hover:text-primary transition-colors" href="#">Users</a>
+</nav>
+</div>
+<div class="flex flex-1 justify-end items-center gap-4">
+<div class="relative w-full max-w-xs hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 border-none rounded-lg focus:ring-2 focus:ring-primary text-sm" placeholder="Search resources..." type="text"/>
+</div>
+<button class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-all">
+<span class="material-symbols-outlined text-lg">cloud_upload</span>
+<span>Upload</span>
+</button>
+<div class="size-10 rounded-full border-2 border-primary p-0.5">
+<div class="w-full h-full rounded-full bg-slate-200" data-alt="User profile avatar placeholder"></div>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto p-6 lg:p-10 space-y-12">
+<!-- Buttons Section -->
+<section>
+<h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">ads_click</span> Buttons
+            </h2>
+<div class="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-8">
+<div class="flex flex-wrap gap-4 items-center">
+<button class="bg-primary hover:bg-primary/90 text-white px-6 py-2.5 rounded-lg font-semibold transition-all shadow-sm">Primary Button</button>
+<button class="border-2 border-primary text-primary hover:bg-primary/5 px-6 py-2 rounded-lg font-semibold transition-all">Secondary Outline</button>
+<button class="text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 px-6 py-2.5 rounded-lg font-semibold transition-all">Ghost Button</button>
+</div>
+<div class="flex flex-wrap gap-4 items-center">
+<button class="p-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-lg hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined">add</span>
+</button>
+<button class="p-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-lg hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined">edit</span>
+</button>
+<button class="p-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-lg hover:bg-red-500 hover:text-white transition-all">
+<span class="material-symbols-outlined">delete</span>
+</button>
+<button class="flex items-center gap-2 bg-primary/10 text-primary px-4 py-2.5 rounded-lg font-semibold hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined text-xl">download</span>
+<span>Download Dataset</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Form Elements -->
+<section>
+<h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">edit_note</span> Inputs &amp; Controls
+            </h2>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+<div class="space-y-2">
+<label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Text Input</label>
+<input class="w-full rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-primary focus:border-primary" placeholder="Enter title..." type="text"/>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Resource Category</label>
+<select class="w-full rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-primary focus:border-primary">
+<option>Satellite Imagery</option>
+<option>Vector Map</option>
+<option>Statistical Data</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Publish Date</label>
+<div class="relative">
+<input class="w-full rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-primary focus:border-primary" type="date"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Tags</label>
+<div class="flex flex-wrap gap-2 p-2 min-h-[42px] rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+<span class="bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded flex items-center gap-1">
+                            Geology <span class="material-symbols-outlined text-[14px] cursor-pointer">close</span>
+</span>
+<span class="bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded flex items-center gap-1">
+                            Germany <span class="material-symbols-outlined text-[14px] cursor-pointer">close</span>
+</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Cards -->
+<section>
+<h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">dashboard</span> Cards &amp; Resources
+            </h2>
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+<!-- Resource Card -->
+<div class="group bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-md transition-all">
+<div class="h-48 bg-slate-200 relative" data-alt="Satellite map view of agricultural fields near Berlin" data-location="Berlin" style="">
+<div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+<div class="absolute bottom-3 left-3 flex gap-2">
+<span class="bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase">Layer</span>
+<span class="bg-white/90 text-slate-900 text-[10px] font-bold px-2 py-0.5 rounded uppercase">GeoTIFF</span>
+</div>
+</div>
+<div class="p-5 space-y-3">
+<div class="flex justify-between items-start">
+<h3 class="font-bold text-lg leading-tight group-hover:text-primary transition-colors">Soil Moisture Analysis 2023 - Brandenburg</h3>
+<span class="material-symbols-outlined text-slate-400">more_vert</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm line-clamp-2">High-resolution soil moisture data processed from Sentinel-1 imagery covering the Northeast German Lowlands.</p>
+<div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800">
+<div class="flex items-center gap-2">
+<div class="size-6 rounded-full bg-slate-300" data-alt="Small author avatar"></div>
+<span class="text-xs font-medium text-slate-600 dark:text-slate-400">Dr. M. Weber</span>
+</div>
+<div class="flex items-center gap-3 text-slate-400">
+<span class="flex items-center gap-1 text-xs"><span class="material-symbols-outlined text-sm">visibility</span> 1.2k</span>
+<span class="flex items-center gap-1 text-xs"><span class="material-symbols-outlined text-sm">star</span> 48</span>
+</div>
+</div>
+</div>
+</div>
+<!-- User Card -->
+<div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 flex flex-col items-center text-center">
+<div class="size-24 rounded-full bg-primary/10 flex items-center justify-center mb-4 relative">
+<span class="material-symbols-outlined text-primary text-5xl">person</span>
+<div class="absolute bottom-1 right-1 size-5 bg-green-500 border-2 border-white rounded-full"></div>
+</div>
+<h3 class="font-bold text-xl">Elena Richardson</h3>
+<p class="text-primary text-sm font-medium mb-4">Lead GIS Analyst</p>
+<div class="grid grid-cols-3 w-full gap-4 py-4 border-y border-slate-100 dark:border-slate-800 mb-6">
+<div>
+<p class="text-xl font-bold">124</p>
+<p class="text-[10px] uppercase text-slate-400 font-bold">Layers</p>
+</div>
+<div>
+<p class="text-xl font-bold">12</p>
+<p class="text-[10px] uppercase text-slate-400 font-bold">Maps</p>
+</div>
+<div>
+<p class="text-xl font-bold">8</p>
+<p class="text-[10px] uppercase text-slate-400 font-bold">Docs</p>
+</div>
+</div>
+<button class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 py-2 rounded-lg font-bold hover:bg-primary hover:text-white transition-all">View Profile</button>
+</div>
+<!-- Stat Card -->
+<div class="space-y-4">
+<div class="bg-primary text-white p-6 rounded-xl shadow-lg relative overflow-hidden">
+<span class="material-symbols-outlined absolute -right-4 -bottom-4 text-white/10 text-9xl">analytics</span>
+<p class="text-sm font-medium text-white/80 uppercase tracking-wider">Total Storage Used</p>
+<h4 class="text-4xl font-bold my-2">4.2 TB</h4>
+<div class="w-full bg-white/20 h-2 rounded-full mt-4">
+<div class="bg-white h-full rounded-full" style="width: 72%;"></div>
+</div>
+<p class="text-xs text-white/70 mt-2">72% of allocated capacity</p>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 flex items-center gap-4">
+<div class="size-12 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-3xl">hub</span>
+</div>
+<div>
+<p class="text-2xl font-bold">1,842</p>
+<p class="text-sm text-slate-500">Connected Nodes</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Map Controls & Pagination -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="lg:col-span-2 space-y-6">
+<h2 class="text-2xl font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">map</span> Map Interface Components
+                </h2>
+<div class="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-8">
+<!-- Pagination -->
+<div class="flex flex-col gap-4">
+<p class="text-sm font-semibold text-slate-500 uppercase">Pagination</p>
+<div class="flex items-center gap-2">
+<button class="size-10 rounded-lg border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-400 hover:text-primary hover:border-primary transition-all">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="size-10 rounded-lg bg-primary text-white font-bold">1</button>
+<button class="size-10 rounded-lg border border-slate-200 dark:border-slate-800 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-800 font-medium">2</button>
+<button class="size-10 rounded-lg border border-slate-200 dark:border-slate-800 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-800 font-medium">3</button>
+<span class="px-2 text-slate-400">...</span>
+<button class="size-10 rounded-lg border border-slate-200 dark:border-slate-800 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-800 font-medium">12</button>
+<button class="size-10 rounded-lg border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-400 hover:text-primary hover:border-primary transition-all">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Map Specific Controls -->
+<div class="flex flex-wrap gap-8">
+<div class="space-y-4">
+<p class="text-sm font-semibold text-slate-500 uppercase">Zoom Controls</p>
+<div class="flex flex-col border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-800 w-10">
+<button class="p-2 border-b border-slate-200 dark:border-slate-700 hover:text-primary"><span class="material-symbols-outlined">add</span></button>
+<button class="p-2 border-b border-slate-200 dark:border-slate-700 hover:text-primary"><span class="material-symbols-outlined">remove</span></button>
+<button class="p-2 hover:text-primary"><span class="material-symbols-outlined">my_location</span></button>
+</div>
+</div>
+<div class="flex-1 space-y-4">
+<p class="text-sm font-semibold text-slate-500 uppercase">Layer Toggle</p>
+<div class="space-y-2">
+<label class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg cursor-pointer border border-transparent hover:border-primary/30 transition-all">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">layers</span>
+<span class="text-sm font-medium">Topographic Base</span>
+</div>
+<div class="w-10 h-5 bg-primary rounded-full relative">
+<div class="absolute right-1 top-1 size-3 bg-white rounded-full"></div>
+</div>
+</label>
+<label class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg cursor-pointer border border-transparent hover:border-primary/30 transition-all">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400">layers_clear</span>
+<span class="text-sm font-medium text-slate-500">Hydrography Network</span>
+</div>
+<div class="w-10 h-5 bg-slate-300 dark:bg-slate-600 rounded-full relative">
+<div class="absolute left-1 top-1 size-3 bg-white rounded-full"></div>
+</div>
+</label>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Legend Panel -->
+<div class="space-y-6">
+<h2 class="text-2xl font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">legend_toggle</span> Legend
+                </h2>
+<div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+<div class="bg-slate-50 dark:bg-slate-800 px-4 py-3 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+<span class="font-bold text-sm">Land Use Classes</span>
+<span class="material-symbols-outlined text-sm cursor-pointer">close</span>
+</div>
+<div class="p-4 space-y-3">
+<div class="flex items-center gap-3">
+<div class="size-4 rounded bg-[#008234]"></div>
+<span class="text-sm font-medium">Forestry Area</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="size-4 rounded bg-[#FFD700]"></div>
+<span class="text-sm font-medium">Agriculture (Crops)</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="size-4 rounded bg-[#87CEEB]"></div>
+<span class="text-sm font-medium">Water Bodies</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="size-4 rounded bg-[#A9A9A9]"></div>
+<span class="text-sm font-medium">Urban &amp; Infrastructure</span>
+</div>
+<div class="pt-4 border-t border-slate-100 dark:border-slate-800 mt-4">
+<p class="text-[10px] uppercase font-bold text-slate-400 mb-2">Opacity Control</p>
+<input class="w-full accent-primary h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer" type="range"/>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-12 mt-12 px-6">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex items-center gap-3 text-slate-400">
+<span class="material-symbols-outlined text-2xl">database</span>
+<span class="font-bold">ZALF GeoNode v3.4.1</span>
+</div>
+<div class="flex gap-8 text-sm font-medium text-slate-500">
+<a class="hover:text-primary transition-colors" href="#">Documentation</a>
+<a class="hover:text-primary transition-colors" href="#">API Reference</a>
+<a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-primary transition-colors" href="#">Contact</a>
+</div>
+<div class="text-slate-400 text-sm">
+                © 2024 Leibniz Centre for Agricultural Landscape Research (ZALF)
+            </div>
+</div>
+</footer>
+</body></html>

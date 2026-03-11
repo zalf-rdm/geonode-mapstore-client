@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4ade80", // ZALF Green accent
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#0a0f14",
+                        "glass": "rgba(255, 255, 255, 0.03)",
+                        "glass-border": "rgba(255, 255, 255, 0.1)",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .sidebar-item-active {
+            background: rgba(74, 222, 128, 0.1);
+            border-left: 3px solid #4ade80;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+<!-- Header -->
+<header class="flex items-center justify-between border-b border-glass-border px-8 py-3 glass-panel sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3 text-primary">
+<div class="size-8 flex items-center justify-center bg-primary/20 rounded-lg">
+<span class="material-symbols-outlined">public</span>
+</div>
+<h2 class="text-slate-100 text-lg font-bold leading-tight tracking-tight">GeoNode <span class="text-primary">Editor</span></h2>
+</div>
+<div class="hidden md:flex items-center gap-2 text-sm text-slate-400">
+<a class="hover:text-primary transition-colors" href="#">Catalog</a>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">Layers</a>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span class="text-slate-200 font-medium">Metadata Editor</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+<input class="bg-glass border-glass-border rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none w-64" placeholder="Search datasets..." type="text"/>
+</div>
+<div class="flex gap-2">
+<button class="p-2 rounded-lg bg-glass border border-glass-border hover:bg-white/5 transition-colors text-slate-300">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+<button class="p-2 rounded-lg bg-glass border border-glass-border hover:bg-white/5 transition-colors text-slate-300">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+</button>
+</div>
+<div class="h-8 w-[1px] bg-glass-border mx-2"></div>
+<div class="flex items-center gap-3">
+<div class="text-right hidden lg:block">
+<p class="text-xs font-semibold text-slate-100 leading-none">Alex Rivera</p>
+<p class="text-[10px] text-slate-400">ZALF Researcher</p>
+</div>
+<div class="size-9 rounded-full border border-primary/50 bg-cover bg-center" data-alt="User profile avatar of a researcher" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD4JlJj3Qu3ntAC1xFfK9fWjCW0wlm5EG_7l0yIh85XXKSBLJ5pseg6QXhkN2mqHi8c8TiaTXKgomHG8uACm3QAptr4wrKVC6fX6pDp-Pwfvt3J2n-3TFB55Xgi5nDfT92uxFtd2gxbJDqu17JPE1h4uCju9RNBfmHD1waShqwecze6YgY6AkpIFVC4gLsWM8BovrntNODSI4HVfIH_R01XrBkgGf2EqsFjYy0QthCbkObdSKJe5EVB3ToLbletbeaAEMqD4HtmRej7");'></div>
+</div>
+</div>
+</header>
+<main class="flex flex-1 overflow-hidden">
+<!-- Sidebar -->
+<aside class="w-72 border-r border-glass-border flex flex-col glass-panel">
+<div class="p-6">
+<div class="flex items-center gap-3 mb-8">
+<div class="size-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div>
+<h3 class="text-sm font-bold text-slate-100">Metadata Sections</h3>
+<p class="text-xs text-slate-500">Configure spatial layer</p>
+</div>
+</div>
+<nav class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg sidebar-item-active text-primary" href="#">
+<span class="material-symbols-outlined text-sm">info</span>
+<span class="text-sm font-medium">Basic Info</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-glass hover:text-slate-200 transition-all" href="#">
+<span class="material-symbols-outlined text-sm">map</span>
+<span class="text-sm font-medium">Spatial Extent</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-glass hover:text-slate-200 transition-all" href="#">
+<span class="material-symbols-outlined text-sm">table_rows</span>
+<span class="text-sm font-medium">Attributes</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-glass hover:text-slate-200 transition-all" href="#">
+<span class="material-symbols-outlined text-sm">lock</span>
+<span class="text-sm font-medium">Permissions</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-glass hover:text-slate-200 transition-all" href="#">
+<span class="material-symbols-outlined text-sm">history</span>
+<span class="text-sm font-medium">Revision History</span>
+</a>
+</nav>
+</div>
+<div class="mt-auto p-6 border-t border-glass-border">
+<div class="bg-primary/5 rounded-xl p-4 border border-primary/10">
+<p class="text-[11px] text-primary font-bold uppercase tracking-wider mb-1">Layer Status</p>
+<div class="flex items-center gap-2">
+<div class="size-2 rounded-full bg-primary animate-pulse"></div>
+<span class="text-xs text-slate-300 font-medium">Live &amp; Editable</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Content Area -->
+<section class="flex-1 overflow-y-auto p-8 bg-slate-950/20">
+<div class="max-w-4xl mx-auto">
+<div class="flex items-end justify-between mb-8">
+<div>
+<h1 class="text-3xl font-bold text-slate-100 tracking-tight">Basic Information</h1>
+<p class="text-slate-400 mt-2">Core identification and descriptive metadata for the soil analysis dataset.</p>
+</div>
+<div class="flex gap-3">
+<button class="px-5 py-2 rounded-lg bg-glass border border-glass-border text-slate-300 font-medium text-sm hover:bg-white/5 transition-colors">Discard</button>
+<button class="px-5 py-2 rounded-lg bg-primary text-slate-900 font-bold text-sm hover:opacity-90 transition-opacity flex items-center gap-2 shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-sm">save</span>
+                                Save Changes
+                            </button>
+</div>
+</div>
+<div class="grid grid-cols-1 gap-6">
+<!-- Form Section -->
+<div class="glass-panel rounded-xl p-8 space-y-8">
+<!-- Title Field -->
+<div class="space-y-2">
+<label class="text-sm font-semibold text-slate-300 flex items-center gap-2">
+                                    Resource Title
+                                    <span class="text-primary text-xs italic font-normal">(Required)</span>
+</label>
+<input class="w-full bg-slate-900/50 border border-glass-border rounded-lg px-4 py-3 text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all" type="text" value="Soil Organic Carbon Content - North East Region"/>
+</div>
+<!-- Abstract Field -->
+<div class="space-y-2">
+<label class="text-sm font-semibold text-slate-300">Abstract / Description</label>
+<textarea class="w-full bg-slate-900/50 border border-glass-border rounded-lg px-4 py-3 text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all" rows="6">This dataset contains high-resolution spatial data for soil organic carbon (SOC) content across the agricultural lands of North Eastern Germany. Data was collected during the 2023-2024 monitoring cycle using a combination of satellite imagery (Sentinel-2) and ground-truth sample points.</textarea>
+<p class="text-xs text-slate-500 text-right">Character count: 248 / 2000</p>
+</div>
+<!-- Keywords Field -->
+<div class="space-y-2">
+<label class="text-sm font-semibold text-slate-300">Keywords &amp; Tags</label>
+<div class="flex flex-wrap gap-2 p-2 bg-slate-900/50 border border-glass-border rounded-lg">
+<span class="bg-primary/20 text-primary text-xs font-bold px-3 py-1 rounded-full border border-primary/20 flex items-center gap-1">
+                                        Agriculture <button class="material-symbols-outlined text-[14px]">close</button>
+</span>
+<span class="bg-primary/20 text-primary text-xs font-bold px-3 py-1 rounded-full border border-primary/20 flex items-center gap-1">
+                                        Soil Health <button class="material-symbols-outlined text-[14px]">close</button>
+</span>
+<span class="bg-primary/20 text-primary text-xs font-bold px-3 py-1 rounded-full border border-primary/20 flex items-center gap-1">
+                                        SOC <button class="material-symbols-outlined text-[14px]">close</button>
+</span>
+<span class="bg-primary/20 text-primary text-xs font-bold px-3 py-1 rounded-full border border-primary/20 flex items-center gap-1">
+                                        Sentinel-2 <button class="material-symbols-outlined text-[14px]">close</button>
+</span>
+<input class="bg-transparent border-none text-xs focus:ring-0 w-24 p-1" placeholder="Add tag..." type="text"/>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-6 pt-4">
+<div class="space-y-2">
+<label class="text-sm font-semibold text-slate-300">Publication Date</label>
+<div class="relative">
+<input class="w-full bg-slate-900/50 border border-glass-border rounded-lg px-4 py-3 text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none appearance-none" type="date" value="2024-05-15"/>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">calendar_today</span>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-semibold text-slate-300">Category</label>
+<select class="w-full bg-slate-900/50 border border-glass-border rounded-lg px-4 py-3 text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none appearance-none">
+<option>Environmental Monitoring</option>
+<option>Geoscientific Information</option>
+<option>Farming</option>
+<option>Planning Cadastre</option>
+</select>
+</div>
+</div>
+</div>
+<!-- Secondary Sidebar / Preview -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="md:col-span-2 glass-panel rounded-xl p-6">
+<h3 class="text-sm font-bold text-slate-100 mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-lg">visibility</span>
+                                    Catalog Preview
+                                </h3>
+<div class="bg-slate-900 rounded-lg p-4 border border-glass-border">
+<div class="flex gap-4">
+<div class="w-32 h-32 rounded bg-slate-800 flex items-center justify-center overflow-hidden border border-glass-border">
+<div class="w-full h-full bg-cover bg-center" data-alt="Satellite map view of agricultural fields" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDJ42Ad2Jfk-Z__tS6NgYkuQ0iOAPKknq8hxNayhkmYWg0v23E4q4LE-IbhJS9ho4KjJSjEROsSvAm9ZZGmpCa-lOz2G_jQZqMZoFTcCc_uXKJp7g7vQHYlW3Z7RhgDeQEZSzr3Fpd31-JtYFD4Erin5WiriQvTte6ZPpzmSctESDLbtHFWNrrQdhkmx2j91QLodARVKFr9hQbyq80bAq5svySGGaWhD4FacsAwiryrmjpDU-bmkvINpNU7xt5M0GxVVRUbjK9I8w-1');"></div>
+</div>
+<div class="flex-1">
+<p class="text-primary text-[10px] font-bold uppercase">Public Layer</p>
+<h4 class="text-slate-100 font-bold text-md mt-1">Soil Organic Carbon Content...</h4>
+<p class="text-slate-400 text-xs mt-1 line-clamp-2">This dataset contains high-resolution spatial data for soil organic carbon (SOC) content across the...</p>
+<div class="mt-3 flex items-center gap-3">
+<div class="flex items-center gap-1 text-[10px] text-slate-500">
+<span class="material-symbols-outlined text-xs">database</span> 12.4 MB
+                                                </div>
+<div class="flex items-center gap-1 text-[10px] text-slate-500">
+<span class="material-symbols-outlined text-xs">update</span> 2h ago
+                                                </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="glass-panel rounded-xl p-6">
+<h3 class="text-sm font-bold text-slate-100 mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-lg">help</span>
+                                    Editor Tips
+                                </h3>
+<div class="space-y-4">
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-primary text-sm mt-0.5">check_circle</span>
+<p class="text-xs text-slate-400">Keep titles concise and descriptive of the spatial area.</p>
+</div>
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-primary text-sm mt-0.5">check_circle</span>
+<p class="text-xs text-slate-400">Add at least 5 keywords for better search discoverability.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+</div>
+</body></html>

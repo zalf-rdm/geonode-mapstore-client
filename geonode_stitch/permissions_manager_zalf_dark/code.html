@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Resource Permissions | ZALF GeoNode</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0d7ff2",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased font-display">
+<div class="relative flex min-h-screen flex-col overflow-x-hidden">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between border-b border-primary/20 bg-background-light dark:bg-background-dark px-6 py-3 lg:px-40">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3 text-primary">
+<span class="material-symbols-outlined text-3xl">database</span>
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-tight">ZALF GeoNode</h2>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="#">Metadata</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="#">Data</a>
+<a class="text-primary text-sm font-bold border-b-2 border-primary pb-1" href="#">Permissions</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="#">Security</a>
+</nav>
+</div>
+<div class="flex flex-1 justify-end gap-4 items-center">
+<label class="hidden sm:flex items-center bg-slate-200 dark:bg-slate-800 rounded-lg px-3 py-1.5 w-full max-w-xs border border-transparent focus-within:border-primary">
+<span class="material-symbols-outlined text-slate-500 text-lg">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-full placeholder:text-slate-500" placeholder="Search resources..." type="text"/>
+</label>
+<div class="flex gap-2">
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+<div class="aspect-square bg-primary/20 rounded-full h-10 w-10 border border-primary/30 flex items-center justify-center overflow-hidden">
+<img alt="Profile" data-alt="User profile avatar placeholder" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDaaBSb3-xmhY7JCC5XgxnF5NYay60NqVALKr-ezOojSFmXqg7vggg__Va-k7QYP4YwKVC40M4DK_4gjOG_DxH9ecLv98HEaPDyMSk1ADE710LGhV9YUSrXPUfICSThB1Z9kWjgrfxw6Ez-w8EFrruo1qhK5JWnrrI8TtNOx21wJrXnCxjdJdd0LuWT_x7A0p98fgb9eDPD6NuU4Xx1zefpkdCnaUEqakK8eruHtobRbmLacg7UlZKHaG5zgcjOsB9_knLHTFbav06"/>
+</div>
+</div>
+</header>
+<div class="flex flex-1 flex-col lg:flex-row lg:px-40">
+<!-- Sidebar Navigation -->
+<aside class="w-full lg:w-64 border-r border-primary/10 py-6 pr-6 flex flex-col gap-6">
+<div class="px-3">
+<h1 class="text-slate-900 dark:text-slate-100 text-base font-bold">Project Manager</h1>
+<p class="text-slate-500 text-xs uppercase tracking-widest mt-1">Security Portal</p>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary text-white shadow-lg shadow-primary/20" href="#">
+<span class="material-symbols-outlined">layers</span>
+<span class="text-sm font-medium">Layers</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">map</span>
+<span class="text-sm font-medium">Maps</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="text-sm font-medium">Documents</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-sm font-medium">Users &amp; Groups</span>
+</a>
+</nav>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 py-8 px-4 lg:px-10">
+<!-- Breadcrumbs -->
+<div class="flex items-center gap-2 mb-6 text-sm">
+<a class="text-slate-500 hover:text-primary transition-colors" href="#">Data Catalog</a>
+<span class="material-symbols-outlined text-xs text-slate-500">chevron_right</span>
+<a class="text-slate-500 hover:text-primary transition-colors" href="#">Soil Carbon Dataset V2</a>
+<span class="material-symbols-outlined text-xs text-slate-500">chevron_right</span>
+<span class="text-slate-900 dark:text-slate-100 font-medium">Permissions</span>
+</div>
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+<div>
+<h2 class="text-slate-900 dark:text-slate-100 text-3xl font-black tracking-tight">Resource Permissions</h2>
+<p class="text-slate-500 mt-1 max-w-xl">Configure access policies for "Soil Carbon Content - Brandenburg Region". Ensure the principle of least privilege is applied.</p>
+</div>
+<div class="flex gap-3 w-full md:w-auto">
+<button class="flex-1 md:flex-none px-6 py-2.5 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold rounded-lg hover:bg-slate-300 dark:hover:bg-slate-700 transition-all text-sm">Discard</button>
+<button class="flex-1 md:flex-none px-6 py-2.5 bg-primary text-white font-bold rounded-lg shadow-lg shadow-primary/30 hover:bg-primary/90 transition-all text-sm">Save Changes</button>
+</div>
+</div>
+<!-- Tabs -->
+<div class="border-b border-primary/10 mb-8 flex gap-8">
+<button class="border-b-2 border-primary text-primary font-bold pb-4 text-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">manage_accounts</span>
+                    Users &amp; Groups
+                </button>
+<button class="border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 pb-4 text-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">security</span>
+                    Security Policy
+                </button>
+<button class="border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 pb-4 text-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">history</span>
+                    Access Audit
+                </button>
+</div>
+<!-- Permissions Management Card -->
+<div class="bg-white dark:bg-slate-900/50 rounded-xl border border-primary/10 overflow-hidden">
+<div class="p-6 border-b border-primary/10 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50">
+<h3 class="text-slate-900 dark:text-slate-100 font-bold text-lg">Access Control List</h3>
+<button class="flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-lg text-sm font-bold hover:bg-primary/20 transition-all">
+<span class="material-symbols-outlined text-lg">person_add</span>
+                        Add User or Group
+                    </button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-slate-50/50 dark:bg-slate-800/30 text-slate-500 text-xs uppercase tracking-wider">
+<th class="px-6 py-4 font-bold">Principal</th>
+<th class="px-6 py-4 font-bold text-center">View</th>
+<th class="px-6 py-4 font-bold text-center">Download</th>
+<th class="px-6 py-4 font-bold text-center">Edit</th>
+<th class="px-6 py-4 font-bold text-center">Manage</th>
+<th class="px-6 py-4 font-bold text-right">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-primary/5">
+<!-- Principal Row 1 -->
+<tr class="hover:bg-primary/5 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-sm">person</span>
+</div>
+<div>
+<p class="text-sm font-bold">Dr. Elena Muller</p>
+<p class="text-xs text-slate-500">elena.m@zalf.de</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-center"><input checked="" class="rounded border-slate-300 text-primary focus:ring-primary dark:bg-slate-800 dark:border-slate-700" type="checkbox"/></td>
+<td class="px-6 py-4 text-center"><input checked="" class="rounded border-slate-300 text-primary focus:ring-primary dark:bg-slate-800 dark:border-slate-700" type="checkbox"/></td>
+<td class="px-6 py-4 text-center"><input checked="" class="rounded border-slate-300 text-primary focus:ring-primary dark:bg-slate-800 dark:border-slate-700" type="checkbox"/></td>
+<td class="px-6 py-4 text-center"><input class="rounded border-slate-300 text-primary focus:ring-primary dark:bg-slate-800 dark:border-slate-700" type="checkbox"/></td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-lg">delete</span>
+</button>
+</td>
+</tr>
+<!-- Principal Row 2 -->
+<tr class="hover:bg-primary/5 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-500">
+<span class="material-symbols-outlined text-sm">groups</span>
+</div>
+<div>
+<p class="text-sm font-bold">Brandenburg Soil Analytics</p>
+<p class="text-xs text-slate-500">Group · 12 members</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-center"><input checked="" class="rounded border-slate-300 text-primary focus:ring-primary dark:bg-slate-800 dark:border-slate-700" type="checkbox"/></td>
+<td class="px-6 py-4 text-center"><input checked="" class="rounded border-slate-300 text-primary focus:ring-primary dark:bg-slate-800 dark:border-slate-700" type="checkbox"/></td>
+<td class="px-6 py-4 text-center"><input class="rounded border-slate-300 text-primary focus:ring-primary dark:bg-slate-800 dark:border-slate-700" type="checkbox"/></td>
+<td class="px-6 py-4 text-center"><input class="rounded border-slate-300 text-primary focus:ring-primary dark:bg-slate-800 dark:border-slate-700" type="checkbox"/></td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-lg">delete</span>
+</button>
+</td>
+</tr>
+<!-- Principal Row 3 -->
+<tr class="hover:bg-primary/5 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-sm">shield</span>
+</div>
+<div>
+<p class="text-sm font-bold">Adminstrators</p>
+<p class="text-xs text-slate-500">System Group</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-center"><input checked="" class="rounded border-slate-300 text-primary opacity-50 bg-slate-100 dark:bg-slate-800" disabled="" type="checkbox"/></td>
+<td class="px-6 py-4 text-center"><input checked="" class="rounded border-slate-300 text-primary opacity-50 bg-slate-100 dark:bg-slate-800" disabled="" type="checkbox"/></td>
+<td class="px-6 py-4 text-center"><input checked="" class="rounded border-slate-300 text-primary opacity-50 bg-slate-100 dark:bg-slate-800" disabled="" type="checkbox"/></td>
+<td class="px-6 py-4 text-center"><input checked="" class="rounded border-slate-300 text-primary opacity-50 bg-slate-100 dark:bg-slate-800" disabled="" type="checkbox"/></td>
+<td class="px-6 py-4 text-right">
+<span class="material-symbols-outlined text-slate-300 dark:text-slate-700 text-lg">lock</span>
+</td>
+</tr>
+<!-- Principal Row 4 (Anonymous) -->
+<tr class="hover:bg-primary/5 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-500">
+<span class="material-symbols-outlined text-sm">public</span>
+</div>
+<div>
+<p class="text-sm font-bold">Anonymous Users</p>
+<p class="text-xs text-slate-500">Anyone on the web</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-center"><input class="rounded border-slate-300 text-primary focus:ring-primary dark:bg-slate-800 dark:border-slate-700" type="checkbox"/></td>
+<td class="px-6 py-4 text-center"><input class="rounded border-slate-300 text-primary focus:ring-primary dark:bg-slate-800 dark:border-slate-700" type="checkbox"/></td>
+<td class="px-6 py-4 text-center"><input class="rounded border-slate-300 text-primary opacity-50" disabled="" type="checkbox"/></td>
+<td class="px-6 py-4 text-center"><input class="rounded border-slate-300 text-primary opacity-50" disabled="" type="checkbox"/></td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-lg">settings_suggest</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Additional Security Card -->
+<div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="bg-white dark:bg-slate-900/50 p-6 rounded-xl border border-primary/10">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-primary">visibility_off</span>
+<h4 class="font-bold text-slate-900 dark:text-slate-100">Metadata Visibility</h4>
+</div>
+<p class="text-sm text-slate-500 mb-6">Specify if the metadata record should be discoverable in the public catalog even if the data is restricted.</p>
+<div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
+<span class="text-sm font-medium">Publicly Discoverable</span>
+<div class="relative inline-flex h-6 w-11 items-center rounded-full bg-primary">
+<span class="inline-block h-4 w-4 translate-x-6 transform rounded-full bg-white transition"></span>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900/50 p-6 rounded-xl border border-primary/10">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-primary">file_download_off</span>
+<h4 class="font-bold text-slate-900 dark:text-slate-100">Download Restrictions</h4>
+</div>
+<p class="text-sm text-slate-500 mb-6">Enforce additional terms of use or custom licenses before users can download the original source data.</p>
+<button class="w-full py-2 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-sm font-bold hover:bg-primary/10 hover:text-primary transition-all">
+                        Configure Licensing Model
+                    </button>
+</div>
+</div>
+</main>
+</div>
+</div>
+</body></html>

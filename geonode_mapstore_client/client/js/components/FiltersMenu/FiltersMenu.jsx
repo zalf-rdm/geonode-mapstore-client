@@ -31,7 +31,8 @@ const FiltersMenu = forwardRef(({
     hideCardLayoutButton,
     cardLayoutStyle,
     setCardLayoutStyle,
-    orderConfig
+    orderConfig,
+    showFilterButton = true
 }, ref) => {
 
     const {
@@ -85,7 +86,7 @@ const FiltersMenu = forwardRef(({
             <div className="gn-menu-container">
                 <div className="gn-menu-content">
                     <div className="gn-menu-fill">
-                        {totalFilters > 0 ? <ButtonWithTooltip
+                        {showFilterButton && (totalFilters > 0 ? <ButtonWithTooltip
                             variant="primary"
                             size="sm"
                             onClick={onClick}
@@ -99,26 +100,28 @@ const FiltersMenu = forwardRef(({
                             onClick={onClick}
                         >
                             {isMobile ? <FaIcon name="filter" /> : <Message msgId="gnhome.filter"/>}
-                        </Button>}
+                        </Button>)}
                         {orderAlign === 'left' ? orderButtonNode : null}
-                        {loading ? <span className="resources-count-loading"><Spinner /></span> : <Badge>
+                        {loading ? <span className="resources-count-loading"><Spinner /></span> : <Badge className="gn-resources-count-badge">
                             <span className="resources-count"> <Message msgId="gnhome.resourcesFound" msgParams={{ count: totalResources }}/> </span>
                         </Badge>}
                     </div>
-                    <Menu
-                        items={cardsMenu}
-                        containerClass={`gn-menu-list`}
-                        size="md"
-                        alignRight
-                    />
-                    {!hideCardLayoutButton && <Button
-                        variant="default"
-                        onClick={handleToggleCardLayoutStyle}
-                        size="sm"
-                    >
-                        <FaIcon name={cardLayoutStyle === 'grid' ? 'list' : 'th'} />
-                    </Button>}
-                    {orderAlign === 'right' ? orderButtonNode : null}
+                    <div className="gn-menu-actions">
+                        <Menu
+                            items={cardsMenu}
+                            containerClass={`gn-menu-list`}
+                            size="md"
+                            alignRight
+                        />
+                        {!hideCardLayoutButton && <Button
+                            variant="default"
+                            onClick={handleToggleCardLayoutStyle}
+                            size="sm"
+                        >
+                            <FaIcon name={cardLayoutStyle === 'grid' ? 'list' : 'th'} />
+                        </Button>}
+                        {orderAlign === 'right' ? orderButtonNode : null}
+                    </div>
                 </div>
             </div>
         </div>

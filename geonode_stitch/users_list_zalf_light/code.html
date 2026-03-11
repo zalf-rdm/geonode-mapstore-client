@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ZALF GeoNode Community</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4CAF50", // ZALF Green accent
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#101922",
+                        "zalf-navy": "#1a2b3c",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen font-display">
+<div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark px-6 md:px-10 lg:px-40 py-3 sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-primary">
+<div class="size-8 flex items-center justify-center bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined text-primary">hub</span>
+</div>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-tight">GeoNode <span class="text-primary">ZALF</span></h2>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-primary text-sm font-semibold border-b-2 border-primary pb-1" href="#">Users</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors text-sm font-medium" href="#">Groups</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors text-sm font-medium" href="#">Datasets</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors text-sm font-medium" href="#">Maps</a>
+</nav>
+</div>
+<div class="flex flex-1 justify-end gap-4 md:gap-8">
+<label class="hidden sm:flex flex-col min-w-40 h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+<div class="text-slate-400 flex items-center justify-center pl-3">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 border-none bg-transparent focus:outline-0 focus:ring-0 placeholder:text-slate-400 px-3 text-sm font-normal" placeholder="Search members..." value=""/>
+</div>
+</label>
+<div class="flex items-center gap-3">
+<button class="flex items-center justify-center size-10 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-400">notifications</span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary/20" data-alt="User profile avatar of a researcher" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB2vKhL4OnIdHIwsKWXp0GYHZnBu-mEnDwxWewK4GaObFZQxykWSAh0VbDfXfk6bvXitf43-1s5qe5ighXEQdoxaeJFZD4KlXvWs2gbOJxtJg7uB7BQcAaiaP9s1t6o7I2OKO2-YpNvEEq5TJyOosCU1-2QwwCpe1eQ6z3s9AatHjcVL_gvyZnVURGwgHLZMDiNSj95SBdiwynG6yeqYBjuH7Ii2wmCIKSsL-eWrtsxmQGX0JS_Tb1lfTYoeXAz9ja1wddgsrk_5K5R");'></div>
+</div>
+</div>
+</header>
+<main class="flex-1 flex flex-col max-w-7xl mx-auto w-full px-6 md:px-10 lg:px-40 py-8">
+<!-- Hero Section -->
+<div class="flex flex-col gap-2 mb-8">
+<h1 class="text-slate-900 dark:text-white text-4xl font-extrabold leading-tight tracking-tight">Community Members</h1>
+<p class="text-slate-500 dark:text-slate-400 text-lg max-w-2xl leading-relaxed">
+                        Connect with the Leibniz Centre for Agricultural Landscape Research (ZALF) experts and geospatial data scientists.
+                    </p>
+</div>
+<!-- Tabs/Filters -->
+<div class="mb-8">
+<div class="flex border-b border-slate-200 dark:border-slate-800 gap-8 overflow-x-auto">
+<a class="flex items-center gap-2 border-b-2 border-primary text-primary pb-3 font-bold text-sm whitespace-nowrap" href="#">
+<span class="material-symbols-outlined text-[18px]">group</span>
+                            All Users
+                        </a>
+<a class="flex items-center gap-2 border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 pb-3 font-medium text-sm whitespace-nowrap transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">bolt</span>
+                            Active
+                        </a>
+<a class="flex items-center gap-2 border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 pb-3 font-medium text-sm whitespace-nowrap transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">new_releases</span>
+                            Newest
+                        </a>
+<a class="flex items-center gap-2 border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 pb-3 font-medium text-sm whitespace-nowrap transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+                            Staff
+                        </a>
+</div>
+</div>
+<!-- User Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+<!-- Profile Card 1 -->
+<div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 flex flex-col items-center text-center hover:shadow-md transition-shadow group">
+<div class="relative mb-4">
+<div class="size-24 rounded-full border-4 border-primary/10 group-hover:border-primary/30 transition-colors overflow-hidden">
+<div class="w-full h-full bg-center bg-no-repeat bg-cover" data-alt="Female researcher profile portrait" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD5ynCFqGFAkxNahObkfnFdwnwxUQsoHpAK-GVrEc-yADYz8dItY5eQZm8e4evIc4wiQfV7gYgbpibJQAUmHI5qoSpfP6UmB-v8EeI6VDJEFRd7J5EtXA6VkUuKo0bRdsLe9NTF_TdoRrIOwGtpUnRjqU3E-JosRpuiJm-2wU2GYBG0a1u7Kuur1qp1X8TGoW0-lDYUUOZf3KmxVU5Is7ARfy8Mm2MMMK3V2QKRTHV--gFsQEZlTBWK0wTfKz014hPazgcirjBKPEWR");'></div>
+</div>
+<div class="absolute bottom-1 right-1 size-5 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"></div>
+</div>
+<h3 class="text-slate-900 dark:text-white text-lg font-bold mb-1">Dr. Anja Schmidt</h3>
+<p class="text-primary text-sm font-semibold mb-3">Landscape Ecology</p>
+<p class="text-slate-500 dark:text-slate-400 text-sm mb-6 leading-snug">Specializing in spatial modeling of agricultural ecosystems and biodiversity patterns.</p>
+<div class="w-full flex justify-center gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+<div class="flex flex-col items-center">
+<span class="text-slate-900 dark:text-white font-bold text-sm">24</span>
+<span class="text-slate-400 text-xs uppercase tracking-wider">Datasets</span>
+</div>
+<div class="w-px h-8 bg-slate-100 dark:bg-slate-800"></div>
+<div class="flex flex-col items-center">
+<span class="text-slate-900 dark:text-white font-bold text-sm">12</span>
+<span class="text-slate-400 text-xs uppercase tracking-wider">Maps</span>
+</div>
+</div>
+</div>
+<!-- Profile Card 2 -->
+<div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 flex flex-col items-center text-center hover:shadow-md transition-shadow group">
+<div class="relative mb-4">
+<div class="size-24 rounded-full border-4 border-primary/10 group-hover:border-primary/30 transition-colors overflow-hidden">
+<div class="w-full h-full bg-center bg-no-repeat bg-cover" data-alt="Male scientist profile portrait" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBkrZtkkXe96CPvVmmXwLGVtbkGri0eYGY4e7pqLVJK1Hrccyyx35lQO0orqOcM2TDFcy2RSEw9l8BntW60Fm7pVw1lEBudj2Nb7q-WmtiXUyvieWE_KXwGnDdfKPhFA5BL_JGeMWeb6shNdzVWrtqX8VdmrTinu3DkNe1NmZFhgAqmvktEggbuU_h4uF98hb6z8xYDCny2AZd_DaYEnjamcEhcNaSLeEOjNpqunnrxxn5KnxC3zkzRNcx95j1JLDvLi0b8RwpRDqvk");'></div>
+</div>
+</div>
+<h3 class="text-slate-900 dark:text-white text-lg font-bold mb-1">Markus Weber</h3>
+<p class="text-primary text-sm font-semibold mb-3">Soil Science</p>
+<p class="text-slate-500 dark:text-slate-400 text-sm mb-6 leading-snug">Developing GIS frameworks for national-scale soil moisture and carbon monitoring.</p>
+<div class="w-full flex justify-center gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+<div class="flex flex-col items-center">
+<span class="text-slate-900 dark:text-white font-bold text-sm">8</span>
+<span class="text-slate-400 text-xs uppercase tracking-wider">Datasets</span>
+</div>
+<div class="w-px h-8 bg-slate-100 dark:bg-slate-800"></div>
+<div class="flex flex-col items-center">
+<span class="text-slate-900 dark:text-white font-bold text-sm">2</span>
+<span class="text-slate-400 text-xs uppercase tracking-wider">Maps</span>
+</div>
+</div>
+</div>
+<!-- Profile Card 3 -->
+<div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 flex flex-col items-center text-center hover:shadow-md transition-shadow group">
+<div class="relative mb-4">
+<div class="size-24 rounded-full border-4 border-primary/10 group-hover:border-primary/30 transition-colors overflow-hidden">
+<div class="w-full h-full bg-center bg-no-repeat bg-cover" data-alt="Female GIS specialist portrait" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBM9lBjlGlTi-iSfYmZz7yIdTyYxZDjZVd1U6Yiyp55HrfQSSN-47zY1sYMWRzuDmIOEiXc8mq0yOv4kFYz3VefzZCufZ8xmefefMBE4vLtohG_cmevYBoouP0Btm1p2uiepfKMd9ynMDa7bkuq00rjlhu9-14XtAzl33yEx96aD5Sk8eC5BfiI0Xt30OoHTOL-n7-YLqjV0ax_v_6v0MRvaIbcvg7JIIX4jAkHo56IkyMeOQgADtlijBMmzfJZgA7JQTr_tee-Gx9V");'></div>
+</div>
+<div class="absolute bottom-1 right-1 size-5 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"></div>
+</div>
+<h3 class="text-slate-900 dark:text-white text-lg font-bold mb-1">Elena Fischer</h3>
+<p class="text-primary text-sm font-semibold mb-3">GIS Specialist</p>
+<p class="text-slate-500 dark:text-slate-400 text-sm mb-6 leading-snug">Expert in GeoNode administration and OGC web service interoperability standards.</p>
+<div class="w-full flex justify-center gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+<div class="flex flex-col items-center">
+<span class="text-slate-900 dark:text-white font-bold text-sm">42</span>
+<span class="text-slate-400 text-xs uppercase tracking-wider">Datasets</span>
+</div>
+<div class="w-px h-8 bg-slate-100 dark:bg-slate-800"></div>
+<div class="flex flex-col items-center">
+<span class="text-slate-900 dark:text-white font-bold text-sm">18</span>
+<span class="text-slate-400 text-xs uppercase tracking-wider">Maps</span>
+</div>
+</div>
+</div>
+<!-- Profile Card 4 -->
+<div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 flex flex-col items-center text-center hover:shadow-md transition-shadow group">
+<div class="relative mb-4">
+<div class="size-24 rounded-full border-4 border-primary/10 group-hover:border-primary/30 transition-colors overflow-hidden">
+<div class="w-full h-full bg-center bg-no-repeat bg-cover" data-alt="Male data scientist portrait" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDXHP9JmgXTfPsvvl60sApsshq0uY705VbpeDTB1Sp6sBQ8CNohAnW1DfsrCvhw1ZPPhSZca4EIQE7TB_5bdepYex7rA0InQBjukGnXXgr2Ib_sGeSrqCYzqKfgq_VUNiWWri-R_gQBKS3w1ePgOe8F9Cg5LqyQionxyQGZRx-AJoriyw7KYPdmKPJCINaVjL9d7ImFTEoCmLIwct56FxSolXsUTx7_fiChqhD2mIj8fOB0RKuhbOCBjOHlgKf3Xc72FkvMQWpCJe0y");'></div>
+</div>
+</div>
+<h3 class="text-slate-900 dark:text-white text-lg font-bold mb-1">Dr. Thomas Meyer</h3>
+<p class="text-primary text-sm font-semibold mb-3">Hydrology Expert</p>
+<p class="text-slate-500 dark:text-slate-400 text-sm mb-6 leading-snug">Focused on watershed analysis and impact of climate change on local water resources.</p>
+<div class="w-full flex justify-center gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+<div class="flex flex-col items-center">
+<span class="text-slate-900 dark:text-white font-bold text-sm">15</span>
+<span class="text-slate-400 text-xs uppercase tracking-wider">Datasets</span>
+</div>
+<div class="w-px h-8 bg-slate-100 dark:bg-slate-800"></div>
+<div class="flex flex-col items-center">
+<span class="text-slate-900 dark:text-white font-bold text-sm">4</span>
+<span class="text-slate-400 text-xs uppercase tracking-wider">Maps</span>
+</div>
+</div>
+</div>
+<!-- Profile Card 5 -->
+<div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 flex flex-col items-center text-center hover:shadow-md transition-shadow group">
+<div class="relative mb-4">
+<div class="size-24 rounded-full border-4 border-primary/10 group-hover:border-primary/30 transition-colors overflow-hidden">
+<div class="w-full h-full bg-center bg-no-repeat bg-cover" data-alt="Female researcher headshot" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAnDDculya3exfEPUjPe3sHYwK4YO8Wbw4hyDnVdvW6WXzQNsk5ejWG4s_DKBB2PmzVVbqoLoLCOfQtyHorr8yi3Ge_6AgIFSViQstfQ9nhtESepe2r2tPZyildDV2i3YevEhKEubn8coz47R7MuUR3ErN26CR7ZJ3TQTsyoxU1vdRfmcH_XkvuFcsqJWwCU9bOF2Z0g1nkPyGUK_7oPY3_FxV5wN74ZxpeBtjS03YR3BxPVfF5_TWh6ygUCC2JNgV5SCM-V1nOa68k");'></div>
+</div>
+<div class="absolute bottom-1 right-1 size-5 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"></div>
+</div>
+<h3 class="text-slate-900 dark:text-white text-lg font-bold mb-1">Sarah Wagner</h3>
+<p class="text-primary text-sm font-semibold mb-3">Data Scientist</p>
+<p class="text-slate-500 dark:text-slate-400 text-sm mb-6 leading-snug">Machine learning applications for automated land use classification and change detection.</p>
+<div class="w-full flex justify-center gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+<div class="flex flex-col items-center">
+<span class="text-slate-900 dark:text-white font-bold text-sm">31</span>
+<span class="text-slate-400 text-xs uppercase tracking-wider">Datasets</span>
+</div>
+<div class="w-px h-8 bg-slate-100 dark:bg-slate-800"></div>
+<div class="flex flex-col items-center">
+<span class="text-slate-900 dark:text-white font-bold text-sm">7</span>
+<span class="text-slate-400 text-xs uppercase tracking-wider">Maps</span>
+</div>
+</div>
+</div>
+<!-- Profile Card 6 -->
+<div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 flex flex-col items-center text-center hover:shadow-md transition-shadow group">
+<div class="relative mb-4">
+<div class="size-24 rounded-full border-4 border-primary/10 group-hover:border-primary/30 transition-colors overflow-hidden">
+<div class="w-full h-full bg-center bg-no-repeat bg-cover" data-alt="Male research fellow portrait" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAQB6m-4wegsSrNc1cxAwb6YIENA4cKHVwh_j4CaG0Aaz_DxcKOGD_Y98K7ZKO_t6AJO7YkRz1TFhYdptVvW-kkAbChJA24yD27UX3k7QL2NVHS1ei9aNGEpZM81gp2qjZpuH2LhevqbEbUcKriTbTdgPYIeaUfehj4wAE8EDVyXy_By_PJaU8FQ9F-bHx3uGj5r3Mti5zVohB05FCER1TMnNtdHQyKPC02ROY-F175FR_2Q2aCyrtIsv32abunpvyRPzIDB3wrB9oe");'></div>
+</div>
+</div>
+<h3 class="text-slate-900 dark:text-white text-lg font-bold mb-1">Johannes Koch</h3>
+<p class="text-primary text-sm font-semibold mb-3">Remote Sensing</p>
+<p class="text-slate-500 dark:text-slate-400 text-sm mb-6 leading-snug">UAV-based hyperspectral data analysis for precision farming and yield prediction.</p>
+<div class="w-full flex justify-center gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+<div class="flex flex-col items-center">
+<span class="text-slate-900 dark:text-white font-bold text-sm">19</span>
+<span class="text-slate-400 text-xs uppercase tracking-wider">Datasets</span>
+</div>
+<div class="w-px h-8 bg-slate-100 dark:bg-slate-800"></div>
+<div class="flex flex-col items-center">
+<span class="text-slate-900 dark:text-white font-bold text-sm">9</span>
+<span class="text-slate-400 text-xs uppercase tracking-wider">Maps</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="flex items-center justify-center gap-2 mt-12 py-6">
+<button class="size-10 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="size-10 flex items-center justify-center rounded-lg bg-primary text-white font-bold">1</button>
+<button class="size-10 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-medium">2</button>
+<button class="size-10 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-medium">3</button>
+<div class="text-slate-400 px-2 font-medium">...</div>
+<button class="size-10 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-medium">12</button>
+<button class="size-10 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 px-6 md:px-10 lg:px-40 py-10">
+<div class="flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="flex items-center gap-2 opacity-60">
+<span class="material-symbols-outlined text-primary">hub</span>
+<span class="font-bold text-slate-900 dark:text-white">GeoNode Community</span>
+</div>
+<div class="text-slate-400 text-sm">
+                        © 2024 Leibniz Centre for Agricultural Landscape Research (ZALF)
+                    </div>
+<div class="flex gap-6">
+<a class="text-slate-400 hover:text-primary transition-colors" href="#">Support</a>
+<a class="text-slate-400 hover:text-primary transition-colors" href="#">Privacy</a>
+<a class="text-slate-400 hover:text-primary transition-colors" href="#">Terms</a>
+</div>
+</div>
+</footer>
+</div>
+</div>
+</body></html>
