@@ -856,8 +856,7 @@
             "mandatory": true,
             "name": "PublishDataCollection",
             "cfg": {
-              "showText": true,
-              "doiPrefixes": ["10.20387"]
+              "showText": true
             }
           },
           {
@@ -1180,8 +1179,7 @@
               "mandatory": true,
               "name": "PublishDataCollection",
               "cfg": {
-                "showText": true,
-                "doiPrefixes": ["10.20387"]
+                "showText": true
               }
             },
             {
@@ -2917,10 +2915,7 @@
                 "mandatory": true,
                 "name": "PublishDataCollection",
                 "cfg": {
-                    "showText": true,
-                    "doiPrefixes": [
-                        "10.20387"
-                    ]
+                    "showText": true
                 }                
             },
             {

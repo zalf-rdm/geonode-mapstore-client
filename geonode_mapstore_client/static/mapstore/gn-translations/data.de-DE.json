@@ -21,7 +21,7 @@
                 "title": "Visueller Stil-Editor"
             },
             "ApproveDataCollection": {
-                "button": "Datensatz genehmigen",
+                "button": "Datensammlung genehmigen",
                 "cancel": "Abbrechen",
                 "buttonTooltip": "Datensammlung genehmigen",
                 "title": "Datensammlung genehmigen",
@@ -29,7 +29,7 @@
                 "approve": "Genehmigen"
             },
             "PublishDataCollection": {
-                "button": "Datensatz publizieren",
+                "button": "Datensammlung publizieren",
                 "cancel": "Abbrechen",
                 "buttonTooltip": "Datensammlung publizieren",
                 "title": "Datensammlung publizieren",

@@ -21,11 +21,11 @@
                 "title": "Visual Style Editor"
             },
             "ApproveDataCollection": {
-                "button": "Approve dataset",
+                "button": "Approve data collection",
                 "cancel": "Cancel",
                 "buttonTooltip": "Approve data collection",
                 "title": "Approve data collection",
-                "description": "You have to verify your dataset before a data steward can publish the dataset in the repository. Please make sure everything is set and click on 'Approve'. \n\n Do you wish to approve the data collection '{title}'?",
+                "description": "You have to verify your data collection before a data steward can publish it in the repository. Please make sure everything is set and click on 'Approve'. \n\n Do you wish to approve the data collection '{title}'?",
                 "approve": "Approve"
             },
             "PublishDataCollection": {

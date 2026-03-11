@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { Glyphicon } from 'react-bootstrap';
 import { createStructuredSelector } from 'reselect';
@@ -27,16 +27,20 @@ const i18n = (shortId, msgParams={}) => {
     return { msgId, msgParams };
 }
 
+const DEFAULT_DIALOG_STYLE = { "white-space": "pre-line" };
+
 const ApproveDataCollectionComponent = (props) => {
-    const { open, onClose, style={"white-space": "pre-line"}, closeGlyph, dispatch } = props;
+    const { open, onClose, style=DEFAULT_DIALOG_STYLE, closeGlyph, dispatch } = props;
     const { title, owner } = props.resourceData;
 
     const [ iconApproveButton, setIconApproveButton ] = useState("thumbs-up");
+    const [ approveError, setApproveError ] = useState(null);
 
-    const onApprove = function () {
+    const onApprove = useCallback(() => {
         const pk = props.resourceData.pk;
         const url = parseDevHostname(`/api/v2/approve/${pk}/`);
         setIconApproveButton("cog");
+        setApproveError(null);
         axios.post(url, { owner: owner.pk }).then(() => {
             setIconApproveButton("check");
             if (dispatch) {
@@ -47,10 +51,11 @@ const ApproveDataCollectionComponent = (props) => {
             }
             setTimeout(onClose, 200);
         }).catch(error => {
-            setIconApproveButton("circle-exclamation");
+            setIconApproveButton("thumbs-up");
+            setApproveError(error?.response?.data?.message || 'An error occurred during approval.');
             console.error('An error occurred during approval:', error);
         });
-    }
+    }, [props.resourceData, owner, dispatch, onClose]);
 
     return (
         <Portal>
@@ -61,6 +66,7 @@ const ApproveDataCollectionComponent = (props) => {
                 </span>
                 <div role="body">
                     <Message { ...i18n("description", { title }) } />
+                    { approveError && <div className="alert alert-danger" role="alert" style={{ marginTop: 12 }}>{approveError}</div> }
                 </div>
                 <div role="footer">
                     <Button variant="secondary" onClick={onClose}>

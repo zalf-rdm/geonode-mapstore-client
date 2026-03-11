@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { FormGroup, Checkbox, FormControl, ControlLabel, Glyphicon } from 'react-bootstrap';
 import { createStructuredSelector } from 'reselect';
@@ -64,14 +64,14 @@ const PublishDataCollectionComponent = ({
         doiResourceCandidates.reduce((acc, value) => ({...acc, [value.pk]: value}), {})
     );
     const [ checkedItems, setCheckedItems ] = useState({});
-    const handleSelectionChange = (event) => {
+    const handleSelectionChange = useCallback((event) => {
         // we use resource pk as name
         const { name, checked } = event.target;
         setCheckedItems(prev => ({
             ...prev,
             [name]: checked,
         }));
-    };
+    }, []);
 
     // DOI prefixes are embedded in the page by the Django context processor.
     const { prefixes: doiPrefixes, loading: prefixesLoading } = useDatacitePrefixes();
@@ -93,17 +93,23 @@ const PublishDataCollectionComponent = ({
                     ...ownedResources.reduce((acc, value) => ({ ...acc, [value.pk]: true}), {})
                 })
             );
-        }).catch(e => console.error(`Could not send request! ${e}`));
+        }).catch(e => {
+            setSelectionError('Could not load resource ownership data. Some items may not be pre-selected.');
+            console.error(`Could not send request! ${e}`);
+        });
     }, [maplayers, linkedResources])
 
     const [ iconPublishButton, setIconPublishButton ] = useState("bookmark");
+    const [ publishError, setPublishError ] = useState(null);
+    const [ selectionError, setSelectionError ] = useState(null);
     
     const [ doiPrefix, setDoiPrefix ] = useState();
     const [ skipDoiPrefix, setSkipDoiPrefix ] = useState(false);
     const toggleSkipDoiPrefix = () => setSkipDoiPrefix(prev => !prev);
 
-    const onPublish = function () {
+    const onPublish = useCallback(() => {
         setIconPublishButton("cog fa-spin");
+        setPublishError(null);
 
         const payload = {
             "owner": owner.pk,
@@ -130,9 +136,10 @@ const PublishDataCollectionComponent = ({
             setTimeout(onClose, 200);
         }).catch(error => {
             setIconPublishButton("exclamation-circle");
+            setPublishError(error?.response?.data?.message || 'An error occurred during publish.');
             console.error(`An error occured during publish: ${error.statusText}`);
         });
-    }
+    }, [pk, owner, skipDoiPrefix, doiPrefix, doiPrefixes, checkedItems, resourceData, dispatch, onClose]);
 
     return (
         <Portal>
@@ -143,6 +150,8 @@ const PublishDataCollectionComponent = ({
                 </span>
                 <div role="body">
                     <Message { ...i18n("description", { title }) } />
+                    { selectionError && <div className="alert alert-warning" role="alert" style={{ marginTop: 8 }}>{selectionError}</div> }
+                    { publishError && <div className="alert alert-danger" role="alert" style={{ marginTop: 8 }}>{publishError}</div> }
 
                     <FormGroup className="mb-3">
                         {

@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
 */
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import { createPlugin } from '@mapstore/framework/utils/PluginsUtils';
@@ -18,8 +18,9 @@ import Spinner from '@js/components/Spinner';
 import gnDownload from '@js/reducers/gndownload';
 
 function DataCiteDownload({ onDownload, resourcePk, isDownloading }) {
+    const handleDownload = useCallback(() => onDownload('DataCite', resourcePk), [onDownload, resourcePk]);
     return (
-        <Button variant="default" onClick={() => onDownload('DataCite', resourcePk)} className="datacitebutton">
+        <Button variant="default" onClick={handleDownload} className="datacitebutton">
             {isDownloading && <Spinner animation="border" role="status">
                 <span className="sr-only">Loading...</span>
             </Spinner>} <Message msgId="gnviewer.dataCite" />
