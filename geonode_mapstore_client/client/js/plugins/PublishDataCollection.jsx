@@ -76,6 +76,14 @@ const PublishDataCollectionComponent = ({
     // DOI prefixes are embedded in the page by the Django context processor.
     const { prefixes: doiPrefixes, loading: prefixesLoading } = useDatacitePrefixes();
 
+    const [ iconPublishButton, setIconPublishButton ] = useState("bookmark");
+    const [ publishError, setPublishError ] = useState(null);
+    const [ selectionError, setSelectionError ] = useState(null);
+
+    const [ doiPrefix, setDoiPrefix ] = useState();
+    const [ skipDoiPrefix, setSkipDoiPrefix ] = useState(false);
+    const toggleSkipDoiPrefix = () => setSkipDoiPrefix(prev => !prev);
+
     useEffect(() => {
         // example: ?id__in=3,2&filter{owner}=1000&exclude[]=*&include[]=owner&include[]=pk
         const params = {
@@ -98,14 +106,6 @@ const PublishDataCollectionComponent = ({
             console.error(`Could not send request! ${e}`);
         });
     }, [maplayers, linkedResources])
-
-    const [ iconPublishButton, setIconPublishButton ] = useState("bookmark");
-    const [ publishError, setPublishError ] = useState(null);
-    const [ selectionError, setSelectionError ] = useState(null);
-    
-    const [ doiPrefix, setDoiPrefix ] = useState();
-    const [ skipDoiPrefix, setSkipDoiPrefix ] = useState(false);
-    const toggleSkipDoiPrefix = () => setSkipDoiPrefix(prev => !prev);
 
     const onPublish = useCallback(() => {
         setIconPublishButton("cog fa-spin");
