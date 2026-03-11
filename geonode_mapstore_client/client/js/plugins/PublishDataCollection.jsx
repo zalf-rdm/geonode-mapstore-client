@@ -14,11 +14,8 @@ import FaIcon from '@js/components/FaIcon';
 import Dropdown from '@js/components/Dropdown';
 import { parseDevHostname } from '@js/utils/APIUtils';
 import { updateResourceProperties } from '@js/actions/gnresource';
-import {
-    getResourceData,
-    getResourcePerms,
-    getCompactPermissions,
-} from '@js/selectors/resource';
+import { getResourceData } from '@js/selectors/resource';
+import useDatacitePrefixes from '@js/hooks/useDatacitePrefixes';
 
 
 const i18n = (shortId, msgParams={}) => {
@@ -38,28 +35,25 @@ const PublishDataCollectionComponent = ({
     const { title, pk, owner, maplayers=[], linkedResources={} } = resourceData;
     const { linkedTo=[] } = linkedResources;
 
+    const maplayersData = maplayers.map(ml => ({
+        pk: ml.dataset.pk,
+        title: ml.dataset.title,
+        source: "maplayer",
+    }));
+    const maplayerPks = new Set(maplayersData.map(ml => ml.pk));
+    const uniqueLinkedTo = new Map();
+    linkedTo.forEach(lt => {
+        if (!maplayerPks.has(lt.pk) && !uniqueLinkedTo.has(lt.pk)) {
+            uniqueLinkedTo.set(lt.pk, {
+                pk: lt.pk,
+                title: lt.title,
+                source: "linked " + lt.resource_type,
+            });
+        }
+    });
     const doiResourceCandidates = [
-        ...maplayers
-            .map(ml => {
-                return {
-                    pk: ml.dataset.pk,
-                    title: ml.dataset.title,
-                    source: "maplayer",
-                }
-            }),
-        ...linkedTo
-            .map(lt => {
-                return {
-                    pk: lt.pk,
-                    title: lt.title,
-                    source: "linked " + lt.resource_type,
-                }
-            })
-            .filter(((lt, i) => {
-                const unique = i === linkedTo.findIndex(test => test.pk === lt.pk);
-                const maplayer = maplayers.findIndex(test => test.pk === lt.pk) >= 0;
-                return !maplayer && unique;
-            }))
+        ...maplayersData,
+        ...Array.from(uniqueLinkedTo.values()),
     ];
     
     const doiResourceCandidatesUnique = Object.assign({},
@@ -75,25 +69,8 @@ const PublishDataCollectionComponent = ({
         }));
     };
 
-    // Fetch DOI prefixes available to the authenticated user from the backend.
-    const [ doiPrefixes, setDoiPrefixes ] = useState([]);
-    const [ prefixesLoading, setPrefixesLoading ] = useState(true);
-
-    useEffect(() => {
-        const url = parseDevHostname("/api/v2/datacite/prefixes/");
-        setPrefixesLoading(true);
-        axios.get(url)
-            .then(response => {
-                const prefixes = response.data?.prefixes;
-                if (Array.isArray(prefixes) && prefixes.length > 0) {
-                    setDoiPrefixes(prefixes);
-                }
-            })
-            .catch(e => {
-                console.warn(`Could not fetch DOI prefixes from API, using fallback config: ${e}`);
-            })
-            .finally(() => setPrefixesLoading(false));
-    }, []);
+    // DOI prefixes are embedded in the page by the Django context processor.
+    const { prefixes: doiPrefixes, loading: prefixesLoading } = useDatacitePrefixes();
 
     useEffect(() => {
         // example: ?id__in=3,2&filter{owner}=1000&exclude[]=*&include[]=owner&include[]=pk
@@ -127,7 +104,7 @@ const PublishDataCollectionComponent = ({
         const payload = {
             "owner": owner.pk,
             "doi_prefix": skipDoiPrefix ? undefined : (doiPrefix || doiPrefixes?.[0]),
-            "resources": Object.keys(checkedItems)
+            "resources": Object.keys(checkedItems).filter(pk => checkedItems[pk])
         }
 
         const url = parseDevHostname(`/api/v2/publish/${pk}/`);
@@ -321,29 +298,6 @@ export default createPlugin('PublishDataCollection', {
             Component: ConnectedPublishDataCollectionMenuItem
         }
     },
-    epics: {
-        // openpublishDataCollectionDialog: (action$, { getState }) => {
-        //     action$.ofType("publishdatacollectiondialog")
-        //         .switchMap(props => {
-        //             console.log("It is going to be epic ..")
-        //             return Rx.Observable.empty()
-        //         });
-        // }
-    },
-    reducers: {
-        // toggleDialog: (state = { open: false }, action) => {
-        //     switch (action.type) {
-        //         case (SET_CONTROL_PROPERTY): {
-        //             const { property, value } = action.payload;
-        //             console.log(`Control propery '${property}' changed to '${value}'`)
-        //             return {
-        //                 ...state,
-        //                 [property]: value
-        //             };
-        //         }
-        //         default:
-        //             return state;
-        //     }
-        // }
-    }
+    epics: {},
+    reducers: {}
 });

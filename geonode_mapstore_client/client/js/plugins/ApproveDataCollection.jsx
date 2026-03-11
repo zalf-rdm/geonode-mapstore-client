@@ -45,7 +45,6 @@ const ApproveDataCollectionComponent = (props) => {
                     is_approved: true
                 }));
             }
-            //const data = response.data;
             setTimeout(onClose, 200);
         }).catch(error => {
             setIconApproveButton("circle-exclamation");

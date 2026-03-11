@@ -35,7 +35,7 @@ def _get_datacite_settings(request):
     try:
         from geonode.zalf.api.datacite import get_doi_prefixes_for_user
         prefixes = get_doi_prefixes_for_user(user)
-    except Exception:
+    except ImportError:
         prefixes = []
 
     return {"can_publish": True, "prefixes": prefixes}
