@@ -1,86 +1,203 @@
-{% load static %}
+{% load static i18n %}
+{% load avatar_tags %}
 {% load get_menu_json %}
 {% get_user_menu as USER_MENU %}
 
 {% block extra_style %}
 {% endblock %}
 
-<style>
-    #{{ id|default:'' }}-bottom {
-        display: none;
-        margin-bottom: 0;
-    }
-    @media (max-width: 748px) {
-        #{{ id|default:'' }} .gn-menu-content-center > * {
-            display: none;
-        }
-        #{{ id|default:'' }}-bottom {
-            display: flex;
-            width: calc(100% - 16px);
-            margin: 8px;
-        }
-    }
-</style>
+<nav class="topnavbar font-inter py-lg-0 my-0">
+    <div class="topnavbar-inner d-flex w-100 align-items-center px-2">
 
-<nav id="{{ id|default:'' }}" class="gn-menu gn-menu-symmetric">
-    <div class="gn-menu-container">
-        <div class="gn-menu-content">
-            <div class="gn-menu-content-left">
-                {% block left_menu %}
-                <ul class="gn-menu-list">
-                    <li>
-                        <a href="/">
-                            {% if custom_theme.logo and custom_theme.logo.url %}
-                                <img src="{{ custom_theme.logo.url }}">
-                            {% else %}
-                                <img src="{% block logo_src %}/static/mapstore/img/geonode-logo.svg{% endblock %}">
-                            {% endif %}
+        <!-- LOGO + TOGGLE BTN -->
+        <div class="navbar-brand-zalf d-flex align-items-center justify-content-between flex-shrink-0">
+            <a href="{% url 'home' %}" class="p-0 m-0 d-flex align-items-center">
+                <img src="/static/img/logo_zalf_white_half.png"
+                     alt="Zalf Repository"
+                     style="max-height: 45px; width: auto;">
+            </a>
+            <button class="navbar-toggle-btn d-lg-none ms-3" id="navbarToggle" type="button">
+                <i class="fa fa-bars"></i>
+            </button>
+        </div>
+
+        <div class="navbar-collapse-custom" id="navbarMenu">
+            <div class="navbar-menu-layout">
+                <!-- LEFT MENU -->
+                <ul class="navbar-nav mb-0 flex-column flex-lg-row">
+
+                    <!-- Data -->
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center" href="/catalogue" id="navData" role="button">
+                            {% trans "All Data" %}
                         </a>
                     </li>
+
+                    <!-- Topics -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center"
+                           href="#" id="navTopics"
+                           role="button" data-toggle="dropdown" aria-expanded="false">
+                            {% trans "Topics" %}
+                            <i class="fa fa-angle-down ms-1"></i>
+                        </a>
+
+                        <ul class="dropdown-menu dropdown-menu-wide" aria-labelledby="navTopics">
+                            <li class="p-0 m-0 fs-7">
+                                <div class="row g-0">
+                                    <div class="col-6 col-md-6 pe-md-2">
+                                        <a class="dropdown-item" href="/catalogue/#/?q=Animals">{% trans "Animals" %}</a>
+                                        <a class="dropdown-item" href="/catalogue/#/?q=Atmosphere">{% trans "Atmosphere" %}</a>
+                                        <a class="dropdown-item" href="/catalogue/#/?q=Climate">{% trans "Climate" %}</a>
+                                        <a class="dropdown-item" href="/catalogue/#/?q=Forest">{% trans "Forest" %}</a>
+                                        <a class="dropdown-item" href="/catalogue/#/?q=Hydrology">{% trans "Hydrology" %}</a>
+                                    </div>
+                                    <div class="col-6 col-md-6 ps-md-2 position-relative">
+                                        <div class="d-none d-md-block position-absolute top-0 bottom-0 start-0"
+                                             style="width:2px; background:#fff; opacity:0.8;"></div>
+                                        <a class="dropdown-item" href="/catalogue/#/?q=Landscape">{% trans "Landscape" %}</a>
+                                        <a class="dropdown-item" href="/catalogue/#/?q=Long Term Field Experiment">{% trans "Long Term Field Experiment" %}</a>
+                                        <a class="dropdown-item" href="/catalogue/#/?q=Plants">{% trans "Plants" %}</a>
+                                        <a class="dropdown-item" href="/catalogue/#/?q=Soil%20Profiles">{% trans "Soil Profiles" %}</a>
+                                        <a class="dropdown-item" href="/catalogue/#/?q=Water">{% trans "Water" %}</a>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Tools & Services -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center"
+                           href="#" id="navTools"
+                           role="button" data-toggle="dropdown" aria-expanded="false">
+                            {% trans "Tools & Services" %}
+                            <i class="fa fa-angle-down ms-1"></i>
+                        </a>
+                        <ul class="dropdown-menu fs-7" aria-labelledby="navTools">
+                            <li><a class="dropdown-item" href="https://tools.bonares.de/ltfe/" target="_blank">{% trans "LTE Maps" %}</a></li>
+                            <li><a class="dropdown-item" href="https://tools.bonares.de/bp_db/" target="_blank">{% trans "Soil Profiles" %}</a></li>
+                            <li><a class="dropdown-item" href="https://dqkit.bonares.de/" target="_blank">{% trans "DQ Kit" %}</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Upload -->
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center" href="/upload" id="navUpload" role="button">
+                            {% trans "Upload" %}
+                        </a>
+                    </li>
+
+                    <!-- About -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center"
+                           href="#" id="navAbout"
+                           role="button" data-toggle="dropdown" aria-expanded="false">
+                            {% trans "About" %}
+                            <i class="fa fa-angle-down ms-1"></i>
+                        </a>
+                        <ul class="dropdown-menu fs-7" aria-labelledby="navAbout">
+                            <li><a class="dropdown-item" href="/development">{% trans "Development" %}</a></li>
+                            <li><a class="dropdown-item" href="/services">{% trans "OGC Services and API" %}</a></li>
+                            <li><a class="dropdown-item" href="/faq">{% trans "FAQ" %}</a></li>
+                            <li><a class="dropdown-item" href="#">{% trans "Contact Us" %}</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#">{% trans "Version 2.0.1" %}</a></li>
+                        </ul>
+                    </li>
                 </ul>
-                {% endblock %}
-            </div>
-            <div class="gn-menu-content-center">
-                {% block center_menu %}
+
+                <!-- SEARCH & LOGIN -->
+                <div class="navbar-actions">
                     {% include './search_bar.html' with search_bar_id='gn-search-bar' %}
-                {% endblock %}
-            </div>
-            <div class="gn-menu-content-right">
-                {% block right_menu %}
-                <ul class="gn-menu-list">
-                    {% for menu_item in USER_MENU %}
-                        {% include './menu_item.html' with menu_item=menu_item align_right=True %}
-                    {% endfor %}
-                </ul>
-                {% endblock %}
+                    {% include './new_login.html' with search_bar_id='gn-search-bar' %}
+                </div>
             </div>
         </div>
     </div>
 </nav>
-<div id="{{ id|default:'' }}-bottom">
-    {% block bottom_menu %}
-        {% include './search_bar.html' with search_bar_id='gn-search-bar-bottom' %}
-    {% endblock %}
-</div>
-{% block extra_script %}
-    <script type="text/javascript">
-        (function() {
-            function manageUrlChange() {
-                var signInElement = document.getElementById("sign-in");
-                if (signInElement){
-                    if (window.location.pathname === '/account/login/'){
-                        signInElement.setAttribute("href", window.location.href)
-                    }
-                    else {
-                        var href = signInElement.getAttribute("href").split("next=")[0];
-                        var url_parts = window.location.href.split(window.location.pathname);
-                        var path_name = encodeURIComponent(window.location.pathname + url_parts[url_parts.length-1]);
-                        signInElement.setAttribute("href", href.concat("next=".concat(path_name)));
+
+
+
+<script>
+    // Mobile navbar functionality
+    document.addEventListener('DOMContentLoaded', () => {
+        const toggleBtn = document.getElementById('navbarToggle');
+        const navbarMenu = document.getElementById('navbarMenu');
+        
+        // Toggle main menu on mobile
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                navbarMenu.classList.toggle('show');
+            });
+        }
+
+        // Handle dropdowns on mobile
+        document.querySelectorAll('[data-toggle="dropdown"]').forEach(toggle => {
+            toggle.addEventListener('click', (e) => {
+                if (window.innerWidth < 992) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const parent = toggle.closest('li.dropdown');
+                    const menu = parent.querySelector('.dropdown-menu');
+                    
+                    if (menu) {
+                        // Close all other dropdowns first
+                        document.querySelectorAll('.dropdown-menu.show').forEach(item => {
+                            if (item !== menu) {
+                                item.classList.remove('show');
+                            }
+                        });
+                        
+                        // Toggle current dropdown menu
+                        menu.classList.toggle('show');
                     }
                 }
+            });
+        });
+
+        // Close dropdown when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth < 992) {
+                if (!e.target.closest('.navbar-nav')) {
+                    document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                        menu.classList.remove('show');
+                    });
+                }
             }
-            window.addEventListener('DOMContentLoaded', manageUrlChange);
-            window.addEventListener('hashchange', manageUrlChange, false);
-        })();
-    </script>
-{% endblock extra_script %}
+        });
+
+        // Close dropdown when clicking menu item on mobile
+        document.querySelectorAll('.dropdown-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 992) {
+                    const menu = link.closest('.dropdown-menu');
+                    if (menu) {
+                        menu.classList.remove('show');
+                    }
+                }
+            });
+        });
+
+        // Close menu when resizing
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 992) {
+                navbarMenu.classList.remove('show');
+                document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                    menu.classList.remove('show');
+                });
+            }
+        });
+    });
+
+    // Ensures "next" param updates correctly for login links
+    document.addEventListener('DOMContentLoaded', () => {
+        const signIn = document.getElementById('sign-in');
+        if (signIn) {
+            const href = signIn.getAttribute('href').split('next=')[0];
+            const path = encodeURIComponent(window.location.pathname + window.location.search + window.location.hash);
+            signIn.href = href + 'next=' + path;
+        }
+    });
+</script>

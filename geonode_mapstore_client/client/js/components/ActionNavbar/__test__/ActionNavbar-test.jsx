@@ -13,164 +13,164 @@ import ActionNavbar from '../ActionNavbar';
 
 
 const conf = {
-    leftItems: [
-        {
-            "labelId": "gnhome.data",
-            "type": "dropdown",
-            "items": [
-                {
-                    "type": "link",
-                    "href": "/layers/?limit=5",
-                    "labelId": "gnhome.layers",
-                    "badge": 1,
-                    "permissions": [],
-                    "allowedRoles": []
-                },
-                {
-                    "type": "link",
-                    "href": "/documents/?limit=5",
-                    "labelId": "gnhome.documents",
-                    "badge": 1,
-                    "permissions": [],
-                    "allowedRoles": []
-                },
-                {
-                    "type": "link",
-                    "href": "/services/?limit=5",
-                    "labelId": "gnhome.remoteServices",
-                    "permissions": [],
-                    "allowedRoles": []
-                }
-            ]
-        },
-        {
-            "labelId": "gnhome.maps",
-            "authenticated": false,
-            "type": "link",
-            "subType": "tag",
-            "href": "/maps/?limit=5",
-            "badge": 2
-        },
-        {
-            "type": "link",
-            "subType": "tag",
-            "href": "/apps/?limit=5",
-            "labelId": "gnhome.apps",
-            "badge": 5
-        },
-        {
-            "labelId": "gnhome.about",
-            "type": "dropdown",
-            "items": [
-                {
-                    "type": "link",
-                    "href": "/people/",
-                    "labelId": "gnhome.people"
-                },
-                {
-                    "type": "link",
-                    "href": "/groups/",
-                    "labelId": "gnhome.groups"
-                },
-                {
-                    "type": "link",
-                    "href": "/groups/categories/",
-                    "labelId": "gnhome.groupsCategories"
-                }
-            ]
-        },
-        {
-            "type": "link",
-            "subType": "tag",
-            "href": "/apps/?limit=5",
-            "labelId": "gnhome.apps",
-            "badge": 5
-        },
-        {
-            "labelId": "gnhome.about",
-            "type": "dropdown",
-            "items": [
-                {
-                    "type": "link",
-                    "href": "/people/",
-                    "labelId": "gnhome.people"
-                },
-                {
-                    "type": "link",
-                    "href": "/groups/",
-                    "labelId": "gnhome.groups"
-                },
-                {
-                    "type": "link",
-                    "href": "/groups/categories/",
-                    "labelId": "gnhome.groupsCategories"
-                }
-            ]
-        }
-    ],
-    rightItems: [
-        {
-            "labelId": "gnhome.data",
-            "type": "dropdown",
-            "items": [
-                {
-                    "type": "link",
-                    "href": "/layers/?limit=5",
-                    "labelId": "gnhome.layers",
-                    "badge": 1,
-                    "permissions": [],
-                    "allowedRoles": []
-                },
-                {
-                    "type": "link",
-                    "href": "/documents/?limit=5",
-                    "labelId": "gnhome.documents",
-                    "badge": 1,
-                    "permissions": [],
-                    "allowedRoles": []
-                },
-                {
-                    "type": "link",
-                    "href": "/services/?limit=5",
-                    "labelId": "gnhome.remoteServices",
-                    "permissions": [],
-                    "allowedRoles": []
-                }
-            ]
-        },
-        {
-            "labelId": "gnhome.maps",
-            "authenticated": false,
-            "type": "link",
-            "subType": "tag",
-            "href": "/maps/?limit=5",
-            "badge": 2
-        },
-        {
-            "labelId": "gnhome.maps",
-            "authenticated": false,
-            "type": "link",
-            "subType": "tag",
-            "href": "/maps/?limit=5",
-            "badge": 2
-        },
-        {
-            "labelId": "gnhome.maps",
-            "authenticated": false,
-            "type": "link",
-            "subType": "tag",
-            "href": "/maps/?limit=5",
-            "badge": 2
-        },
-        {
-            "labelId": "gnhome.maps",
-            "authenticated": false,
-            "type": "link",
-            "subType": "tag",
-            "href": "/maps/?limit=5",
-            "badge": 2
-        }
-    ]
+    // leftItems: [
+    //     {
+    //         "labelId": "gnhome.data",
+    //         "type": "dropdown",
+    //         "items": [
+    //             {
+    //                 "type": "link",
+    //                 "href": "/layers/?limit=5",
+    //                 "labelId": "gnhome.layers",
+    //                 "badge": 1,
+    //                 "permissions": [],
+    //                 "allowedRoles": []
+    //             },
+    //             {
+    //                 "type": "link",
+    //                 "href": "/documents/?limit=5",
+    //                 "labelId": "gnhome.documents",
+    //                 "badge": 1,
+    //                 "permissions": [],
+    //                 "allowedRoles": []
+    //             },
+    //             {
+    //                 "type": "link",
+    //                 "href": "/services/?limit=5",
+    //                 "labelId": "gnhome.remoteServices",
+    //                 "permissions": [],
+    //                 "allowedRoles": []
+    //             }
+    //         ]
+    //     },
+    //     {
+    //         "labelId": "gnhome.maps",
+    //         "authenticated": false,
+    //         "type": "link",
+    //         "subType": "tag",
+    //         "href": "/maps/?limit=5",
+    //         "badge": 2
+    //     },
+    //     {
+    //         "type": "link",
+    //         "subType": "tag",
+    //         "href": "/apps/?limit=5",
+    //         "labelId": "gnhome.apps",
+    //         "badge": 5
+    //     },
+    //     {
+    //         "labelId": "gnhome.about",
+    //         "type": "dropdown",
+    //         "items": [
+    //             {
+    //                 "type": "link",
+    //                 "href": "/people/",
+    //                 "labelId": "gnhome.people"
+    //             },
+    //             {
+    //                 "type": "link",
+    //                 "href": "/groups/",
+    //                 "labelId": "gnhome.groups"
+    //             },
+    //             {
+    //                 "type": "link",
+    //                 "href": "/groups/categories/",
+    //                 "labelId": "gnhome.groupsCategories"
+    //             }
+    //         ]
+    //     },
+    //     {
+    //         "type": "link",
+    //         "subType": "tag",
+    //         "href": "/apps/?limit=5",
+    //         "labelId": "gnhome.apps",
+    //         "badge": 5
+    //     },
+    //     {
+    //         "labelId": "gnhome.about",
+    //         "type": "dropdown",
+    //         "items": [
+    //             {
+    //                 "type": "link",
+    //                 "href": "/people/",
+    //                 "labelId": "gnhome.people"
+    //             },
+    //             {
+    //                 "type": "link",
+    //                 "href": "/groups/",
+    //                 "labelId": "gnhome.groups"
+    //             },
+    //             {
+    //                 "type": "link",
+    //                 "href": "/groups/categories/",
+    //                 "labelId": "gnhome.groupsCategories"
+    //             }
+    //         ]
+    //     }
+    // ],
+    // rightItems: [
+    //     {
+    //         "labelId": "gnhome.data",
+    //         "type": "dropdown",
+    //         "items": [
+    //             {
+    //                 "type": "link",
+    //                 "href": "/layers/?limit=5",
+    //                 "labelId": "gnhome.layers",
+    //                 "badge": 1,
+    //                 "permissions": [],
+    //                 "allowedRoles": []
+    //             },
+    //             {
+    //                 "type": "link",
+    //                 "href": "/documents/?limit=5",
+    //                 "labelId": "gnhome.documents",
+    //                 "badge": 1,
+    //                 "permissions": [],
+    //                 "allowedRoles": []
+    //             },
+    //             {
+    //                 "type": "link",
+    //                 "href": "/services/?limit=5",
+    //                 "labelId": "gnhome.remoteServices",
+    //                 "permissions": [],
+    //                 "allowedRoles": []
+    //             }
+    //         ]
+    //     },
+    //     {
+    //         "labelId": "gnhome.maps",
+    //         "authenticated": false,
+    //         "type": "link",
+    //         "subType": "tag",
+    //         "href": "/maps/?limit=5",
+    //         "badge": 2
+    //     },
+    //     {
+    //         "labelId": "gnhome.maps",
+    //         "authenticated": false,
+    //         "type": "link",
+    //         "subType": "tag",
+    //         "href": "/maps/?limit=5",
+    //         "badge": 2
+    //     },
+    //     {
+    //         "labelId": "gnhome.maps",
+    //         "authenticated": false,
+    //         "type": "link",
+    //         "subType": "tag",
+    //         "href": "/maps/?limit=5",
+    //         "badge": 2
+    //     },
+    //     {
+    //         "labelId": "gnhome.maps",
+    //         "authenticated": false,
+    //         "type": "link",
+    //         "subType": "tag",
+    //         "href": "/maps/?limit=5",
+    //         "badge": 2
+    //     }
+    // ]
 
 };
 
@@ -185,13 +185,13 @@ describe('Test GeoNode action navbar component', () => {
         setTimeout(done);
     });
     it('should render with default', () => {
-        ReactDOM.render( <ActionNavbar/>, document.getElementById("container"));
+        ReactDOM.render(<ActionNavbar />, document.getElementById("container"));
         const el = document.querySelector('.gn-menu');
         expect(el).toExist();
     });
 
     it('should render left content right content', () => {
-        ReactDOM.render( <ActionNavbar
+        ReactDOM.render(<ActionNavbar
             leftItems={conf.leftItems.items}
             rightItems={conf.rightItems.items}
         />, document.getElementById("container"));

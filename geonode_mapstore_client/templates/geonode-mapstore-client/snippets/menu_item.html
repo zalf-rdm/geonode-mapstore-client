@@ -34,7 +34,7 @@
                         <img src="{{ menu_item.image }}">
                     {% endif %}
                 </button>
-                <ul class="dropdown-menu{% if align_right %} dropdown-menu-right{% endif %}" aria-labelledby="{{menu_item.id}}">
+                <ul class="dropdown-menu list-unstyled{% if align_right %} dropdown-menu-right{% endif %}" aria-labelledby="{{menu_item.id}}">
                     {% for child_item in menu_item.items %}
                         {% if child_item.type == 'link' %}
                             <li>

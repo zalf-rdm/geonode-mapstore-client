@@ -33,78 +33,78 @@ def _is_mobile_device(context):
 def get_base_left_topbar_menu():
 
     return [
-        {
-            "type": "link",
-            "href": "/catalogue/#/all",
-            "label": "All resources",
-        },
-        {
-            "type": "link",
-            "href": "/catalogue/#/datasets",
-            "label": "Datasets",
-        },
-        {
-            "type": "link", 
-            "href": "/catalogue/#/maps", 
-            "label": "Maps"
-        },
-        {
-            "type": "link",
-            "href": "/catalogue/#/documents",
-            "label": "Documents",
-        },
-        {
-            "type": "link",
-            "href": "/catalogue/#/geostories",
-            "label": "GeoStories",
-        },
-        {
-            "type": "link",
-            "href": "/catalogue/#/dashboards",
-            "label": "Dashboards",
-        }
+        # {
+        #     "type": "link",
+        #     "href": "/catalogue/#/all",
+        #     "label": "All resources",
+        # },
+        # {
+        #     "type": "link",
+        #     "href": "/catalogue/#/datasets",
+        #     "label": "Datasets",
+        # },
+        # {
+        #     "type": "link", 
+        #     "href": "/catalogue/#/maps", 
+        #     "label": "Maps"
+        # },
+        # {
+        #     "type": "link",
+        #     "href": "/catalogue/#/documents",
+        #     "label": "Documents",
+        # },
+        # {
+        #     "type": "link",
+        #     "href": "/catalogue/#/geostories",
+        #     "label": "GeoStories",
+        # },
+        # {
+        #     "type": "link",
+        #     "href": "/catalogue/#/dashboards",
+        #     "label": "Dashboards",
+        # }
     ]
 
 
 @register.simple_tag(takes_context=True)
 def get_base_right_topbar_menu(context):
-    is_mobile = _is_mobile_device(context)
+    # is_mobile = _is_mobile_device(context)
 
-    if is_mobile:
-        return []
+    # if is_mobile:
+    #     return []
 
     about = {
-        "label": "About",
-        "type": "dropdown",
-        "items": [
-            {"type": "link", "href": "/people/", "label": "People"},
-            {"type": "link", "href": "/groups/", "label": "Groups"},
-        ],
+        # "label": "About",
+        # "type": "dropdown",
+        # "items": [
+        #     {"type": "link", "href": "/people/", "label": "People"},
+        #     {"type": "link", "href": "/groups/", "label": "Groups"},
+        # ],
     }
 
-    user = _get_request_user(context)
+    # user = _get_request_user(context)
 
-    if user and user.is_authenticated and not Configuration.load().read_only:
-        about["items"].extend(
-            [
-                {"type": "divider"},
-                {
-                    "type": "link",
-                    "href": "/invitations/geonode-send-invite/",
-                    "label": "Invite users",
-                },
-                {
-                    "type": "link",
-                    "href": "/admin/people/profile/add/",
-                    "label": "Add user",
-                }
-                if user.is_superuser
-                else None,
-                {"type": "link", "href": "/groups/create/", "label": "Create group"}
-                if user.is_superuser
-                else None,
-            ]
-        )
+    # if user and user.is_authenticated and not Configuration.load().read_only:
+    #     about["items"].extend(
+    #         [
+    #             {"type": "divider"},
+    #             {
+    #                 "type": "link",
+    #                 "href": "/invitations/geonode-send-invite/",
+    #                 "label": "Invite users",
+    #             },
+    #             {
+    #                 "type": "link",
+    #                 "href": "/admin/people/profile/add/",
+    #                 "label": "Add user",
+    #             }
+    #             if user.is_superuser
+    #             else None,
+    #             {"type": "link", "href": "/groups/create/", "label": "Create group"}
+    #             if user.is_superuser
+    #             else None,
+    #         ]
+    #     )
     return [about]
 
 

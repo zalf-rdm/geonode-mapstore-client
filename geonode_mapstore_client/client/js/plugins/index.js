@@ -484,6 +484,10 @@ export const plugins = {
         'PublishDataCollection',
         () => import(/* webpackChunkName: 'plugins/publish-data-collection-plugin' */ '@js/plugins/PublishDataCollection')
     ),
+    FooterPlugin: toModulePlugin(
+        'Footer',
+        () => import(/* webpackChunkName: 'plugins/footer-plugin' */ '@js/plugins/Footer')
+    )
 };
 
 const pluginsDefinition = {

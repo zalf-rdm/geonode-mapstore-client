@@ -1,0 +1,697 @@
+/* ---------------------------------------------------
+  ZALF Theme — Typography, Palette & Branding
+  Compatible with Bootstrap 3
+---------------------------------------------------- */
+
+/* === Google Fonts === */
+@import (css) url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans:wght@300;400;500;700&display=swap');
+
+/* === Font stacks === */
+@font-inter: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+@font-noto: 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+/* === Brand palette (ZALF-inspired) === */
+@brand-primary: #3B7A57; // deep green
+@brand-secondary: #94BFA2; // soft sage
+@brand-dark: #0B0B0B; // neutral dark
+@brand-light: #F4F4F4; // neutral light
+@brand-accent: #4D9B70; // medium green accent
+@brand-warning: #EBBC35;
+@brand-danger: #BB4940;
+@brand-success: #58CF80;
+@brand-info: #94BFA2;
+
+/* === Core overrides === */
+@link-color: @brand-accent;
+
+/* === Root Variables (GeoNode / MapStore) === */
+:root {
+  /* --- Core --- */
+  --gn-main-color: #1a1a1a;
+  --gn-main-bg: #ffffff;
+  --gn-main-border-color: #dddddd;
+
+  /* --- Brand --- */
+  --gn-primary: @brand-primary;
+  --gn-info: @brand-info;
+  --gn-success: @brand-success;
+  --gn-warning: @brand-warning;
+  --gn-danger: @brand-danger;
+  --gn-link-color: @brand-accent;
+  --gn-link-hover-color: darken(@brand-accent, 10%);
+
+  /* --- Navbar Gradient Colors --- */
+  --gn-primary-1: #c7d406;
+  /* main green */
+  --gn-primary-2: #4D9B70;
+  /* secondary green */
+
+  /* --- Footer --- */
+  --gn-footer-color: @brand-light;
+  --gn-footer-bg: @brand-dark;
+  --gn-footer-link-color: @brand-accent;
+  --gn-footer-link-hover-color: darken(@brand-accent, 10%);
+}
+
+/* === Typography === */
+body {
+  font-family: @font-inter;
+  font-weight: 400;
+  color: var(--gn-main-color);
+  background-color: var(--gn-main-bg);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: @font-inter;
+  font-weight: 600;
+  color: @brand-dark;
+}
+
+p,
+li {
+  font-family: @font-noto;
+  font-weight: 400;
+  line-height: 1.6;
+  color: #333;
+}
+
+/* === Font helpers === */
+.font-inter {
+  font-family: @font-inter !important;
+}
+
+.font-noto {
+  font-family: @font-noto !important;
+}
+
+/* === Buttons (Bootstrap 3 override) === */
+.btn-primary {
+  background-color: @brand-primary;
+  border-color: @brand-primary;
+  color: #fff;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: darken(@brand-primary, 8%);
+  border-color: darken(@brand-primary, 8%);
+}
+
+/* === Footer === */
+footer.footer {
+  font-family: @font-inter;
+  background-color: var(--gn-footer-bg);
+  color: var(--gn-footer-color);
+  padding: 40px 0;
+}
+
+footer.footer a {
+  color: var(--gn-footer-link-color);
+  text-decoration: none;
+}
+
+footer.footer a:hover {
+  color: var(--gn-footer-link-hover-color) !important;
+}
+
+/* ---------------------------------------------
+  TopNavbar (Bootstrap 3 style)
+--------------------------------------------- */
+@gn-header-height: 68px;
+
+.topnavbar {
+  border: none;
+  background: #5be404;
+  backdrop-filter: var(--gn-blur);
+  -webkit-backdrop-filter: var(--gn-blur);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, .04);
+  min-height: @gn-header-height;
+  margin-bottom: 0; // default .navbar from BS3
+  position: relative;
+  width: 100%;
+}
+
+.topnavbar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(91, 228, 0, 0.274);
+  pointer-events: none;
+}
+
+.topnavbar .navbar-brand,
+.topnavbar .navbar-nav>li>a {
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.topnavbar .navbar-nav>li>a {
+  position: relative;
+}
+
+.topnavbar .navbar-nav>li>a:after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 6px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gn-primary-1), var(--gn-primary-2));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--gn-fast, 0.2s) var(--gn-ease, ease);
+}
+
+.topnavbar .navbar-nav>li>a:hover:after,
+.topnavbar .navbar-nav>li.active>a:after {
+  transform: scaleX(1);
+}
+
+.topnavbar .navbar-nav>li>a:hover,
+.topnavbar .navbar-nav>li.active>a {
+  background: rgba(91, 228, 0, 0.274);
+  color: #fff !important;
+}
+
+/* === Dropdown (Bootstrap 3 structure) === */
+.topnavbar .dropdown-menu {
+  background: @brand-primary;
+  color: #fff;
+  border-radius: 6px;
+  box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.08);
+  padding: 8px 0;
+  z-index: 1000;
+  min-width: 320px;
+  width: auto;
+  max-width: 95vw;
+  word-break: break-word;
+  white-space: normal;
+}
+
+/* Links inside dropdown: BS3 default → .dropdown-menu > li > a */
+.topnavbar .dropdown-menu>li>a,
+.topnavbar .dropdown-menu .row a,
+.topnavbar .dropdown-item {
+  background: transparent;
+  color: #fff;
+  display: block;
+  padding: 5px 20px;
+  clear: both;
+  font-weight: normal;
+  line-height: 1.42857143;
+  white-space: normal;
+  word-break: break-word;
+  transition: background var(--gn-fast, 0.2s) var(--gn-ease, ease),
+    color var(--gn-fast, 0.2s) var(--gn-ease, ease);
+}
+
+.topnavbar .dropdown-menu>li>a:hover,
+.topnavbar .dropdown-menu>li>a:focus,
+.topnavbar .dropdown-menu .row a:hover,
+.topnavbar .dropdown-menu .row a:focus {
+  background: rgba(91, 228, 0, 0.274);
+  color: var(--gn-primary-1);
+}
+
+/* Dropdown toggle (BS3 uses .dropdown-toggle + data-toggle="dropdown") */
+.topnavbar .dropdown-toggle {
+  position: relative;
+  z-index: 10;
+}
+
+.topnavbar .dropdown-toggle:hover,
+.topnavbar .dropdown-toggle:focus {
+  background: rgba(91, 228, 0, 0.274);
+  color: #fff;
+}
+
+.topnavbar .dropdown-toggle:after {
+  /* highlight line under active/hover item */
+  color: #000;
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 6px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gn-primary-1), var(--gn-primary-2));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--gn-fast, 0.2s) var(--gn-ease, ease);
+  z-index: 2;
+  border: 0;
+}
+
+.topnavbar .dropdown-toggle:hover:after,
+.topnavbar .dropdown-toggle:focus:after,
+.topnavbar .navbar-nav>li.active>.dropdown-toggle:after {
+  transform: scaleX(1);
+}
+
+.topnavbar li.open>.dropdown-toggle,
+.topnavbar li.active>.dropdown-toggle {
+  background: rgba(68, 151, 12, 0.15) !important;
+  color: @brand-warning;
+}
+
+/* === Search Bar (Navbar, compatible with Bootstrap 3) === */
+.topnavbar .search input[type="text"],
+.topnavbar input#gn-search-bar,
+.topnavbar .navbar-form input[type="text"],
+.topnavbar .navbar-form .form-control {
+  background: transparent !important;
+  border: 1.5px solid #fff !important;
+  color: #fff !important;
+  border-radius: 4px;
+  box-shadow: none;
+  outline: none;
+  padding: 6px 12px;
+  transition: border-color 0.2s;
+}
+
+.topnavbar .search input[type="text"]::placeholder,
+.topnavbar input#gn-search-bar::placeholder,
+.topnavbar .navbar-form input[type="text"]::placeholder {
+  color: #fff;
+  opacity: 0.7;
+}
+
+.topnavbar .search input[type="text"]:focus,
+.topnavbar input#gn-search-bar:focus,
+.topnavbar .navbar-form input[type="text"]:focus {
+  border-color: var(--gn-primary-1);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.topnavbar .search input[type="text"] {
+  width: 130px;
+  transition: width 0.3s;
+  margin-left: auto;
+}
+
+.topnavbar .search input[type="text"]:focus {
+  width: 260px; // or the desired value
+}
+
+/* Reset default margin/padding from BS3 .navbar */
+.navbar {
+  margin: 0;
+  padding: 0;
+}
+
+.topnavbar a,
+.topnavbar a:visited,
+.topnavbar a:hover,
+.topnavbar a:focus,
+.topnavbar a:active {
+  text-decoration: none !important;
+}
+
+.msgapi .modal {
+  display: block !important;
+  visibility: visible !important;
+}
+
+.msgapi .modal.fade.in {
+  opacity: 1 !important;
+}
+
+.msgapi .modal-dialog {
+  z-index: 99999 !important;
+}
+
+.modal-backdrop {
+  z-index: 99990 !important;
+}
+
+.topnavbar .dropdown-menu {
+  min-width: 150px;
+  width: auto;
+  max-width: 90vw;
+  word-break: break-word;
+  white-space: normal;
+}
+
+.topnavbar .dropdown-item {
+  white-space: normal;
+  word-break: break-word;
+}
+
+/* === Navbar Styling === */
+.topnavbar {
+  background: linear-gradient(90deg, #1e7e34 0%, #27ae60 100%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.topnavbar .navbar-nav .nav-link {
+  color: rgba(255, 255, 255, 0.85) !important;
+  padding: 0.75rem 1rem !important;
+  transition: color 0.3s ease;
+  white-space: nowrap;
+}
+
+.topnavbar .navbar-nav .nav-link:hover {
+  color: #fff !important;
+}
+
+.topnavbar .dropdown-menu {
+  background-color: rgba(30, 126, 52, 0.95);
+  border: none;
+  padding: 0.5rem 0;
+  min-width: 200px;
+}
+
+.topnavbar .dropdown-item {
+  color: rgba(255, 255, 255, 0.85);
+  padding: 0.5rem 1.5rem;
+}
+
+.topnavbar .dropdown-item:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+/* === Navbar layout === */
+.topnavbar .topnavbar-inner {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  min-height: @gn-header-height;
+}
+
+.topnavbar .topnavbar-inner>div {
+  height: 100%;
+  display: flex;
+  align-items: stretch;
+}
+
+.topnavbar .navbar-collapse-custom {
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: stretch;
+}
+
+.topnavbar .navbar-menu-layout {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 1rem;
+  height: 100%;
+}
+
+.topnavbar .navbar-menu-layout .navbar-nav,
+.topnavbar .navbar-actions .navbar-nav {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+  gap: 0.25rem;
+  height: 100%;
+}
+
+.topnavbar .navbar-nav {
+  height: 100%;
+  align-items: stretch;
+}
+
+.topnavbar .navbar-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+  height: 100%;
+}
+
+.topnavbar .navbar-actions>div {
+  width: 100%;
+}
+
+.topnavbar .navbar-actions .navbar-nav {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+  gap: 0.25rem;
+}
+
+.topnavbar .navbar-actions .search,
+.topnavbar .navbar-actions .input-group {
+  width: 100%;
+}
+
+.topnavbar #navbarMenu {
+  width: 100%;
+}
+
+.gn-main-header .topnavbar {
+  min-height: @gn-header-height;
+}
+
+/* Hamburger toggle button */
+.navbar-toggle-btn {
+  background: none;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  padding: 0.5rem;
+  font-size: 1.25rem;
+}
+
+.navbar-toggle-btn:hover {
+  color: #ffffff;
+}
+
+@media (max-width: 991px) {
+  .topnavbar {
+    padding: 0.5rem 0;
+  }
+
+  .topnavbar .topnavbar-inner {
+    flex-wrap: wrap;
+  }
+
+  .navbar-brand-zalf {
+    width: 100%;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+
+  .navbar-brand-zalf img {
+    max-height: 35px !important;
+  }
+
+  #navbarMenu {
+    width: 100%;
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: linear-gradient(90deg, #1e7e34 0%, #27ae60 100%);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .topnavbar .navbar-menu-layout .navbar-nav,
+  .topnavbar .navbar-actions .navbar-nav,
+  .topnavbar .navbar-nav {
+    height: auto;
+  }
+
+  #navbarMenu.show {
+    max-height: 1200px;
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+  }
+
+  #navbarMenu .navbar-nav .nav-item {
+    width: 100%;
+  }
+
+  #navbarMenu .navbar-nav .nav-link {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.9rem;
+  }
+
+  #navbarMenu .dropdown-menu {
+    position: static !important;
+    float: none;
+    width: 100% !important;
+    margin-top: 0;
+    padding-left: 2rem;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    display: none;
+    padding: 0.5rem 0 0.5rem 2rem;
+  }
+
+  #navbarMenu .dropdown-menu.show {
+    display: block !important;
+  }
+
+  #navbarMenu .dropdown-item {
+    padding: 0.4rem 0.5rem 0.4rem 3rem !important;
+    font-size: 0.85rem;
+    background-color: transparent;
+  }
+
+  #navbarMenu .dropdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  .topnavbar .navbar-actions {
+    border-top: 1px solid rgba(255, 255, 255, 0.25);
+    padding-top: 0.75rem;
+  }
+
+  .topnavbar .navbar-actions .search {
+    margin-left: 1.5rem;
+  }
+
+  .topnavbar .navbar-actions .search input[type="text"] {
+    margin-left: 0;
+  }
+}
+
+@media (min-width: 992px) {
+  .topnavbar,
+  .gn-main-header .topnavbar {
+    height: @gn-header-height;
+  }
+
+  .topnavbar .topnavbar-inner {
+    height: 100%;
+  }
+
+  .navbar-toggle-btn {
+    display: none;
+  }
+
+  .topnavbar .navbar-menu-layout {
+    flex-direction: row;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .topnavbar .navbar-menu-layout .navbar-nav {
+    flex-direction: row;
+    align-items: center;
+    flex: 1 1 auto;
+    width: auto;
+    gap: 0.5rem;
+  }
+
+  .topnavbar #navbarMenu {
+    display: flex !important;
+    max-height: none;
+    overflow: visible;
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+    background: transparent;
+    height: 100%;
+  }
+
+  .topnavbar .navbar-actions {
+    flex-direction: row;
+    align-items: center;
+    width: auto;
+    margin-left: auto;
+    border-top: none;
+    padding-top: 0;
+    gap: 1rem;
+  }
+
+  .topnavbar .navbar-actions>div,
+  .topnavbar .navbar-actions .navbar-nav {
+    width: auto;
+  }
+
+  .topnavbar .navbar-actions .navbar-nav {
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+
+  .topnavbar .navbar-actions #gn-search-bar {
+    width: 200px !important;
+  }
+
+  .topnavbar .navbar-nav>li {
+    height: 100%;
+    display: flex;
+    align-items: stretch;
+  }
+
+  .topnavbar .navbar-nav>li>a {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 1rem !important;
+  }
+
+  .topnavbar .navbar-actions .search,
+  .topnavbar .navbar-actions .search .input-group {
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  .topnavbar .navbar-nav>.dropdown .dropdown-menu {
+    margin-top: 0;
+    top: 100%;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .topnavbar .px-2 {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+
+  .navbar-brand-zalf {
+    flex-grow: 0 !important;
+  }
+
+  .navbar-nav {
+    font-size: 0.85rem;
+  }
+
+  .navbar-nav .nav-link {
+    padding: 0.4rem 0.75rem !important;
+  }
+
+  .dropdown-menu .row {
+    flex-direction: column;
+  }
+
+  .dropdown-menu .col-6 {
+    width: 100% !important;
+    padding: 0 !important;
+  }
+}
+
+.avatar img {
+  max-height: 32px;
+  width: auto;
+  vertical-align: middle;
+}
+.topnavbar .dropdown-menu.dropdown-menu-wide {
+  min-width: 350px;
+}

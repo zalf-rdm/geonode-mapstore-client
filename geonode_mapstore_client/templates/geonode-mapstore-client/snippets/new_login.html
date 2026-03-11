@@ -1,0 +1,59 @@
+{% load i18n avatar_tags socialaccount zalf_social %}
+<div>
+  <ul class="navbar-nav ms-auto">
+    {% comment %} {% block my_extra_right_tab %}
+      {% render_nav_menu 'TOPBAR_MENU' %}
+    {% endblock my_extra_right_tab %} {% endcomment %}
+
+    {% comment %} {% if not user.is_authenticated and ACCOUNT_OPEN_SIGNUP and not READ_ONLY_MODE %}
+      <li class="nav-item">
+        <a class="nav-link" href="{% url "account_signup" %}">{% trans "Register" %}</a>
+      </li>
+    {% endif %} {% endcomment %}
+    {% if user.is_authenticated %}
+      <li class="nav-item dropdown">
+        <a href="#" class="nav-link dropdown-toggle avatar d-flex align-items-center" id="userDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
+          {% autoescape off %}{% avatar user 40 %}{% endautoescape %}
+          <span class="ms-2">
+            {% with full_name=user.first_name|add:' '|add:user.last_name %}
+              {% if full_name|length > 1 %}
+                {{ full_name|truncatechars:20 }}
+              {% else %}
+                {{ user.username|truncatechars:20 }}
+              {% endif %}
+            {% endwith %}
+          </span>
+          <i class="fa fa-angle-down fa-lg ms-1"></i>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+          <li><a class="dropdown-item" href="{{ user.get_absolute_url }}">{% trans "Profile" %}</a></li>
+          <li><a class="dropdown-item" href="{% url "recent-activity" %}">{% trans "Recent Activity" %}</a></li>
+          <li><a class="dropdown-item" href="{% url "messages_inbox" %}">{% trans "Inbox" %}</a></li>
+          {% if user.is_superuser or user.is_staff %}
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{% url "admin:index" %}">{% trans "Admin" %}</a></li>
+            {% if 'geonode.geoserver' in INSTALLED_APPS %}
+              <li><a class="dropdown-item" href="{{ OGC_SERVER.default.WEB_UI_LOCATION }}">GeoServer</a></li>
+            {% endif %}
+            {% if USE_MONITORING %}
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="{% url "monitoring:index" %}">{% trans "Monitoring & Analytics" %}</a></li>
+            {% endif %}
+          {% endif %}
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="{% url "help" %}">{% trans "Help" %}</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="{% url 'account_logout' %}">{% trans "Log out" %}</a></li>
+        </ul>
+      </li>
+    {% else %}
+      <li class="nav-item">
+        {% get_primary_social_provider as provider_id %}
+        <form method="POST" action="{% provider_login_url provider_id %}" novalidate="novalidate">
+            {% csrf_token %}
+            <button type="submit" class="nav-link">{% trans 'Register/Login via ORCID' %}</button>
+        </form>
+    </li>
+    {% endif %}
+  </ul>
+</div>
