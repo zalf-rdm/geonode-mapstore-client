@@ -15,6 +15,32 @@ from geonode.upload.utils import get_max_upload_size, get_max_upload_parallelism
 from geonode.utils import get_supported_datasets_file_types
 
 
+def _get_datacite_settings(request):
+    """
+    Return DataCite publishing info for the current user, embedded directly
+    into the page so the frontend needs no extra HTTP round-trip.
+
+    ``can_publish`` is derived from group membership only (no DataCite API
+    call).  ``prefixes`` are fetched from the DataCite API and cached per
+    account — they are only fetched when the user can publish.
+    """
+    user = getattr(request, "user", None)
+    if user is None or not user.is_authenticated:
+        return {"can_publish": False, "prefixes": []}
+
+    can_publish = user.can_publish_data_collection()
+    if not can_publish:
+        return {"can_publish": False, "prefixes": []}
+
+    try:
+        from geonode.zalf.api.datacite import get_doi_prefixes_for_user
+        prefixes = get_doi_prefixes_for_user(user)
+    except ImportError:
+        prefixes = []
+
+    return {"can_publish": True, "prefixes": prefixes}
+
+
 def resource_urls(request):
     """Global values to pass to templates"""
     defaults = dict(GEOAPPS=["GeoStory", "GeoDashboard", "MapViewer"])
@@ -66,5 +92,6 @@ def resource_urls(request):
         .get("OPTIONS", dict())
         .get("MOSAIC_ENABLED", False),
         "SUPPORTED_DATASET_FILE_TYPES": get_supported_datasets_file_types(),
+        "DATACITE": _get_datacite_settings(request),
     }
     return defaults

@@ -19,6 +19,24 @@
             "VisualStyleEditor": {
                 "description": "Dataset's style editor",
                 "title": "Visual Style Editor"
+            },
+            "ApproveDataCollection": {
+                "button": "Approve data collection",
+                "cancel": "Cancel",
+                "buttonTooltip": "Approve data collection",
+                "title": "Approve data collection",
+                "description": "You have to verify your data collection before a data steward can publish it in the repository. Please make sure everything is set and click on 'Approve'. \n\n Do you wish to approve the data collection '{title}'?",
+                "approve": "Approve"
+            },
+            "PublishDataCollection": {
+                "button": "Publish data collection",
+                "cancel": "Cancel",
+                "buttonTooltip": "Publish data collection",
+                "title": "Publish data collection",
+                "description": "Select the data to publish along with this collection {title}",
+                "selectDoiPrefix": "Choose a DOI prefix",
+                "skipDoiPrefix": "Publish without registering a DOI",
+                "publish": "Start data publication"
             }
         },
         "gnhome": {
@@ -332,6 +350,7 @@
             "embeddashboard": "Embed this Dashboard",
             "directLink": "Direct Link",
             "iso": "ISO Metadata",
+            "dataCite": "DataCite Metadata",
             "dublinCore": "Dublin Core Metadata",
             "owner": "Owner",
             "creation": "Creation",

@@ -153,6 +153,23 @@ export const resourceToLayerConfig = (resource) => {
         const { url: wmsUrl } = links.find(({ link_type: linkType }) => linkType === 'OGC:WMS') || {};
         const { url: wmtsUrl } = links.find(({ link_type: linkType }) => linkType === 'OGC:WMTS') || {};
 
+        const params = wmsUrl && url.parse(wmsUrl, true).query;
+        const dimensions = [
+            ...(hasTime ? [{
+                name: 'time',
+                source: {
+                    type: 'multidim-extension',
+                    url: wmtsUrl || (wmsUrl || '').split('/geoserver/')[0] + '/geoserver/gwc/service/wmts'
+                }
+            }] : [])
+        ];
+
+        const {
+            defaultLayerFormat = 'image/png',
+            defaultTileSize = 512
+        } = getConfigProp('geoNodeSettings') || {};
+        const fields = datasetAttributeSetToFields(resource);
+        
         if (resource.subtype === "tabular") {
             return {
                 perms,
@@ -188,22 +205,6 @@ export const resourceToLayerConfig = (resource) => {
             };
         }
     
-        const dimensions = [
-            ...(hasTime ? [{
-                name: 'time',
-                source: {
-                    type: 'multidim-extension',
-                    url: wmtsUrl || (wmsUrl || '').split('/geoserver/')[0] + '/geoserver/gwc/service/wmts'
-                }
-            }] : [])
-        ];
-
-        const params = wmsUrl && url.parse(wmsUrl, true).query;
-        const {
-            defaultLayerFormat = 'image/png',
-            defaultTileSize = 512
-        } = getConfigProp('geoNodeSettings') || {};
-        const fields = datasetAttributeSetToFields(resource);
         return {
             perms,
             id: uuid(),
