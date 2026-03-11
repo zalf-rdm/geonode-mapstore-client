@@ -14,7 +14,11 @@ import FaIcon from '@js/components/FaIcon';
 import Dropdown from '@js/components/Dropdown';
 import { parseDevHostname } from '@js/utils/APIUtils';
 import { updateResourceProperties } from '@js/actions/gnresource';
-import { getResourceData } from '@js/selectors/resource';
+import {
+    getResourceData,
+    getResourcePerms,
+    getCompactPermissions,
+} from '@js/selectors/resource';
 import useDatacitePrefixes from '@js/hooks/useDatacitePrefixes';
 
 
@@ -104,7 +108,7 @@ const PublishDataCollectionComponent = ({
         const payload = {
             "owner": owner.pk,
             "doi_prefix": skipDoiPrefix ? undefined : (doiPrefix || doiPrefixes?.[0]),
-            "resources": Object.keys(checkedItems).filter(pk => checkedItems[pk])
+            "resources": Object.keys(checkedItems).filter(itemPk => checkedItems[itemPk])
         }
 
         const url = parseDevHostname(`/api/v2/publish/${pk}/`);
