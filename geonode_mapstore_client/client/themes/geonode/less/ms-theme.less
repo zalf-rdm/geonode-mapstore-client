@@ -97,6 +97,124 @@
     bottom: 30px;
     margin-bottom: 35px;
 }
+
+#navigationBarPreview-container {
+    display: none;
+}
+
+#navigationBarPreview {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    z-index: 30;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 3rem;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid #dbe3ee;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 24px rgba(15, 31, 54, 0.12);
+    overflow: hidden;
+}
+
+#navigationBarPreview .mapToolbar {
+    position: static !important;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    bottom: auto;
+    margin-bottom: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: hidden;
+}
+
+#navigationBarPreview .background-preview-button,
+#navigationBarPreview .mapToolbar > .btn-group,
+#navigationBarPreview .mapToolbar > .btn,
+#navigationBarPreview .mapToolbar > span {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+}
+
+#navigationBarPreview .mapToolbar,
+#navigationBarPreview .square-button-md,
+#navigationBarPreview .btn-group > .btn,
+#navigationBarPreview .mapToolbar .btn {
+    margin: 0;
+    width: 3rem;
+    min-width: 3rem;
+    height: 12rem;
+    min-height: 3rem;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    overflow: visible;
+}
+
+#navigationBarPreview .btn-group {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+#navigationBarPreview .mapToolbar .glyphicon,
+#navigationBarPreview .mapToolbar .fa {
+    font-size: 1.05rem;
+    line-height: 1;
+}
+
+#navigationBarPreview .mapToolbar .btn,
+#navigationBarPreview .mapToolbar .square-button-md {
+    background: transparent;
+    border: 0;
+    color: #64748b;
+}
+
+#navigationBarPreview .mapToolbar .btn:hover,
+#navigationBarPreview .mapToolbar .square-button-md:hover {
+    background: #f1f5f9;
+    color: #334155;
+}
+
+#navigationBarPreview .mapToolbar .btn + .btn,
+#navigationBarPreview .mapToolbar .square-button-md + .square-button-md,
+#navigationBarPreview .btn-group + .btn-group,
+#navigationBarPreview .btn-group + .btn,
+#navigationBarPreview .btn + .btn-group,
+#navigationBarPreview .background-preview-button + .btn-group,
+#navigationBarPreview .btn-group + .background-preview-button {
+    border-top: 1px solid #e2e8f0;
+}
+
+#navigationBarPreview {
+    .tooltip,
+    .ms-tooltip,
+    [role="tooltip"] {
+        left: calc(100% + 0.5rem) !important;
+        right: auto !important;
+        margin-left: 0 !important;
+        transform: none !important;
+    }
+
+    .tooltip-arrow,
+    .ms-tooltip-arrow {
+        left: -0.25rem !important;
+        right: auto !important;
+    }
+}
+
+#footer-attribution-container {
+    display: none !important;
+}
 .background-preview-button {
     margin: 0 !important;
 }

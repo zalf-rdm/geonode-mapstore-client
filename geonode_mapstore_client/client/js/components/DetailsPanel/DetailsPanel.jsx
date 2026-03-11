@@ -253,7 +253,7 @@ function DetailsPanel({
     const assetItems = [
         ...toArray(resource?.download_urls).map((download, index) => ({
             id: `download-${index}`,
-            label: download?.name || download?.label || download?.format || download?.mime || download?.type || 'Download',
+            label: download?.label || download?.name || download?.format || download?.mime || download?.type || 'Download',
             size: getReadableSize(download?.size || download?.filesize),
             href: download?.url,
             icon: 'download'
@@ -262,16 +262,16 @@ function DetailsPanel({
             .filter(link => link?.href || link?.url)
             .map((link, index) => ({
                 id: `link-${index}`,
-                label: link?.title || link?.name || link?.link_type || link?.extension || 'Resource link',
+                label: link?.extras?.content?.title || link?.title || link?.name || link?.link_type || link?.extension || 'Resource link',
                 size: getReadableSize(link?.filesize || link?.size),
                 href: link?.href || link?.url,
                 icon: 'file-o'
             }))
     ].filter(item => item?.href && item?.label).slice(0, 3);
     const stats = [
-        resource?.popular_count ? { icon: 'eye', label: `${resource.popular_count} Views` } : null,
-        resource?.download_count ? { icon: 'download', label: `${resource.download_count} Downloads` } : null
-    ].filter(Boolean);
+        { icon: 'eye', label: `${resource?.popular_count ?? 0} Views` },
+        { icon: 'download', label: `${resource?.download_count ?? resource?.downloads_count ?? toArray(resource?.download_urls).length ?? 0} Downloads` }
+    ];
     const breadcrumbs = [
         { label: 'Home', href: formatHref({ pathname: '/' }) },
         { label: name || resource?.resource_type || 'Resource', href: formatHref({ pathname, query: { f: resource?.resource_type } }) },
@@ -319,6 +319,17 @@ function DetailsPanel({
                                         loading={loading}
                                         enabled={!!(resourceCanPreviewed && !activeEditMode && !editThumbnail)}
                                     />
+                                    {previewDetailUrl && !editThumbnail && (
+                                        <a
+                                            className="gn-details-panel-open-map"
+                                            href={previewDetailUrl}
+                                            rel="noopener noreferrer"
+                                        >
+                                            <FaIcon name="external-link" />
+                                            {' '}
+                                            Open in MapStore
+                                        </a>
+                                    )}
                                     <DetailsThumbnail
                                         enabled={!!editThumbnail}
                                         resource={resource}
@@ -456,16 +467,14 @@ function DetailsPanel({
                                         </div>
                                     )}
                                 </div>
-                                {stats.length > 0 && (
-                                    <div className="gn-details-panel-summary-footer">
-                                        {stats.map(stat => (
-                                            <span key={stat.label} className="gn-details-panel-stat">
-                                                <FaIcon name={stat.icon} />
-                                                {stat.label}
-                                            </span>
-                                        ))}
-                                    </div>
-                                )}
+                                <div className="gn-details-panel-summary-footer">
+                                    {stats.map(stat => (
+                                        <span key={stat.label} className="gn-details-panel-stat">
+                                            <FaIcon name={stat.icon} />
+                                            {stat.label}
+                                        </span>
+                                    ))}
+                                </div>
                             </aside>
                         </div>
                         <div className="gn-details-panel-info-section">

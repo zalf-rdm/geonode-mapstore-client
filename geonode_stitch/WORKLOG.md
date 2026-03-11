@@ -419,6 +419,150 @@ Mudanças aplicadas:
 - quebra forçada de títulos longos no bloco lateral do detail
 - prevenção de overflow horizontal em nomes técnicos extensos
 
+### Etapa 20 - Rodapé de views/downloads e labels de assets no detail
+
+Status: concluída
+
+Arquivos alterados:
+
+- `geonode_mapstore_client/client/js/components/DetailsPanel/DetailsPanel.jsx`
+
+Mudanças aplicadas:
+
+- rodapé do card lateral agora sempre exibe `Views` e `Downloads`
+- fallback para `0` ou para a quantidade de downloads conhecidos quando o contador não vem explícito
+- assets passam a usar títulos mais fiéis ao payload do recurso
+
+### Etapa 21 - Ajuste do mapa preview para o padrão Stitch
+
+Status: concluída
+
+Arquivos alterados:
+
+- `geonode_mapstore_client/static/mapstore/configs/localConfig.json`
+- `geonode_mapstore_client/client/js/components/DetailsPanel/DetailsPanel.jsx`
+- `geonode_mapstore_client/client/themes/geonode/less/ms-theme.less`
+- `geonode_mapstore_client/client/themes/geonode/less/_details-panel.less`
+
+Mudanças aplicadas:
+
+- criação de `navigationBarPreview` para estilizar o toolbar do preview separadamente
+- remoção do `MapFooter` nos previews de dataset e map
+- ocultação da attribution container do preview
+- controles do mapa reposicionados no canto superior esquerdo com visual cinza
+- inclusão do botão `Open in MapStore` dentro do preview, apontando para o mesmo destino do `Explore on Map`
+
+### Etapa 22 - Separação visual entre zoom controls e Open in MapStore
+
+Status: concluída
+
+Arquivos alterados:
+
+- `geonode_mapstore_client/client/themes/geonode/less/ms-theme.less`
+- `geonode_mapstore_client/client/themes/geonode/less/_details-panel.less`
+
+Mudanças aplicadas:
+
+- toolbar do preview forçado para coluna estreita e independente
+- `Open in MapStore` mantido como botão flutuante separado no canto inferior direito
+- ajuste de `z-index`, largura e pointer events para evitar sobreposição visual
+
+### Etapa 23 - Restauração dos controles do preview
+
+Status: concluída
+
+Arquivos alterados:
+
+- `geonode_mapstore_client/static/mapstore/configs/localConfig.json`
+- `geonode_mapstore_client/client/themes/geonode/less/ms-theme.less`
+
+Mudanças aplicadas:
+
+- inclusão explícita do plugin `Locate` nos previews
+- relaxamento do CSS do toolbar para não ocultar os botões
+- manutenção do layout vertical dos controles no canto superior esquerdo
+
+### Etapa 24 - Toolbar do preview alinhado com ZoomAll, ZoomIn e ZoomOut
+
+Status: concluída
+
+Arquivos alterados:
+
+- `geonode_mapstore_client/static/mapstore/configs/localConfig.json`
+- `geonode_mapstore_client/client/themes/geonode/less/ms-theme.less`
+
+Mudanças aplicadas:
+
+- preview passou a usar `MapLoading`, `ZoomAll`, `ZoomIn` e `ZoomOut` sempre visíveis
+- `ZoomAll` assume o papel de recenter semelhante ao Stitch
+- CSS do toolbar foi ajustado para renderizar todos os grupos e botões da pilha vertical
+
+### Etapa 25 - Correção de corte visual dos controles do preview
+
+Status: concluída
+
+Arquivos alterados:
+
+- `geonode_mapstore_client/client/themes/geonode/less/ms-theme.less`
+
+Mudanças aplicadas:
+
+- aumento da caixa dos botões do preview
+- `overflow` relaxado para evitar clipping dos controles
+- ajuste fino de line-height e tamanho dos ícones
+
+### Etapa 26 - Reposicionamento vertical do toolbar do preview
+
+Status: concluída
+
+Arquivos alterados:
+
+- `geonode_mapstore_client/client/themes/geonode/less/ms-theme.less`
+
+Mudanças aplicadas:
+
+- toolbar do preview movido alguns pixels para baixo para evitar corte na borda superior do mapa
+
+### Etapa 27 - Posicionamento aplicado no seletor visível do toolbar
+
+Status: concluída
+
+Arquivos alterados:
+
+- `geonode_mapstore_client/client/themes/geonode/less/ms-theme.less`
+
+Mudanças aplicadas:
+
+- posicionamento do preview movido do seletor `-container` para `#navigationBarPreview`
+- ajuste aplicado diretamente no nó visível do toolbar
+
+### Etapa 28 - Máscara do toolbar e tooltip do preview
+
+Status: concluída
+
+Arquivos alterados:
+
+- `geonode_mapstore_client/client/themes/geonode/less/ms-theme.less`
+
+Mudanças aplicadas:
+
+- a “caixa branca” do controle passou a ser o próprio `#navigationBarPreview`
+- largura e overflow do toolbar foram corrigidos para evitar corte de botões
+- tooltip visualmente deslocado para a direita no contexto do preview
+
+### Etapa 29 - Tooltip dos controles do preview à direita
+
+Status: concluída
+
+Arquivos alterados:
+
+- `geonode_mapstore_client/client/themes/geonode/less/ms-theme.less`
+
+Mudanças aplicadas:
+
+- tooltip dos controles do preview reposicionado para abrir à direita dos botões
+- ajuste restrito ao contexto de `#navigationBarPreview`
+
 ## Próximos passos previstos
 
 1. Revisar visualmente catálogo e detalhe no navegador e ajustar refinamentos.

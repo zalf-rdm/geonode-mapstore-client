@@ -162,9 +162,26 @@
             },
             {
                 "name": "Toolbar",
-                "id": "NavigationBar",
+                "id": "NavigationBarPreview",
                 "cfg": {
-                    "id": "navigationBar"
+                    "id": "navigationBarPreview",
+                    "layout": "horizontal"
+                }
+            },
+            {
+                "name": "MapLoading",
+                "override": {
+                    "Toolbar": {
+                        "alwaysVisible": true
+                    }
+                }
+            },
+            {
+                "name": "ZoomAll",
+                "override": {
+                    "Toolbar": {
+                        "alwaysVisible": true
+                    }
                 }
             },
             {
@@ -182,9 +199,6 @@
                         "alwaysVisible": true
                     }
                 }
-            },
-            {
-                "name": "MapFooter"
             },
             {
                 "name": "Notifications"
@@ -228,9 +242,26 @@
             },
             {
                 "name": "Toolbar",
-                "id": "NavigationBar",
+                "id": "NavigationBarPreview",
                 "cfg": {
-                    "id": "navigationBar"
+                    "id": "navigationBarPreview",
+                    "layout": "horizontal"
+                }
+            },
+            {
+                "name": "MapLoading",
+                "override": {
+                    "Toolbar": {
+                        "alwaysVisible": true
+                    }
+                }
+            },
+            {
+                "name": "ZoomAll",
+                "override": {
+                    "Toolbar": {
+                        "alwaysVisible": true
+                    }
                 }
             },
             {
@@ -338,9 +369,6 @@
             },
             {
                 "name": "Expander"
-            },
-            {
-                "name": "MapFooter"
             },
             {
                 "name": "Notifications"

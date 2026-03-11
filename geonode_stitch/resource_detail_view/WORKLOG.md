@@ -208,6 +208,78 @@ Nova atualização aplicada no detail:
 
 - títulos longos do bloco lateral agora quebram linha sem overflow
 
+### Views/downloads e assets no aside do detail
+
+Nova atualização aplicada no detail:
+
+- rodapé lateral agora sempre mostra `Views` e `Downloads`
+- o layout usa fallback coerente quando o contador de downloads não vem do GeoNode
+- assets passaram a aproveitar melhor os títulos vindos no payload
+
+### Ajuste do mapa preview
+
+Nova atualização aplicada no detail:
+
+- toolbar do preview ganhou id dedicado para estilo próprio
+- attribution do preview foi ocultada
+- botões do mapa foram movidos para o canto superior esquerdo com visual cinza
+- botão `Open in MapStore` foi adicionado dentro do mapa
+
+### Separação visual dos controles do mapa
+
+Nova atualização aplicada no detail:
+
+- zoom controls isolados como coluna flutuante no canto superior esquerdo
+- `Open in MapStore` mantido como botão flutuante independente no canto inferior direito
+
+### Restauração dos controles do preview
+
+Nova atualização aplicada no detail:
+
+- `Locate` foi incluído explicitamente no preview
+- CSS do toolbar foi ajustado para voltar a mostrar os botões corretamente
+
+### Toolbar do preview com recenter e zoom completos
+
+Nova atualização aplicada no detail:
+
+- preview passou a usar `ZoomAll`, `ZoomIn` e `ZoomOut` como controles principais
+- `ZoomAll` foi usado como equivalente visual do recenter do Stitch
+- CSS do toolbar foi ajustado para não esconder grupos de botões
+
+### Correção de clipping dos controles
+
+Nova atualização aplicada no detail:
+
+- área clicável e visual dos controles do preview foi ampliada
+- clipping dos ícones foi reduzido com ajuste de `overflow` e `line-height`
+
+### Reposicionamento vertical do toolbar
+
+Nova atualização aplicada no detail:
+
+- toolbar do preview foi deslocado para baixo para não encostar na borda superior do mapa
+
+### Posicionamento no seletor real do toolbar
+
+Nova atualização aplicada no detail:
+
+- deslocamento do toolbar passou a atuar em `#navigationBarPreview`, não só no seletor `-container`
+
+### Máscara do toolbar e tooltip
+
+Nova atualização aplicada no detail:
+
+- a casca branca do controle passou para o próprio `#navigationBarPreview`
+- clipping do grupo de botões foi reduzido
+- tooltip foi empurrado visualmente para a direita
+
+### Tooltip à direita dos controles
+
+Nova atualização aplicada no detail:
+
+- tooltip dos botões do preview agora abre à direita do controle
+
 ## Pendências
 
 1. Refinar visual após revisão manual no navegador.
