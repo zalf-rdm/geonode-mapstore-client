@@ -48,7 +48,7 @@ const ApproveDataCollectionComponent = (props) => {
             setTimeout(onClose, 200);
         }).catch(error => {
             setIconApproveButton("circle-exclamation");
-            console.error(`An error occured during approval: ${error}`);
+            console.error('An error occurred during approval:', error);
         });
     }
 
