@@ -35,7 +35,7 @@
                 "title": "Publish data collection",
                 "description": "Select the data to publish along with this collection {title}",
                 "selectDoiPrefix": "Choose a DOI prefix",
-                "skipDoiPrefix": "Publish without registereing a DOI",
+                "skipDoiPrefix": "Publish without registering a DOI",
                 "publish": "Start data publication"
             }
         },
