@@ -195,21 +195,16 @@
     border-top: 1px solid #e2e8f0;
 }
 
-#navigationBarPreview {
-    .tooltip,
-    .ms-tooltip,
-    [role="tooltip"] {
-        left: calc(100% + 0.5rem) !important;
-        right: auto !important;
-        margin-left: 0 !important;
-        transform: none !important;
-    }
+.tooltip.left,
+.ms-tooltip.left,
+[role="tooltip"].left {
+    margin-left: 10rem !important;
+}
 
-    .tooltip-arrow,
-    .ms-tooltip-arrow {
-        left: -0.25rem !important;
-        right: auto !important;
-    }
+.tooltip.left .tooltip-arrow,
+.ms-tooltip.left .tooltip-arrow,
+[role="tooltip"].left .tooltip-arrow {
+    display: none;
 }
 
 #footer-attribution-container {
