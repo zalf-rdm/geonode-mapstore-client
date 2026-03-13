@@ -701,7 +701,9 @@
                 "cfg": {
                     "downloadMsgId": "gnhome.dataset",
                     "tooltipId": "gnviewer.download",
-                    "allowedSources": ["LOCAL"]
+                    "allowedSources": [
+                        "LOCAL"
+                    ]
                 }
             },
             {
@@ -1221,7 +1223,10 @@
                         "executionRequest": {
                             "url": "{context.getEndpointUrl('executionrequest')}",
                             "params": {
-                                "filter{action.in}": ["replace", "upsert"],
+                                "filter{action.in}": [
+                                    "replace",
+                                    "upsert"
+                                ],
                                 "sort[]": "-created",
                                 "filter{geonode_resource}": "{context.get(state('gnResourceData'), 'pk')}"
                             }
@@ -1254,7 +1259,6 @@
                             "type": "link",
                             "href": "{'#/dataset/' + (state('gnResourceData') || {}).pk}",
                             "label": "{'< Go back to ' + (state('gnResourceData') || {}).title}"
-
                         }
                     ]
                 }
@@ -1284,7 +1288,9 @@
                 "cfg": {
                     "hideCloseButton": true,
                     "hideLayerTitle": true,
-                    "primaryKeyAttributes": ["fid"]
+                    "primaryKeyAttributes": [
+                        "fid"
+                    ]
                 }
             },
             {
@@ -1404,7 +1410,7 @@
                 "cfg": {
                     "enableIFrameModule": true,
                     "className": "gn-dataset-layersettings"
-                }  
+                }
             },
             {
                 "name": "StyleEditor"
@@ -1930,7 +1936,9 @@
             {
                 "name": "FeatureEditor",
                 "cfg": {
-                    "primaryKeyAttributes": ["fid"]
+                    "primaryKeyAttributes": [
+                        "fid"
+                    ]
                 }
             },
             {
@@ -2009,7 +2017,7 @@
                 "mandatory": true,
                 "cfg": {
                     "enableIFrameModule": true
-                }  
+                }
             },
             {
                 "name": "Widgets"
@@ -2061,7 +2069,7 @@
                 "mandatory": true,
                 "name": "DatasetsCatalog"
             },
-            { 
+            {
                 "name": "StyleEditor",
                 "cfg": {
                     "enableEditDefaultStyle": false
@@ -2325,7 +2333,6 @@
                 "cfg": {
                     "redirectTo": "/"
                 }
-                
             },
             {
                 "name": "GeoStory",
@@ -2719,115 +2726,115 @@
             {
                 "name": "LayerDownload",
                 "cfg": {
-                  "cropDataSetVisible": false,
-                  "hideServiceSelector": true,
-                  "defaultSelectedService": "wps",
-                  "formats": [
-                      {
-                          "name": "application/json",
-                          "label": "GeoJSON",
-                          "type": "vector",
-                          "validServices": [
-                              "wps"
-                          ]
-                      },
-                      {
-                          "name": "application/arcgrid",
-                          "label": "ArcGrid",
-                          "type": "raster",
-                          "validServices": [
-                              "wps"
-                          ]
-                      },
-                      {
-                          "name": "image/tiff",
-                          "label": "TIFF",
-                          "type": "raster",
-                          "validServices": [
-                              "wps"
-                          ]
-                      },
-                      {
-                          "name": "image/png",
-                          "label": "PNG",
-                          "type": "raster",
-                          "validServices": [
-                              "wps"
-                          ]
-                      },
-                      {
-                          "name": "image/jpeg",
-                          "label": "JPEG",
-                          "type": "raster",
-                          "validServices": [
-                              "wps"
-                          ]
-                      },
-                      {
-                          "name": "application/wfs-collection-1.0",
-                          "label": "GML (FeatureCollection)",
-                          "type": "vector",
-                          "validServices": [
-                              "wps"
-                          ]
-                      },
-                      {
-                          "name": "application/wfs-collection-1.1",
-                          "label": "GML (WFS 1.1.0 FeatureCollection)",
-                          "type": "vector",
-                          "validServices": [
-                              "wps"
-                          ]
-                      },
-                      {
-                          "name": "application/zip",
-                          "label": "Shapefile",
-                          "type": "vector",
-                          "validServices": [
-                              "wps"
-                          ]
-                      },
-                      {
-                          "name": "text/csv",
-                          "label": "CSV",
-                          "type": "vector",
-                          "validServices": [
-                              "wps"
-                          ]
-                      },
-                      {
-                         "name": "application/vnd.ms-excel",
-                          "label": "Excel",
-                          "type": "vector",
-                          "validServices": [
-                              "wps"
-                          ]
-                      },
-                      {
-                          "name": "application/geopackage+sqlite3",
-                          "label": "GeoPackage",
-                          "type": "vector",
-                          "validServices": [
-                              "wps"
-                          ]
-                      },
-                      {
-                          "name": "application/geopackage+sqlite3",
-                          "label": "GeoPackage",
-                          "type": "raster",
-                          "validServices": [
-                              "wps"
-                          ]
-                      },
-                      {
-                          "name": "application/vnd.google-earth.kml+xml",
-                          "label": "KML",
-                          "type": "vector",
-                          "validServices": [
-                              "wps"
-                          ]
-                      }
-                  ]
+                    "cropDataSetVisible": false,
+                    "hideServiceSelector": true,
+                    "defaultSelectedService": "wps",
+                    "formats": [
+                        {
+                            "name": "application/json",
+                            "label": "GeoJSON",
+                            "type": "vector",
+                            "validServices": [
+                                "wps"
+                            ]
+                        },
+                        {
+                            "name": "application/arcgrid",
+                            "label": "ArcGrid",
+                            "type": "raster",
+                            "validServices": [
+                                "wps"
+                            ]
+                        },
+                        {
+                            "name": "image/tiff",
+                            "label": "TIFF",
+                            "type": "raster",
+                            "validServices": [
+                                "wps"
+                            ]
+                        },
+                        {
+                            "name": "image/png",
+                            "label": "PNG",
+                            "type": "raster",
+                            "validServices": [
+                                "wps"
+                            ]
+                        },
+                        {
+                            "name": "image/jpeg",
+                            "label": "JPEG",
+                            "type": "raster",
+                            "validServices": [
+                                "wps"
+                            ]
+                        },
+                        {
+                            "name": "application/wfs-collection-1.0",
+                            "label": "GML (FeatureCollection)",
+                            "type": "vector",
+                            "validServices": [
+                                "wps"
+                            ]
+                        },
+                        {
+                            "name": "application/wfs-collection-1.1",
+                            "label": "GML (WFS 1.1.0 FeatureCollection)",
+                            "type": "vector",
+                            "validServices": [
+                                "wps"
+                            ]
+                        },
+                        {
+                            "name": "application/zip",
+                            "label": "Shapefile",
+                            "type": "vector",
+                            "validServices": [
+                                "wps"
+                            ]
+                        },
+                        {
+                            "name": "text/csv",
+                            "label": "CSV",
+                            "type": "vector",
+                            "validServices": [
+                                "wps"
+                            ]
+                        },
+                        {
+                            "name": "application/vnd.ms-excel",
+                            "label": "Excel",
+                            "type": "vector",
+                            "validServices": [
+                                "wps"
+                            ]
+                        },
+                        {
+                            "name": "application/geopackage+sqlite3",
+                            "label": "GeoPackage",
+                            "type": "vector",
+                            "validServices": [
+                                "wps"
+                            ]
+                        },
+                        {
+                            "name": "application/geopackage+sqlite3",
+                            "label": "GeoPackage",
+                            "type": "raster",
+                            "validServices": [
+                                "wps"
+                            ]
+                        },
+                        {
+                            "name": "application/vnd.google-earth.kml+xml",
+                            "label": "KML",
+                            "type": "vector",
+                            "validServices": [
+                                "wps"
+                            ]
+                        }
+                    ]
                 }
             }
         ],
@@ -3227,13 +3234,19 @@
                                 "type": "date",
                                 "labelId": "resourcesCatalog.columnCreated",
                                 "format": "MMM Do YY, h:mm:ss a",
-                                "icon": { "glyph": "time" },
+                                "icon": {
+                                    "glyph": "time"
+                                },
                                 "noDataLabelId": "resourcesCatalog.emptyNA"
                             },
                             {
                                 "path": "owner.username",
-                                "icon": { "glyph": "user" },
-                                "image": { "path": "owner.avatar" },
+                                "icon": {
+                                    "glyph": "user"
+                                },
+                                "image": {
+                                    "path": "owner.avatar"
+                                },
                                 "width": 10,
                                 "labelId": "gnviewer.columnOwner",
                                 "noDataLabelId": "resourcesCatalog.emptyUnknown"
@@ -3247,8 +3260,12 @@
                             {
                                 "path": "owner.username",
                                 "target": "footer",
-                                "icon": { "glyph": "user" },
-                                "image": { "path": "owner.avatar" },
+                                "icon": {
+                                    "glyph": "user"
+                                },
+                                "image": {
+                                    "path": "owner.avatar"
+                                },
                                 "noDataLabelId": "resourcesCatalog.emptyUnknown"
                             }
                         ]
@@ -3652,7 +3669,7 @@
             },
             {
                 "name": "MetadataViewer"
-            }, 
+            },
             {
                 "name": "Notifications"
             }
