@@ -41,7 +41,7 @@ const isEmptyValue = (value) => {
     return value === 'None' || !value;
 };
 const isStyleLabel = (style) => style === "label";
-const isFieldLabelOnly = ({style, value}) => isEmptyValue(value) && isStyleLabel(style);
+const isFieldLabelOnly = ({ style, value }) => isEmptyValue(value) && isStyleLabel(style);
 
 const DetailInfoFieldLabel = ({ field }) => {
     const label = field.labelId ? <Message msgId={field.labelId} /> : field.label;
@@ -180,7 +180,7 @@ const shouldHideInfoField = (tab, item = {}) => {
 };
 
 const parseTabItems = (items, tab) => {
-    return (items || []).filter(({value, style}) => {
+    return (items || []).filter(({ value, style }) => {
         return !(isEmptyValue(value) && !isStyleLabel(style));
     }).filter((item) => !shouldHideInfoField(tab, item));
 };
@@ -193,11 +193,11 @@ function DetailsInfo({
     const filteredTabs = tabs
         .filter((tab) => !tab?.disableIf)
         .map((tab) =>
-            ({
-                ...tab,
-                items: isDefaultTabType(tab.type) ? parseTabItems(tab?.items, tab) : tab?.items,
-                Component: tabTypes[tab.type] || tabTypes.tab
-            }))
+        ({
+            ...tab,
+            items: isDefaultTabType(tab.type) ? parseTabItems(tab?.items, tab) : tab?.items,
+            Component: tabTypes[tab.type] || tabTypes.tab
+        }))
         .filter(tab => !isEmpty(tab?.items));
     const [selectedTabId, onSelect] = useState(filteredTabs?.[0]?.id);
     return (
@@ -205,7 +205,7 @@ function DetailsInfo({
             className="gn-details-info tabs-underline"
             selectedTabId={selectedTabId}
             onSelect={onSelect}
-            tabs={filteredTabs.map(({Component, ...tab} = {}) => ({
+            tabs={filteredTabs.map(({ Component, ...tab } = {}) => ({
                 title: <DetailInfoFieldLabel field={tab} />,
                 eventKey: tab?.id,
                 component: <Component fields={tab?.items} {...props} />

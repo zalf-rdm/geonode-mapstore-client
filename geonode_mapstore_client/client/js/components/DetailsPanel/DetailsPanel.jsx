@@ -125,10 +125,10 @@ const DetailsPanelTools = ({
     }, []);
 
     const handleCopyPermalink = (type) => {
-        setCopiedUrl({...copiedUrl, [type]: true});
+        setCopiedUrl({ ...copiedUrl, [type]: true });
         setTimeout(() => {
             if (isMounted.current) {
-                setCopiedUrl({...copiedUrl, [type]: false});
+                setCopiedUrl({ ...copiedUrl, [type]: false });
             }
         }, 700);
     };
@@ -139,14 +139,14 @@ const DetailsPanelTools = ({
 
     return (
         <div className="gn-details-panel-tools">
-            <Unadvertised resource={resource}/>
+            <Unadvertised resource={resource} />
             <ResourceStatus resource={resource} />
             {enableFavorite &&
-            <Button
-                variant="default"
-                onClick={debounce(() => handleFavorite(favorite), 500)}>
-                <FaIcon name={favorite ? 'star' : 'star-o'} />
-            </Button>}
+                <Button
+                    variant="default"
+                    onClick={debounce(() => handleFavorite(favorite), 500)}>
+                    <FaIcon name={favorite ? 'star' : 'star-o'} />
+                </Button>}
             <CopyToClipboard
                 tooltipPosition="top"
                 tooltipId={
@@ -158,7 +158,7 @@ const DetailsPanelTools = ({
             >
                 <Button
                     variant="default"
-                    onClick={()=> handleCopyPermalink('resource')}>
+                    onClick={() => handleCopyPermalink('resource')}>
                     <FaIcon name="share-alt" />
                 </Button>
             </CopyToClipboard>
@@ -173,7 +173,7 @@ const DetailsPanelTools = ({
             >
                 <Button
                     variant="default"
-                    onClick={()=> handleCopyPermalink('datasetowsurl')}>
+                    onClick={() => handleCopyPermalink('datasetowsurl')}>
                     <FaIcon name="globe" />
                 </Button>
             </CopyToClipboard>}
@@ -500,7 +500,7 @@ function DetailsPanel({
                             </aside>
                         </div>
                         <div className="gn-details-panel-info-section">
-                            <DetailsInfo tabs={tabs} formatHref={formatHref} allowEdit={activeEditMode} resourceTypesInfo={types} resource={resource} onSetExtent={onSetExtent}/>
+                            <DetailsInfo tabs={tabs} formatHref={formatHref} allowEdit={activeEditMode} resourceTypesInfo={types} resource={resource} onSetExtent={onSetExtent} />
                         </div>
                     </div>
                 </section>
@@ -656,7 +656,7 @@ function DetailsPanel({
                     </div>
 
                     <div className="gn-details-panel-info-section">
-                        <DetailsInfo tabs={tabs} formatHref={formatHref} allowEdit={activeEditMode} resourceTypesInfo={types} resource={resource} onSetExtent={onSetExtent}/>
+                        <DetailsInfo tabs={tabs} formatHref={formatHref} allowEdit={activeEditMode} resourceTypesInfo={types} resource={resource} onSetExtent={onSetExtent} />
                     </div>
                 </div>
             </section>
@@ -669,7 +669,7 @@ DetailsPanel.defaultProps = {
     formatHref: () => '#',
     linkHref: () => '#',
     onResourceThumbnail: () => '#',
-    onAction: () => {},
+    onAction: () => { },
     width: 696,
     getTypesInfo: getResourceTypesInfo,
     isThumbnailChanged: false,
