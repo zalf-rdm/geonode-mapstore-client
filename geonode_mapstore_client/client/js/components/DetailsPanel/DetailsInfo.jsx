@@ -151,10 +151,38 @@ const tabTypes = {
     'assets': DetailsAssets
 };
 
-const parseTabItems = (items) => {
+const hiddenInfoFieldLabelIds = new Set([
+    'gnviewer.title',
+    'gnviewer.owner',
+    'gnviewer.regions',
+    'gnviewer.resourceType'
+]);
+
+const hiddenInfoFieldLabels = new Set([
+    'title',
+    'owner',
+    'regions',
+    'region',
+    'resource type'
+]);
+
+const isInfoTab = (tab = {}) => tab?.id === 'info' || tab?.labelId === 'gnviewer.info';
+
+const shouldHideInfoField = (tab, item = {}) => {
+    if (!isInfoTab(tab)) {
+        return false;
+    }
+    if (hiddenInfoFieldLabelIds.has(item?.labelId)) {
+        return true;
+    }
+    const normalizedLabel = (item?.label || '').toString().trim().toLowerCase();
+    return hiddenInfoFieldLabels.has(normalizedLabel);
+};
+
+const parseTabItems = (items, tab) => {
     return (items || []).filter(({value, style}) => {
         return !(isEmptyValue(value) && !isStyleLabel(style));
-    });
+    }).filter((item) => !shouldHideInfoField(tab, item));
 };
 const isDefaultTabType = (type) => type === 'tab';
 
@@ -167,7 +195,7 @@ function DetailsInfo({
         .map((tab) =>
             ({
                 ...tab,
-                items: isDefaultTabType(tab.type) ? parseTabItems(tab?.items) : tab?.items,
+                items: isDefaultTabType(tab.type) ? parseTabItems(tab?.items, tab) : tab?.items,
                 Component: tabTypes[tab.type] || tabTypes.tab
             }))
         .filter(tab => !isEmpty(tab?.items));

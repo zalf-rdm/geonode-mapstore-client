@@ -885,8 +885,9 @@
 .gn-details-panel-summary-label {
     display: block;
     font-size: 0.72rem;
-    font-weight: 800;
-    letter-spacing: 0.08em;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    line-height: 1.2;
     text-transform: uppercase;
     color: #90a0b2;
 }
@@ -941,10 +942,11 @@
 .gn-details-panel-summary-section {
     h3 {
         margin: 0 0 0.5rem;
-        color: #6b7280;
+        color: #90a0b2;
         font-size: 0.75rem;
-        font-weight: 800;
-        letter-spacing: 0.08em;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        line-height: 1.2;
         text-transform: uppercase;
     }
 }
@@ -1051,36 +1053,64 @@
 
 .gn-details-panel-info-section {
     margin-top: 1.75rem;
-    border-top: 1px solid #e5ecf3;
-    padding-top: 1.5rem;
+    border-top: none;
+    padding-top: 0;
 }
 
 .gn-details-info {
     padding: 0;
 
-    > .nav {
+    > .nav,
+    > .nav.nav-pills {
         position: static;
         display: flex;
         gap: 1.5rem;
         margin-bottom: 1.5rem;
         border-bottom: 1px solid #e3eaf2;
-        background: transparent;
+        background: transparent !important;
+        background-color: transparent !important;
+
+        > li {
+            background: transparent !important;
+            background-color: transparent !important;
+        }
 
         > li > a {
             border: none !important;
             background: transparent !important;
+            background-color: transparent !important;
             border-bottom: 2px solid transparent !important;
             border-radius: 0 !important;
             padding: 0 0 1rem !important;
-            font-weight: 700;
-            color: #7b8aa0;
+            font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #94a3b8 !important;
+            box-shadow: none !important;
         }
 
         > li.active > a,
+        > li.active > a:hover,
+        > li.active > a:focus,
         > li > a:hover,
         > li > a:focus {
+            background: transparent !important;
+            background-color: transparent !important;
+            box-shadow: none !important;
+        }
+
+        > li.active > a,
+        > li.active > a:hover,
+        > li.active > a:focus {
             color: #75b72a !important;
+            font-weight: 700;
             border-bottom-color: #75b72a !important;
+        }
+
+        > li > a:hover,
+        > li > a:focus {
+            color: #1f2937 !important;
+            border-bottom-color: transparent !important;
         }
     }
 

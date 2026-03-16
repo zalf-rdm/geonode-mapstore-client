@@ -238,18 +238,31 @@ function DetailsPanel({
     const metadataDetailUrl = resource?.pk && getMetadataDetailUrl(resource);
     const metadataEditUrl = resource?.pk && getMetadataUrl(resource);
     const canEditMetadata = resourceHasPermission(resource, 'change_resourcebase') && metadataEditUrl;
+    const previewDetailUrl = (resourceCanPreviewed || canView) ? detailUrl : metadataDetailUrl;
     const createdDate = getDateValue(resource?.date || resource?.created);
     const updatedDate = getDateValue(resource?.last_updated || resource?.date);
-    const previewDetailUrl = (resourceCanPreviewed || canView) ? detailUrl : metadataDetailUrl;
-    const taxonomyTags = [
+    const regionTags = [
         ...toArray(resource?.regions),
-        ...toArray(resource?.places),
-        ...toArray(resource?.category),
+        ...toArray(resource?.places)
+    ]
+        .map(getTagValue)
+        .filter(Boolean)
+        .filter((tag, index, array) => array.indexOf(tag) === index)
+        .slice(0, 6);
+    const keywordTags = [
         ...toArray(resource?.keywords)
     ]
         .map(getTagValue)
         .filter(Boolean)
-        .slice(0, 6);
+        .filter((tag, index, array) => array.indexOf(tag) === index)
+        .slice(0, 8);
+    const categoryTags = [
+        ...toArray(resource?.category)
+    ]
+        .map(getTagValue)
+        .filter(Boolean)
+        .filter((tag, index, array) => array.indexOf(tag) === index)
+        .slice(0, 4);
     const assetItems = [
         ...toArray(resource?.download_urls).map((download, index) => ({
             id: `download-${index}`,
@@ -381,17 +394,6 @@ function DetailsPanel({
                                             <Message msgId="gnviewer.share" />
                                         </Button>
                                     </CopyToClipboard>
-                                    {previewDetailUrl && !editThumbnail && (
-                                        <Button
-                                            variant="default"
-                                            href={previewDetailUrl}
-                                            rel="noopener noreferrer"
-                                        >
-                                            <FaIcon name="external-link" />
-                                            {' '}
-                                            Explore on Map
-                                        </Button>
-                                    )}
                                 </div>
                             </div>
                             <aside className="gn-details-panel-summary">
@@ -456,11 +458,31 @@ function DetailsPanel({
                                             </div>
                                         </div>
                                     )}
-                                    {taxonomyTags.length > 0 && (
+                                    {regionTags.length > 0 && (
                                         <div className="gn-details-panel-summary-section">
                                             <h3>Region</h3>
                                             <div className="gn-details-panel-tags">
-                                                {taxonomyTags.map((tag, idx) => (
+                                                {regionTags.map((tag, idx) => (
+                                                    <span key={`${tag}-${idx}`} className="gn-details-panel-tag">{tag}</span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                    {keywordTags.length > 0 && (
+                                        <div className="gn-details-panel-summary-section">
+                                            <h3>Keywords</h3>
+                                            <div className="gn-details-panel-tags">
+                                                {keywordTags.map((tag, idx) => (
+                                                    <span key={`${tag}-${idx}`} className="gn-details-panel-tag">{tag}</span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                    {categoryTags.length > 0 && (
+                                        <div className="gn-details-panel-summary-section">
+                                            <h3>Category</h3>
+                                            <div className="gn-details-panel-tags">
+                                                {categoryTags.map((tag, idx) => (
                                                     <span key={`${tag}-${idx}`} className="gn-details-panel-tag">{tag}</span>
                                                 ))}
                                             </div>
@@ -536,17 +558,15 @@ function DetailsPanel({
                                 />
                             </div>
                             <div className="gn-details-panel-primary-actions">
-                                {(detailUrl || metadataDetailUrl) && !editThumbnail && (
+                                {!resourceCanPreviewed && metadataDetailUrl && !editThumbnail && (
                                     <Button
                                         variant="primary"
-                                        href={(resourceCanPreviewed || canView) ? detailUrl : metadataDetailUrl}
+                                        href={metadataDetailUrl}
                                         rel="noopener noreferrer"
                                     >
-                                        <FaIcon name={resourceCanPreviewed ? 'external-link' : 'file-text-o'} />
+                                        <FaIcon name="file-text-o" />
                                         {' '}
-                                        {resourceCanPreviewed
-                                            ? 'Explore on Map'
-                                            : <Message msgId="gnviewer.viewMetadata" />}
+                                        <Message msgId="gnviewer.viewMetadata" />
                                     </Button>
                                 )}
                             </div>
@@ -601,11 +621,34 @@ function DetailsPanel({
                                         </div>
                                     )}
                                 </div>
-                                {taxonomyTags.length > 0 && (
-                                    <div className="gn-details-panel-tags">
-                                        {taxonomyTags.map((tag, idx) => (
-                                            <span key={`${tag}-${idx}`} className="gn-details-panel-tag">{tag}</span>
-                                        ))}
+                                {regionTags.length > 0 && (
+                                    <div className="gn-details-panel-summary-section">
+                                        <h3>Region</h3>
+                                        <div className="gn-details-panel-tags">
+                                            {regionTags.map((tag, idx) => (
+                                                <span key={`${tag}-${idx}`} className="gn-details-panel-tag">{tag}</span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                                {keywordTags.length > 0 && (
+                                    <div className="gn-details-panel-summary-section">
+                                        <h3>Keywords</h3>
+                                        <div className="gn-details-panel-tags">
+                                            {keywordTags.map((tag, idx) => (
+                                                <span key={`${tag}-${idx}`} className="gn-details-panel-tag">{tag}</span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                                {categoryTags.length > 0 && (
+                                    <div className="gn-details-panel-summary-section">
+                                        <h3>Category</h3>
+                                        <div className="gn-details-panel-tags">
+                                            {categoryTags.map((tag, idx) => (
+                                                <span key={`${tag}-${idx}`} className="gn-details-panel-tag">{tag}</span>
+                                            ))}
+                                        </div>
                                     </div>
                                 )}
                             </div>
