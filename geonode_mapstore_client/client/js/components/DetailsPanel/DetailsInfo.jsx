@@ -557,6 +557,7 @@ function DetailsInfo({
     ...props
 }) {
     const filteredTabs = tabs
+        .filter((tab) => tab?.id !== 'assets' && tab?.type !== 'assets' && tab?.labelId !== 'gnviewer.assets')
         .filter((tab) => !tab?.disableIf)
         .map((tab) =>
         ({
