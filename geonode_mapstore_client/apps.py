@@ -36,7 +36,11 @@ def run_setup_hooks(*args, **kwargs):
     setattr(
         settings,
         "CLIENT_APP_ALLOWED_PERMS_LIST",
-        [{"geostory": allowed_perms}, {"dashboard": allowed_perms}, {"mapviewer": allowed_perms}],
+        [
+            {"geostory": allowed_perms},
+            {"dashboard": allowed_perms},
+            {"mapviewer": allowed_perms},
+        ],
     )
     setattr(
         settings,
@@ -118,7 +122,7 @@ def run_setup_hooks(*args, **kwargs):
             "subtype",
             "title",
             "executions",
-            "thumbnail_url"
+            "thumbnail_url",
         ],
     }
     settings.REST_API_PRESETS["dataset_list"] = {
@@ -144,7 +148,7 @@ def run_setup_hooks(*args, **kwargs):
             "ptype",
             "extent",
             "is_approved",
-            "is_published"
+            "is_published",
         ],
     }
     settings.REST_API_PRESETS["map_list"] = {
@@ -164,7 +168,7 @@ def run_setup_hooks(*args, **kwargs):
             "subtype",
             "title",
             "executions",
-            "thumbnail_url"
+            "thumbnail_url",
         ],
     }
     settings.REST_API_PRESETS["document_list"] = {
@@ -180,7 +184,7 @@ def run_setup_hooks(*args, **kwargs):
             "thumbnail_url",
             "alternate",
             "attribution",
-            "href"
+            "href",
         ],
     }
     settings.REST_API_PRESETS["viewer_common"] = {
@@ -210,9 +214,11 @@ def run_setup_hooks(*args, **kwargs):
             "linked_resources",
             "links",
             "owner",
+            "owner.orcid_identifier",
             "perms",
             "pk",
             "poc",
+            "poc.orcid_identifier",
             "raw_abstract",
             "regions",
             "resource_type",
@@ -223,30 +229,20 @@ def run_setup_hooks(*args, **kwargs):
             "temporal_extent_start",
             "thumbnail_url",
             "title",
-            "uuid"
+            "uuid",
         ],
     }
-    settings.REST_API_PRESETS["map_viewer"] = {
-        "include[]": [
-            "data",
-            "maplayers"
-        ]
-    }
-    settings.REST_API_PRESETS["document_viewer"] = {
-        "include[]": [
-            "href",
-            "extension"
-        ]
-    }
+    settings.REST_API_PRESETS["map_viewer"] = {"include[]": ["data", "maplayers"]}
+    settings.REST_API_PRESETS["document_viewer"] = {"include[]": ["href", "extension"]}
     settings.REST_API_PRESETS["dataset_viewer"] = {
         "include[]": [
-            "featureinfo_custom_template",            
+            "featureinfo_custom_template",
             "dataset_ows_url",
             "default_style",
             "ptype",
             "store",
             "has_time",
-            "attribute_set"
+            "attribute_set",
         ]
     }
     settings.PROXY_ALLOWED_PARAMS_NEEDLES += (
@@ -274,13 +270,25 @@ def run_setup_hooks(*args, **kwargs):
     MAPSTORE_DASHBOARD_CATALOGUE_SELECTED_SERVICE = ""
 
     if GEONODE_CATALOGUE_SERVICE:
-        MAPSTORE_DASHBOARD_CATALOGUE_SERVICES[list(list(GEONODE_CATALOGUE_SERVICE.keys()))[0]] = GEONODE_CATALOGUE_SERVICE[
+        MAPSTORE_DASHBOARD_CATALOGUE_SERVICES[
+            list(list(GEONODE_CATALOGUE_SERVICE.keys()))[0]
+        ] = GEONODE_CATALOGUE_SERVICE[
             list(list(GEONODE_CATALOGUE_SERVICE.keys()))[0]
         ]  # noqa
-        MAPSTORE_DASHBOARD_CATALOGUE_SELECTED_SERVICE = list(list(GEONODE_CATALOGUE_SERVICE.keys()))[0]
+        MAPSTORE_DASHBOARD_CATALOGUE_SELECTED_SERVICE = list(
+            list(GEONODE_CATALOGUE_SERVICE.keys())
+        )[0]
 
-    setattr(settings, "MAPSTORE_DASHBOARD_CATALOGUE_SELECTED_SERVICE", MAPSTORE_DASHBOARD_CATALOGUE_SELECTED_SERVICE)
-    setattr(settings, "MAPSTORE_DASHBOARD_CATALOGUE_SERVICES", MAPSTORE_DASHBOARD_CATALOGUE_SERVICES)
+    setattr(
+        settings,
+        "MAPSTORE_DASHBOARD_CATALOGUE_SELECTED_SERVICE",
+        MAPSTORE_DASHBOARD_CATALOGUE_SELECTED_SERVICE,
+    )
+    setattr(
+        settings,
+        "MAPSTORE_DASHBOARD_CATALOGUE_SERVICES",
+        MAPSTORE_DASHBOARD_CATALOGUE_SERVICES,
+    )
 
 
 def connect_geoserver_style_visual_mode_signal():

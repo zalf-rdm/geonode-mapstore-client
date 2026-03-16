@@ -5,7 +5,7 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import castArray from 'lodash/castArray';
 import isEmpty from 'lodash/isEmpty';
 import moment from 'moment';
@@ -18,6 +18,7 @@ import DetailsLinkedResources from '@js/components/DetailsPanel/DetailsLinkedRes
 import Message from '@mapstore/framework/components/I18N/Message';
 import DetailsLocations from '@js/components/DetailsPanel/DetailsLocations';
 import DetailsAssets from '@js/components/DetailsPanel/DetailsAssets';
+import { getUserByPk } from '@js/api/geonode/v2';
 
 const replaceTemplateString = (properties, str) => {
     return Object.keys(properties).reduce((updatedStr, key) => {
@@ -43,6 +44,29 @@ const isEmptyValue = (value) => {
 };
 const isStyleLabel = (style) => style === "label";
 const isFieldLabelOnly = ({ style, value }) => isEmptyValue(value) && isStyleLabel(style);
+
+const getDisplayText = (value) => {
+    if (value === null || value === undefined) {
+        return '';
+    }
+    if (typeof value === 'string' || typeof value === 'number') {
+        return `${value}`;
+    }
+    if (Array.isArray(value)) {
+        return value.map(getDisplayText).filter(Boolean).join(', ');
+    }
+    if (typeof value === 'object') {
+        return value.name
+            || value.label
+            || value.value
+            || value.title
+            || value.username
+            || value.email
+            || value.organization
+            || '';
+    }
+    return '';
+};
 
 const DetailInfoFieldLabel = ({ field }) => {
     const label = field.labelId ? <Message msgId={field.labelId} /> : field.label;
@@ -87,9 +111,17 @@ function DetailsInfoFields({ fields, formatHref }) {
                 return (
                     <DetailsInfoField key={filedIndex} field={field}>
                         {(values) => values.map((value, idx) => {
-                            return field.href
-                                ? <a key={idx} href={field.href}>{value}</a>
-                                : <a key={idx} href={value.href}>{value.value}</a>;
+                            if (value === null || value === undefined) {
+                                return null;
+                            }
+                            const href = field.href || value?.href;
+                            const text = getDisplayText(field.href ? value : (value?.value ?? value));
+                            if (!text) {
+                                return null;
+                            }
+                            return href
+                                ? <a key={idx} href={href}>{text}</a>
+                                : <span key={idx}>{text}</span>;
                         })}
                     </DetailsInfoField>
                 );
@@ -97,8 +129,15 @@ function DetailsInfoFields({ fields, formatHref }) {
             if (field.type === 'query') {
                 return (
                     <DetailsInfoField key={filedIndex} field={field}>
-                        {(values) => values.map((value, idx) => (
-                            <a key={idx} href={formatHref({
+                        {(values) => values.map((value, idx) => {
+                            if (value === null || value === undefined) {
+                                return null;
+                            }
+                            const queryText = getDisplayText(field.valueKey ? value?.[field.valueKey] : value);
+                            if (!queryText) {
+                                return null;
+                            }
+                            return (<a key={idx} href={formatHref({
                                 query: field.queryTemplate
                                     ? Object.keys(field.queryTemplate)
                                         .reduce((acc, key) => ({
@@ -107,8 +146,8 @@ function DetailsInfoFields({ fields, formatHref }) {
                                         }), {})
                                     : field.query,
                                 pathname: field.pathname
-                            })}>{field.valueKey ? value[field.valueKey] : value}</a>
-                        ))}
+                            })}>{queryText}</a>);
+                        })}
                     </DetailsInfoField>
                 );
             }
@@ -134,7 +173,7 @@ function DetailsInfoFields({ fields, formatHref }) {
                 return (
                     <DetailsInfoField key={filedIndex} field={field}>
                         {(values) => values.map((value, idx) => (
-                            <span key={idx}>{value}</span>
+                            <span key={idx}>{getDisplayText(value)}</span>
                         ))}
                     </DetailsInfoField>
                 );
@@ -146,41 +185,102 @@ function DetailsInfoFields({ fields, formatHref }) {
 
 function getPocName(user) {
     if (!user) return '';
-    return (user.first_name && user.last_name)
-        ? `${user.first_name} ${user.last_name}`
-        : (user.username || '');
+    const firstName = getDisplayText(user.first_name);
+    const lastName = getDisplayText(user.last_name);
+    const fullName = `${firstName} ${lastName}`.trim();
+    return fullName || getDisplayText(user.username) || getDisplayText(user.name);
+}
+
+function getContactValue(contact, keys = []) {
+    for (let i = 0; i < keys.length; i++) {
+        const key = keys[i];
+        const value = key.split('.').reduce((acc, part) => acc?.[part], contact);
+        const text = getDisplayText(value);
+        if (text) {
+            return text;
+        }
+    }
+    return '';
+}
+
+function findValueByKeyPattern(input, keyPattern, depth = 0) {
+    if (!input || depth > 5) {
+        return '';
+    }
+    if (Array.isArray(input)) {
+        for (let i = 0; i < input.length; i++) {
+            const found = findValueByKeyPattern(input[i], keyPattern, depth + 1);
+            if (found) {
+                return found;
+            }
+        }
+        return '';
+    }
+    if (typeof input !== 'object') {
+        return '';
+    }
+    const entries = Object.entries(input);
+    for (let i = 0; i < entries.length; i++) {
+        const [key, value] = entries[i];
+        if (keyPattern.test(key)) {
+            const text = getDisplayText(value);
+            if (text) {
+                return text;
+            }
+        }
+    }
+    for (let i = 0; i < entries.length; i++) {
+        const [, value] = entries[i];
+        const found = findValueByKeyPattern(value, keyPattern, depth + 1);
+        if (found) {
+            return found;
+        }
+    }
+    return '';
 }
 
 function DetailsInfoGeneralSection({ resource }) {
     if (!resource) return null;
     const { uuid, license, category } = resource;
-    const licenseName = license?.name_long || license?.name || license?.identifier
-        || (typeof license === 'string' ? license : null);
-    if (!uuid && !licenseName && !category?.gn_description) return null;
+    const publicationDate = resource?.date || resource?.created || resource?.last_updated;
+    const sourceName = getDisplayText(resource?.sourcetype || resource?.source || resource?.subtype);
+    const licenseName = getDisplayText(license?.name_long || license?.name || license?.identifier || license);
+    const categoryName = getDisplayText(category?.gn_description || category?.name || category);
+    const identifier = getDisplayText(uuid);
+    const identifierValue = identifier || '-';
+    const publicationValue = publicationDate ? moment(publicationDate).format('MMM DD, YYYY') : '-';
+    const sourceValue = sourceName || '-';
+    const licenseValue = licenseName || '-';
+    const categoryValue = categoryName || '-';
     return (
-        <div className="gn-info-section-card">
-            <div className="gn-info-section-card-header">
+        <div className="gn-info-section-card gn-info-general-card">
+            <div className="gn-info-general-card-head">
+                <div className="gn-info-general-card-icon">
+                    <FaIcon name="info-circle" />
+                </div>
                 <h3>General Information</h3>
             </div>
-            <div className="gn-info-section-card-body gn-info-section-grid">
-                {uuid && (
-                    <div className="gn-info-section-item gn-info-section-item--full">
-                        <p className="gn-info-section-label">Identifier (UUID)</p>
-                        <p className="gn-info-section-value gn-info-section-value--mono">{uuid}</p>
-                    </div>
-                )}
-                {licenseName && (
-                    <div className="gn-info-section-item">
-                        <p className="gn-info-section-label">License</p>
-                        <p className="gn-info-section-value">{licenseName}</p>
-                    </div>
-                )}
-                {category?.gn_description && (
-                    <div className="gn-info-section-item">
-                        <p className="gn-info-section-label">Category</p>
-                        <p className="gn-info-section-value">{category.gn_description}</p>
-                    </div>
-                )}
+            <div className="gn-info-section-card-body gn-info-section-grid gn-info-general-grid gn-info-general-card-content">
+                <div className="gn-info-section-item">
+                    <p className="gn-info-section-label">Identifier (UUID)</p>
+                    <p className="gn-info-section-value gn-info-section-value--mono">{identifierValue}</p>
+                </div>
+                <div className="gn-info-section-item">
+                    <p className="gn-info-section-label">Publication</p>
+                    <p className="gn-info-section-value">{publicationValue}</p>
+                </div>
+                <div className="gn-info-section-item">
+                    <p className="gn-info-section-label">Source</p>
+                    <p className="gn-info-section-value">{sourceValue}</p>
+                </div>
+                <div className="gn-info-section-item">
+                    <p className="gn-info-section-label">License</p>
+                    <p className="gn-info-section-value">{licenseValue}</p>
+                </div>
+                <div className="gn-info-section-item">
+                    <p className="gn-info-section-label">Category</p>
+                    <p className="gn-info-section-value">{categoryValue}</p>
+                </div>
             </div>
         </div>
     );
@@ -188,11 +288,170 @@ function DetailsInfoGeneralSection({ resource }) {
 
 function DetailsInfoContactSection({ resource }) {
     if (!resource?.poc) return null;
-    const contact = Array.isArray(resource.poc) ? resource.poc[0] : resource.poc;
+    const contact = Array.isArray(resource.poc)
+        ? resource.poc.find((item) => item && typeof item === 'object') || resource.poc[0]
+        : resource.poc;
+    const [contactDetails, setContactDetails] = useState(null);
+    const [ownerDetails, setOwnerDetails] = useState(null);
+    const contactPk = contact?.pk || contact?.id;
+    const ownerPk = resource?.owner?.pk || resource?.owner?.id;
+
+    useEffect(() => {
+        let mounted = true;
+        if (!contactPk) {
+            setContactDetails(null);
+            return () => {
+                mounted = false;
+            };
+        }
+        getUserByPk(contactPk)
+            .then((data) => {
+                if (mounted) {
+                    setContactDetails(data || null);
+                }
+            })
+            .catch(() => {
+                if (mounted) {
+                    setContactDetails(null);
+                }
+            });
+        return () => {
+            mounted = false;
+        };
+    }, [contactPk]);
+
+    useEffect(() => {
+        let mounted = true;
+        if (!ownerPk) {
+            setOwnerDetails(null);
+            return () => {
+                mounted = false;
+            };
+        }
+        getUserByPk(ownerPk)
+            .then((data) => {
+                if (mounted) {
+                    setOwnerDetails(data || null);
+                }
+            })
+            .catch(() => {
+                if (mounted) {
+                    setOwnerDetails(null);
+                }
+            });
+        return () => {
+            mounted = false;
+        };
+    }, [ownerPk]);
+
     if (!contact) return null;
-    const name = getPocName(contact);
-    const { email, organization, avatar } = contact;
-    if (!name && !email && !organization) return null;
+    const name = getPocName(contact) || getDisplayText(contact);
+    const email = getContactValue(contact, [
+        'email',
+        'profile.email',
+        'details.email'
+    ]);
+    const organization = getContactValue(contact, [
+        'organization',
+        'organization.name',
+        'profile.organization',
+        'profile.organization.name',
+        'details.organization'
+    ]);
+    const department = getContactValue(contact, [
+        'department',
+        'organization_department',
+        'org_department',
+        'profile.department',
+        'details.department',
+        'organization.department'
+    ]) || getContactValue(contactDetails, [
+        'department',
+        'organization_department',
+        'org_department',
+        'profile.department',
+        'details.department',
+        'organization.department'
+    ]) || getContactValue(ownerDetails, [
+        'department',
+        'organization_department',
+        'org_department',
+        'profile.department',
+        'details.department',
+        'organization.department'
+    ]);
+    const orcidFromContact = getContactValue(contact, [
+        'orcid',
+        'ORCID',
+        'orcid_identifier',
+        'orcid_id',
+        'orcidId',
+        'profile.orcid',
+        'profile.orcid_identifier',
+        'profile.orcid_id',
+        'details.orcid',
+        'extra.orcid'
+    ]);
+    const orcidFromOwner = getContactValue(resource?.owner, [
+        'orcid',
+        'ORCID',
+        'orcid_identifier',
+        'orcid_id',
+        'orcidId',
+        'profile.orcid',
+        'profile.orcid_identifier',
+        'profile.orcid_id',
+        'details.orcid',
+        'extra.orcid'
+    ]);
+    const orcidFromResource = getContactValue(resource, [
+        'orcid',
+        'ORCID',
+        'orcid_identifier',
+        'orcid_id',
+        'orcidId',
+        'metadata.orcid',
+        'extra_metadata.orcid',
+        'extra.orcid'
+    ]);
+    const orcid = orcidFromContact
+        || orcidFromOwner
+        || orcidFromResource
+        || getContactValue(contactDetails, [
+            'orcid',
+            'ORCID',
+            'orcid_identifier',
+            'orcid_id',
+            'orcidId',
+            'profile.orcid',
+            'profile.orcid_identifier',
+            'profile.orcid_id',
+            'details.orcid',
+            'extra.orcid'
+        ])
+        || getContactValue(ownerDetails, [
+            'orcid',
+            'ORCID',
+            'orcid_identifier',
+            'orcid_id',
+            'orcidId',
+            'profile.orcid',
+            'profile.orcid_identifier',
+            'profile.orcid_id',
+            'details.orcid',
+            'extra.orcid'
+        ])
+        || findValueByKeyPattern(contact, /orcid/i)
+        || findValueByKeyPattern(contactDetails, /orcid/i)
+        || findValueByKeyPattern(resource?.owner, /orcid/i)
+        || findValueByKeyPattern(ownerDetails, /orcid/i)
+        || findValueByKeyPattern(resource, /orcid/i);
+    const avatar = getDisplayText(contact?.avatar || contact?.avatar_url || contact?.profile_image);
+    const displayName = name || '-';
+    const displayEmail = email || '-';
+    const displayOrcid = orcid || '-';
+    const displayOrganization = organization || '-';
+    const displayDepartment = department || '-';
     return (
         <div className="gn-info-section-card">
             <div className="gn-info-section-card-header">
@@ -203,24 +462,37 @@ function DetailsInfoContactSection({ resource }) {
                     <div className="gn-info-poc-person">
                         <div className="gn-info-poc-avatar">
                             {avatar
-                                ? <img src={avatar} alt={name} />
+                                ? <img src={avatar} alt={displayName} />
                                 : <FaIcon name="user" />}
                         </div>
                         <div className="gn-info-poc-details">
-                            {name && <h4>{name}</h4>}
-                            {email && (
-                                <p className="gn-info-poc-email">
-                                    <FaIcon name="envelope" />{' '}{email}
+                            <h4>{displayName}</h4>
+                            <p className="gn-info-poc-email">
+                                {displayEmail !== '-' && <><FaIcon name="envelope" />{' '}</>}
+                                {displayEmail}
+                            </p>
+                            <div className="gn-info-poc-orcid">
+                                <p className="gn-info-section-label">ORCID</p>
+                                <p className="gn-info-section-value">
+                                    {displayOrcid !== '-'
+                                        ? (
+                                            <a href={`https://orcid.org/${displayOrcid.replace(/^(https?:\/\/orcid\.org\/)?/, '')}`} target="_blank" rel="noopener noreferrer">
+                                                {displayOrcid}
+                                            </a>
+                                        )
+                                        : displayOrcid}
                                 </p>
-                            )}
+                            </div>
                         </div>
                     </div>
-                    {organization && (
-                        <div className="gn-info-poc-org">
-                            <p className="gn-info-section-label">Organization</p>
-                            <p className="gn-info-section-value">{organization}</p>
+                    <div className="gn-info-poc-org">
+                        <p className="gn-info-section-label">Organization</p>
+                        <p className="gn-info-section-value">{displayOrganization}</p>
+                        <div className="gn-info-poc-department">
+                            <p className="gn-info-section-label">Department</p>
+                            <p className="gn-info-section-value">{displayDepartment}</p>
                         </div>
-                    )}
+                    </div>
                 </div>
             </div>
         </div>

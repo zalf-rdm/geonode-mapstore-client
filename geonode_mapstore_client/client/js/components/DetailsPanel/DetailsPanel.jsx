@@ -56,6 +56,94 @@ const getTagValue = (item) => {
     return item?.label || item?.name || item?.identifier || item?.title || item?.value;
 };
 
+const DOI_REGEX = /10\.\d{4,9}\/[-._;()/:A-Z0-9]+/i;
+const DOI_URL_REGEX = /https?:\/\/(?:dx\.)?doi\.org\/([^\s]+)/i;
+
+const normalizeDoi = (value = '') => {
+    const text = `${value}`.trim();
+    if (!text) {
+        return '';
+    }
+    const fromUrl = text.match(DOI_URL_REGEX);
+    if (fromUrl?.[1]) {
+        return fromUrl[1].trim();
+    }
+    const cleaned = text.replace(/^doi\s*:\s*/i, '').trim();
+    const fromText = cleaned.match(DOI_REGEX);
+    return fromText ? fromText[0].trim() : '';
+};
+
+const getDoiInfo = (resource = {}) => {
+    const directCandidates = [
+        resource?.doi,
+        resource?.doi_url,
+        resource?.identifier,
+        resource?.alternate,
+        resource?.citation,
+        resource?.source
+    ];
+
+    const directDoi = directCandidates
+        .map(normalizeDoi)
+        .find(Boolean);
+
+    const links = toArray(resource?.links);
+    const doiLink = links.find((link) => {
+        const href = link?.href || link?.url || '';
+        const title = `${link?.title || link?.name || link?.link_type || ''}`;
+        return DOI_URL_REGEX.test(href) || /doi/i.test(title);
+    });
+
+    const doiFromLinkHref = normalizeDoi(doiLink?.href || doiLink?.url || '');
+    const doiFromLinkTitle = normalizeDoi(doiLink?.title || doiLink?.name || '');
+    const doi = directDoi || doiFromLinkHref || doiFromLinkTitle;
+    const url = doi ? `https://doi.org/${doi}` : '';
+
+    return {
+        doi,
+        url
+    };
+};
+
+const ABSTRACT_PREVIEW_LIMIT = 400;
+const stripHtml = (value = '') => value
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+const DetailsPanelAbstract = ({ abstract = '' }) => {
+    const [expanded, setExpanded] = useState(false);
+    const plainText = stripHtml(abstract);
+    const needsCollapse = plainText.length > ABSTRACT_PREVIEW_LIMIT;
+    const collapsedText = needsCollapse
+        ? `${plainText.slice(0, ABSTRACT_PREVIEW_LIMIT).trimEnd()}...`
+        : plainText;
+
+    return (
+        <div className="gn-details-text gn-details-panel-description-modern">
+            {expanded && needsCollapse
+                ? <span className="gn-details-text-body" dangerouslySetInnerHTML={{ __html: abstract }} />
+                : <span className="gn-details-text-body">{collapsedText}</span>}
+            {needsCollapse && (
+                <span
+                    role="button"
+                    tabIndex={0}
+                    className="gn-details-abstract-toggle"
+                    onClick={() => setExpanded(!expanded)}
+                    onKeyDown={(event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault();
+                            setExpanded(!expanded);
+                        }
+                    }}
+                >
+                    {expanded ? 'View Less' : 'View More'}
+                </span>
+            )}
+        </div>
+    );
+};
+
 const EditTitle = ({ title, onEdit, disabled }) => {
     const [textValue, setTextValue] = React.useState(title);
     return (
@@ -241,6 +329,11 @@ function DetailsPanel({
     const previewDetailUrl = (resourceCanPreviewed || canView) ? detailUrl : metadataDetailUrl;
     const createdDate = getDateValue(resource?.date || resource?.created);
     const updatedDate = getDateValue(resource?.last_updated || resource?.date);
+    const doiInfo = getDoiInfo(resource);
+    const hasDoi = !!doiInfo?.doi;
+    const doiValue = doiInfo?.doi || '-';
+    const createdDateValue = createdDate || '-';
+    const updatedDateValue = updatedDate || '-';
     const regionTags = [
         ...toArray(resource?.regions),
         ...toArray(resource?.places)
@@ -256,13 +349,6 @@ function DetailsPanel({
         .filter(Boolean)
         .filter((tag, index, array) => array.indexOf(tag) === index)
         .slice(0, 8);
-    const categoryTags = [
-        ...toArray(resource?.category)
-    ]
-        .map(getTagValue)
-        .filter(Boolean)
-        .filter((tag, index, array) => array.indexOf(tag) === index)
-        .slice(0, 4);
     const assetItems = [
         ...toArray(resource?.download_urls).map((download, index) => ({
             id: `download-${index}`,
@@ -420,27 +506,38 @@ function DetailsPanel({
                                     </div>
                                 </div>
                                 <div className="gn-details-panel-summary-body stitch">
-                                    {resource?.abstract
-                                        ? <div className="gn-details-panel-summary-section">
-                                            <h3>Abstract</h3>
-                                            <div className="gn-details-text gn-details-panel-description-modern">
-                                                <span className="gn-details-text-body" dangerouslySetInnerHTML={{ __html: resource.abstract }} />
-                                            </div>
+                                    <div className="gn-details-panel-summary-section">
+                                        <h3>DOI</h3>
+                                        <div className="gn-details-panel-summary-value">
+                                            {hasDoi
+                                                ? (
+                                                    <a
+                                                        className="gn-details-panel-doi-link"
+                                                        href={doiInfo.url}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                    >
+                                                        {doiValue}
+                                                    </a>
+                                                )
+                                                : doiValue}
                                         </div>
-                                        : null}
+                                    </div>
+                                    <div className="gn-details-panel-summary-section">
+                                        <h3>Abstract</h3>
+                                        {resource?.abstract
+                                            ? <DetailsPanelAbstract abstract={resource.abstract} />
+                                            : <div className="gn-details-text gn-details-panel-description-modern"><span className="gn-details-text-body">-</span></div>}
+                                    </div>
                                     <div className="gn-details-panel-summary-grid stitch">
-                                        {createdDate && (
-                                            <div className="gn-details-panel-summary-item">
-                                                <span className="gn-details-panel-summary-label">Created</span>
-                                                <span className="gn-details-panel-summary-value with-icon"><FaIcon name="calendar" />{createdDate}</span>
-                                            </div>
-                                        )}
-                                        {updatedDate && (
-                                            <div className="gn-details-panel-summary-item">
-                                                <span className="gn-details-panel-summary-label">Last Update</span>
-                                                <span className="gn-details-panel-summary-value with-icon"><FaIcon name="refresh" />{updatedDate}</span>
-                                            </div>
-                                        )}
+                                        <div className="gn-details-panel-summary-item">
+                                            <span className="gn-details-panel-summary-label">Created</span>
+                                            <span className="gn-details-panel-summary-value with-icon"><FaIcon name="calendar" />{createdDateValue}</span>
+                                        </div>
+                                        <div className="gn-details-panel-summary-item">
+                                            <span className="gn-details-panel-summary-label">Last Update</span>
+                                            <span className="gn-details-panel-summary-value with-icon"><FaIcon name="refresh" />{updatedDateValue}</span>
+                                        </div>
                                     </div>
                                     {regionTags.length > 0 && (
                                         <div className="gn-details-panel-summary-section">
@@ -457,16 +554,6 @@ function DetailsPanel({
                                             <h3>Keywords</h3>
                                             <div className="gn-details-panel-tags">
                                                 {keywordTags.map((tag, idx) => (
-                                                    <span key={`${tag}-${idx}`} className="gn-details-panel-tag">{tag}</span>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
-                                    {categoryTags.length > 0 && (
-                                        <div className="gn-details-panel-summary-section">
-                                            <h3>Category</h3>
-                                            <div className="gn-details-panel-tags">
-                                                {categoryTags.map((tag, idx) => (
                                                     <span key={`${tag}-${idx}`} className="gn-details-panel-tag">{tag}</span>
                                                 ))}
                                             </div>
@@ -586,24 +673,38 @@ function DetailsPanel({
                                 <div className="gn-details-panel-meta-text">
                                     {resource?.owner && <ResourceMessage type={resource?.resource_type} pathname={pathname} formatHref={formatHref} />}
                                 </div>
-                                {resource?.abstract
-                                    ? <div className="gn-details-text gn-details-panel-description-modern">
-                                        <span className="gn-details-text-body" dangerouslySetInnerHTML={{ __html: resource.abstract }} />
+                                <div className="gn-details-panel-summary-section">
+                                    <h3>DOI</h3>
+                                    <div className="gn-details-panel-summary-value">
+                                        {hasDoi
+                                            ? (
+                                                <a
+                                                    className="gn-details-panel-doi-link"
+                                                    href={doiInfo.url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                >
+                                                    {doiValue}
+                                                </a>
+                                            )
+                                            : doiValue}
                                     </div>
-                                    : null}
+                                </div>
+                                <div className="gn-details-panel-summary-section">
+                                    <h3>Abstract</h3>
+                                    {resource?.abstract
+                                        ? <DetailsPanelAbstract abstract={resource.abstract} />
+                                        : <div className="gn-details-text gn-details-panel-description-modern"><span className="gn-details-text-body">-</span></div>}
+                                </div>
                                 <div className="gn-details-panel-summary-grid">
-                                    {createdDate && (
-                                        <div className="gn-details-panel-summary-item">
-                                            <span className="gn-details-panel-summary-label">Created</span>
-                                            <span className="gn-details-panel-summary-value">{createdDate}</span>
-                                        </div>
-                                    )}
-                                    {updatedDate && (
-                                        <div className="gn-details-panel-summary-item">
-                                            <span className="gn-details-panel-summary-label">Last Update</span>
-                                            <span className="gn-details-panel-summary-value">{updatedDate}</span>
-                                        </div>
-                                    )}
+                                    <div className="gn-details-panel-summary-item">
+                                        <span className="gn-details-panel-summary-label">Created</span>
+                                        <span className="gn-details-panel-summary-value">{createdDateValue}</span>
+                                    </div>
+                                    <div className="gn-details-panel-summary-item">
+                                        <span className="gn-details-panel-summary-label">Last Update</span>
+                                        <span className="gn-details-panel-summary-value">{updatedDateValue}</span>
+                                    </div>
                                 </div>
                                 {regionTags.length > 0 && (
                                     <div className="gn-details-panel-summary-section">
@@ -620,16 +721,6 @@ function DetailsPanel({
                                         <h3>Keywords</h3>
                                         <div className="gn-details-panel-tags">
                                             {keywordTags.map((tag, idx) => (
-                                                <span key={`${tag}-${idx}`} className="gn-details-panel-tag">{tag}</span>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-                                {categoryTags.length > 0 && (
-                                    <div className="gn-details-panel-summary-section">
-                                        <h3>Category</h3>
-                                        <div className="gn-details-panel-tags">
-                                            {categoryTags.map((tag, idx) => (
                                                 <span key={`${tag}-${idx}`} className="gn-details-panel-tag">{tag}</span>
                                             ))}
                                         </div>
