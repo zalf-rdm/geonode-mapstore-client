@@ -17,6 +17,23 @@ const REFERENCE_SYSTEM_NAMES = {
     'EPSG:4326': 'WGS 84'
 };
 
+const getReferenceSystemName = (resource, crsCode, fields) => {
+    const explicitName = [
+        resource?.bbox?.crs_name,
+        resource?.bbox?.name,
+        resource?.crs_name,
+        resource?.spatial_reference,
+        resource?.crs?.name,
+        fields?.extent?.crs_name,
+        fields?.extent?.name
+    ].find((value) => `${value || ''}`.trim());
+
+    if (explicitName) {
+        return `${explicitName}`.trim();
+    }
+    return REFERENCE_SYSTEM_NAMES[crsCode] || (crsCode || '-');
+};
+
 const toCrsCode = (value) => {
     if (!value && value !== 0) {
         return '';
@@ -41,8 +58,13 @@ const DetailsLocations = ({ fields, resource } = {}) => {
     const centerLon = get(center, 'geometry.coordinates.[0]');
     const centerLat = get(center, 'geometry.coordinates.[1]');
 
-    const crsCode = toCrsCode(resource?.bbox?.crs || resource?.srid);
-    const referenceSystemName = REFERENCE_SYSTEM_NAMES[crsCode] || crsCode || '-';
+    const crsCode = toCrsCode(
+        resource?.bbox?.crs
+        || resource?.srid
+        || resource?.crs?.code
+        || fields?.extent?.crs
+    );
+    const referenceSystemName = getReferenceSystemName(resource, crsCode, fields);
 
     return (
         <div className="gn-location-cards-grid">
@@ -56,7 +78,7 @@ const DetailsLocations = ({ fields, resource } = {}) => {
                 <div className="gn-location-card-content">
                     <div className="gn-location-card-row">
                         <p className="gn-info-section-label">Standard Name</p>
-                        <p className="gn-info-section-value">{referenceSystemName}</p>
+                        <p className="gn-info-section-value gn-info-section-value--mono">{referenceSystemName}</p>
                     </div>
                     <div className="gn-location-card-row">
                         <p className="gn-info-section-label">EPSG Code</p>

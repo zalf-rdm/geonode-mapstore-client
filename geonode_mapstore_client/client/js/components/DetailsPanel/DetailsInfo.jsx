@@ -267,19 +267,19 @@ function DetailsInfoGeneralSection({ resource }) {
                 </div>
                 <div className="gn-info-section-item">
                     <p className="gn-info-section-label">Publication</p>
-                    <p className="gn-info-section-value">{publicationValue}</p>
+                    <p className="gn-info-section-value gn-info-section-value--mono">{publicationValue}</p>
                 </div>
                 <div className="gn-info-section-item">
                     <p className="gn-info-section-label">Source</p>
-                    <p className="gn-info-section-value">{sourceValue}</p>
+                    <p className="gn-info-section-value gn-info-section-value--mono">{sourceValue}</p>
                 </div>
                 <div className="gn-info-section-item">
                     <p className="gn-info-section-label">License</p>
-                    <p className="gn-info-section-value">{licenseValue}</p>
+                    <p className="gn-info-section-value gn-info-section-value--mono">{licenseValue}</p>
                 </div>
                 <div className="gn-info-section-item">
                     <p className="gn-info-section-label">Category</p>
-                    <p className="gn-info-section-value">{categoryValue}</p>
+                    <p className="gn-info-section-value gn-info-section-value--mono">{categoryValue}</p>
                 </div>
             </div>
         </div>
