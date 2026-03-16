@@ -521,7 +521,18 @@ const hiddenInfoFieldLabelIds = new Set([
     'gnviewer.title',
     'gnviewer.owner',
     'gnviewer.regions',
-    'gnviewer.resourceType'
+    'gnviewer.resourceType',
+    'gnviewer.publication',
+    'gnviewer.publicationDate',
+    'gnviewer.date',
+    'gnviewer.source',
+    'gnviewer.sourcetype',
+    'gnviewer.sourceType',
+    'gnviewer.dataSource',
+    'gnviewer.category',
+    'gnviewer.pointOfContact',
+    'gnviewer.pointofcontact',
+    'gnviewer.poc'
 ]);
 
 const hiddenInfoFieldLabels = new Set([
@@ -529,7 +540,16 @@ const hiddenInfoFieldLabels = new Set([
     'owner',
     'regions',
     'region',
-    'resource type'
+    'resource type',
+    'publication',
+    'publication date',
+    'source',
+    'source type',
+    'sourcetype',
+    'category',
+    'point of contact',
+    'pointofcontact',
+    'poc'
 ]);
 
 const isInfoTab = (tab = {}) => tab?.id === 'info' || tab?.labelId === 'gnviewer.info';
@@ -538,7 +558,8 @@ const shouldHideInfoField = (tab, item = {}) => {
     if (!isInfoTab(tab)) {
         return false;
     }
-    if (hiddenInfoFieldLabelIds.has(item?.labelId)) {
+    const labelId = (item?.labelId || '').toString();
+    if (hiddenInfoFieldLabelIds.has(labelId) || /source|publication/i.test(labelId)) {
         return true;
     }
     const normalizedLabel = (item?.label || '').toString().trim().toLowerCase();
