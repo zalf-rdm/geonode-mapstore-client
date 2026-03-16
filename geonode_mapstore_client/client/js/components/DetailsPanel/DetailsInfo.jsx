@@ -11,6 +11,7 @@ import isEmpty from 'lodash/isEmpty';
 import moment from 'moment';
 
 import Button from '@js/components/Button';
+import FaIcon from '@js/components/FaIcon';
 import Tabs from '@js/components/Tabs';
 import DetailsAttributeTable from '@js/components/DetailsPanel/DetailsAttributeTable';
 import DetailsLinkedResources from '@js/components/DetailsPanel/DetailsLinkedResources';
@@ -143,6 +144,99 @@ function DetailsInfoFields({ fields, formatHref }) {
     </div>);
 }
 
+function getPocName(user) {
+    if (!user) return '';
+    return (user.first_name && user.last_name)
+        ? `${user.first_name} ${user.last_name}`
+        : (user.username || '');
+}
+
+function DetailsInfoGeneralSection({ resource }) {
+    if (!resource) return null;
+    const { uuid, license, category } = resource;
+    const licenseName = license?.name_long || license?.name || license?.identifier
+        || (typeof license === 'string' ? license : null);
+    if (!uuid && !licenseName && !category?.gn_description) return null;
+    return (
+        <div className="gn-info-section-card">
+            <div className="gn-info-section-card-header">
+                <h3>General Information</h3>
+            </div>
+            <div className="gn-info-section-card-body gn-info-section-grid">
+                {uuid && (
+                    <div className="gn-info-section-item gn-info-section-item--full">
+                        <p className="gn-info-section-label">Identifier (UUID)</p>
+                        <p className="gn-info-section-value gn-info-section-value--mono">{uuid}</p>
+                    </div>
+                )}
+                {licenseName && (
+                    <div className="gn-info-section-item">
+                        <p className="gn-info-section-label">License</p>
+                        <p className="gn-info-section-value">{licenseName}</p>
+                    </div>
+                )}
+                {category?.gn_description && (
+                    <div className="gn-info-section-item">
+                        <p className="gn-info-section-label">Category</p>
+                        <p className="gn-info-section-value">{category.gn_description}</p>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
+
+function DetailsInfoContactSection({ resource }) {
+    if (!resource?.poc) return null;
+    const contact = Array.isArray(resource.poc) ? resource.poc[0] : resource.poc;
+    if (!contact) return null;
+    const name = getPocName(contact);
+    const { email, organization, avatar } = contact;
+    if (!name && !email && !organization) return null;
+    return (
+        <div className="gn-info-section-card">
+            <div className="gn-info-section-card-header">
+                <h3>Point of Contact</h3>
+            </div>
+            <div className="gn-info-section-card-body">
+                <div className="gn-info-poc">
+                    <div className="gn-info-poc-person">
+                        <div className="gn-info-poc-avatar">
+                            {avatar
+                                ? <img src={avatar} alt={name} />
+                                : <FaIcon name="user" />}
+                        </div>
+                        <div className="gn-info-poc-details">
+                            {name && <h4>{name}</h4>}
+                            {email && (
+                                <p className="gn-info-poc-email">
+                                    <FaIcon name="envelope" />{' '}{email}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                    {organization && (
+                        <div className="gn-info-poc-org">
+                            <p className="gn-info-section-label">Organization</p>
+                            <p className="gn-info-section-value">{organization}</p>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function DetailsInfoEnhanced({ fields, formatHref, resource }) {
+    return (
+        <div className="gn-details-info-enhanced">
+            <DetailsInfoGeneralSection resource={resource} />
+            <DetailsInfoContactSection resource={resource} />
+            {fields && fields.length > 0 && <DetailsInfoFields fields={fields} formatHref={formatHref} />}
+        </div>
+    );
+}
+
 const tabTypes = {
     'attribute-table': DetailsAttributeTable,
     'linked-resources': DetailsLinkedResources,
@@ -196,7 +290,7 @@ function DetailsInfo({
         ({
             ...tab,
             items: isDefaultTabType(tab.type) ? parseTabItems(tab?.items, tab) : tab?.items,
-            Component: tabTypes[tab.type] || tabTypes.tab
+            Component: isInfoTab(tab) ? DetailsInfoEnhanced : (tabTypes[tab.type] || tabTypes.tab)
         }))
         .filter(tab => !isEmpty(tab?.items));
     const [selectedTabId, onSelect] = useState(filteredTabs?.[0]?.id);

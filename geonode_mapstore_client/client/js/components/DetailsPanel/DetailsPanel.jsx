@@ -442,22 +442,6 @@ function DetailsPanel({
                                             </div>
                                         )}
                                     </div>
-                                    {assetItems.length > 0 && (
-                                        <div className="gn-details-panel-summary-section">
-                                            <h3>Assets &amp; Formats</h3>
-                                            <div className="gn-details-panel-assets-list">
-                                                {assetItems.map(asset => (
-                                                    <a key={asset.id} href={asset.href} className="gn-details-panel-asset" target="_blank" rel="noopener noreferrer">
-                                                        <span className="gn-details-panel-asset-main">
-                                                            <FaIcon name={asset.icon} />
-                                                            <span>{asset.label}</span>
-                                                        </span>
-                                                        {asset.size ? <span className="gn-details-panel-asset-size">{asset.size}</span> : null}
-                                                    </a>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
                                     {regionTags.length > 0 && (
                                         <div className="gn-details-panel-summary-section">
                                             <h3>Region</h3>
