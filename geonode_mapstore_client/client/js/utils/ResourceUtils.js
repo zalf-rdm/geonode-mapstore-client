@@ -358,7 +358,7 @@ export function getGeoLimitsFromCompactPermissions({ groups = [], users = [], or
 }
 
 export const resourceHasPermission = (resource, perm) => {
-    return resource?.perms?.includes(perm);
+    return !!resource?.perms?.includes(perm);
 };
 
 
