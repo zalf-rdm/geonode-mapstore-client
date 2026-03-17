@@ -23,14 +23,17 @@
     .ms-side-panel .ms-header.ms-primary .row:first-child {
         .color-var(@theme-vars[main-color]);
         .background-color-var(@theme-vars[main-bg]);
+
         .col-xs-8 {
             .color-var(@theme-vars[main-color]);
         }
+
         .square-button {
             .color-var(@theme-vars[main-color], true);
             .background-color-var(@theme-vars[main-bg], true);
         }
     }
+
     #mapstore-sidebar-menu-container {
         .color-var(@theme-vars[main-color]);
         .background-color-var(@theme-vars[main-bg]);
@@ -45,6 +48,7 @@
     font-size: 16px;
     opacity: 1;
 }
+
 .modal-header .close {
     margin-top: 0;
 }
@@ -52,12 +56,15 @@
 #drawer-menu-button {
     z-index: 5;
 }
+
 #mapstore-navbar-container {
     z-index: 10;
 }
+
 #navigationBar-container {
     z-index: 5;
 }
+
 .timeline-plugin {
     z-index: 5;
 }
@@ -70,6 +77,7 @@
 }
 
 .gn-embed {
+
     // fix position of dashboard full screen button
     .widget-container .mapstore-widget-card .mapstore-widget-header .widget-icons .btn-group button {
         top: 0;
@@ -92,6 +100,7 @@
 .background-plugin-position {
     margin: 4px;
 }
+
 #navigationBar .mapToolbar,
 .background-plugin-position {
     bottom: 30px;
@@ -134,9 +143,9 @@
 }
 
 #navigationBarPreview .background-preview-button,
-#navigationBarPreview .mapToolbar > .btn-group,
-#navigationBarPreview .mapToolbar > .btn,
-#navigationBarPreview .mapToolbar > span {
+#navigationBarPreview .mapToolbar>.btn-group,
+#navigationBarPreview .mapToolbar>.btn,
+#navigationBarPreview .mapToolbar>span {
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -145,7 +154,7 @@
 
 #navigationBarPreview .mapToolbar,
 #navigationBarPreview .square-button-md,
-#navigationBarPreview .btn-group > .btn,
+#navigationBarPreview .btn-group>.btn,
 #navigationBarPreview .mapToolbar .btn {
     margin: 0;
     width: 3rem;
@@ -185,13 +194,13 @@
     color: #334155;
 }
 
-#navigationBarPreview .mapToolbar .btn + .btn,
-#navigationBarPreview .mapToolbar .square-button-md + .square-button-md,
-#navigationBarPreview .btn-group + .btn-group,
-#navigationBarPreview .btn-group + .btn,
-#navigationBarPreview .btn + .btn-group,
-#navigationBarPreview .background-preview-button + .btn-group,
-#navigationBarPreview .btn-group + .background-preview-button {
+#navigationBarPreview .mapToolbar .btn+.btn,
+#navigationBarPreview .mapToolbar .square-button-md+.square-button-md,
+#navigationBarPreview .btn-group+.btn-group,
+#navigationBarPreview .btn-group+.btn,
+#navigationBarPreview .btn+.btn-group,
+#navigationBarPreview .background-preview-button+.btn-group,
+#navigationBarPreview .btn-group+.background-preview-button {
     border-top: 1px solid #e2e8f0;
 }
 
@@ -210,12 +219,14 @@
 #footer-attribution-container {
     display: none !important;
 }
+
 .background-preview-button {
     margin: 0 !important;
 }
+
 // hide di edit, remove and add buttons
 // because these functionalities are not supported on the geonode catalog
-.background-preview-button > .btn-group,
+.background-preview-button>.btn-group,
 .background-tool-buttons {
     display: none;
 }
@@ -223,14 +234,16 @@
 // mapstore compute this value using @square-btn-size and @font-size-h4
 // in this specific context those value have different uom
 // we should override this to ensure to use rem and have the correct value for padding
-.ms-resizable-modal > .modal-content > .modal-header {
+.ms-resizable-modal>.modal-content>.modal-header {
     height: auto;
     padding: 0.6rem;
 }
+
 .modal-header {
     height: auto;
     padding: 0.6rem;
 }
+
 // the input small size is not computed correctly due to rem value
 // this override will fix the attribute table filter inputs
 .input-sm {
@@ -240,31 +253,37 @@
 // fix share modal style
 .gn-share-modal {
     overflow: visible;
+
     .modal-dialog,
-    .ms-resizable-modal > .modal-content > .modal-body > div {
+    .ms-resizable-modal>.modal-content>.modal-body>div {
         overflow: visible;
     }
+
     .col-md-4 {
         padding-left: 0;
         padding-right: 0;
     }
+
     .row {
         margin-left: 0;
         margin-right: 0;
     }
+
     .modal-body {
         margin: 8px;
     }
+
     .modal-footer {
         display: none;
     }
 }
 
 .gn-simple-dialog {
-    .ms-resizable-modal > .modal-content > .modal-header {
+    .ms-resizable-modal>.modal-content>.modal-header {
         height: auto;
     }
-    .ms-resizable-modal > .modal-content > .modal-header .modal-title .ms-title {
+
+    .ms-resizable-modal>.modal-content>.modal-header .modal-title .ms-title {
         text-overflow: initial;
         height: auto;
         line-height: initial;
@@ -288,6 +307,7 @@ div#mapstore-globalspinner {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+
     &.ms2-loading .sk-circle-wrapper {
         margin: auto !important;
     }
@@ -316,10 +336,11 @@ div#mapstore-globalspinner {
     box-shadow: none;
 }
 
-.widgets-builder-header > .row > .text-center {
+.widgets-builder-header>.row>.text-center {
     display: flex;
     flex-direction: row-reverse;
-    > span {
+
+    >span {
         padding: 0 !important;
         flex: 1;
     }
@@ -334,6 +355,7 @@ div#mapstore-globalspinner {
     .btn.close:before {
         content: "X";
     }
+
     .btn.close:hover {
         color: #ffffff;
     }
@@ -346,27 +368,33 @@ div#mapstore-globalspinner {
     .mapstore-widget-card {
         .setFontSize(16px);
         font-size: @fSize;
+
         .mapstore-widget-layer {
             .em(margin-top, 10);
             .em(margin-right, 10);
         }
+
         .mapstore-widget-header {
             font-size: @fSize;
             .em(height, 28);
+
             .widget-title {
                 .setFontSize(14px);
                 font-size: @fSize;
                 .em(margin-left, 6);
             }
+
             .mapstore-info-popover .glyphicon {
                 .setFontSize(14px);
                 font-size: @fSize;
                 .em(margin-top, 7);
                 .em(left, 22);
             }
+
             .widget-icons {
                 .em(height, 10);
                 .em(margin-left, 4);
+
                 .btn-group {
                     button {
                         .em(top, -8);
@@ -376,12 +404,14 @@ div#mapstore-globalspinner {
                 }
             }
         }
+
         .react-grid-Grid {
             .react-grid-Header {
                 .react-grid-HeaderCell {
                     .setFontSize(12px);
                     font-size: @fSize;
                     .em(padding, 4);
+
                     input {
                         .setFontSize(11px);
                         font-size: @fSize;
@@ -393,12 +423,14 @@ div#mapstore-globalspinner {
                     }
                 }
             }
+
             .react-grid-Viewport {
                 .react-grid-Cell {
                     font-size: 12px;
                 }
             }
         }
+
         .mapstore-widget-default-content {
             &.ql-editor {
                 .setFontSize(12px);
@@ -407,80 +439,101 @@ div#mapstore-globalspinner {
                 .em(margin-right, 10);
             }
         }
+
         .mapstore-widget-description {
             font-size: @fSize;
             .em(margin-top, 5);
             .em(margin-right, 5);
         }
+
         .mapstore-widget-options {
             .setFontSize(18px);
             font-size: @fSize;
             .em(margin-top, 4);
-            .em(margin-right, 10);;
+            .em(margin-right, 10);
+            ;
         }
+
         .widget-menu {
             .em(margin-top, -4);
             .em(margin-right, -8);
         }
+
         .widget-footer {
             .em(height, 30);
+
             .result-info {
                 font-size: 12px;
                 .em(margin, 5);
             }
         }
+
         .mapstore-widget-table {
             font-size: 12px;
         }
+
         .legend-widget {
             .setFontSize(12px);
             font-size: @fSize;
             .em(padding-right, 15);
             .em(padding-bottom, 15);
             .em(padding-left, 15);
+
             .widget-legend-toc {
                 .em(margin-top, 10);
+
                 .toc-default-layer-head {
                     .em(height, 44);
                     .em(padding-top, 14);
                     .em(padding-right, 14);
                     .em(border-bottom-width, 1);
-                    .visibility-check{
+
+                    .visibility-check {
                         &.glyphicon {
                             .em(margin-bottom, 10);
                             .em(margin-left, 10);
                         }
                     }
+
                     .toc-title {
                         .em(height, 15);
                         .em(margin-bottom, 5);
                         .em(margin-left, 5);
                         .em(width, 140);
                     }
+
                     .toc-legend-icon {
                         &.glyphicon {
                             .em(margin-right, 10);
                         }
                     }
+
                     .mapstore-slider {
                         .em(margin-top, -8);
                     }
                 }
+
                 .expanded-legend-view {
                     .em(margin-top, 15);
                 }
             }
         }
-        .map-widget-view, .chart-widget-view  {
-            .widget-icons, .widget-title {
+
+        .map-widget-view,
+        .chart-widget-view {
+
+            .widget-icons,
+            .widget-title {
                 .em(margin-bottom, 6);
             }
+
             .mapstore-widget-header {
                 .mapstore-widget-options {
                     .em(margin-top, 4);
                     .em(margin-bottom, 4);
-                    .map-switcher, 
-                    .chart-switcher{
+
+                    .map-switcher,
+                    .chart-switcher {
                         .em(width, 200);
                     }
                 }
@@ -497,6 +550,7 @@ div#mapstore-globalspinner {
 .ms-map-views {
     left: 44px;
 }
+
 #mapstore-settings {
     .form-group-sm select.form-control {
         height: @input-height-base;
@@ -513,6 +567,7 @@ div#mapstore-globalspinner {
         &.modal-dialog {
             margin: 0;
         }
+
         .modal-body {
             max-height: calc(100vh - 220px);
         }
