@@ -127,6 +127,52 @@ const getResourceDescription = (field = {}) => {
     return parts.filter(Boolean).join(' • ');
 };
 
+const getFileIconAndColor = (field = {}) => {
+    const dataLink = getPrimaryDataLink(field);
+    const extension = (dataLink?.extension || '').toLowerCase();
+    const contentType = (dataLink?.extras?.content?.type || '').toLowerCase();
+    const subtype = (field?.subtype || '').toLowerCase();
+
+    // Raster format detection
+    if (['tif', 'tiff', 'geotiff', 'jpg', 'jpeg', 'png', 'img'].includes(extension)
+        || contentType.includes('image')
+        || contentType.includes('tiff')) {
+        return { icon: 'image', color: 'blue' }; // 📷 image icon for raster
+    }
+
+    // Vector format detection (BEFORE raster check since some might overlap)
+    if (['shp', 'gpkg', 'geojson', 'json', 'kml', 'gpx'].includes(extension)
+        || subtype === 'vector'
+        || contentType.includes('geojson')
+        || contentType.includes('kml')
+        || contentType.includes('gpx')) {
+        return { icon: 'map', color: 'purple' }; // 🗺️ map icon for vector
+    }
+
+    // Style/Symbology files
+    if (['qml', 'sld', 'css'].includes(extension)) {
+        return { icon: 'palette', color: 'red' }; // 🎨 palette icon for style
+    }
+
+    // Document/Report format
+    if (['pdf', 'doc', 'docx', 'txt', 'md'].includes(extension)) {
+        return { icon: 'file-text', color: 'amber' }; // 📄 file-text icon for documents
+    }
+
+    // Spreadsheet format
+    if (['xls', 'xlsx', 'csv'].includes(extension)) {
+        return { icon: 'table', color: 'emerald' }; // 📊 table icon for data
+    }
+
+    // Compressed/Archive format
+    if (['zip', 'tar', 'gz', '7z', 'rar'].includes(extension)) {
+        return { icon: 'archive', color: 'slate' }; // 📦 archive icon for archives
+    }
+
+    // Default fallback
+    return { icon: 'file', color: 'gray' };
+};
+
 const SORT_OPTIONS = [
     { value: 'name', label: 'Name' },
     { value: 'type', label: 'Type' }
@@ -247,11 +293,12 @@ const DetailLinkedResource = ({ resources = [], type, downloadingByPk, setDownlo
                     const canDownload = !!mergedField?.pk || !!downloadUrl;
                     const isDownloading = !!(mergedField?.pk && downloadingByPk[pkString]);
                     const sizeLabel = getResourceSizeLabel(mergedField);
+                    const { icon, color } = getFileIconAndColor(mergedField);
                     return (
                         <div key={field.pk || key} className="gn-details-linked-resource-card">
                             <span className="gn-details-linked-resource-main">
-                                <span className="gn-details-linked-resource-icon">
-                                    {mergedField.icon ? <FaIcon name={mergedField.icon} /> : <FaIcon name="file-o" />}
+                                <span className={`gn-details-linked-resource-icon gn-details-linked-resource-icon-${color}`}>
+                                    <FaIcon name={icon} />
                                 </span>
                                 <span className="gn-details-linked-resource-meta">
                                     <span className="gn-details-linked-resource-title">{mergedField.title}</span>

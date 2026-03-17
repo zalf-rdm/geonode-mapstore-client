@@ -1573,14 +1573,22 @@
 
 .gn-details-linked-resources-sort-select {
     background: transparent;
-    border: none;
+    border: none !important;
     outline: none;
+    box-shadow: none !important;
     font-size: 0.72rem;
     font-weight: 700;
     color: #0f172a;
     cursor: pointer;
     padding: 0;
-    appearance: auto;
+    appearance: none;
+
+    &:focus,
+    &:active {
+        border: none !important;
+        outline: none;
+        box-shadow: none !important;
+    }
 }
 
 .gn-details-linked-resources-label {
@@ -1649,6 +1657,54 @@
     background: #e2f2d0;
     color: #75b72a;
     flex-shrink: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+
+    i {
+        font-size: 1.1rem;
+    }
+
+    // Blue color for raster/images
+    &.gn-details-linked-resource-icon-blue {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    // Purple color for vector
+    &.gn-details-linked-resource-icon-purple {
+        background: #e9d5ff;
+        color: #7e22ce;
+    }
+
+    // Red color for style/config
+    &.gn-details-linked-resource-icon-red {
+        background: #fecaca;
+        color: #b91c1c;
+    }
+
+    // Amber color for documents
+    &.gn-details-linked-resource-icon-amber {
+        background: #fde68a;
+        color: #b45309;
+    }
+
+    // Emerald color for spreadsheets
+    &.gn-details-linked-resource-icon-emerald {
+        background: #a7f3d0;
+        color: #047857;
+    }
+
+    // Slate color for archives
+    &.gn-details-linked-resource-icon-slate {
+        background: #e2e8f0;
+        color: #334155;
+    }
+
+    // Gray color for generic files
+    &.gn-details-linked-resource-icon-gray {
+        background: #e5e7eb;
+        color: #4b5563;
+    }
 }
 
 .gn-details-linked-resource-title {
@@ -1739,8 +1795,49 @@
 
 .gn-details-linked-resource-card:hover .gn-details-linked-resource-icon,
 .gn-details-linked-resource-card:focus .gn-details-linked-resource-icon {
-    background: fade(@ms-primary, 12%);
-    color: @ms-primary;
+    opacity: 1;
+
+    // Blue hover (raster/images)
+    &.gn-details-linked-resource-icon-blue {
+        background: #93c5fd;
+        color: #1e40af;
+    }
+
+    // Purple hover (vector)
+    &.gn-details-linked-resource-icon-purple {
+        background: #d8b4fe;
+        color: #6b21a8;
+    }
+
+    // Red hover (style/config)
+    &.gn-details-linked-resource-icon-red {
+        background: #f87171;
+        color: #7f1d1d;
+    }
+
+    // Amber hover (documents)
+    &.gn-details-linked-resource-icon-amber {
+        background: #fcd34d;
+        color: #92400e;
+    }
+
+    // Emerald hover (spreadsheets)
+    &.gn-details-linked-resource-icon-emerald {
+        background: #6ee7b7;
+        color: #065f46;
+    }
+
+    // Slate hover (archives)
+    &.gn-details-linked-resource-icon-slate {
+        background: #cbd5e1;
+        color: #1e293b;
+    }
+
+    // Gray hover (generic files)
+    &.gn-details-linked-resource-icon-gray {
+        background: #d1d5db;
+        color: #374151;
+    }
 }
 
 @media (max-width: 768px) {
