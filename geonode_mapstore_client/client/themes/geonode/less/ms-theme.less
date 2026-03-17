@@ -207,7 +207,9 @@
 .tooltip.left,
 .ms-tooltip.left,
 [role="tooltip"].left {
-    margin-left: 10rem !important;
+    margin-left: 0 !important;
+    transform: translateX(calc(100% + 3.5rem));
+    pointer-events: none;
 }
 
 .tooltip.left .tooltip-arrow,

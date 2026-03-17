@@ -155,15 +155,6 @@
                 }
             },
             {
-                "name": "Identify",
-                "cfg": {
-                    "showInMapPopup": true,
-                    "viewerOptions": {
-                        "container": "{context.ReactSwipe}"
-                    }
-                }
-            },
-            {
                 "name": "Toolbar",
                 "id": "NavigationBarPreview",
                 "cfg": {
@@ -234,15 +225,6 @@
                                 "altShiftDragRotate": false
                             }
                         }
-                    }
-                }
-            },
-            {
-                "name": "Identify",
-                "cfg": {
-                    "showInMapPopup": true,
-                    "viewerOptions": {
-                        "container": "{context.ReactSwipe}"
                     }
                 }
             },
