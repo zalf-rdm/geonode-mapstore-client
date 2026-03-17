@@ -105,6 +105,12 @@ const getReadableDataType = (field = {}) => {
     if (subtype === 'vector') {
         return 'Vector Data';
     }
+    if (extension) {
+        return `${extension.toUpperCase()} Data`;
+    }
+    if (contentType) {
+        return `${contentType.toUpperCase()} Data`;
+    }
     if (dataLink?.name) {
         return dataLink.name;
     }
