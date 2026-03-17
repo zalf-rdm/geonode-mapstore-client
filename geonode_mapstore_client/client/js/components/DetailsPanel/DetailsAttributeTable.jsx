@@ -125,28 +125,67 @@ const BoxPlot = ({ min, max, mean, median, stddev }) => {
     let q1 = mn + 0.25 * (mx - mn);
     let q3 = mn + 0.75 * (mx - mn);
 
+    let quartilesEstimated = true;
+    let quartileSource = 'range interpolation';
+
     if (hasNumeric(mean) && hasNumeric(stddev) && Number(stddev) > 0) {
         const mu = Number(mean);
         const sd = Number(stddev);
         // Approximate quartiles assuming near-normal distribution.
         q1 = mu - 0.6745 * sd;
         q3 = mu + 0.6745 * sd;
+        quartileSource = 'normal approximation from mean/stddev';
     } else if (hasNumeric(median)) {
         q1 = mn + (med - mn) * 0.5;
         q3 = med + (mx - med) * 0.5;
+        quartileSource = 'median-weighted interpolation';
     }
 
     const clamp = (v) => Math.max(mn, Math.min(mx, Number(v)));
     q1 = clamp(q1);
     q3 = clamp(q3);
-    const medianClamped = clamp(med);
+    let medianClamped = clamp(med);
+    const range = mx - mn;
 
-    const toPercent = (v) => `${Math.max(0, Math.min(100, ((Number(v) - mn) / (mx - mn)) * 100))}%`;
+    // Enforce monotonic order for visual consistency and hover quartile labels.
+    // Final invariant: min <= q1 <= median <= q3 <= max
+    q1 = Math.min(q1, q3);
+    q3 = Math.max(q1, q3);
+    if (medianClamped < q1) {
+        q1 = medianClamped;
+    }
+    if (medianClamped > q3) {
+        q3 = medianClamped;
+    }
+    q1 = clamp(q1);
+    q3 = clamp(q3);
+    medianClamped = Math.max(q1, Math.min(q3, medianClamped));
+
+    const toRatio = (v) => {
+        if (range <= 0) return 0;
+        return Math.max(0, Math.min(1, (Number(v) - mn) / range));
+    };
+    const toPercent = (v) => `${toRatio(v) * 100}%`;
+    const summaryParts = [
+        `Min: ${formatStat(mn)}`,
+        `Q1: ${formatStat(q1)}`,
+        `Median: ${formatStat(medianClamped)}`,
+        `Q3: ${formatStat(q3)}`,
+        `Max: ${formatStat(mx)}`,
+        `Quartiles: ${quartilesEstimated ? `Estimated (${quartileSource})` : 'Observed'}`
+    ];
+    const summaryTitle = summaryParts.join(' | ');
 
     return (
         <div className="gn-attr-boxplot-wrap">
-            <p className="gn-attr-stats-section-label">Box Plot</p>
-            <div className="gn-attr-boxplot-track">
+            <p className="gn-attr-stats-section-label">
+                Box Plot
+                {quartilesEstimated && <span className="gn-attr-estimated-badge">Estimated Quartiles</span>}
+            </p>
+            <div
+                className="gn-attr-boxplot-track"
+                title={summaryTitle}
+            >
                 <div
                     className="gn-attr-boxplot-whisker"
                     style={{ left: toPercent(mn), width: `calc(${toPercent(mx)} - ${toPercent(mn)})` }}
@@ -156,12 +195,12 @@ const BoxPlot = ({ min, max, mean, median, stddev }) => {
                 <div
                     className="gn-attr-boxplot-box"
                     style={{ left: toPercent(q1), width: `calc(${toPercent(q3)} - ${toPercent(q1)})` }}
-                    title={`Q1: ${formatStat(q1)} • Q3: ${formatStat(q3)}`}
+                    title={summaryTitle}
                 />
                 <div
                     className="gn-attr-boxplot-median"
                     style={{ left: toPercent(medianClamped) }}
-                    title={`Median: ${formatStat(medianClamped)}`}
+                    title={summaryTitle}
                 />
             </div>
             <div className="gn-attr-boxplot-axis">
