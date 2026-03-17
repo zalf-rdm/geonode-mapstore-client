@@ -5,9 +5,10 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import FaIcon from '@js/components/FaIcon';
+import { getDatasetAttributeStats } from '@js/api/geonode/v2';
 
 const DATA_TYPE_COLORS = {
     integer: 'type-integer',
@@ -48,10 +49,132 @@ const getTypeColorClass = (type = '') => {
 
 const PAGE_SIZE = 10;
 
-const DetailsAttributeTable = ({ fields = [] }) => {
+const formatStat = (val) => {
+    if (val === null || val === undefined) return '—';
+    const num = Number(val);
+    if (!isFinite(num)) return String(val);
+    return num % 1 === 0 ? num.toLocaleString() : num.toFixed(4);
+};
+
+const MiniHistogram = ({ histogram }) => {
+    if (!histogram || histogram.length === 0) return null;
+    const maxCount = Math.max(...histogram.map(b => b.count), 1);
+    return (
+        <div className="gn-attr-histogram">
+            {histogram.map((bin, i) => (
+                <div key={i} className="gn-attr-histogram-col">
+                    <div
+                        className="gn-attr-histogram-bar"
+                        style={{ height: `${Math.round((bin.count / maxCount) * 100)}%` }}
+                        title={`${bin.range[0]} – ${bin.range[1]}: ${bin.count}`}
+                    />
+                    <span className="gn-attr-histogram-label">{bin.range[0]}</span>
+                </div>
+            ))}
+        </div>
+    );
+};
+
+const AttributeStatsPanel = ({ pk, attribute, onClose }) => {
+    const [stats, setStats] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    React.useEffect(() => {
+        if (!pk || !attribute) return;
+        setLoading(true);
+        setStats(null);
+        setError(null);
+        getDatasetAttributeStats(pk, attribute)
+            .then(data => { setStats(data); setLoading(false); })
+            .catch(() => { setError('Could not load statistics.'); setLoading(false); });
+    }, [pk, attribute]);
+
+    return (
+        <div className="gn-attr-stats-panel">
+            <div className="gn-attr-stats-panel-header">
+                <div>
+                    <span className="gn-attr-stats-panel-title">
+                        <FaIcon name="bar-chart" /> {attribute}
+                    </span>
+                    <span className="gn-attr-stats-panel-subtitle">Attribute Analysis</span>
+                </div>
+                <button className="gn-attr-stats-panel-close" onClick={onClose} aria-label="Close">
+                    <FaIcon name="times" />
+                </button>
+            </div>
+            <div className="gn-attr-stats-panel-body">
+                {loading && <div className="gn-attr-stats-loading"><FaIcon name="spinner" /> Loading statistics...</div>}
+                {error && <div className="gn-attr-stats-error">{error}</div>}
+                {stats && !loading && (
+                    <>
+                        {stats.has_stats ? (
+                            <>
+                                <div className="gn-attr-stats-grid">
+                                    {[
+                                        { label: 'Count', val: stats.count },
+                                        { label: 'Min', val: stats.min },
+                                        { label: 'Max', val: stats.max },
+                                        { label: 'Mean', val: stats.mean },
+                                        { label: 'Median', val: stats.median },
+                                        { label: 'Std Dev', val: stats.stddev },
+                                        { label: 'Sum', val: stats.sum },
+                                    ].map(({ label, val }) => (
+                                        <div key={label} className="gn-attr-stats-item">
+                                            <span className="gn-attr-stats-label">{label}</span>
+                                            <span className="gn-attr-stats-value">{formatStat(val)}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                                {stats.histogram && (
+                                    <div className="gn-attr-stats-histogram-wrap">
+                                        <p className="gn-attr-stats-section-label">
+                                            Distribution {stats.histogram_estimated ? '(estimated)' : ''}
+                                        </p>
+                                        <MiniHistogram histogram={stats.histogram} />
+                                    </div>
+                                )}
+                                {stats.unique_values && !stats.histogram && (
+                                    <div className="gn-attr-stats-unique-wrap">
+                                        <p className="gn-attr-stats-section-label">Unique Values ({stats.unique_values.length})</p>
+                                        <div className="gn-attr-stats-unique-list">
+                                            {stats.unique_values.slice(0, 30).map((v, i) => (
+                                                <span key={i} className="gn-attr-stats-unique-val">{String(v)}</span>
+                                            ))}
+                                            {stats.unique_values.length > 30 && (
+                                                <span className="gn-attr-stats-unique-more">+{stats.unique_values.length - 30} more</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+                            </>
+                        ) : (
+                            <div className="gn-attr-stats-no-stats">
+                                <FaIcon name="info-circle" />
+                                <p>No statistics available for this attribute.</p>
+                                <small>Statistics are computed for numeric fields during dataset ingestion.</small>
+                            </div>
+                        )}
+                    </>
+                )}
+            </div>
+        </div>
+    );
+};
+
+const DetailsAttributeTable = ({ fields = [], resource }) => {
     const [filterText, setFilterText] = useState('');
     const [sortAsc, setSortAsc] = useState(true);
     const [page, setPage] = useState(0);
+    const [selectedAttr, setSelectedAttr] = useState(null);
+
+    const datasetPk = resource?.pk;
+
+    // Debug: log what resource we receive
+    React.useEffect(() => {
+        // eslint-disable-next-line no-console
+        console.log('[DetailsAttributeTable] resource:', resource, 'pk:', datasetPk);
+    }, [resource, datasetPk]);
 
     const filtered = useMemo(() => {
         const lower = filterText.toLowerCase();
@@ -77,6 +200,10 @@ const DetailsAttributeTable = ({ fields = [] }) => {
         setFilterText(e.target.value);
         setPage(0);
     };
+
+    const handleRowClick = useCallback((attr) => {
+        setSelectedAttr(prev => (prev === attr ? null : attr));
+    }, []);
 
     return (
         <div className="gn-attr-table-wrap">
@@ -127,23 +254,51 @@ const DetailsAttributeTable = ({ fields = [] }) => {
                             const rawType = (attr.attribute_type || '').toUpperCase() || 'UNKNOWN';
                             const typeClass = getTypeColorClass(attr.attribute_type || '');
                             const description = attr.description || '-';
-                            const unit = attr.attribute_label && attr.attribute_label !== attr.attribute
-                                ? attr.attribute_label
-                                : '-';
+                            const unit = attr.attribute_unit || '-';
+                            const isSelected = selectedAttr === attr.attribute;
                             return (
-                                <tr key={attr.attribute || idx} className="gn-attr-table-row">
-                                    <td>
-                                        <div className="gn-attr-table-field-name">
-                                            <FaIcon name="columns" className="gn-attr-table-field-icon" />
-                                            <span className="gn-attr-table-field-text">{attr.attribute}</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span className={`gn-attr-table-type-badge ${typeClass}`}>{rawType}</span>
-                                    </td>
-                                    <td className="gn-attr-table-description">{description}</td>
-                                    <td className="gn-attr-table-unit">{unit}</td>
-                                </tr>
+                                <React.Fragment key={attr.attribute || idx}>
+                                    <tr
+                                        className={`gn-attr-table-row${isSelected ? ' gn-attr-table-row--selected' : ''}`}
+                                        onClick={() => handleRowClick(attr.attribute)}
+                                        style={{ cursor: 'pointer' }}
+                                    >
+                                        <td>
+                                            <div className="gn-attr-table-field-name">
+                                                <FaIcon name="columns" className="gn-attr-table-field-icon" />
+                                                <span className="gn-attr-table-field-text">{attr.attribute}</span>
+                                                {isSelected && <FaIcon name="chevron-down" className="gn-attr-table-selected-icon" />}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span className={`gn-attr-table-type-badge ${typeClass}`}>{rawType}</span>
+                                        </td>
+                                        <td className="gn-attr-table-description">{description}</td>
+                                        <td className="gn-attr-table-unit">{unit}</td>
+                                    </tr>
+                                    {isSelected && (
+                                        <tr className="gn-attr-table-stats-row">
+                                            <td colSpan={4} style={{ padding: 0 }}>
+                                                {datasetPk
+                                                    ? (
+                                                        <AttributeStatsPanel
+                                                            pk={datasetPk}
+                                                            attribute={attr.attribute}
+                                                            onClose={() => setSelectedAttr(null)}
+                                                        />
+                                                    ) : (
+                                                        <div className="gn-attr-stats-panel">
+                                                            <div className="gn-attr-stats-no-stats">
+                                                                <FaIcon name="info-circle" />
+                                                                <p>Statistics unavailable — resource PK not found.</p>
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                }
+                                            </td>
+                                        </tr>
+                                    )}
+                                </React.Fragment>
                             );
                         })}
                     </tbody>
@@ -171,22 +326,26 @@ const DetailsAttributeTable = ({ fields = [] }) => {
                 </div>
             </div>
 
-            {/* Deep Attribute Analysis hint */}
-            <div className="gn-attr-table-hint">
-                <FaIcon name="info-circle" className="gn-attr-table-hint-icon" />
-                <h4>Deep Attribute Analysis</h4>
-                <p>Select an attribute from the table above to view detailed statistics, distribution histograms, and range values.</p>
-            </div>
+            {/* Hint when nothing selected */}
+            {!selectedAttr && (
+                <div className="gn-attr-table-hint">
+                    <FaIcon name="info-circle" className="gn-attr-table-hint-icon" />
+                    <h4>Deep Attribute Analysis</h4>
+                    <p>Click any attribute row above to view detailed statistics, value distribution, and range values.</p>
+                </div>
+            )}
         </div>
     );
 };
 
 DetailsAttributeTable.propTypes = {
-    fields: PropTypes.array
+    fields: PropTypes.array,
+    resource: PropTypes.object
 };
 
 DetailsAttributeTable.defaultProps = {
-    fields: []
+    fields: [],
+    resource: null
 };
 
 export default DetailsAttributeTable;
