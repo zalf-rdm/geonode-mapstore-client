@@ -56,6 +56,44 @@ const formatStat = (val) => {
     return num % 1 === 0 ? num.toLocaleString() : num.toFixed(4);
 };
 
+const hasNumeric = (v) => {
+    const n = Number(v);
+    return isFinite(n);
+};
+
+const getDisplayHistogram = (stats) => {
+    if (!stats?.histogram?.length) return null;
+
+    // When backend histogram is estimated and flat, model a more informative
+    // traditional shape using mean/stddev (if available).
+    if (
+        stats.histogram_estimated
+        && hasNumeric(stats.mean)
+        && hasNumeric(stats.stddev)
+        && Number(stats.stddev) > 0
+        && hasNumeric(stats.count)
+    ) {
+        const mu = Number(stats.mean);
+        const sigma = Number(stats.stddev);
+        const total = Math.max(1, Number(stats.count));
+        const weighted = stats.histogram.map((bin) => {
+            const low = Number(bin.range?.[0]);
+            const high = Number(bin.range?.[1]);
+            const mid = (low + high) / 2;
+            const z = (mid - mu) / sigma;
+            const weight = Math.exp(-0.5 * z * z);
+            return { ...bin, _weight: weight };
+        });
+        const sumW = weighted.reduce((acc, b) => acc + b._weight, 0) || 1;
+        return weighted.map((bin) => ({
+            ...bin,
+            count: Math.max(1, Math.round((bin._weight / sumW) * total))
+        }));
+    }
+
+    return stats.histogram;
+};
+
 const MiniHistogram = ({ histogram }) => {
     if (!histogram || histogram.length === 0) return null;
     const maxCount = Math.max(...histogram.map(b => b.count), 1);
@@ -71,6 +109,68 @@ const MiniHistogram = ({ histogram }) => {
                     <span className="gn-attr-histogram-label">{bin.range[0]}</span>
                 </div>
             ))}
+        </div>
+    );
+};
+
+const BoxPlot = ({ min, max, mean, median, stddev }) => {
+    if (!hasNumeric(min) || !hasNumeric(max) || Number(max) <= Number(min)) return null;
+
+    const mn = Number(min);
+    const mx = Number(max);
+    const med = hasNumeric(median)
+        ? Number(median)
+        : (hasNumeric(mean) ? Number(mean) : (mn + mx) / 2);
+
+    let q1 = mn + 0.25 * (mx - mn);
+    let q3 = mn + 0.75 * (mx - mn);
+
+    if (hasNumeric(mean) && hasNumeric(stddev) && Number(stddev) > 0) {
+        const mu = Number(mean);
+        const sd = Number(stddev);
+        // Approximate quartiles assuming near-normal distribution.
+        q1 = mu - 0.6745 * sd;
+        q3 = mu + 0.6745 * sd;
+    } else if (hasNumeric(median)) {
+        q1 = mn + (med - mn) * 0.5;
+        q3 = med + (mx - med) * 0.5;
+    }
+
+    const clamp = (v) => Math.max(mn, Math.min(mx, Number(v)));
+    q1 = clamp(q1);
+    q3 = clamp(q3);
+    const medianClamped = clamp(med);
+
+    const toPercent = (v) => `${Math.max(0, Math.min(100, ((Number(v) - mn) / (mx - mn)) * 100))}%`;
+
+    return (
+        <div className="gn-attr-boxplot-wrap">
+            <p className="gn-attr-stats-section-label">Box Plot</p>
+            <div className="gn-attr-boxplot-track">
+                <div
+                    className="gn-attr-boxplot-whisker"
+                    style={{ left: toPercent(mn), width: `calc(${toPercent(mx)} - ${toPercent(mn)})` }}
+                />
+                <div className="gn-attr-boxplot-cap gn-attr-boxplot-cap-min" style={{ left: toPercent(mn) }} />
+                <div className="gn-attr-boxplot-cap gn-attr-boxplot-cap-max" style={{ left: toPercent(mx) }} />
+                <div
+                    className="gn-attr-boxplot-box"
+                    style={{ left: toPercent(q1), width: `calc(${toPercent(q3)} - ${toPercent(q1)})` }}
+                    title={`Q1: ${formatStat(q1)} • Q3: ${formatStat(q3)}`}
+                />
+                <div
+                    className="gn-attr-boxplot-median"
+                    style={{ left: toPercent(medianClamped) }}
+                    title={`Median: ${formatStat(medianClamped)}`}
+                />
+            </div>
+            <div className="gn-attr-boxplot-axis">
+                <span>Min {formatStat(mn)}</span>
+                <span>Q1 {formatStat(q1)}</span>
+                <span>Median {formatStat(medianClamped)}</span>
+                <span>Q3 {formatStat(q3)}</span>
+                <span>Max {formatStat(mx)}</span>
+            </div>
         </div>
     );
 };
@@ -126,12 +226,23 @@ const AttributeStatsPanel = ({ pk, attribute, onClose }) => {
                                         </div>
                                     ))}
                                 </div>
-                                {stats.histogram && (
-                                    <div className="gn-attr-stats-histogram-wrap">
-                                        <p className="gn-attr-stats-section-label">
-                                            Distribution {stats.histogram_estimated ? '(estimated)' : ''}
-                                        </p>
-                                        <MiniHistogram histogram={stats.histogram} />
+                                {(stats.histogram || (hasNumeric(stats.min) && hasNumeric(stats.max))) && (
+                                    <div className="gn-attr-stats-visuals">
+                                        <BoxPlot
+                                            min={stats.min}
+                                            max={stats.max}
+                                            mean={stats.mean}
+                                            median={stats.median}
+                                            stddev={stats.stddev}
+                                        />
+                                        {stats.histogram && (
+                                            <div className="gn-attr-stats-histogram-wrap">
+                                                <p className="gn-attr-stats-section-label">
+                                                    Distribution {stats.histogram_estimated ? '(estimated from mean/stddev)' : ''}
+                                                </p>
+                                                <MiniHistogram histogram={getDisplayHistogram(stats)} />
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                                 {stats.unique_values && !stats.histogram && (
