@@ -573,6 +573,13 @@ const parseTabItems = (items, tab) => {
 };
 const isDefaultTabType = (type) => type === 'tab';
 
+const getLinkedResourcesCount = (fields = {}) => {
+    // Count total resources across all linked resource types
+    const linkedTo = (fields?.linkedTo || []).length;
+    const linkedBy = (fields?.linkedBy || []).length;
+    return linkedTo + linkedBy;
+};
+
 function DetailsInfo({
     tabs = [],
     ...props
@@ -594,7 +601,11 @@ function DetailsInfo({
             selectedTabId={selectedTabId}
             onSelect={onSelect}
             tabs={filteredTabs.map(({ Component, ...tab } = {}) => ({
-                title: <DetailInfoFieldLabel field={tab} />,
+                title: tab?.type === 'linked-resources' ? (
+                    <><DetailInfoFieldLabel field={tab} /> ({getLinkedResourcesCount(tab?.items)})</>
+                ) : (
+                    <DetailInfoFieldLabel field={tab} />
+                ),
                 eventKey: tab?.id,
                 component: <Component fields={tab?.items} {...props} />
             }))}

@@ -256,7 +256,9 @@ const DetailLinkedResource = ({ resources = [], type, downloadingByPk, setDownlo
                 <span className="gn-details-linked-resources-label">
                     {type === 'uses'
                         ? `Downloadable Resources (${resources.length} ${resources.length === 1 ? 'File' : 'Files'})`
-                        : <Message msgId={`gnviewer.linkedResources.${type}`} />
+                        : <>
+                            <Message msgId={`gnviewer.linkedResources.${type}`} /> ({resources.length})
+                        </>
                     }
                 </span>
                 <span className="gn-details-linked-resources-sort">
