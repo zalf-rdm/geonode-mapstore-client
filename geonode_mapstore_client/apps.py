@@ -232,8 +232,20 @@ def run_setup_hooks(*args, **kwargs):
             "uuid",
         ],
     }
-    settings.REST_API_PRESETS["map_viewer"] = {"include[]": ["data", "maplayers"]}
-    settings.REST_API_PRESETS["document_viewer"] = {"include[]": ["href", "extension"]}
+    settings.REST_API_PRESETS["map_viewer"] = {
+        "include[]": [
+            "data",
+            "maplayers"
+        ]
+    }
+    viewer_common_fields = settings.REST_API_PRESETS["viewer_common"]["include[]"]
+    settings.REST_API_PRESETS["document_viewer"] = {
+        "include[]": list(dict.fromkeys([
+            *viewer_common_fields,
+            "href",
+            "extension"
+        ]))
+    }
     settings.REST_API_PRESETS["dataset_viewer"] = {
         "include[]": [
             "featureinfo_custom_template",

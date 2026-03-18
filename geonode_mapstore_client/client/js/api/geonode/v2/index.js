@@ -343,7 +343,7 @@ export const getDatasetByPk = (pk) => {
 export const getDocumentByPk = (pk) => {
     return axios.get(parseDevHostname(`${endpoints[DOCUMENTS]}/${pk}`), {
         params: {
-            api_preset: [API_PRESET.VIEWER_COMMON, API_PRESET.DOCUMENT]
+            api_preset: API_PRESET.DOCUMENT
         },
         ...paramsSerializer()
     })
@@ -356,7 +356,7 @@ export const getDocumentsByPk = (pk) => {
         params: {
             'filter{pk.in}': pks,
             page_size: pks.length,
-            api_preset: [API_PRESET.VIEWER_COMMON, API_PRESET.DOCUMENT]
+            api_preset: API_PRESET.DOCUMENT
         },
         ...paramsSerializer()
     })
