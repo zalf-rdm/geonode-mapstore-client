@@ -141,7 +141,7 @@ function getPageButtons(currentPage, totalPages) {
     return items;
 }
 
-function TableComponent({ owsUrls, typeName, resource }) {
+export function TableComponent({ owsUrls, typeName, resource }) {
     const [header, setHeader] = useState([]);
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false);
