@@ -31,27 +31,63 @@ function rowsFromFeatures(data) {
     });
 };
 
+function buildOwsUrlCandidates(geoserverUrl) {
+    const urls = [];
+    const addUrl = (url) => {
+        if (url && !urls.includes(url)) {
+            urls.push(url);
+        }
+    };
+
+    if (geoserverUrl) {
+        const baseUrl = `${geoserverUrl}`.replace(/\/+$/, '');
+        if (/\/ows$/i.test(baseUrl)) {
+            addUrl(baseUrl);
+        } else if (/\/(wms|wfs)$/i.test(baseUrl)) {
+            addUrl(baseUrl.replace(/\/(wms|wfs)$/i, '/ows'));
+        } else {
+            addUrl(`${baseUrl}/ows`);
+        }
+
+        if (/\/geoserver(\/ows)?$/i.test(baseUrl)) {
+            addUrl(baseUrl.replace(/\/geoserver(\/ows)?$/i, '/gs/ows'));
+        }
+    }
+
+    // Local dev-server proxy route used by GeoNode (`localhost:8081` -> backend).
+    addUrl('/gs/ows');
+    return urls;
+}
 
 
 
-export function TableComponent({ owsUrl, typeName }) {
+
+export function TableComponent({ owsUrls, typeName }) {
     const [header, setHeader] = useState();
     const [rows, setRows] = useState();
     const [error, setError] = useState();
     useEffect(() => {
         const getFeatures = async () => {
-            try {
-                const data = await getFeatureSimple(owsUrl, { typeName });
-                setHeader(headerFromFeatures(data));
-                setRows(rowsFromFeatures(data));
-            } catch(e) {
-                setError(e)
+            let lastError;
+            for (let i = 0; i < (owsUrls || []).length; i++) {
+                try {
+                    const data = await getFeatureSimple(owsUrls[i], { typeName });
+                    setHeader(headerFromFeatures(data));
+                    setRows(rowsFromFeatures(data));
+                    setError(null);
+                    return;
+                } catch (e) {
+                    lastError = e;
+                }
+            }
+            if (lastError) {
+                setError(lastError);
             }
         }
-        if (owsUrl) {
+        if (owsUrls?.length) {
             getFeatures()
         }
-    }, [owsUrl, typeName])
+    }, [owsUrls, typeName])
 
     if (error) {
         console.error(error);
@@ -70,7 +106,7 @@ export function TableComponent({ owsUrl, typeName }) {
 };
 
 TableComponent.propTypes = {
-    owsUrl: PropTypes.string,
+    owsUrls: PropTypes.arrayOf(PropTypes.string),
     typeName: PropTypes.string,
 };
 
@@ -79,12 +115,12 @@ const TabularPreviewPlugin = connect(
         (state) => state?.gnsettings?.geoserverUrl,
         (state) => state?.gnresource?.data
     ], (geoserverUrl, resource) => { 
-        if (!resource.subtype || !geoserverUrl) {
+        const owsUrls = buildOwsUrlCandidates(geoserverUrl);
+        if (!resource?.subtype || !owsUrls?.length) {
             return {}
         }
-        const owsUrl = `${geoserverUrl}ows`
         const typeName = resource.alternate
-        return { owsUrl, typeName };
+        return { owsUrls, typeName };
     })
 )(TableComponent);
 
