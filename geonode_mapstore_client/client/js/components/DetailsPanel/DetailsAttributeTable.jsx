@@ -12,29 +12,29 @@ import { getDatasetAttributeStats } from '@js/api/geonode/v2';
 
 const DATA_TYPE_COLORS = {
     integer: 'type-integer',
-    int: 'type-integer',
+    'int': 'type-integer',
     bigint: 'type-integer',
     smallint: 'type-integer',
-    double: 'type-double',
-    float: 'type-double',
+    'double': 'type-double',
+    'float': 'type-double',
     real: 'type-double',
     numeric: 'type-double',
     decimal: 'type-double',
     string: 'type-string',
     varchar: 'type-string',
-    char: 'type-string',
+    'char': 'type-string',
     text: 'type-string',
     date: 'type-date',
     datetime: 'type-date',
     timestamp: 'type-date',
     time: 'type-date',
-    boolean: 'type-boolean',
+    'boolean': 'type-boolean',
     bool: 'type-boolean',
     geometry: 'type-geometry',
     point: 'type-geometry',
     polygon: 'type-geometry',
     linestring: 'type-geometry',
-    multipolygon: 'type-geometry',
+    multipolygon: 'type-geometry'
 };
 
 const getTypeColorClass = (type = '') => {
@@ -48,6 +48,8 @@ const getTypeColorClass = (type = '') => {
 };
 
 const PAGE_SIZE = 10;
+const MAX_UNIQUE_VALUES = 30;
+const MAX_GROUP_VALUES = 20;
 
 const formatStat = (val) => {
     if (val === null || val === undefined) return '—';
@@ -59,6 +61,30 @@ const formatStat = (val) => {
 const hasNumeric = (v) => {
     const n = Number(v);
     return isFinite(n);
+};
+
+const normalizeAttributeType = (type = '') => type.toLowerCase().replace(/\s+/g, '');
+
+const NUMERIC_TYPE_KEYS = ['integer', 'int', 'bigint', 'smallint', 'double', 'float', 'real', 'numeric', 'decimal'];
+
+const getAttributeCategory = (type = '') => {
+    const normalized = normalizeAttributeType(type);
+    if (normalized.includes('gml:') || normalized.includes('geometry')) {
+        return 'geometry';
+    }
+    if (normalized.includes('datetime') || normalized.includes('timestamp')) {
+        return 'datetime';
+    }
+    if (normalized.includes('date')) {
+        return 'date';
+    }
+    if (normalized.includes('string') || normalized.includes('varchar') || normalized.includes('char') || normalized.includes('text')) {
+        return 'string';
+    }
+    if (NUMERIC_TYPE_KEYS.some((key) => normalized.includes(key))) {
+        return 'numeric';
+    }
+    return 'other';
 };
 
 const getDisplayHistogram = (stats) => {
@@ -214,7 +240,7 @@ const BoxPlot = ({ min, max, mean, median, stddev }) => {
     );
 };
 
-const AttributeStatsPanel = ({ pk, attribute, onClose }) => {
+const AttributeStatsPanel = ({ pk, attribute, attributeType, onClose, onStatsLoaded }) => {
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -225,9 +251,63 @@ const AttributeStatsPanel = ({ pk, attribute, onClose }) => {
         setStats(null);
         setError(null);
         getDatasetAttributeStats(pk, attribute)
-            .then(data => { setStats(data); setLoading(false); })
+            .then((data) => {
+                setStats(data);
+                setLoading(false);
+                if (onStatsLoaded) {
+                    onStatsLoaded(data);
+                }
+            })
             .catch(() => { setError('Could not load statistics.'); setLoading(false); });
-    }, [pk, attribute]);
+    }, [pk, attribute, onStatsLoaded]);
+
+    const effectiveType = stats?.attribute_type || attributeType;
+    const attributeCategory = getAttributeCategory(effectiveType);
+    const uniqueValues = stats?.unique_values || [];
+    const totalUnique = stats?.total_unique ?? uniqueValues.length;
+    const groups = stats?.groups || [];
+
+    const summaryStatsByCategory = {
+        numeric: [
+            { label: 'Count', val: stats?.count },
+            { label: 'Min', val: stats?.min },
+            { label: 'Max', val: stats?.max },
+            { label: 'Mean', val: stats?.mean },
+            { label: 'Median', val: stats?.median },
+            { label: 'Std Dev', val: stats?.stddev },
+            { label: 'Sum', val: stats?.sum }
+        ],
+        datetime: [
+            { label: 'Count', val: stats?.count },
+            { label: 'Min', val: stats?.min },
+            { label: 'Max', val: stats?.max }
+        ],
+        date: [
+            { label: 'Count', val: stats?.count },
+            { label: 'Min', val: stats?.min },
+            { label: 'Max', val: stats?.max }
+        ],
+        string: [
+            { label: 'Count', val: stats?.count },
+            { label: 'Total Unique', val: totalUnique }
+        ],
+        geometry: [
+            { label: 'Count', val: stats?.count },
+            { label: 'Geometry Types', val: totalUnique }
+        ],
+        other: [
+            { label: 'Count', val: stats?.count }
+        ]
+    };
+
+    const summaryStats = summaryStatsByCategory[attributeCategory] || summaryStatsByCategory.other;
+    const showNumericVisuals = attributeCategory === 'numeric' && (stats?.histogram || (hasNumeric(stats?.min) && hasNumeric(stats?.max)));
+    const showUniqueValues = ['string', 'geometry'].includes(attributeCategory) && uniqueValues.length > 0;
+    const showGroups = ['string', 'geometry'].includes(attributeCategory) && groups.length > 0;
+    const uniqueSectionLabel = attributeCategory === 'geometry'
+        ? `Geometry Types (${formatStat(totalUnique)})`
+        : `Values (${formatStat(totalUnique)})`;
+    const groupsSectionLabel = attributeCategory === 'geometry' ? 'Repeated Geometry Types' : 'Groups';
 
     return (
         <div className="gn-attr-stats-panel">
@@ -250,22 +330,14 @@ const AttributeStatsPanel = ({ pk, attribute, onClose }) => {
                         {stats.has_stats ? (
                             <>
                                 <div className="gn-attr-stats-grid">
-                                    {[
-                                        { label: 'Count', val: stats.count },
-                                        { label: 'Min', val: stats.min },
-                                        { label: 'Max', val: stats.max },
-                                        { label: 'Mean', val: stats.mean },
-                                        { label: 'Median', val: stats.median },
-                                        { label: 'Std Dev', val: stats.stddev },
-                                        { label: 'Sum', val: stats.sum },
-                                    ].map(({ label, val }) => (
+                                    {summaryStats.map(({ label, val }) => (
                                         <div key={label} className="gn-attr-stats-item">
                                             <span className="gn-attr-stats-label">{label}</span>
                                             <span className="gn-attr-stats-value">{formatStat(val)}</span>
                                         </div>
                                     ))}
                                 </div>
-                                {(stats.histogram || (hasNumeric(stats.min) && hasNumeric(stats.max))) && (
+                                {showNumericVisuals && (
                                     <div className="gn-attr-stats-visuals">
                                         <BoxPlot
                                             min={stats.min}
@@ -284,15 +356,30 @@ const AttributeStatsPanel = ({ pk, attribute, onClose }) => {
                                         )}
                                     </div>
                                 )}
-                                {stats.unique_values && !stats.histogram && (
+                                {showUniqueValues && (
                                     <div className="gn-attr-stats-unique-wrap">
-                                        <p className="gn-attr-stats-section-label">Unique Values ({stats.unique_values.length})</p>
+                                        <p className="gn-attr-stats-section-label">{uniqueSectionLabel}</p>
                                         <div className="gn-attr-stats-unique-list">
-                                            {stats.unique_values.slice(0, 30).map((v, i) => (
+                                            {uniqueValues.slice(0, MAX_UNIQUE_VALUES).map((v, i) => (
                                                 <span key={i} className="gn-attr-stats-unique-val">{String(v)}</span>
                                             ))}
-                                            {stats.unique_values.length > 30 && (
-                                                <span className="gn-attr-stats-unique-more">+{stats.unique_values.length - 30} more</span>
+                                            {uniqueValues.length > MAX_UNIQUE_VALUES && (
+                                                <span className="gn-attr-stats-unique-more">+{uniqueValues.length - MAX_UNIQUE_VALUES} more</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+                                {showGroups && (
+                                    <div className="gn-attr-stats-unique-wrap">
+                                        <p className="gn-attr-stats-section-label">{groupsSectionLabel}</p>
+                                        <div className="gn-attr-stats-unique-list">
+                                            {groups.slice(0, MAX_GROUP_VALUES).map((group, i) => (
+                                                <span key={i} className="gn-attr-stats-unique-val">
+                                                    {`${String(group.value)} (${formatStat(group.count)})`}
+                                                </span>
+                                            ))}
+                                            {groups.length > MAX_GROUP_VALUES && (
+                                                <span className="gn-attr-stats-unique-more">+{groups.length - MAX_GROUP_VALUES} more</span>
                                             )}
                                         </div>
                                     </div>
@@ -312,19 +399,30 @@ const AttributeStatsPanel = ({ pk, attribute, onClose }) => {
     );
 };
 
+AttributeStatsPanel.propTypes = {
+    pk: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    attribute: PropTypes.string,
+    attributeType: PropTypes.string,
+    onClose: PropTypes.func,
+    onStatsLoaded: PropTypes.func
+};
+
+AttributeStatsPanel.defaultProps = {
+    pk: null,
+    attribute: '',
+    attributeType: '',
+    onClose: () => {},
+    onStatsLoaded: null
+};
+
 const DetailsAttributeTable = ({ fields = [], resource }) => {
     const [filterText, setFilterText] = useState('');
     const [sortAsc, setSortAsc] = useState(true);
     const [page, setPage] = useState(0);
     const [selectedAttr, setSelectedAttr] = useState(null);
+    const [effectiveTypes, setEffectiveTypes] = useState({});
 
     const datasetPk = resource?.pk;
-
-    // Debug: log what resource we receive
-    React.useEffect(() => {
-        // eslint-disable-next-line no-console
-        console.log('[DetailsAttributeTable] resource:', resource, 'pk:', datasetPk);
-    }, [resource, datasetPk]);
 
     const filtered = useMemo(() => {
         const lower = filterText.toLowerCase();
@@ -353,6 +451,18 @@ const DetailsAttributeTable = ({ fields = [], resource }) => {
 
     const handleRowClick = useCallback((attr) => {
         setSelectedAttr(prev => (prev === attr ? null : attr));
+    }, []);
+
+    const handleStatsLoaded = useCallback((attributeName, stats) => {
+        const nextType = stats?.attribute_type;
+        if (!nextType) {
+            return;
+        }
+        setEffectiveTypes((prev) => (
+            prev[attributeName] === nextType
+                ? prev
+                : { ...prev, [attributeName]: nextType }
+        ));
     }, []);
 
     return (
@@ -401,8 +511,9 @@ const DetailsAttributeTable = ({ fields = [], resource }) => {
                                 </td>
                             </tr>
                         ) : pageItems.map((attr, idx) => {
-                            const rawType = (attr.attribute_type || '').toUpperCase() || 'UNKNOWN';
-                            const typeClass = getTypeColorClass(attr.attribute_type || '');
+                            const displayType = effectiveTypes[attr.attribute] || attr.attribute_type || '';
+                            const rawType = displayType.toUpperCase() || 'UNKNOWN';
+                            const typeClass = getTypeColorClass(displayType);
                             const description = attr.description || '-';
                             const unit = attr.attribute_unit || '-';
                             const isSelected = selectedAttr === attr.attribute;
@@ -434,7 +545,9 @@ const DetailsAttributeTable = ({ fields = [], resource }) => {
                                                         <AttributeStatsPanel
                                                             pk={datasetPk}
                                                             attribute={attr.attribute}
+                                                            attributeType={displayType}
                                                             onClose={() => setSelectedAttr(null)}
+                                                            onStatsLoaded={(stats) => handleStatsLoaded(attr.attribute, stats)}
                                                         />
                                                     ) : (
                                                         <div className="gn-attr-stats-panel">
