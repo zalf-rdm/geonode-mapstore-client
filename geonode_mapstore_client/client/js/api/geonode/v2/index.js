@@ -332,7 +332,8 @@ export const getResourceByUuid = (uuid) => {
 export const getDatasetByPk = (pk) => {
     return axios.get(parseDevHostname(`${endpoints[DATASETS]}/${pk}`), {
         params: {
-            api_preset: [API_PRESET.VIEWER_COMMON, API_PRESET.DATASET]
+            api_preset: [API_PRESET.VIEWER_COMMON, API_PRESET.DATASET],
+            include: ['doi']
         },
         ...paramsSerializer()
     })

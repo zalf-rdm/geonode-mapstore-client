@@ -58,6 +58,7 @@ const getTagValue = (item) => {
 
 const DOI_REGEX = /10\.\d{4,9}\/[-._;()/:A-Z0-9]+/i;
 const DOI_URL_REGEX = /https?:\/\/(?:dx\.)?doi\.org\/([^\s]+)/i;
+const DOI_KEY_REGEX = /(^|[_-])(doi|doi_url|dataseturi|dataset_uri|identifier|identifiers|citation|supplemental_information|supplementalinformation|metadata_identifier|md_identifier)([_-]|$)/i;
 
 const normalizeDoi = (value = '') => {
     const text = `${value}`.trim();
@@ -71,6 +72,48 @@ const normalizeDoi = (value = '') => {
     const cleaned = text.replace(/^doi\s*:\s*/i, '').trim();
     const fromText = cleaned.match(DOI_REGEX);
     return fromText ? fromText[0].trim() : '';
+};
+
+const findDoiInValue = (input, depth = 0) => {
+    if (!input || depth > 6) {
+        return '';
+    }
+    if (typeof input === 'string' || typeof input === 'number') {
+        return normalizeDoi(input);
+    }
+    if (Array.isArray(input)) {
+        for (let index = 0; index < input.length; index++) {
+            const found = findDoiInValue(input[index], depth + 1);
+            if (found) {
+                return found;
+            }
+        }
+        return '';
+    }
+    if (typeof input !== 'object') {
+        return '';
+    }
+    const entries = Object.entries(input);
+
+    for (let index = 0; index < entries.length; index++) {
+        const [key, value] = entries[index];
+        if (DOI_KEY_REGEX.test(key)) {
+            const found = findDoiInValue(value, depth + 1);
+            if (found) {
+                return found;
+            }
+        }
+    }
+
+    for (let index = 0; index < entries.length; index++) {
+        const [, value] = entries[index];
+        const found = findDoiInValue(value, depth + 1);
+        if (found) {
+            return found;
+        }
+    }
+
+    return '';
 };
 
 const getDoiInfo = (resource = {}) => {
@@ -96,7 +139,17 @@ const getDoiInfo = (resource = {}) => {
 
     const doiFromLinkHref = normalizeDoi(doiLink?.href || doiLink?.url || '');
     const doiFromLinkTitle = normalizeDoi(doiLink?.title || doiLink?.name || '');
-    const doi = directDoi || doiFromLinkHref || doiFromLinkTitle;
+    const nestedDoi = findDoiInValue({
+        metadata: resource?.metadata,
+        extra_metadata: resource?.extra_metadata,
+        extras: resource?.extras,
+        identifiers: resource?.identifiers,
+        identification: resource?.identification,
+        supplemental_information: resource?.supplemental_information,
+        attribution: resource?.attribution,
+        raw: resource
+    });
+    const doi = directDoi || doiFromLinkHref || doiFromLinkTitle || nestedDoi;
     const url = doi ? `https://doi.org/${doi}` : '';
 
     return {
