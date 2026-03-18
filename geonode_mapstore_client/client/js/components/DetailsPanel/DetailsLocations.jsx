@@ -5,181 +5,132 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import React, { useState, useEffect } from "react";
+import React from "react";
 import turfCenter from "@turf/center";
 import isEmpty from "lodash/isEmpty";
-import isEqual from "lodash/isEqual";
 import get from "lodash/get";
-import wk from 'wellknown';
-
-
-import BaseMap from "@mapstore/framework/components/map/BaseMap";
-import mapTypeHOC from "@mapstore/framework/components/map/enhancers/mapType";
-import ZoomTo from "@js/components/ZoomTo/ZoomTo";
-import { getPolygonFromExtent, bboxToFeatureGeometry } from "@mapstore/framework/utils/CoordinatesUtils";
-import DrawSupport from "@js/components/DrawExtent";
-import Message from "@mapstore/framework/components/I18N/Message";
-import HTML from "@mapstore/framework/components/I18N/HTML";
-import tooltip from "@mapstore/framework/components/misc/enhancers/tooltip";
-import CopyToClipboardCmp from 'react-copy-to-clipboard';
-import Button from "@mapstore/framework/components/misc/Button";
+import { getPolygonFromExtent } from "@mapstore/framework/utils/CoordinatesUtils";
 import FaIcon from "@js/components/FaIcon/FaIcon";
 
-const Map = mapTypeHOC(BaseMap);
-Map.displayName = "Map";
-const CopyToClipboard = tooltip(CopyToClipboardCmp);
-
-const BoundingBoxAndCenter = ({extent, center }) => {
-    const [minx, miny, maxx, maxy] = extent || [];
-    const [copied, setCopied] = useState(false);
-    useEffect(() => {
-        if (copied) {
-            setTimeout(() => {
-                setCopied(false);
-            }, 1000);
-        }
-    }, [copied]);
-    return (
-        <div className={`gn-location-info`}>
-            <div className="bounds">
-                <div className="title">
-                    <Message msgId={"gnviewer.boundingBox"}/>
-                    <CopyToClipboard
-                        text={!isEmpty(extent) && wk.stringify(bboxToFeatureGeometry(extent))}
-                    >
-                        <Button
-                            variant="default"
-                            onClick={()=> setCopied(true)}>
-                            <FaIcon name="copy" />
-                        </Button>
-                    </CopyToClipboard>
-                </div>
-                <div className="bounds-row">
-                    <Message msgId="gnviewer.minLat"/>
-                    {miny?.toFixed(6)}
-                </div>
-                <div className="bounds-row">
-                    <Message msgId="gnviewer.minLon"/>
-                    {minx?.toFixed(6)}
-                </div>
-                <div className="bounds-row">
-                    <Message msgId="gnviewer.maxLat"/>
-                    {maxy?.toFixed(6)}
-                </div>
-                <div className="bounds-row">
-                    <Message msgId="gnviewer.maxLon"/>
-                    {maxx?.toFixed(6)}
-                </div>
-            </div>
-            <div className="center">
-                <div className="title">
-                    <Message msgId={"gnviewer.center"}/>
-                    <CopyToClipboard
-                        text={!isEmpty(center) && wk.stringify(center)}
-                    >
-                        <Button
-                            variant="default"
-                            onClick={()=> setCopied(true)}>
-                            <FaIcon name="copy" />
-                        </Button>
-                    </CopyToClipboard>
-                </div>
-                <div className="center-row">
-                    <Message msgId="gnviewer.centerLat"/>
-                    {get(center, 'geometry.coordinates.[1]')?.toFixed(6)}
-                </div>
-                <div className="center-row">
-                    <Message msgId="gnviewer.centerLon"/>
-                    {get(center, 'geometry.coordinates.[0]')?.toFixed(6)}
-                </div>
-            </div>
-        </div>
-    );
+const REFERENCE_SYSTEM_NAMES = {
+    'EPSG:3857': 'WGS 84 / Pseudo-Mercator',
+    'EPSG:4326': 'WGS 84'
 };
 
-const getFeatureStyle = (type, isDrawn) => {
-    if (type === "polygon") {
-        return {
-            color: isDrawn ? "#ffaa01" : "#397AAB",
-            opacity: 0.8,
-            fillColor: isDrawn
-                ? "rgba(255, 170, 1, 0.1)"
-                : "#397AAB",
-            fillOpacity: 0.2,
-            weight: 2
-        };
+const getReferenceSystemName = (resource, crsCode, fields) => {
+    const explicitName = [
+        resource?.bbox?.crs_name,
+        resource?.bbox?.name,
+        resource?.crs_name,
+        resource?.spatial_reference,
+        resource?.crs?.name,
+        fields?.extent?.crs_name,
+        fields?.extent?.name
+    ].find((value) => `${value || ''}`.trim());
+
+    if (explicitName) {
+        return `${explicitName}`.trim();
     }
-    return {
-        iconAnchor: [0.5, 0.5],
-        anchorXUnits: "fraction",
-        anchorYUnits: "fraction",
-        fillColor: isDrawn ? "#ffaa01" : "#397AAB",
-        opacity: 0,
-        size: 16,
-        fillOpacity: 1,
-        symbolUrl: '/static/mapstore/symbols/plus.svg'
-    };
+    return REFERENCE_SYSTEM_NAMES[crsCode] || (crsCode || '-');
 };
 
-const DetailsLocations = ({ onSetExtent, fields, allowEdit: allowEditProp, resource } = {}) => {
+const toCrsCode = (value) => {
+    if (!value && value !== 0) {
+        return '';
+    }
+    const strValue = `${value}`.trim();
+    if (!strValue) {
+        return '';
+    }
+    return /^EPSG:/i.test(strValue) ? strValue.toUpperCase() : `EPSG:${strValue}`;
+};
+
+const formatCoordinate = (value) => {
+    return Number.isFinite(value) ? value.toFixed(6) : '-';
+};
+
+const DetailsLocations = ({ fields, resource } = {}) => {
     const extent = get(fields, 'extent.coords');
-    const initialExtent = get(fields, 'initialExtent.coords');
+    const [minx, miny, maxx, maxy] = extent || [];
 
     const polygon = !isEmpty(extent) ? getPolygonFromExtent(extent) : null;
     const center = !isEmpty(extent) && polygon ? turfCenter(polygon) : null;
-    const isDrawn = initialExtent !== undefined && !isEqual(initialExtent, extent);
+    const centerLon = get(center, 'geometry.coordinates.[0]');
+    const centerLat = get(center, 'geometry.coordinates.[1]');
 
-    const allowEdit = onSetExtent && !['map', 'dataset'].includes(resource?.resource_type) && allowEditProp;
+    const crsCode = toCrsCode(
+        resource?.bbox?.crs
+        || resource?.srid
+        || resource?.crs?.code
+        || fields?.extent?.crs
+    );
+    const referenceSystemName = getReferenceSystemName(resource, crsCode, fields);
 
     return (
-        <div className="gn-viewer-extent-map">
-            <BoundingBoxAndCenter center={center} extent={extent} />
-            <div className="map-wrapper">
-                <Map
-                    id="gn-locations-map"
-                    key={`${resource?.resource_type}:${resource?.pk}`}
-                    mapType={"openlayers"}
-                    map={{
-                        registerHooks: false,
-                        projection: "EPSG:3857"
-                    }}
-                    options={{interactive: !!allowEdit}}
-                    styleMap={{
-                        height: '100%'
-                    }}
-                    layers={[
-                        {
-                            type: 'osm',
-                            title: 'Open Street Map',
-                            name: 'mapnik',
-                            source: 'osm',
-                            group: 'background',
-                            visibility: true
-                        },
-                        ...(!isEmpty(extent)
-                            ? [
-                                {
-                                    id: "extent-location",
-                                    type: "vector",
-                                    features: [
-                                        {
-                                            ...polygon,
-                                            style: getFeatureStyle("polygon", isDrawn)
-                                        },
-                                        {
-                                            ...center,
-                                            style: getFeatureStyle("point", isDrawn)
-                                        }
-                                    ]
-                                }
-                            ]
-                            : [])
-                    ]}
-                >
-                    <ZoomTo extent={extent?.join(",")} nearest={false} />
-                    {allowEdit && <DrawSupport onSetExtent={onSetExtent}/>}
-                </Map>
-                {allowEdit && <HTML msgId="gnviewer.mapExtentHelpText"/>}
+        <div className="gn-location-cards-grid">
+            <div className="gn-location-card">
+                <div className="gn-location-card-head">
+                    <div className="gn-location-card-icon">
+                        <FaIcon name="globe" />
+                    </div>
+                    <h3>Reference System</h3>
+                </div>
+                <div className="gn-location-card-content">
+                    <div className="gn-location-card-row">
+                        <p className="gn-info-section-label">Standard Name</p>
+                        <p className="gn-info-section-value gn-info-section-value--mono">{referenceSystemName}</p>
+                    </div>
+                    <div className="gn-location-card-row">
+                        <p className="gn-info-section-label">EPSG Code</p>
+                        <p className="gn-info-section-value gn-info-section-value--mono">{crsCode || '-'}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div className="gn-location-card">
+                <div className="gn-location-card-head">
+                    <div className="gn-location-card-icon">
+                        <FaIcon name="th-large" />
+                    </div>
+                    <h3>Bounding Box</h3>
+                </div>
+                <div className="gn-location-card-content gn-location-card-content-grid">
+                    <div className="gn-location-card-row">
+                        <p className="gn-info-section-label">North</p>
+                        <p className="gn-info-section-value gn-info-section-value--mono">{formatCoordinate(maxy)}</p>
+                    </div>
+                    <div className="gn-location-card-row">
+                        <p className="gn-info-section-label">South</p>
+                        <p className="gn-info-section-value gn-info-section-value--mono">{formatCoordinate(miny)}</p>
+                    </div>
+                    <div className="gn-location-card-row">
+                        <p className="gn-info-section-label">East</p>
+                        <p className="gn-info-section-value gn-info-section-value--mono">{formatCoordinate(maxx)}</p>
+                    </div>
+                    <div className="gn-location-card-row">
+                        <p className="gn-info-section-label">West</p>
+                        <p className="gn-info-section-value gn-info-section-value--mono">{formatCoordinate(minx)}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div className="gn-location-card">
+                <div className="gn-location-card-head">
+                    <div className="gn-location-card-icon">
+                        <FaIcon name="crosshairs" />
+                    </div>
+                    <h3>Geometric Center</h3>
+                </div>
+                <div className="gn-location-card-content">
+                    <div className="gn-location-card-row">
+                        <p className="gn-info-section-label">Latitude</p>
+                        <p className="gn-info-section-value gn-info-section-value--mono">{formatCoordinate(centerLat)}</p>
+                    </div>
+                    <div className="gn-location-card-row">
+                        <p className="gn-info-section-label">Longitude</p>
+                        <p className="gn-info-section-value gn-info-section-value--mono">{formatCoordinate(centerLon)}</p>
+                    </div>
+                </div>
             </div>
         </div>
     );

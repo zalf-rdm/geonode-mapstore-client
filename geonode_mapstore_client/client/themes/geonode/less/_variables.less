@@ -71,8 +71,8 @@
 
 @gn-font-family-serif: Georgia, 'Times New Roman', Times, serif;
 @gn-font-family-monospace: Menlo, Monaco, Consolas, 'Courier New', monospace;
-@gn-font-family-sans-serif: 'Montserrat', sans-serif;
-@gn-font-family-base: 'Montserrat', sans-serif;
+@gn-font-family-sans-serif: 'Inter', sans-serif;
+@gn-font-family-base: 'Inter', sans-serif;
 
 .gn-buttons-vars() {
     @button-default: {
@@ -240,26 +240,46 @@
 
 .gn-button-primary-vars(@variant: primary, @color, @contrast) {
     @result: {
-        button-color: ~'--gn-button-@{variant}-color', @contrast;
-        button-bg: ~'--gn-button-@{variant}-bg', @color;
-        button-border-color: ~'--gn-button-@{variant}-border-color', @color;
-        button-focus-color: ~'--gn-button-@{variant}-focus-color', @contrast;
-        button-focus-bg: ~'--gn-button-@{variant}-focus-bg', darken(@color, 10%);
-        button-focus-border-color: ~'--gn-button-@{variant}-focus-border-color', darken(@color, 25%);
-        button-hover-color: ~'--gn-button-@{variant}-hover-color', @contrast;
-        button-hover-bg: ~'--gn-button-@{variant}-hover-bg', darken(@color, 10%);
-        button-hover-border-color: ~'--gn-button-@{variant}-hover-border-color', darken(@color, 12%);
-        button-active-color: ~'--gn-button-@{variant}-active-color', @contrast;
-        button-active-bg: ~'--gn-button-@{variant}-active-bg', darken(@color, 10%);
-        button-active-border-color: ~'--gn-button-@{variant}-active-border-color', darken(@color, 12%);
-        button-active-hover-color: ~'--gn-button-@{variant}-active-hover-color', @contrast;
-        button-active-hover-bg: ~'--gn-button-@{variant}-active-hover-bg', darken(@color, 17%);
-        button-active-hover-border-color: ~'--gn-button-@{variant}-active-hover-border-color', darken(@color, 25%);
-        button-disabled-color: ~'--gn-button-@{variant}-disabled-color', @contrast;
-        button-disabled-bg: ~'--gn-button-@{variant}-disabled-bg', @color;
-        button-disabled-border-color: ~'--gn-button-@{variant}-disabled-border-color', @color;
-        button-badge-color: ~'--gn-button-@{variant}-badge-color', @color;
-        button-badge-bg: ~'--gn-button-@{variant}-badge-bg', @contrast;
+        button-color:~'--gn-button-@{variant}-color',
+        @contrast;
+        button-bg:~'--gn-button-@{variant}-bg',
+        @color;
+        button-border-color:~'--gn-button-@{variant}-border-color',
+        @color;
+        button-focus-color:~'--gn-button-@{variant}-focus-color',
+        @contrast;
+        button-focus-bg:~'--gn-button-@{variant}-focus-bg',
+        darken(@color, 10%);
+        button-focus-border-color:~'--gn-button-@{variant}-focus-border-color',
+        darken(@color, 25%);
+        button-hover-color:~'--gn-button-@{variant}-hover-color',
+        @contrast;
+        button-hover-bg:~'--gn-button-@{variant}-hover-bg',
+        darken(@color, 10%);
+        button-hover-border-color:~'--gn-button-@{variant}-hover-border-color',
+        darken(@color, 12%);
+        button-active-color:~'--gn-button-@{variant}-active-color',
+        @contrast;
+        button-active-bg:~'--gn-button-@{variant}-active-bg',
+        darken(@color, 10%);
+        button-active-border-color:~'--gn-button-@{variant}-active-border-color',
+        darken(@color, 12%);
+        button-active-hover-color:~'--gn-button-@{variant}-active-hover-color',
+        @contrast;
+        button-active-hover-bg:~'--gn-button-@{variant}-active-hover-bg',
+        darken(@color, 17%);
+        button-active-hover-border-color:~'--gn-button-@{variant}-active-hover-border-color',
+        darken(@color, 25%);
+        button-disabled-color:~'--gn-button-@{variant}-disabled-color',
+        @contrast;
+        button-disabled-bg:~'--gn-button-@{variant}-disabled-bg',
+        @color;
+        button-disabled-border-color:~'--gn-button-@{variant}-disabled-border-color',
+        @color;
+        button-badge-color:~'--gn-button-@{variant}-badge-color',
+        @color;
+        button-badge-bg:~'--gn-button-@{variant}-badge-bg',
+        @contrast;
     }
 }
 

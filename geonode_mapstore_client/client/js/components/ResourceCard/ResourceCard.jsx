@@ -7,16 +7,15 @@
  */
 
 import React, { forwardRef, useState, useRef } from 'react';
-import Message from '@mapstore/framework/components/I18N/Message';
 import FaIcon from '@js/components/FaIcon';
-import Button from '@js/components/Button';
 import Spinner from '@js/components/Spinner';
-import { getResourceTypesInfo, getMetadataDetailUrl } from '@js/utils/ResourceUtils';
+import { getResourceTypesInfo } from '@js/utils/ResourceUtils';
 import ResourceStatus from '@js/components/ResourceStatus';
 import ALink from '@js/components/ALink';
 import AuthorInfo from '@js/components/AuthorInfo/AuthorInfo';
 import ActionButtons from '@js/components/ActionButtons';
 import Unadvertised from '@js/components/Unadvertised';
+import moment from 'moment';
 
 
 const ResourceCard = forwardRef(({
@@ -44,18 +43,14 @@ const ResourceCard = forwardRef(({
     const abstractRef = useRef();
     const res = data;
     const types = getTypesInfo();
-    const { icon } = types[res.subtype] || types[res.resource_type] || {};
     const {
-        formatDetailUrl = resource => resource?.detail_url,
-        canPreviewed, hasPermission
-    } = res && (types[res.subtype] || types[res.resource_type]) || {};
-    const detailUrl = res?.pk && formatDetailUrl(res);
-    const resourceCanPreviewed = res?.pk && canPreviewed && canPreviewed(res);
-    const canView = res?.pk && hasPermission && hasPermission(res);
-
-    const metadataDetailUrl = res?.pk && getMetadataDetailUrl(res);
-
+        icon,
+        name: resourceTypeLabel = 'Resource'
+    } = types[res.subtype] || types[res.resource_type] || {};
     const [imgError, setImgError] = useState(false);
+    const cardDate = res?.date
+            ? moment(res.date).format('DD MMM YYYY')
+            : '';
 
     function handleClick() {
         onClick(data);
@@ -76,7 +71,7 @@ const ResourceCard = forwardRef(({
                 readOnly ? ' read-only' : ''
             } gn-card-type-${layoutCardsStyle} ${
                 isCardLayoutList ? 'rounded-0' : ''
-            }${className ? ` ${className}` : ''}`}
+            } gn-resource-card-modern${className ? ` ${className}` : ''}`}
         >
             {!readOnly && (
                 <a
@@ -96,17 +91,26 @@ const ResourceCard = forwardRef(({
                 />
             )}
             <div className={`card-resource-${layoutCardsStyle}`}>
-                {(imgError || !res.thumbnail_url) ? (
-                    <div className={`${imgClassName} card-img-placeholder`}>
-                        <FaIcon name={icon} />
-                    </div>
-                ) : (
-                    <img
-                        className={imgClassName}
-                        src={res.thumbnail_url}
-                        onError={() => setImgError(true)}
-                    />
-                )}
+                <div className="gn-resource-card-media">
+                    {(imgError || !res.thumbnail_url) ? (
+                        <div className={`${imgClassName} card-img-placeholder`}>
+                            <FaIcon name={icon} />
+                        </div>
+                    ) : (
+                        <img
+                            className={imgClassName}
+                            src={res.thumbnail_url}
+                            onError={() => setImgError(true)}
+                        />
+                    )}
+                    {!isCardLayoutList && (
+                        <div className="gn-resource-card-media-top">
+                            <span className={`gn-resource-card-pill gn-resource-card-pill-${res.resource_type}`}>
+                                {resourceTypeLabel}
+                            </span>
+                        </div>
+                    )}
+                </div>
                 <div className="gn-resource-card-body-wrapper">
                     <div className="card-body">
                         <div className="card-title">
@@ -127,17 +131,24 @@ const ResourceCard = forwardRef(({
                                     </>
                                 )}
                                 {(loading || downloading) && <Spinner />}
-                                <ALink
-                                    className={
-                                        featured
-                                            ? 'gn-featured-card-title'
-                                            : 'gn-card-title'
-                                    }
-                                    readOnly={readOnly}
-                                    href={getDetailHref(res)}
-                                >
-                                    {res.title}
-                                </ALink>
+                                <div className="gn-resource-card-title-wrap">
+                                    {isCardLayoutList && (
+                                        <span className={`gn-resource-card-pill gn-resource-card-pill-inline gn-resource-card-pill-${res.resource_type}`}>
+                                            {resourceTypeLabel}
+                                        </span>
+                                    )}
+                                    <ALink
+                                        className={
+                                            featured
+                                                ? 'gn-featured-card-title'
+                                                : 'gn-card-title'
+                                        }
+                                        readOnly={readOnly}
+                                        href={getDetailHref(res)}
+                                    >
+                                        {res.title}
+                                    </ALink>
+                                </div>
                             </div>
                             <div>
                                 <ResourceStatus resource={res} />
@@ -178,23 +189,7 @@ const ResourceCard = forwardRef(({
                                 formatHref={formatHref}
                             />
                             <div className="gn-card-actions">
-                                {!readOnly && (detailUrl || metadataDetailUrl) && (
-                                    <div
-                                        className={`${
-                                            options && options.length === 0
-                                                ? 'gn-card-view-editor-right'
-                                                : 'gn-card-view-editor'
-                                        }`}
-                                    >
-                                        <Button
-                                            variant="primary"
-                                            href={(resourceCanPreviewed || canView) ? detailUrl : metadataDetailUrl}
-                                            rel="noopener noreferrer"
-                                        >
-                                            <Message msgId={`gnhome.view`} />
-                                        </Button>
-                                    </div>
-                                )}
+                                {cardDate && <span className="gn-resource-card-date">{cardDate}</span>}
                             </div>
                         </div>
                     </div>
