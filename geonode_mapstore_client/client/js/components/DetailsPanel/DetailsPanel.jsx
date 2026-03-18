@@ -7,7 +7,6 @@
  */
 
 import React, { useRef, useState, useEffect } from 'react';
-import { Glyphicon } from 'react-bootstrap';
 import FaIcon from '@js/components/FaIcon';
 import Button from '@js/components/Button';
 import DetailsInfo from './DetailsInfo';
@@ -650,7 +649,7 @@ function DetailsPanel({
                             href={linkHref ? linkHref() : undefined}
                             onClick={closePanel}
                             className="square-button">
-                            <Glyphicon glyph="1-close" />
+                            <FaIcon name="times" />
                         </Button>
                     </div>
                 )}
@@ -703,7 +702,6 @@ function DetailsPanel({
                                     {resource?.srid ? <span className="gn-details-panel-pill is-muted">{resource.srid}</span> : null}
                                 </div>
                                 <div ref={titleNodeRef} className="gn-details-panel-title">
-                                    <span className="gn-details-panel-title-icon">{!downloading ? <FaIcon name={icon} /> : <Spinner />}</span>
                                     <EditTitle disabled={!activeEditMode} title={resource?.title} onEdit={editTitle} />
                                 </div>
                                 <div className="gn-details-panel-summary-owner">
@@ -720,27 +718,28 @@ function DetailsPanel({
                             </div>
 
                             <div className="gn-details-panel-summary-body">
-                                <div className="gn-details-panel-tools-wrap">
-                                    {tools}
-                                </div>
-                                <div className="gn-details-panel-meta-text">
-                                    {resource?.owner && <ResourceMessage type={resource?.resource_type} pathname={pathname} formatHref={formatHref} />}
-                                </div>
-                                <div className="gn-details-panel-summary-section">
-                                    <h3>DOI</h3>
-                                    <div className="gn-details-panel-summary-value">
-                                        {hasDoi
-                                            ? (
-                                                <a
-                                                    className="gn-details-panel-doi-link"
-                                                    href={doiInfo.url}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                >
-                                                    {doiValue}
-                                                </a>
-                                            )
-                                            : doiValue}
+                                <div className="gn-details-panel-summary-section gn-details-panel-summary-section-doi">
+                                    <div className="gn-details-panel-summary-section-head">
+                                        <div>
+                                            <h3>DOI</h3>
+                                            <div className="gn-details-panel-summary-value">
+                                                {hasDoi
+                                                    ? (
+                                                        <a
+                                                            className="gn-details-panel-doi-link"
+                                                            href={doiInfo.url}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                        >
+                                                            {doiValue}
+                                                        </a>
+                                                    )
+                                                    : doiValue}
+                                            </div>
+                                        </div>
+                                        <div className="gn-details-panel-tools-wrap">
+                                            {tools}
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="gn-details-panel-summary-section">
@@ -752,11 +751,11 @@ function DetailsPanel({
                                 <div className="gn-details-panel-summary-grid">
                                     <div className="gn-details-panel-summary-item">
                                         <span className="gn-details-panel-summary-label">Created</span>
-                                        <span className="gn-details-panel-summary-value">{createdDateValue}</span>
+                                        <span className="gn-details-panel-summary-value with-icon"><FaIcon name="calendar" />{createdDateValue}</span>
                                     </div>
                                     <div className="gn-details-panel-summary-item">
                                         <span className="gn-details-panel-summary-label">Last Update</span>
-                                        <span className="gn-details-panel-summary-value">{updatedDateValue}</span>
+                                        <span className="gn-details-panel-summary-value with-icon"><FaIcon name="refresh" />{updatedDateValue}</span>
                                     </div>
                                 </div>
                                 {regionTags.length > 0 && (
@@ -779,6 +778,14 @@ function DetailsPanel({
                                         </div>
                                     </div>
                                 )}
+                            </div>
+                            <div className="gn-details-panel-summary-footer">
+                                {stats.map(stat => (
+                                    <span key={stat.label} className="gn-details-panel-stat">
+                                        <FaIcon name={stat.icon} />
+                                        {stat.label}
+                                    </span>
+                                ))}
                             </div>
                         </aside>
                     </div>
