@@ -157,6 +157,11 @@ nav.hide-navigation#gn-topbar {
         align-items: center;
     }
 
+    // Dropdown labels already render a .caret span; disable BS5 pseudo-caret here.
+    .gn-menu-container .dropdown-toggle::after {
+        display: none;
+    }
+
     .gn-menu-content-left {
         display: flex;
         flex: 1;
