@@ -617,6 +617,10 @@
                                 {
                                     "type": "plugin",
                                     "name": "DublinCoreDownload"
+                                },
+                                {
+                                    "type": "plugin",
+                                    "name": "DataCiteDownload"
                                 }
                             ]
                         }
@@ -1670,6 +1674,9 @@
                 "name": "DublinCoreDownload"
             },
             {
+                "name": "DataCiteDownload"
+            },
+            {
                 "name": "LayerDownload",
                 "cfg": {
                     "disablePluginIf": "{!state('selectedLayerPermissions').includes('download_resourcebase')}",
@@ -2196,6 +2203,20 @@
                                     "type": "link",
                                     "href": "{context.getMetadataUrl(state('gnResourceData'))}",
                                     "labelId": "gnviewer.editMetadata"
+                                },
+                                {
+                                    "type": "divider",
+                                    "disableIf": "{state('resourceParams')?.appPk && (context.get(state('gnResourceData'), 'is_published') || context.get(state('gnResourceData'), 'is_approved'))}"
+                                },
+                                {
+                                    "type": "plugin",
+                                    "name": "ApproveDataCollection",
+                                    "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'change_resourcebase') && !state('isNewResource')  || context.get(state('gnResourceData'), 'is_approved')}"
+                                },
+                                {
+                                    "type": "plugin",
+                                    "name": "PublishDataCollection",
+                                    "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'change_resourcebase') && !state('isNewResource') || context.get(state('gnResourceData'), 'is_published')}"
                                 },
                                 {
                                     "type": "divider",
@@ -2840,6 +2861,20 @@
             {
                 "mandatory": true,
                 "name": "DatasetsCatalog"
+            },
+             {
+                "mandatory": true,
+                "name": "ApproveDataCollection",
+                "cfg": {
+                    "showText": true
+                }                
+            },
+            {
+                "mandatory": true,
+                "name": "PublishDataCollection",
+                "cfg": {
+                    "showText": true
+                }                
             },
             {
                 "name": "VisualStyleEditor",

@@ -19,6 +19,24 @@
             "VisualStyleEditor": {
                 "description": "Der Stileditor des Datensatzes",
                 "title": "Visueller Stil-Editor"
+            },
+            "ApproveDataCollection": {
+                "button": "Datensammlung genehmigen",
+                "cancel": "Abbrechen",
+                "buttonTooltip": "Datensammlung genehmigen",
+                "title": "Datensammlung genehmigen",
+                "description": "Um die Datensammlung zu publizieren, verifizieren ihre Richtigkeit und klicken Sie auf 'Genehmigen'. Ein Data Steward kann dann die Publikation vornehmen. \n\n Wollen Sie die Datensammlung '{title}' genehmigen?",
+                "approve": "Genehmigen"
+            },
+            "PublishDataCollection": {
+                "button": "Datensammlung publizieren",
+                "cancel": "Abbrechen",
+                "buttonTooltip": "Datensammlung publizieren",
+                "title": "Datensammlung publizieren",
+                "description": "Wählen Sie die zu publizierenden Datensätze für die Datensammlung {title}",
+                "selectDoiPrefix": "Wählen Sie einen DOI-Präfix",
+                "skipDoiPrefix": "Ohne DOI publizieren",
+                "publish": "Datenpublikation starten"
             }
         },
         "gnhome": {
@@ -332,6 +350,7 @@
             "embeddashboard": "Betten Sie dieses Dashboard ein",
             "directLink": "Direkte Verbindung",
             "iso": "ISO -Metadaten",
+            "dataCite": "DataCite Metadaten",
             "dublinCore": "Dublin Core Metadaten",
             "owner": "Eigentümer",
             "creation": "Erstellungsdatum",
