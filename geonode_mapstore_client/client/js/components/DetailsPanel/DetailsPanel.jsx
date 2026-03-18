@@ -10,7 +10,6 @@ import React, { useRef, useState, useEffect } from 'react';
 import FaIcon from '@js/components/FaIcon';
 import Button from '@js/components/Button';
 import DetailsInfo from './DetailsInfo';
-import Spinner from '@js/components/Spinner';
 import Message from '@mapstore/framework/components/I18N/Message';
 import tooltip from '@mapstore/framework/components/misc/enhancers/tooltip';
 import moment from 'moment';
@@ -29,25 +28,7 @@ const CopyToClipboard = tooltip(CopyToClipboardCmp);
 
 const getDateValue = (value) => value ? moment(value).format('MMM DD, YYYY') : null;
 const toArray = (value) => Array.isArray(value) ? value : value ? [value] : [];
-const getReadableSize = (value) => {
-    if (!value) {
-        return null;
-    }
-    if (typeof value === 'string') {
-        return value;
-    }
-    if (typeof value === 'number') {
-        const units = ['B', 'KB', 'MB', 'GB', 'TB'];
-        let size = value;
-        let unitIndex = 0;
-        while (size >= 1024 && unitIndex < units.length - 1) {
-            size /= 1024;
-            unitIndex += 1;
-        }
-        return `${size.toFixed(size >= 10 || unitIndex === 0 ? 0 : 1)} ${units[unitIndex]}`;
-    }
-    return null;
-};
+const getPreviewActionLabel = (resource) => resource?.subtype === 'tabular' ? 'View Table' : 'Open in MapStore';
 const getTagValue = (item) => {
     if (typeof item === 'string') {
         return item;
@@ -219,25 +200,6 @@ function formatResourceLinkUrl(resource) {
     return window.location.href;
 }
 
-const ResourceMessage = ({ type, pathname, formatHref }) => {
-    return (
-        <span className="gn-details-panel-origin">
-            <Message msgId="gnviewer.resourceOrigin.a" />{' '}
-            <a
-                href={formatHref({
-                    pathname,
-                    query: {
-                        'f': type
-                    }
-                })}
-            >
-                {type || 'resource'}
-            </a>
-            {' '}<Message msgId="gnviewer.resourceOrigin.from" />{' '}
-        </span>
-    );
-};
-
 
 const DetailsPanelTools = ({
     resource,
@@ -401,24 +363,6 @@ function DetailsPanel({
         .filter(Boolean)
         .filter((tag, index, array) => array.indexOf(tag) === index)
         .slice(0, 8);
-    const assetItems = [
-        ...toArray(resource?.download_urls).map((download, index) => ({
-            id: `download-${index}`,
-            label: download?.label || download?.name || download?.format || download?.mime || download?.type || 'Download',
-            size: getReadableSize(download?.size || download?.filesize),
-            href: download?.url,
-            icon: 'download'
-        })),
-        ...toArray(resource?.links)
-            .filter(link => link?.href || link?.url)
-            .map((link, index) => ({
-                id: `link-${index}`,
-                label: link?.extras?.content?.title || link?.title || link?.name || link?.link_type || link?.extension || 'Resource link',
-                size: getReadableSize(link?.filesize || link?.size),
-                href: link?.href || link?.url,
-                icon: 'file-o'
-            }))
-    ].filter(item => item?.href && item?.label).slice(0, 3);
     const stats = [
         { icon: 'eye', label: `${resource?.popular_count ?? 0} Views` },
         { icon: 'download', label: `${resource?.download_count ?? resource?.downloads_count ?? toArray(resource?.download_urls).length ?? 0} Downloads` }
@@ -478,7 +422,7 @@ function DetailsPanel({
                                         >
                                             <FaIcon name="external-link" />
                                             {' '}
-                                            Open in MapStore
+                                            {getPreviewActionLabel(resource)}
                                         </a>
                                     )}
                                     <DetailsThumbnail
