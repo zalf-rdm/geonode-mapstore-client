@@ -1,9 +1,11 @@
 import expect from 'expect';
 import {
+    detectCSVDelimiter,
     determineResourceType,
     getFileNameAndExtensionFromUrl,
     getFileNameParts,
-    getFilenameFromContentDispositionHeader
+    getFilenameFromContentDispositionHeader,
+    parseCSVToArray
 } from '@js/utils/FileUtils';
 
 describe('FileUtils', () => {
@@ -30,6 +32,14 @@ describe('FileUtils', () => {
     it('should return video if extension is a supported audio format', () => {
         const mediaType = determineResourceType('mp3');
         expect(mediaType).toEqual('video');
+    });
+    it('should return excel if extension is a supported spreadsheet format', () => {
+        let mediaType = determineResourceType('csv');
+        expect(mediaType).toEqual('excel');
+        mediaType = determineResourceType('xls');
+        expect(mediaType).toEqual('excel');
+        mediaType = determineResourceType('xlsx');
+        expect(mediaType).toEqual('excel');
     });
 
     it('should always return file extension in lowercase', () => {
@@ -71,6 +81,64 @@ describe('FileUtils', () => {
         expect(getFilenameFromContentDispositionHeader('attachment; filename="tileset.json"')).toBe('tileset.json');
         expect(getFilenameFromContentDispositionHeader('attachment; filename*="filename.jpg"')).toBe('filename.jpg');
         expect(getFilenameFromContentDispositionHeader('attachment')).toBe('');
+    });
+
+    describe('detectCSVDelimiter', () => {
+        it('should detect comma as delimiter', () => {
+            const input = 'a,b,c';
+            expect(detectCSVDelimiter(input)).toBe(',');
+        });
+
+        it('should detect semicolon as delimiter', () => {
+            const input = 'a;b;c';
+            expect(detectCSVDelimiter(input)).toBe(';');
+        });
+
+        it('should detect pipe as delimiter', () => {
+            const input = 'a|b|c';
+            expect(detectCSVDelimiter(input)).toBe('|');
+        });
+
+        it('should detect tab as delimiter', () => {
+            const input = 'a\tb\tc';
+            expect(detectCSVDelimiter(input)).toBe('\t');
+        });
+
+        it('should default to comma if no delimiter is found', () => {
+            const input = 'abc';
+            expect(detectCSVDelimiter(input)).toBe(',');
+        });
+    });
+
+    describe('parseCSVToArray', () => {
+        it('should parse CSV with comma delimiter', () => {
+            const input = 'a,b,c\n1,2,3';
+            const expectedOutput = [['a', 'b', 'c'], ['1', '2', '3']];
+            expect(parseCSVToArray(input)).toEqual(expectedOutput);
+        });
+
+        it('should parse CSV with semicolon delimiter', () => {
+            const input = 'a;b;c\n1;2;3';
+            const expectedOutput = [['a', 'b', 'c'], ['1', '2', '3']];
+            expect(parseCSVToArray(input)).toEqual(expectedOutput);
+        });
+
+        it('should parse CSV with pipe delimiter', () => {
+            const input = 'a|b|c\n1|2|3';
+            const expectedOutput = [['a', 'b', 'c'], ['1', '2', '3']];
+            expect(parseCSVToArray(input)).toEqual(expectedOutput);
+        });
+
+        it('should parse CSV with tab delimiter', () => {
+            const input = 'a\tb\tc\n1\t2\t3';
+            const expectedOutput = [['a', 'b', 'c'], ['1', '2', '3']];
+            expect(parseCSVToArray(input)).toEqual(expectedOutput);
+        });
+
+        it('should return empty array for empty input', () => {
+            const input = '';
+            expect(parseCSVToArray(input)).toEqual([]);
+        });
     });
 });
 

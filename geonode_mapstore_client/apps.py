@@ -13,7 +13,7 @@ import os
 from django.views.generic import TemplateView
 from django.utils.translation import gettext_lazy as _
 from django.apps import apps, AppConfig as BaseAppConfig
-
+from . import views
 
 def run_setup_hooks(*args, **kwargs):
     from geonode.urls import urlpatterns
@@ -77,14 +77,27 @@ def run_setup_hooks(*args, **kwargs):
         pass
 
     urlpatterns += [
+        re_path("/client/extensions", views.ExtensionsView.as_view(), name="mapstore-extension"),
+        re_path("/client/pluginsconfig", views.PluginsConfigView.as_view(), name="mapstore-pluginsconfig"),
+
         re_path(
             r"^catalogue/",
             TemplateView.as_view(
                 template_name="geonode-mapstore-client/catalogue.html"
             ),
         ),
+        re_path(r"^metadata/(?P<pk>[^/]*)$", views.metadata, name='metadata'),
+        re_path(r"^metadata/(?P<pk>[^/]*)/embed$", views.metadata_embed, name='metadata_embed'),
         # required, otherwise will raise no-lookup errors to be analysed
         re_path(r"^api/v2/", include(router.urls)),
+        
+        # pages
+        re_path(r"^all$", TemplateView.as_view(template_name="geonode-mapstore-client/pages/all.html")),
+        re_path(r"^datasets$", TemplateView.as_view(template_name="geonode-mapstore-client/pages/datasets.html")),
+        re_path(r"^dashboards$", TemplateView.as_view(template_name="geonode-mapstore-client/pages/dashboards.html")),
+        re_path(r"^maps$", TemplateView.as_view(template_name="geonode-mapstore-client/pages/maps.html")),
+        re_path(r"^documents$", TemplateView.as_view(template_name="geonode-mapstore-client/pages/documents.html")),
+        re_path(r"^geostories$", TemplateView.as_view(template_name="geonode-mapstore-client/pages/geostories.html")),
     ]
 
     # adding default format for metadata schema validation
@@ -118,7 +131,9 @@ def run_setup_hooks(*args, **kwargs):
             "subtype",
             "title",
             "executions",
-            "thumbnail_url"
+            "thumbnail_url",
+            "created",
+            "favorite"
         ],
     }
     settings.REST_API_PRESETS["dataset_list"] = {
@@ -223,8 +238,15 @@ def run_setup_hooks(*args, **kwargs):
             "temporal_extent_start",
             "thumbnail_url",
             "title",
-            "uuid"
+            "uuid",
+            "metadata_uploaded_preserve",
+            "featured"
         ],
+    }
+    settings.REST_API_PRESETS["map_details"] = {
+        "include[]": [
+            "maplayers"
+        ]
     }
     settings.REST_API_PRESETS["map_viewer"] = {
         "include[]": [
@@ -246,7 +268,8 @@ def run_setup_hooks(*args, **kwargs):
             "ptype",
             "store",
             "has_time",
-            "attribute_set"
+            "attribute_set",
+            "data"
         ]
     }
     settings.PROXY_ALLOWED_PARAMS_NEEDLES += (

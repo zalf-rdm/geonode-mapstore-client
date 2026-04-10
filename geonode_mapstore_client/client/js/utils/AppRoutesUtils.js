@@ -11,8 +11,6 @@ import { ResourceTypes } from '@js/utils/ResourceUtils';
 export const appRouteComponentTypes = {
     VIEWER: 'ViewerRoute',
     CATALOGUE: 'CatalogueRoute',
-    DATASET_UPLOAD: 'UploadDatasetRoute',
-    DOCUMENT_UPLOAD: 'UploadDocumentRoute',
     COMPONENTS: 'ComponentsRoute',
     MAP_VIEWER: 'MapViewerRoute'
 };
@@ -32,8 +30,7 @@ export const MAP_ROUTES = [
         pageConfig: {
             resourceType: ResourceTypes.MAP
         },
-        component: appRouteComponentTypes.MAP_VIEWER,
-        shouldNotRequestResources: true
+        component: appRouteComponentTypes.MAP_VIEWER
     }
 ];
 
@@ -73,8 +70,7 @@ export const DASHBOARD_ROUTES = [{
     pageConfig: {
         resourceType: ResourceTypes.DASHBOARD
     },
-    component: appRouteComponentTypes.VIEWER,
-    shouldNotRequestResources: true
+    component: appRouteComponentTypes.VIEWER
 }];
 
 export const DOCUMENT_ROUTES = [{
@@ -85,8 +81,7 @@ export const DOCUMENT_ROUTES = [{
     pageConfig: {
         resourceType: ResourceTypes.DOCUMENT
     },
-    component: appRouteComponentTypes.VIEWER,
-    shouldNotRequestResources: true
+    component: appRouteComponentTypes.VIEWER
 }];
 
 export const GEOSTORY_ROUTES = [{
@@ -95,11 +90,15 @@ export const GEOSTORY_ROUTES = [{
     pageConfig: {
         resourceType: ResourceTypes.GEOSTORY
     },
-    component: appRouteComponentTypes.VIEWER,
-    shouldNotRequestResources: true
+    component: appRouteComponentTypes.VIEWER
 }];
 
 export const CATALOGUE_ROUTES = [
+    {
+        name: 'metadata',
+        path: ['/metadata/:pk'],
+        component: appRouteComponentTypes.VIEWER
+    },
     {
         name: 'dataset_viewer',
         path: [
@@ -108,8 +107,7 @@ export const CATALOGUE_ROUTES = [
         pageConfig: {
             resourceType: ResourceTypes.DATASET
         },
-        component: appRouteComponentTypes.VIEWER,
-        shouldNotRequestResources: true
+        component: appRouteComponentTypes.VIEWER
     },
     {
         name: 'dataset_viewer',
@@ -119,8 +117,7 @@ export const CATALOGUE_ROUTES = [
         pageConfig: {
             resourceType: ResourceTypes.DATASET
         },
-        component: appRouteComponentTypes.VIEWER,
-        shouldNotRequestResources: true
+        component: appRouteComponentTypes.VIEWER
     },
     {
         // tabular view needs an extra route
@@ -154,19 +151,17 @@ export const CATALOGUE_ROUTES = [
         pageConfig: {
             resourceType: ResourceTypes.DATASET
         },
-        component: appRouteComponentTypes.VIEWER,
-        shouldNotRequestResources: true
+        component: appRouteComponentTypes.VIEWER
     },
     {
-        name: 'dataset_edit_style_viewer',
+        name: 'dataset_edit_layer_settings',
         path: [
-            '/dataset/:pk/edit/style'
+            '/dataset/:pk/edit/settings'
         ],
         pageConfig: {
             resourceType: ResourceTypes.DATASET
         },
-        component: appRouteComponentTypes.VIEWER,
-        shouldNotRequestResources: true
+        component: appRouteComponentTypes.VIEWER
     },
     {
         name: 'map_viewer',
@@ -176,8 +171,7 @@ export const CATALOGUE_ROUTES = [
         pageConfig: {
             resourceType: ResourceTypes.MAP
         },
-        component: appRouteComponentTypes.MAP_VIEWER,
-        shouldNotRequestResources: true
+        component: appRouteComponentTypes.MAP_VIEWER
     },
     {
         name: 'geostory_viewer',
@@ -187,8 +181,7 @@ export const CATALOGUE_ROUTES = [
         pageConfig: {
             resourceType: ResourceTypes.GEOSTORY
         },
-        component: appRouteComponentTypes.VIEWER,
-        shouldNotRequestResources: true
+        component: appRouteComponentTypes.VIEWER
     },
     {
         name: 'document_viewer',
@@ -198,8 +191,7 @@ export const CATALOGUE_ROUTES = [
         pageConfig: {
             resourceType: ResourceTypes.DOCUMENT
         },
-        component: appRouteComponentTypes.VIEWER,
-        shouldNotRequestResources: true
+        component: appRouteComponentTypes.VIEWER
     },
     {
         name: 'dashboard_viewer',
@@ -209,8 +201,7 @@ export const CATALOGUE_ROUTES = [
         pageConfig: {
             resourceType: ResourceTypes.DASHBOARD
         },
-        component: appRouteComponentTypes.VIEWER,
-        shouldNotRequestResources: true
+        component: appRouteComponentTypes.VIEWER
     },
     {
         name: 'viewer',
@@ -220,8 +211,7 @@ export const CATALOGUE_ROUTES = [
         pageConfig: {
             resourceType: ResourceTypes.VIEWER
         },
-        component: appRouteComponentTypes.VIEWER,
-        shouldNotRequestResources: true
+        component: appRouteComponentTypes.VIEWER
     },
     {
         name: 'viewer',
@@ -231,35 +221,34 @@ export const CATALOGUE_ROUTES = [
         pageConfig: {
             resourceType: ResourceTypes.VIEWER
         },
-        component: appRouteComponentTypes.VIEWER,
-        shouldNotRequestResources: true
+        component: appRouteComponentTypes.VIEWER
     },
     {
         name: 'catalogue',
         path: [
-            '/',
-            '/search/',
-            '/search/filter',
-            '/detail/:pk',
-            '/detail/:ctype/:pk',
-            '/:page'
+            '/'
         ],
         component: appRouteComponentTypes.CATALOGUE
     },
     {
         name: 'upload_dataset',
         path: ['/upload/dataset'],
-        component: appRouteComponentTypes.DATASET_UPLOAD,
-        shouldNotRequestResources: true,
+        component: appRouteComponentTypes.COMPONENTS,
         protectedRoute: true,
         hash: "#/upload/dataset"
     },
     {
         name: 'upload_document',
         path: ['/upload/document'],
-        component: appRouteComponentTypes.DOCUMENT_UPLOAD,
-        shouldNotRequestResources: true,
+        component: appRouteComponentTypes.COMPONENTS,
         protectedRoute: true,
         hash: "#/upload/document"
+    },
+    {
+        name: 'create_dataset',
+        path: ['/create/dataset'],
+        component: appRouteComponentTypes.COMPONENTS,
+        protectedRoute: true,
+        hash: "#/create/dataset"
     }
 ];

@@ -11,9 +11,10 @@ import { createPlugin } from '@mapstore/framework/utils/PluginsUtils';
 import { connect } from 'react-redux';
 import { replace } from 'connected-react-router';
 import { createSelector } from 'reselect';
+import { Glyphicon } from 'react-bootstrap';
+
 import Message from '@mapstore/framework/components/I18N/Message';
-import Button from '@js/components/Button';
-import FaIcon from '@js/components/FaIcon';
+import Button from '@mapstore/framework/components/layout/Button';
 import { getGeoApps } from '@js/api/geonode/v2';
 import { getDefaultPluginsConfig } from '@js/api/geonode/config';
 import { setControlProperty } from '@mapstore/framework/actions/controls';
@@ -26,6 +27,7 @@ import { setResource as setContextCreatorResource } from '@mapstore/framework/ac
 import { manageLinkedResource, setDefaultViewerPlugins } from '@js/actions/gnresource';
 import { ResourceTypes } from '@js/utils/ResourceUtils';
 import { ProcessTypes } from '@js/utils/ResourceServiceUtils';
+import Text from '@mapstore/framework/components/layout/Text';
 
 function MapViewersCatalogPlugin({
     enabled,
@@ -112,7 +114,9 @@ function MapViewersCatalogPlugin({
                     <div className="gn-new-map-viewer-action-wrapper">
                         <div  className="gn-new-map-viewer-action-card">
                             <div>
-                                <FaIcon name="link" className="fa-4x"/>
+                                <Text fontSize="xxl" >
+                                    <Glyphicon glyph="link"/>
+                                </Text>
                             </div>
                             <Button variant="primary" onClick={() => {
                                 setNewViewerModal('link');
@@ -123,7 +127,9 @@ function MapViewersCatalogPlugin({
                         </div>
                         <div className="gn-new-map-viewer-action-card">
                             <div >
-                                <FaIcon name="cogs" className="fa-4x"/>
+                                <Text fontSize="xxl" >
+                                    <Glyphicon glyph="context"/>
+                                </Text>
                             </div>
                             <Button variant="primary" onClick={() => setNewViewerModal('')}>
                                 <Message msgId="gnviewer.createNewViewer" />

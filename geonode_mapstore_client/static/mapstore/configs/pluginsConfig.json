@@ -43,6 +43,11 @@
       "hidden": true
     },
     {
+      "name": "SecurityPopup",
+      "mandatory": true,
+      "hidden": true
+    },
+    {
       "name": "TOC",
       "glyph": "1-layer",
       "symbol": "layers",
@@ -63,14 +68,13 @@
         "FilterLayer",
         "AddGroup",
         "Swipe",
-        "VisualStyleEditor",
         "StyleEditor"
       ],
       "autoEnableChildren": [
         "FeatureEditor",
         "FilterLayer",
         "AddGroup",
-        "VisualStyleEditor"
+        "StyleEditor"
       ],
       "dependencies": [
         "DrawerMenu",
@@ -81,36 +85,9 @@
       "name": "StyleEditor",
       "glyph": "1-stilo",
       "title": "plugins.StyleEditor.title",
-      "description": "plugins.StyleEditor.description"
-    },
-    {
-      "name": "VisualStyleEditor",
-      "glyph": "1-stilo",
-      "title": "plugins.VisualStyleEditor.title",
-      "description": "plugins.VisualStyleEditor.description",
+      "description": "plugins.StyleEditor.description",
       "defaultConfig": {
-        "showLayerProperties": true,
-        "styleService": {
-            "baseUrl": "{state('settings') && state('settings').geonodeUrl && state('settings').geonodeUrl + 'gs/' || '/gs/'}",
-            "formats": [
-                "css",
-                "sld"
-            ],
-            "availableUrls": [
-                "{state('settings') && state('settings').geoserverUrl || '/geoserver/'}",
-                "{state('settings') && state('settings').geonodeUrl && state('settings').geonodeUrl + 'gs/' || '/gs/'}"
-            ],
-            "fonts": [
-                "Arial",
-                "Courier New",
-                "Monospaced",
-                "SansSerif",
-                "Serif",
-                "Times New Roman"
-            ]
-        },
-        "editingAllowedRoles": null,
-        "enableSetDefaultStyle": true
+        "enableEditDefaultStyle": false
       }
     },
     {
@@ -132,7 +109,10 @@
     {
       "name": "MapFooter",
       "mandatory": true,
-      "hidden": true
+      "hidden": true,
+      "defaultConfig": {
+        "containerPosition": "footer"
+      }
     },
     {
       "name": "Widgets",
@@ -185,7 +165,7 @@
       "defaultConfig": {
         "showHighlightFeatureButton": true,
         "viewerOptions": {
-          "container": "{context.ReactSwipe}"
+          "container": "{ReactSwipe}"
         }
       },
       "children": [
@@ -286,7 +266,6 @@
       ],
       "autoEnableChildren": [
         "PrintScale",
-        "PrintGraticule",
         "PrintAuthor",
         "PrintCopyright"
       ]
@@ -537,6 +516,13 @@
       ]
     },
     {
+      "name": "LongitudinalProfileTool",
+      "glyph": "1-line",
+      "title": "plugins.LongitudinalProfileTool.title",
+      "description": "plugins.LongitudinalProfileTool.description",
+      "dependencies": ["SidebarMenu"]
+    },
+    {
       "name": "GeoProcessing",
       "glyph": "globe-settings",
       "title": "plugins.GeoProcessing.title",
@@ -614,6 +600,20 @@
           "history": false
         }
       }
+    },
+    {
+      "name": "Itinerary",
+      "glyph": "route",
+      "title": "plugins.Itinerary.title",
+      "description": "plugins.Itinerary.description",
+      "dependencies": ["SidebarMenu"]
+    },
+    {
+      "name": "Isochrone",
+      "glyph": "1-point-dashed",
+      "title": "plugins.Isochrone.title",
+      "description": "plugins.Isochrone.description",
+      "dependencies": ["SidebarMenu"]
     }
   ]
 }

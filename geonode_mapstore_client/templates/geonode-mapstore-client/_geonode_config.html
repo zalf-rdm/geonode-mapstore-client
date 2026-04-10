@@ -69,11 +69,12 @@
         let extensionsFolder = geoNodeSettings.EXTENSIONS_FOLDER_PATH;
         let supportedDatasetFileTypes = geoNodeSettings.SUPPORTED_DATASET_FILE_TYPES;
         let catalogHomeRedirectsTo = geoNodeSettings.CATALOG_HOME_REDIRECTS_TO;
-        let defaultCatalogPage = geoNodeSettings.DEFAULT_CATALOG_PAGE || "all";
         let catalogPagePath = geoNodeSettings.CATALOG_PAGE_PATH;
+        let isPublishedOptionEnabled = geoNodeSettings.RESOURCE_PUBLISHING || false;
+        let isApprovedOptionEnabled = geoNodeSettings.ADMIN_MODERATE_UPLOADS || false;
         let customFilters = geoNodeSettings.CUSTOM_FILTERS || {
             "my-resources": {
-                "filter{owner.pk}": "{state('user') && state('user').pk}"
+                "filter{owner.pk}": "{get(state('user'), 'pk')}"
             },
             "favorite": {
                 "favorite": true
@@ -178,7 +179,6 @@
                 ],
                 extensionsFolder: extensionsFolder,
                 printUrl: geoServerPublicLocation + 'pdf/info.json',
-                bingApiKey: '{% bing_api_key %}',
                 mapboxAccessToken: '{{ MAPBOX_ACCESS_TOKEN }}',
                 geoNodeApi: {
                     endpointV1: siteUrl + 'api',
@@ -212,8 +212,9 @@
                     },
                     staticPath: "{% static '' %}",
                     catalogHomeRedirectsTo: catalogHomeRedirectsTo,
-                    defaultCatalogPage: defaultCatalogPage,
-                    catalogPagePath: catalogPagePath
+                    catalogPagePath: catalogPagePath,
+                    isPublishedOptionEnabled: isPublishedOptionEnabled,
+                    isApprovedOptionEnabled: isApprovedOptionEnabled
                 }
             },
         };

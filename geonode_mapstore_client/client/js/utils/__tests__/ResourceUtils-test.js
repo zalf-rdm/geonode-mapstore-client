@@ -21,19 +21,24 @@ import {
     toMapStoreMapConfig,
     parseStyleName,
     canCopyResource,
-    excludeDeletedResources,
     processUploadResponse,
     parseUploadResponse,
     cleanUrl,
-    parseUploadFiles,
     getResourceTypesInfo,
     ResourceTypes,
     FEATURE_INFO_FORMAT,
     isDocumentExternalSource,
+    hasDefaultDownload,
     getDownloadUrlInfo,
     getCataloguePath,
     getResourceWithLinkedResources,
-    getResourceAdditionalProperties
+    getResourceAdditionalProperties,
+    getDimensions,
+    canManageResourcePublishing,
+    canManageResourceOptions,
+    canManageResourceSettings,
+    canAccessPermissions,
+    formatResourceLinkUrl
 } from '../ResourceUtils';
 
 describe('Test Resource Utils', () => {
@@ -52,6 +57,23 @@ describe('Test Resource Utils', () => {
             pk: 1
         });
         expect(newLayer.params).toEqual({ map: 'name', map_resolution: '91' });
+    });
+    it('test resourceToLayerConfig with layer settings of the dataset', () => {
+        const newLayer = resourceToLayerConfig({
+            alternate: 'geonode:layer_name',
+            links: [{
+                extension: 'html',
+                link_type: 'OGC:WMS',
+                name: 'OGC WMS Service',
+                mime: 'text/html',
+                url: 'http://localhost:8080/geoserver/wms?map=name&map_resolution=91'
+            }],
+            title: 'Layer title',
+            perms: [],
+            pk: 1,
+            data: {opacity: 0.8}
+        });
+        expect(newLayer.opacity).toBe(0.8);
     });
 
     it('should parse arcgis dataset', () => {
@@ -92,7 +114,8 @@ describe('Test Resource Utils', () => {
                 }
             }
         }];
-        const permissionOptions = getResourcePermissions(data[0].allowed_perms.compact);
+        const groups = [];
+        const permissionOptions = getResourcePermissions(data[0].allowed_perms.compact, groups);
         expect(permissionOptions).toEqual({
             test1: [
                 { value: 'none', labelId: `gnviewer.nonePermission`, label: 'None' },
@@ -135,8 +158,7 @@ describe('Test Resource Utils', () => {
         expect(mapLayers[0]).toEqual({
             pk: 10,
             extra_params: {
-                msId: '03',
-                styles: [{ name: 'custom:style', title: 'My Style', format: 'css' }]
+                msId: '03'
             },
             current_style: 'geonode:style',
             name: 'geonode:layer',
@@ -247,16 +269,14 @@ describe('Test Resource Utils', () => {
                                         pk: 1
                                     }
                                 }
-                            },
-                            availableStyles: [],
-                            featureInfo: { template: '', format: undefined }
+                            }
                         }
                     ]
                 }
             }
         );
     });
-    it('should transform a resource to a mapstore map config', () => {
+    it('should transform a resource to a mapstore map config, with featureInfo', () => {
         const resource = {
             maplayers: [
                 {
@@ -287,6 +307,7 @@ describe('Test Resource Utils', () => {
                                 }
                             },
                             featureInfo: {
+                                template: "<div>test</div>",
                                 format: FEATURE_INFO_FORMAT
                             }
                         }
@@ -327,8 +348,7 @@ describe('Test Resource Utils', () => {
                                     }
                                 }
                             },
-                            availableStyles: [],
-                            featureInfo: { template: '', format: FEATURE_INFO_FORMAT }
+                            featureInfo: { template: "<div>test</div>", format: FEATURE_INFO_FORMAT }
                         }
                     ]
                 }
@@ -416,9 +436,7 @@ describe('Test Resource Utils', () => {
                                         pk: 1
                                     }
                                 }
-                            },
-                            availableStyles: [],
-                            featureInfo: { template: '', format: undefined }
+                            }
                         }
                     ]
                 }
@@ -427,7 +445,7 @@ describe('Test Resource Utils', () => {
     });
 
     it('transform a resource to a mapstore map config with featureinfo template', () => {
-        const template = '<div>Test</div>';
+        const template = '<div>LAYER<div/>';
         const resource = {
             maplayers: [
                 {
@@ -438,7 +456,7 @@ describe('Test Resource Utils', () => {
                     },
                     dataset: {
                         pk: 1,
-                        featureinfo_custom_template: template
+                        featureinfo_custom_template: '<div>Test</div>'
                     }
                 }
             ],
@@ -457,7 +475,8 @@ describe('Test Resource Utils', () => {
                                 }
                             },
                             featureInfo: {
-                                template: ""
+                                template,
+                                format: FEATURE_INFO_FORMAT
                             }
                         }
                     ]
@@ -502,13 +521,6 @@ describe('Test Resource Utils', () => {
         expect(canCopyResource({ resource_type: 'map', perms: [] }, user)).toBe(false);
         expect(canCopyResource({ resource_type: 'geostory', perms: [] }, user)).toBe(false);
         expect(canCopyResource({ resource_type: 'dashboard', perms: [] }, user)).toBe(false);
-    });
-
-    it('should test excludeDeletedResources', () => {
-        const resources = [{ name: 'test-1', processes: [{ processType: 'deleteResource', output: { status: 'finished' } }] },
-            { name: 'test-2' }];
-
-        expect(excludeDeletedResources(resources)).toEqual([{ name: 'test-2' }]);
     });
 
     it('should test processUploadResponse', () => {
@@ -673,217 +685,6 @@ describe('Test Resource Utils', () => {
         expect(url).toEqual('https://test.com/dataset/808');
     });
 
-    it('should parse upload files', () => {
-        const data = {
-            uploadFiles: {
-                TestFile: {
-                    type: 'shp',
-                    files: {
-                        dbf: { name: "TestFile.dbf" },
-                        prj: { name: "TestFile.prj" },
-                        shp: { name: "TestFile.shp" },
-                        shx: { name: "TestFile.shx" },
-                        sld: { name: "TestFile.sld" },
-                        xml: { name: "TestFile.xml" }
-                    }
-                }
-            },
-            supportedDatasetTypes: [
-                {
-                    id: 'shp',
-                    label: 'ESRI Shapefile',
-                    format: 'vector',
-                    ext: ['shp'],
-                    requires: ['shp', 'prj', 'dbf', 'shx'],
-                    optional: ['xml', 'sld']
-                },
-                {
-                    id: 'tiff',
-                    label: 'GeoTIFF',
-                    format: 'raster',
-                    ext: ['tiff', 'tif'],
-                    mimeType: ['image/tiff'],
-                    optional: ['xml', 'sld']
-                },
-                {
-                    id: 'csv',
-                    label: 'Comma Separated Value (CSV)',
-                    format: 'vector',
-                    ext: ['csv'],
-                    mimeType: ['text/csv'],
-                    optional: ['xml', 'sld']
-                },
-                {
-                    id: 'zip',
-                    label: 'Zip Archive',
-                    format: 'archive',
-                    ext: ['zip'],
-                    mimeType: ['application/zip'],
-                    optional: ['xml', 'sld']
-                },
-                {
-                    id: 'xml',
-                    label: 'XML Metadata File',
-                    format: 'metadata',
-                    ext: ['xml'],
-                    mimeType: ['application/json'],
-                    needsFiles: [
-                        'shp',
-                        'prj',
-                        'dbf',
-                        'shx',
-                        'csv',
-                        'tiff',
-                        'zip',
-                        'sld'
-                    ]
-                },
-                {
-                    id: 'sld',
-                    label: 'Styled Layer Descriptor (SLD)',
-                    format: 'metadata',
-                    ext: ['sld'],
-                    mimeType: ['application/json'],
-                    needsFiles: [
-                        'shp',
-                        'prj',
-                        'dbf',
-                        'shx',
-                        'csv',
-                        'tiff',
-                        'zip',
-                        'xml'
-                    ]
-                }
-            ],
-            supportedOptionalExtensions: [
-                'xml',
-                'sld',
-                'xml',
-                'sld',
-                'xml',
-                'sld',
-                'xml',
-                'sld'
-            ],
-            supportedRequiresExtensions: ['shp', 'prj', 'dbf', 'shx']
-        };
-
-        expect(parseUploadFiles(data)).toEqual({
-            TestFile: {
-                type: "shp",
-                files: {
-                    dbf: { name: "TestFile.dbf" },
-                    prj: { name: "TestFile.prj" },
-                    shp: { name: "TestFile.shp" },
-                    shx: { name: "TestFile.shx" },
-                    sld: { name: "TestFile.sld" },
-                    xml: { name: "TestFile.xml" }
-                },
-                mainExt: "shp",
-                missingExt: [],
-                addMissingFiles: false
-            }
-        });
-    });
-
-    it('request for missing files', () => {
-        const data = {
-            uploadFiles: {
-                TestFile: {
-                    type: 'xml',
-                    files: {
-                        sld: { name: "TestFile.sld" },
-                        xml: { name: "TestFile.xml" }
-                    }
-                }
-            },
-            supportedDatasetTypes: [
-                {
-                    id: 'shp',
-                    label: 'ESRI Shapefile',
-                    format: 'vector',
-                    ext: ['shp'],
-                    requires: ['shp', 'prj', 'dbf', 'shx'],
-                    optional: ['xml', 'sld']
-                },
-                {
-                    id: 'tiff',
-                    label: 'GeoTIFF',
-                    format: 'raster',
-                    ext: ['tiff', 'tif'],
-                    mimeType: ['image/tiff'],
-                    optional: ['xml', 'sld']
-                },
-                {
-                    id: 'csv',
-                    label: 'Comma Separated Value (CSV)',
-                    format: 'vector',
-                    ext: ['csv'],
-                    mimeType: ['text/csv'],
-                    optional: ['xml', 'sld']
-                },
-                {
-                    id: 'zip',
-                    label: 'Zip Archive',
-                    format: 'archive',
-                    ext: ['zip'],
-                    mimeType: ['application/zip'],
-                    optional: ['xml', 'sld']
-                },
-                {
-                    id: 'xml',
-                    label: 'XML Metadata File',
-                    format: 'metadata',
-                    ext: ['xml'],
-                    mimeType: ['application/json'],
-                    needsFiles: [
-                        'shp',
-                        'prj',
-                        'dbf',
-                        'shx',
-                        'csv',
-                        'tiff',
-                        'zip',
-                        'sld'
-                    ]
-                },
-                {
-                    id: 'sld',
-                    label: 'Styled Layer Descriptor (SLD)',
-                    format: 'metadata',
-                    ext: ['sld'],
-                    mimeType: ['application/json'],
-                    needsFiles: [
-                        'shp',
-                        'prj',
-                        'dbf',
-                        'shx',
-                        'csv',
-                        'tiff',
-                        'zip',
-                        'xml'
-                    ]
-                }
-            ],
-            supportedOptionalExtensions: [
-                'xml',
-                'sld',
-                'xml',
-                'sld',
-                'xml',
-                'sld',
-                'xml',
-                'sld'
-            ],
-            supportedRequiresExtensions: ['shp', 'prj', 'dbf', 'shx']
-        };
-
-        const parsedFiles = parseUploadFiles(data);
-        const baseName = 'TestFile';
-
-        expect(parsedFiles[baseName].addMissingFiles).toEqual(true);
-    });
     describe('Test getResourceTypesInfo', () => {
         it('test dataset of getResourceTypesInfo', () => {
             const {
@@ -895,18 +696,14 @@ describe('Test Resource Utils', () => {
             let resource = {
                 perms: ['view_resourcebase'],
                 store: "workspace",
-                alternate: 'name:test'
+                alternate: 'name:test',
+                pk: "100"
             };
-            expect(icon).toBe('database');
+            expect(icon.glyph).toBe('dataset');
             expect(canPreviewed(resource)).toBeTruthy();
             expect(name).toBe('Dataset');
 
-            // Test with store
-            expect(formatMetadataUrl(resource)).toBe('/datasets/workspace:name:test/metadata');
-
-            // Test with no store
-            resource = {...resource, store: undefined};
-            expect(formatMetadataUrl(resource)).toBe('/datasets/name:test/metadata');
+            expect(formatMetadataUrl(resource)).toBe('#/metadata/100');
 
         });
         it('test map of getResourceTypesInfo', () => {
@@ -920,10 +717,10 @@ describe('Test Resource Utils', () => {
                 perms: ['view_resourcebase'],
                 pk: "100"
             };
-            expect(icon).toBe('map');
+            expect(icon.glyph).toBe('1-map');
             expect(canPreviewed(resource)).toBeTruthy();
             expect(name).toBe('Map');
-            expect(formatMetadataUrl(resource)).toBe('/maps/100/metadata');
+            expect(formatMetadataUrl(resource)).toBe('#/metadata/100');
         });
         it('test document of getResourceTypesInfo', () => {
             const {
@@ -939,12 +736,12 @@ describe('Test Resource Utils', () => {
                 pk: "100",
                 extension: "pdf"
             };
-            expect(icon).toBe('file');
+            expect(icon.glyph).toBe('document');
             expect(canPreviewed(resource)).toBeTruthy();
             expect(hasPermission(resource)).toBeTruthy();
             expect(name).toBe('Document');
-            expect(formatMetadataUrl(resource)).toBe('/documents/100/metadata');
-            expect(metadataPreviewUrl(resource)).toBe('/documents/100/metadata_detail?preview');
+            expect(formatMetadataUrl(resource)).toBe('#/metadata/100');
+            expect(metadataPreviewUrl(resource)).toBe('/metadata/100/embed');
         });
         it('test geostory of getResourceTypesInfo', () => {
             const {
@@ -957,10 +754,10 @@ describe('Test Resource Utils', () => {
                 perms: ['view_resourcebase'],
                 pk: "100"
             };
-            expect(icon).toBe('book');
+            expect(icon.glyph).toBe('geostory');
             expect(canPreviewed(resource)).toBeTruthy();
             expect(name).toBe('GeoStory');
-            expect(formatMetadataUrl(resource)).toBe('/apps/100/metadata');
+            expect(formatMetadataUrl(resource)).toBe('#/metadata/100');
         });
         it('test dashboard of getResourceTypesInfo', () => {
             const {
@@ -973,10 +770,10 @@ describe('Test Resource Utils', () => {
                 perms: ['view_resourcebase'],
                 pk: "100"
             };
-            expect(icon).toBe('dashboard');
+            expect(icon.glyph).toBe('dashboard');
             expect(canPreviewed(resource)).toBeTruthy();
             expect(name).toBe('Dashboard');
-            expect(formatMetadataUrl(resource)).toBe('/apps/100/metadata');
+            expect(formatMetadataUrl(resource)).toBe('#/metadata/100');
         });
     });
     it('test isDocumentExternalSource', () => {
@@ -991,31 +788,77 @@ describe('Test Resource Utils', () => {
         resource = {...resource, resource_type: "dataset"};
         expect(isDocumentExternalSource(resource)).toBeFalsy();
     });
+    it('test hasDefaultDownload', () => {
+        expect(hasDefaultDownload(null)).toBeFalsy();
+        expect(hasDefaultDownload(undefined)).toBeFalsy();
+        expect(hasDefaultDownload({})).toBeFalsy();
+        expect(hasDefaultDownload({ download_urls: null })).toBeFalsy();
+        expect(hasDefaultDownload({ download_urls: [] })).toBeFalsy();
+        expect(hasDefaultDownload({ download_urls: [{ url: '/a', "default": false }] })).toBeFalsy();
+        expect(hasDefaultDownload({ download_urls: [{ url: '/a' }] })).toBeFalsy();
+        expect(hasDefaultDownload({ download_urls: [{ url: '/a', "default": true }] })).toBeTruthy();
+        expect(hasDefaultDownload({ download_urls: [{ url: '/a' }, { url: '/b', "default": true }] })).toBeTruthy();
+    });
     it('test getDownloadUrlInfo', () => {
-        const downloadData = {url: "/someurl", ajax_safe: true };
+        const downloadData = { url: "/someurl", ajax_safe: true };
 
-        // EXTERNAL SOURCE
+        // EXTERNAL SOURCE (document, remote) → href
         let resource = { download_urls: [downloadData], href: "/somehref", resource_type: "document", sourcetype: "REMOTE"};
         let downloadInfo = getDownloadUrlInfo(resource);
         expect(downloadInfo.url).toBe("/somehref");
         expect(downloadInfo.ajaxSafe).toBeFalsy();
 
-        // AJAX SAFE
-        resource = { download_urls: [downloadData]};
+        // Non-dataset, single download_url → use that entry (length === 1 fallback)
+        resource = { download_urls: [downloadData] };
         downloadInfo = getDownloadUrlInfo(resource);
         expect(downloadInfo.url).toBe(downloadData.url);
         expect(downloadInfo.ajaxSafe).toBeTruthy();
 
-        // HREF
-        resource = {href: "/someurl"};
+        // HREF fallback (no download_urls)
+        resource = { href: "/someurl" };
         downloadInfo = getDownloadUrlInfo(resource);
         expect(downloadInfo.url).toBe(resource.href);
         expect(downloadInfo.ajaxSafe).toBeFalsy();
 
-        // NOT AJAX SAFE
-        resource = {download_urls: [{...downloadData, ajax_safe: false}]};
+        // Non-dataset, single entry, not ajax safe
+        resource = { download_urls: [{ ...downloadData, ajax_safe: false }] };
         downloadInfo = getDownloadUrlInfo(resource);
         expect(downloadInfo.url).toBe(downloadData.url);
+        expect(downloadInfo.ajaxSafe).toBeFalsy();
+
+        // Dataset with default download → url and ajaxSafe from default entry
+        resource = { resource_type: ResourceTypes.DATASET, download_urls: [{ ...downloadData, "default": true }] };
+        downloadInfo = getDownloadUrlInfo(resource);
+        expect(downloadInfo.url).toBe(downloadData.url);
+        expect(downloadInfo.ajaxSafe).toBeTruthy();
+
+        // Dataset with download_urls but no default → url null, ajaxSafe false
+        resource = { resource_type: ResourceTypes.DATASET, download_urls: [{ url: '/asset', "default": false }] };
+        downloadInfo = getDownloadUrlInfo(resource);
+        expect(downloadInfo.url).toBeFalsy();
+        expect(downloadInfo.ajaxSafe).toBeFalsy();
+
+        // Dataset with multiple entries, one default → use default
+        resource = {
+            resource_type: ResourceTypes.DATASET,
+            download_urls: [
+                { url: '/asset1', "default": false },
+                { url: '/dataset', "default": true, ajax_safe: true }
+            ]
+        };
+        downloadInfo = getDownloadUrlInfo(resource);
+        expect(downloadInfo.url).toBe('/dataset');
+        expect(downloadInfo.ajaxSafe).toBeTruthy();
+
+        // Non-dataset with multiple entries, one default → use default
+        resource = {
+            download_urls: [
+                { url: '/other', "default": false },
+                { url: '/default', "default": true, ajax_safe: false }
+            ]
+        };
+        downloadInfo = getDownloadUrlInfo(resource);
+        expect(downloadInfo.url).toBe('/default');
         expect(downloadInfo.ajaxSafe).toBeFalsy();
     });
     it('test getCataloguePath', () => {
@@ -1050,10 +893,10 @@ describe('Test Resource Utils', () => {
             .toEqual({linkedResources: {linkedBy: ["1"], linkedTo: ["1"]}});
     });
     it('getResourceAdditionalProperties', () => {
-        expect(getResourceAdditionalProperties({})).toEqual({});
-        expect(getResourceAdditionalProperties()).toEqual({});
+        expect(getResourceAdditionalProperties({})).toEqual({assets: [ { _showEmptyState: true } ]});
+        expect(getResourceAdditionalProperties()).toEqual({assets: [ { _showEmptyState: true } ]});
         expect(getResourceAdditionalProperties({pk: 1, linked_resources: {linked_to: ["1"], linked_by: ["1"]}}))
-            .toEqual({pk: 1, linkedResources: {linkedBy: ["1"], linkedTo: ["1"]}});
+            .toEqual({pk: 1, linkedResources: {linkedBy: ["1"], linkedTo: ["1"]}, assets: [ { _showEmptyState: true } ]});
         expect(getResourceAdditionalProperties({
             pk: 1,
             links: [
@@ -1160,5 +1003,124 @@ describe('Test Resource Utils', () => {
                     }
                 ]
             });
+    });
+    it('getResourceAdditionalProperties - return empty state flag if no assets', () => {
+        expect(getResourceAdditionalProperties({
+            pk: 1,
+            links: [{}]
+        }))
+            .toEqual({pk: 1, links: [{}], assets: [{_showEmptyState: true}]});
+    });
+    describe('getDimensions', () => {
+        it('should return empty array if no links and has_time is false', () => {
+            const result = getDimensions();
+            expect(result).toEqual([]);
+        });
+
+        it('should return dimensions with time if has_time is true and WMTS link is present', () => {
+            const links = [{ link_type: 'OGC:WMTS', url: 'http://example.com/wmts' }];
+            const result = getDimensions({ links, has_time: true });
+            expect(result).toEqual([{
+                name: 'time',
+                source: {
+                    type: 'multidim-extension',
+                    url: 'http://example.com/wmts'
+                }
+            }]);
+        });
+
+        it('should return dimensions with time if has_time is true and only WMS link is present', () => {
+            const links = [{ link_type: 'OGC:WMS', url: 'http://example.com/geoserver/wms' }];
+            const result = getDimensions({ links, has_time: true });
+            expect(result).toEqual([{
+                name: 'time',
+                source: {
+                    type: 'multidim-extension',
+                    url: 'http://example.com/geoserver/gwc/service/wmts'
+                }
+            }]);
+        });
+
+        it('should return empty array if has_time is false', () => {
+            const links = [{ link_type: 'OGC:WMTS', url: 'http://example.com/wmts' }];
+            const result = getDimensions({ links, has_time: false });
+            expect(result).toEqual([]);
+        });
+
+        it('should return default url if no matching link types are found', () => {
+            const links = [{ link_type: 'OGC:OTHER', url: 'http://example.com/other' }];
+            const result = getDimensions({ links, has_time: true });
+            expect(result).toEqual([{
+                name: 'time',
+                source: {
+                    type: 'multidim-extension',
+                    url: '/geoserver/gwc/service/wmts'
+                }
+            }]);
+        });
+    });
+    it('canManageResourcePublishing', () => {
+        expect(canManageResourcePublishing({ perms: ['publish_resourcebase'] })).toBeTruthy();
+
+        expect(canManageResourcePublishing({ perms: ['feature_resourcebase'] })).toBeTruthy();
+
+        expect(canManageResourcePublishing({ perms: ['change_resourcebase'] })).toBeTruthy();
+
+        expect(canManageResourcePublishing({ perms: ['publish_resourcebase', 'feature_resourcebase', 'change_resourcebase'] })).toBeTruthy();
+
+        expect(canManageResourcePublishing({ perms: ['view_resourcebase', 'publish_resourcebase', 'download_resourcebase'] })).toBeTruthy();
+
+        expect(canManageResourcePublishing({ perms: ['view_resourcebase'] })).toBeFalsy();
+
+        expect(canManageResourcePublishing({ perms: [] })).toBeFalsy();
+
+        expect(canManageResourcePublishing({})).toBeFalsy();
+
+        expect(canManageResourcePublishing(undefined)).toBeFalsy();
+
+        expect(canManageResourcePublishing(null)).toBeFalsy();
+    });
+    it('canManageResourceOptions', () => {
+        expect(canManageResourceOptions({ perms: ['change_resourcebase'] })).toBeTruthy();
+
+        expect(canManageResourceOptions({ perms: ['approve_resourcebase'] })).toBeTruthy();
+
+        expect(canManageResourceOptions({ perms: ['change_resourcebase', 'approve_resourcebase'] })).toBeTruthy();
+
+        expect(canManageResourceOptions({ perms: ['view_resourcebase', 'change_resourcebase', 'download_resourcebase'] })).toBeTruthy();
+
+        expect(canManageResourceOptions({ perms: ['view_resourcebase'] })).toBeFalsy();
+
+        expect(canManageResourceOptions({ perms: ['publish_resourcebase', 'feature_resourcebase'] })).toBeFalsy();
+
+        expect(canManageResourceOptions({ perms: [] })).toBeFalsy();
+
+        expect(canManageResourceOptions({})).toBeFalsy();
+
+        expect(canManageResourceOptions(undefined)).toBeFalsy();
+
+        expect(canManageResourceOptions(null)).toBeFalsy();
+    });
+    it('canManageResourceSettings', () => {
+        expect(canManageResourceSettings({ perms: ['change_resourcebase'] })).toBeTruthy();
+        expect(canManageResourceSettings({ perms: ['change_resourcebase', 'view_resourcebase'] })).toBeTruthy();
+        expect(canManageResourceSettings({ perms: ['approve_resourcebase', 'publish_resourcebase'] })).toBeTruthy();
+        expect(canManageResourceSettings({ perms: ['approve_resourcebase', 'feature_resourcebase'] })).toBeTruthy();
+        expect(canManageResourceSettings({ perms: ['approve_resourcebase', 'change_resourcebase'] })).toBeTruthy();
+        expect(canManageResourceSettings({ perms: ['publish_resourcebase', 'change_resourcebase'] })).toBeTruthy();
+
+        expect(canManageResourceSettings({ perms: ['view_resourcebase'] })).toBeFalsy();
+        expect(canManageResourceSettings({ perms: [] })).toBeFalsy();
+        expect(canManageResourceSettings({})).toBeFalsy();
+        expect(canManageResourceSettings(undefined)).toBeFalsy();
+        expect(canManageResourceSettings(null)).toBeFalsy();
+    });
+    it('canAccessPermissions', () => {
+        expect(canAccessPermissions({ perms: ['change_resourcebase_permissions'] })).toBeTruthy();
+        expect(canAccessPermissions({ perms: ['view_resourcebase'] })).toBeFalsy();
+    });
+    it('formatResourceLinkUrl', () => {
+        expect(formatResourceLinkUrl({ uuid: '123' })).toContain('/catalogue/uuid/123');
+        expect(formatResourceLinkUrl({ pk: '123' })).toNotContain('/catalogue/uuid/123');
     });
 });

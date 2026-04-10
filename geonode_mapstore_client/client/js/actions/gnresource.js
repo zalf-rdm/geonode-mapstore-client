@@ -42,6 +42,7 @@ export const SET_DEFAULT_VIEWER_PLUGINS = 'GEONODE:SET_DEFAULT_VIEWER_PLUGINS';
 export const SET_SELECTED_LAYER = 'GEONODE:SET_SELECTED_LAYER';
 export const UPDATE_LAYER_DATASET = 'GEONODE:UPDATE_LAYER_DATASET';
 export const SET_SELECTED_LAYER_DATASET = 'GEONODE:SET_SELECTED_LAYER_DATASET';
+export const REQUEST_RESOURCE = 'GEONODE:REQUEST_RESOURCE';
 
 /**
 * Actions for GeoNode resource
@@ -394,3 +395,13 @@ export function setLayerDataset(layerId) {
         layerId
     };
 }
+<<<<<<< HEAD
+=======
+
+export function requestResource(resource) {
+    return {
+        type: REQUEST_RESOURCE,
+        resource
+    };
+}
+>>>>>>> b4a45c7b65f7abc101f389902d2152d25dceca58

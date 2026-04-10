@@ -13,13 +13,15 @@ import { DOWNLOAD_METADATA, downloadMetaDataComplete } from '@js/actions/gndownl
 import {
     error as errorNotification
 } from '@mapstore/framework/actions/notifications';
+import { getMetadataDownloadLinkByPk } from '@js/api/geonode/v2';
+
 
 export const gnDownloadMetaData = (action$, store) =>
     action$.ofType(DOWNLOAD_METADATA)
         .switchMap((action) => {
             const state = store.getState();
-            const url = state.gnresource?.data?.links?.find((link) => link.name === action.link).url;
-            const resourceTitle = state.gnresource?.data?.title;
+            const url = getMetadataDownloadLinkByPk(action.pk);
+            const resourceTitle = state.gnresource?.data?.title?.replace(/[\.\s]/g, '_');
 
             return Observable
                 .defer(() => axios.get(url).then((data) => data))

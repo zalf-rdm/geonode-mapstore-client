@@ -11,6 +11,8 @@ import axios from '@mapstore/framework/libs/ajax';
 import uuid from "uuid";
 import url from "url";
 import get from 'lodash/get';
+import isNil from 'lodash/isNil';
+
 import {
     getNewMapConfiguration,
     getNewGeoStoryConfig,
@@ -25,21 +27,26 @@ import {
     getCompactPermissionsByPk,
     setResourceThumbnail,
     setLinkedResourcesByPk,
-    removeLinkedResourcesByPk
+    removeLinkedResourcesByPk,
+    getDatasetTimeSettingsByPk,
+    getResourceByTypeAndByPk,
+    deleteResourceThumbnail
 } from '@js/api/geonode/v2';
 import { configureMap } from '@mapstore/framework/actions/config';
-import { mapSelector } from '@mapstore/framework/selectors/map';
 import { isMapInfoOpen } from '@mapstore/framework/selectors/mapInfo';
-import { getSelectedLayer } from '@mapstore/framework/selectors/layers';
-import { isLoggedIn } from '@mapstore/framework/selectors/security';
+import { isLoggedIn, userSelector } from '@mapstore/framework/selectors/security';
 import {
     browseData,
-    selectNode
+    selectNode,
+    showSettings,
+    updateNode,
+    hideSettings
 } from '@mapstore/framework/actions/layers';
 import {
-    updateStatus,
-    initStyleService
-} from '@mapstore/framework/actions/styleeditor';
+    setSelectedResource,
+    setShowDetails,
+    SET_SHOW_DETAILS
+} from '@mapstore/framework/plugins/ResourcesCatalog/actions/resources';
 import {
     setNewResource,
     setResourceType,
@@ -56,7 +63,11 @@ import {
     updateResource,
     setResourcePathParameters,
     MANAGE_LINKED_RESOURCE,
-    setMapViewerLinkedResource
+    setMapViewerLinkedResource,
+    REQUEST_RESOURCE,
+    resourceLoading,
+    resourceError,
+    setSelectedLayer
 } from '@js/actions/gnresource';
 
 import {
@@ -79,19 +90,21 @@ import {
     resourceToLayerConfig,
     ResourceTypes,
     toMapStoreMapConfig,
-    parseStyleName,
     getCataloguePath,
-    isDefaultDatasetSubtype
+    isDefaultDatasetSubtype,
+    resourceHasPermission
 } from '@js/utils/ResourceUtils';
 import {
     canAddResource,
+    getInitialDatasetLayer,
+    getInitialDatasetLayerStyle,
     getResourceData,
+    getResourceId,
     getResourceThumbnail
 } from '@js/selectors/resource';
 import { updateAdditionalLayer } from '@mapstore/framework/actions/additionallayers';
 import { STYLE_OWNER_NAME } from '@mapstore/framework/utils/StyleEditorUtils';
-import { styleServiceSelector } from '@mapstore/framework/selectors/styleeditor';
-import { updateStyleService } from '@mapstore/framework/api/StyleEditor';
+import { initStyleService, resetStyleEditor } from '@mapstore/framework/actions/styleeditor';
 import { CLICK_ON_MAP, resizeMap, CHANGE_MAP_VIEW, zoomToExtent } from '@mapstore/framework/actions/map';
 import { purgeMapInfoResults, closeIdentify, NEW_MAPINFO_REQUEST } from '@mapstore/framework/actions/mapInfo';
 import { saveError } from '@js/actions/gnsave';
@@ -100,7 +113,6 @@ import {
     success as successNotification,
     warning as warningNotification
 } from '@mapstore/framework/actions/notifications';
-import { getStyleProperties } from '@js/api/geonode/style';
 import { convertDependenciesMappingForCompatibility } from '@mapstore/framework/utils/WidgetsUtils';
 import {
     setResource as setContextCreatorResource,
@@ -109,20 +121,23 @@ import {
     setCreationStep
 } from '@mapstore/framework/actions/contextcreator';
 import { setContext } from '@mapstore/framework/actions/context';
+import { REDUCERS_LOADED } from '@mapstore/framework/actions/storemanager';
 import { wrapStartStop } from '@mapstore/framework/observables/epics';
 import { parseDevHostname } from '@js/utils/APIUtils';
 import { ProcessTypes } from '@js/utils/ResourceServiceUtils';
 import { catalogClose } from '@mapstore/framework/actions/catalog';
 import { VisualizationModes } from '@mapstore/framework/utils/MapTypeUtils';
 import { forceUpdateMapLayout } from '@mapstore/framework/actions/maplayout';
+import { getShowDetails } from '@mapstore/framework/plugins/ResourcesCatalog/selectors/resources';
+import { searchSelector } from '@mapstore/framework/selectors/router';
 
 const FIT_BOUNDS_CONTROL = 'fitBounds';
 
 const resourceTypes = {
     [ResourceTypes.DATASET]: {
         resourceObservable: (pk, options) => {
-            const { page, selectedLayer, map: currentMap } = options || {};
-            const { subtype } = options?.params || {};
+            const { page, selectedLayer } = options || {};
+            const { subtype, query } = options?.params || {};
             return Observable.defer(() =>
                 axios.all([
                     getNewMapConfiguration(),
@@ -133,29 +148,21 @@ const resourceTypes = {
                             : getResourceByPk(pk)
                 ])
                     .then((response) => {
-                        const [mapConfig, gnLayer] = response;
-                        const newLayer = resourceToLayerConfig(gnLayer);
-
-                        if (!newLayer?.extendedParams?.defaultStyle || page !== 'dataset_edit_style_viewer') {
-                            return [mapConfig, gnLayer, newLayer];
+                        const [, gnLayer] = response ?? [];
+                        if (gnLayer?.has_time && resourceHasPermission(gnLayer, 'change_resourcebase')) {
+                            // fetch timeseries when applicable
+                            return getDatasetTimeSettingsByPk(pk)
+                                .then((timeseries) => response.concat(timeseries));
                         }
-
-                        return getStyleProperties({
-                            baseUrl: options?.styleService?.baseUrl,
-                            styleName: parseStyleName(newLayer.extendedParams.defaultStyle)
-                        }).then((updatedStyle) => {
-                            return [
-                                mapConfig,
-                                gnLayer,
-                                {
-                                    ...newLayer,
-                                    availableStyles: [{
-                                        ...updatedStyle,
-                                        ...newLayer.extendedParams.defaultStyle
-                                    }]
-                                }
-                            ];
-                        });
+                        return response;
+                    })
+                    .then((response) => {
+                        const [mapConfig, gnLayer, timeseries] = response;
+                        const newLayer = options?.isSamePreviousResource
+                            ? selectedLayer // keep configuration for other pages when resource id is the same (eg: filters)
+                            : resourceToLayerConfig(gnLayer);
+                        const _gnLayer = {...gnLayer, layerSettings: gnLayer.data};
+                        return [mapConfig, {..._gnLayer, timeseries}, newLayer];
                     })
             )
                 .switchMap((response) => {
@@ -167,12 +174,10 @@ const resourceTypes = {
                             ...mapConfig,
                             map: {
                                 ...mapConfig.map,
-                                ...currentMap, // keep configuration for other pages when resource id is the same (eg: center, zoom)
                                 visualizationMode: ['3dtiles'].includes(subtype) ? VisualizationModes._3D : VisualizationModes._2D,
                                 layers: [
                                     ...mapConfig.map.layers,
                                     {
-                                        ...selectedLayer, // keep configuration for other pages when resource id is the same (eg: filters)
                                         ...newLayer,
                                         isDataset: true,
                                         _v_: Date.now()
@@ -180,25 +185,24 @@ const resourceTypes = {
                                 ]
                             }
                         }),
-                        ...((extent && !currentMap)
+                        ...(extent
                             ? [ setControlProperty(FIT_BOUNDS_CONTROL, 'geometry', extent) ]
                             : []),
                         setControlProperty('toolbar', 'expanded', false),
-                        setControlProperty('rightOverlay', 'enabled', 'DetailViewer'),
                         forceUpdateMapLayout(),
                         selectNode(newLayer.id, 'layer', false),
-                        setResource(gnLayer),
+                        ...(!options?.isSamePreviousResource ? [setResource(gnLayer)] : []),
                         setResourceId(pk),
                         ...(page === 'dataset_edit_data_viewer'
                             ? [
                                 browseData(newLayer)
                             ]
                             : []),
-                        ...(page === 'dataset_edit_style_viewer'
+                        ...(page === 'dataset_edit_layer_settings'
                             ? [
-                                setControlProperty('visualStyleEditor', 'enabled', true),
+                                showSettings(newLayer.id, "layers", {opacity: newLayer.opacity ?? 1}),
+                                setControlProperty("layersettings", "activeTab", query.tab ?? "general"),
                                 updateAdditionalLayer(newLayer.id, STYLE_OWNER_NAME, 'override', {}),
-                                updateStatus('edit'),
                                 resizeMap()
                             ]
                             : []),
@@ -228,22 +232,34 @@ const resourceTypes = {
             ]))
                 .switchMap(([baseConfig, resource]) => {
                     const [mapResource, mapViewerResource] = resource ?? [];
+                    const viewerData = mapViewerResource?.data ?? null;
+                    const viewerPk = mapViewerResource?.pk;
                     const mapConfig = options.data
                         ? options.data
                         : toMapStoreMapConfig(mapResource, baseConfig);
-                    return Observable.of(
-                        configureMap(mapConfig),
-                        setControlProperty('toolbar', 'expanded', false),
-                        setContext(mapViewerResource ? mapViewerResource.data : null),
-                        setResource(mapResource),
+
+                    const initialActions = Observable.of(
+                        setContext(viewerData),
                         setResourceId(pk),
+                        setResource(mapResource),
                         setMapViewerLinkedResource(mapViewerResource),
                         setResourcePathParameters({
                             ...options?.params,
-                            appPk: mapViewerResource?.pk,
-                            hasViewer: !!mapViewerResource?.pk
-                        })
+                            appPk: viewerPk,
+                            hasViewer: !!viewerPk
+                        }),
+                        setControlProperty("toolbar", "expanded", false)
                     );
+
+                    // Wait for module plugin reducers to load before configuring map
+                    // This ensures dynamic plugin reducers are ready to restore state
+                    const waitForReducers$ = viewerData && options?.action$
+                        ? Observable.race(
+                            options.action$.ofType(REDUCERS_LOADED).take(1),
+                            Observable.timer(5000) // timeout as safety fallback only
+                        ) : Observable.of(null);
+
+                    return Observable.concat(initialActions, waitForReducers$.map(() => configureMap(mapConfig)));
                 }),
         newResourceObservable: (options) => {
             const queryDatasetParts = (options?.query?.['gn-dataset'] || '').split(':');
@@ -304,9 +320,10 @@ const resourceTypes = {
         newResourceObservable: (options) =>
             Observable.defer(() => getNewGeoStoryConfig())
                 .switchMap((gnGeoStory) => {
+                    const currentStory = options.data || {...gnGeoStory, sections: [{...gnGeoStory.sections[0], id: uuid(),
+                        contents: [{...gnGeoStory.sections[0].contents[0], id: uuid()}]}]};
                     return Observable.of(
-                        setCurrentStory(options.data || {...gnGeoStory, sections: [{...gnGeoStory.sections[0], id: uuid(),
-                            contents: [{...gnGeoStory.sections[0].contents[0], id: uuid()}]}]}),
+                        setCurrentStory({...currentStory, defaultGeoStoryConfig: {...currentStory}}),
                         setEditing(true),
                         setGeoStoryResource({
                             canEdit: true
@@ -319,7 +336,6 @@ const resourceTypes = {
             Observable.defer(() => getDocumentByPk(pk))
                 .switchMap((gnDocument) => {
                     return Observable.of(
-                        setControlProperty('rightOverlay', 'enabled', 'DetailViewer'),
                         setResource(gnDocument),
                         setResourceId(pk)
                     );
@@ -429,12 +445,26 @@ const resourceTypes = {
 };
 
 // collect all the reset action needed before changing a viewer
-const getResetActions = (isSameResource) => [
-    resetControls(),
-    ...(!isSameResource ? [ resetResourceState() ] : []),
-    setControlProperty('rightOverlay', 'enabled', false),
-    setControlProperty(FIT_BOUNDS_CONTROL, 'geometry', null)
-];
+const getResetActions = (state, isSameResource) => {
+    const initialResource = state?.gnresource?.initialResource;
+    const initialLayer = getInitialDatasetLayer(state);
+    return [
+        resetControls(),
+        ...(!isSameResource
+            ? [ resetResourceState() ]
+            : [
+                ...(initialResource ? [setResource(initialResource)] : []),
+                ...(initialLayer ? [setSelectedLayer(initialLayer), updateNode(initialLayer.layerId, 'layers', initialLayer)] : [])
+            ]
+        ),
+        setControlProperty('rightOverlay', 'enabled', false),
+        setControlProperty(FIT_BOUNDS_CONTROL, 'geometry', null),
+        // reset style editor state to avoid persistence service configuration in between resource pages
+        initStyleService(),
+        resetStyleEditor(),
+        hideSettings()
+    ];
+};
 
 export const gnViewerRequestNewResourceConfig = (action$, store) =>
     action$.ofType(REQUEST_NEW_RESOURCE_CONFIG)
@@ -498,12 +528,12 @@ export const gnViewerRequestResourceConfig = (action$, store) =>
                     loadingResourceConfig(false)
                 );
             }
-            const styleService = styleServiceSelector(state);
+            const { query = {} } = url.parse(searchSelector(state), true) || {};
             const resourceData = getResourceData(state);
             const isSamePreviousResource = !resourceData?.['@ms-detail'] && resourceData?.pk === action.pk;
             return Observable.concat(
                 Observable.of(
-                    ...getResetActions(isSamePreviousResource),
+                    ...getResetActions(state, isSamePreviousResource),
                     loadingResourceConfig(true),
                     setResourceType(action.resourceType),
                     setResourcePathParameters(action?.options?.params)
@@ -519,25 +549,13 @@ export const gnViewerRequestResourceConfig = (action$, store) =>
                             })
                     ]
                     : []),
-                ...(styleService?.baseUrl
-                    ? [Observable.defer(() => updateStyleService({
-                        styleService
-                    }))
-                        .switchMap((updatedStyleService) => {
-                            return Observable.of(initStyleService(updatedStyleService, {
-                                editingAllowedRoles: ['ALL'],
-                                editingAllowedGroups: []
-                            }));
-                        })]
-                    : []),
                 resourceObservable(action.pk, {
                     ...action.options,
-                    styleService: styleServiceSelector(state),
                     isSamePreviousResource,
                     resourceData,
-                    selectedLayer: isSamePreviousResource && getSelectedLayer(state),
-                    map: isSamePreviousResource && mapSelector(state),
-                    params: action?.options?.params
+                    selectedLayer: isSamePreviousResource && {...getInitialDatasetLayer(state), style: getInitialDatasetLayerStyle(state)},
+                    params: {...action?.options?.params, query},
+                    action$
                 }),
                 Observable.of(
                     loadingResourceConfig(false)
@@ -556,17 +574,17 @@ export const gnViewerSetNewResourceThumbnail = (action$, store) =>
         .switchMap(() => {
             const state = store.getState();
             const newThumbnailData = getResourceThumbnail(state);
-            const resourceIDThumbnail = state?.gnresource?.id;
+            const resourceIDThumbnail = getResourceId(state);
             const currentResource = state.gnresource?.data || {};
 
-            const body = {
-                file: newThumbnailData
-            };
+            const body = { file: newThumbnailData };
+            const deleteThumbnail = !newThumbnailData;
+            const successMsgId = `gnviewer.${deleteThumbnail ? "thumbnailRemoved" : "thumbnailsaved"}`;
 
-            return Observable.defer(() => setResourceThumbnail(resourceIDThumbnail, body))
+            return Observable.defer(() => deleteThumbnail ? deleteResourceThumbnail(resourceIDThumbnail) : setResourceThumbnail(resourceIDThumbnail, body))
                 .switchMap((res) => {
                     return Observable.of(updateResourceProperties({ ...currentResource, thumbnail_url: res.thumbnail_url, thumbnailChanged: false, updatingThumbnail: false }), updateResource({ ...currentResource, thumbnail_url: res.thumbnail_url }),
-                        successNotification({ title: "gnviewer.thumbnailsaved", message: "gnviewer.thumbnailsaved" }));
+                        successNotification({ title: successMsgId, message: successMsgId }));
                 }).catch((error) => {
                     return Observable.of(
                         saveError(error.data || error.message),
@@ -576,7 +594,7 @@ export const gnViewerSetNewResourceThumbnail = (action$, store) =>
         });
 
 export const closeInfoPanelOnMapClick = (action$, store) => action$.ofType(CLICK_ON_MAP)
-    .filter(() => store.getState().controls?.rightOverlay?.enabled === 'DetailViewer' || store.getState().controls?.rightOverlay?.enabled === 'Share')
+    .filter(() => store.getState().controls?.rightOverlay?.enabled === 'Share')
     .switchMap(() => Observable.of(setControlProperty('rightOverlay', 'enabled', false)));
 
 
@@ -592,8 +610,8 @@ const oneOfTheOther = (control) => {
 /**
  * Close open panels on new panel open
  */
-export const closeOpenPanels = (action$, store) => action$.ofType(SET_CONTROL_PROPERTY)
-    .filter((action) => !!action.value)
+export const closeOpenPanels = (action$, store) => action$.ofType(SET_CONTROL_PROPERTY, SET_SHOW_DETAILS)
+    .filter((action) => !!action.value || action.show)
     .switchMap((action) => {
         const state = store.getState();
         const getActions = () => {
@@ -610,9 +628,13 @@ export const closeOpenPanels = (action$, store) => action$.ofType(SET_CONTROL_PR
             if (isDatasetCatalogPanelOpen && isVisualStyleEditorOpen) {
                 setActions.push(setControlProperty('datasetsCatalog', 'enabled', false));
             }
+            const isResourceDetailsOpen = !action.show && getShowDetails(state);
+            if (isResourceDetailsOpen) {
+                setActions.push(setShowDetails(false));
+            }
             const control = oneOfTheOther(action.control);
-            if (control?.control) {
-                if (state.controls?.rightOverlay?.enabled === 'DetailViewer' || state.controls?.rightOverlay?.enabled === 'Share') {
+            if (control?.control || action.show) {
+                if (state.controls?.rightOverlay?.enabled === 'Share') {
                     setActions.push(setControlProperty('rightOverlay', 'enabled', false));
                 } else if (!!state.controls?.[`${control.alternate}`]?.enabled) {
                     setActions.push(setControlProperty(`${control.alternate}`, 'enabled', false));
@@ -632,6 +654,10 @@ export const closeDatasetCatalogPanel = (action$, store) => action$.ofType(NEW_M
     .switchMap(() => {
         return Observable.of(setControlProperty('datasetsCatalog', 'enabled', false));
     });
+
+export const closeResourceDetailsOnMapInfoOpen = (action$, store) => action$.ofType(NEW_MAPINFO_REQUEST)
+    .filter(() => isMapInfoOpen(store.getState()) && getShowDetails(store.getState()))
+    .mapTo(setShowDetails(false));
 
 export const gnManageLinkedResource = (action$, store) =>
     action$.ofType(MANAGE_LINKED_RESOURCE)
@@ -700,6 +726,63 @@ export const gnZoomToFitBounds = (action$) =>
                 })
         );
 
+const getResourceWithDetail = (resource) => ({
+    ...resource,
+    /* store information related to detail */
+    '@ms-detail': true
+});
+export const gnSelectResourceEpic = (action$, store) =>
+    action$.ofType(REQUEST_RESOURCE)
+        .switchMap(action => {
+            const selectedResource = action?.resource;
+            if (isNil(selectedResource?.pk)) {
+                return Observable.of(
+                    setResource(null),
+                    setResourceCompactPermissions(undefined)
+                );
+            }
+            const state = store.getState();
+            const user = userSelector(state);
+            const { resource_type: resourceType, pk, subtype } = selectedResource;
+            const _selectedResource = getResourceWithDetail(selectedResource);
+            const initialActions = !_selectedResource ? [] : [
+                setResource(_selectedResource, true),
+                setSelectedResource(_selectedResource)
+            ];
+            return Observable.defer(() => Promise.all([
+                getResourceByTypeAndByPk(resourceType, pk, subtype),
+                user
+                    ? getCompactPermissionsByPk(pk)
+                        .then((compactPermissions) => compactPermissions)
+                        .catch(() => null)
+                    : Promise.resolve(null)
+            ])
+                .then((response) => {
+                    const [resource] = response ?? [];
+                    if (resource?.has_time && resourceHasPermission(resource, 'change_resourcebase')) {
+                        return getDatasetTimeSettingsByPk(pk)
+                            .then((timeseries) => response.concat(timeseries));
+                    }
+                    return response;
+                }))
+                .switchMap((response) => {
+                    const [resource, compactPermissions, timeseries] = response ?? [];
+                    return Observable.of(
+                        setResourceType(resourceType),
+                        setResource(getResourceWithDetail({...resource, timeseries})),
+                        ...(compactPermissions ? [setResourceCompactPermissions(compactPermissions)] : [])
+                    );
+                })
+                .catch((error) => {
+                    return Observable.of(resourceError(error.data || error.message));
+                })
+                .startWith(
+                    // preload the resource if available
+                    ...initialActions,
+                    resourceLoading()
+                );
+        });
+
 export default {
     gnViewerRequestNewResourceConfig,
     gnViewerRequestResourceConfig,
@@ -707,6 +790,8 @@ export default {
     closeInfoPanelOnMapClick,
     closeOpenPanels,
     closeDatasetCatalogPanel,
+    closeResourceDetailsOnMapInfoOpen,
     gnManageLinkedResource,
-    gnZoomToFitBounds
+    gnZoomToFitBounds,
+    gnSelectResourceEpic
 };

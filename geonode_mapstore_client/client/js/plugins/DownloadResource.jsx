@@ -10,24 +10,24 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import isEmpty from 'lodash/isEmpty';
+import { MenuItem, Glyphicon } from 'react-bootstrap';
+
+
 import { createPlugin } from '@mapstore/framework/utils/PluginsUtils';
 import { getDownloadUrlInfo, isDocumentExternalSource, GXP_PTYPES, SOURCE_TYPES } from '@js/utils/ResourceUtils';
 import Message from '@mapstore/framework/components/I18N/Message';
-import Button from '@js/components/Button';
+import Button from '@mapstore/framework/components/layout/Button';
 import tooltip from '@mapstore/framework/components/misc/enhancers/tooltip';
-import Dropdown from '@js/components/Dropdown';
-import FaIcon from '@js/components/FaIcon';
 import {
     getResourceData
 } from '@js/selectors/resource';
 import { downloadResource } from '@js/actions/gnresource';
 import { processingDownload } from '@js/selectors/resourceservice';
-
 const ButtonWithTooltip = tooltip(Button);
 
 const RENDER_TYPE = {
     "button": ButtonWithTooltip,
-    "menuItem": Dropdown.Item
+    "menuItem": MenuItem
 };
 
 const DownloadButton = ({
@@ -39,6 +39,7 @@ const DownloadButton = ({
     renderType = "button",
     showIcon,
     downloadMsgId = "gnviewer.download",
+    tooltipId = downloadMsgId, // for backward compatibility
     allowedSources = [SOURCE_TYPES.LOCAL, SOURCE_TYPES.REMOTE],
     downloading
 }) => {
@@ -62,14 +63,14 @@ const DownloadButton = ({
         return downloadInfo.url ? (
             <Component
                 {...isButton && { variant, size }}
-                {...showIcon && { tooltipId: downloadMsgId }}
+                {...showIcon && { tooltipId }}
                 download
                 href={ downloadInfo.url }
                 target="_blank"
                 rel="noopener noreferrer"
             >
                 {showIcon
-                    ? <FaIcon name={isExternal ? "external-link" : "download"} />
+                    ? <Glyphicon glyph={isExternal ? "new-window" : "download"} />
                     : <Message msgId={downloadMsgId} />
                 }
             </Component>
@@ -81,10 +82,10 @@ const DownloadButton = ({
             disabled={!!downloading}
             onClick={() => downloading ? null : onAction(_resource)}
             {...isButton && { variant, size}}
-            {...showIcon && { tooltipId: downloadMsgId }}
+            {...showIcon && { tooltipId }}
         >
             {showIcon
-                ? <FaIcon name="download" />
+                ? <Glyphicon glyph="download" />
                 : <Message msgId={downloadMsgId} />
             }
         </Component>
@@ -131,9 +132,15 @@ export default createPlugin('DownloadResource', {
             Component: DownloadResource,
             priority: 1
         },
-        DetailViewer: {
+        ResourceDetails: {
             name: 'DownloadResource',
             target: 'toolbar',
+            Component: DownloadResource,
+            priority: 1,
+            position: 1
+        },
+        LayerDownload: {
+            name: 'DownloadResource',
             Component: DownloadResource,
             priority: 1
         },

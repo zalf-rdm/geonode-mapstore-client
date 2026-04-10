@@ -3,7 +3,7 @@
 // Theme
 // **************
 
-#gn-components-theme(@theme-vars) {
+#ms-components-theme(@theme-vars) {
     .gn-resources-catalog {
         .color-var(@theme-vars[main-color]);
         .background-color-var(@theme-vars[main-bg]);
@@ -19,7 +19,7 @@
     top: 0;
     right: 0;
     z-index: 2000;
-    width: 550px;
+    width: 420px;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -86,5 +86,71 @@
         text-align: center;
         font-style: italic;
         position: relative;
+    }
+}
+
+.gn-resource-page-catalog {
+    display: flex;
+    flex-direction: column;
+    .gn-resource-page-catalog-section {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+        font-size: @font-size-base * 1; font-weight: lighter;
+        h1 { font-size: @font-size-base * 3; font-weight: lighter; }
+        h2 { font-size: @font-size-base * 2.75; font-weight: lighter; }
+        h3 { font-size: @font-size-base * 2.5; font-weight: lighter; }
+        h4 { font-size: @font-size-base * 2; font-weight: lighter; }
+        h5 { font-size: @font-size-base * 1.5; font-weight: lighter; }
+        h6 { font-size: @font-size-base * 1; font-weight: lighter; }
+        p { font-size: @font-size-base * 1; font-weight: lighter; }
+    }
+    .gn-resource-page-catalog-content {
+        margin: auto;
+        max-width: 1440px;
+    }
+    .ms-plugin {
+        .ms-plugin-placeholder {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+        &.ResourcesGrid {
+            .ms-plugin-placeholder {
+                font-size: 3rem;
+                min-height: 230px;
+                display: flex;
+            }
+            &:has(.ms-resources-grid) {
+                .ms-plugin-placeholder {
+                    display: none;
+                }
+            }
+        }
+    }
+}
+
+:has(.ms-resources-filter._visible) {
+    .gn-resource-page-catalog-section:not(._panel) {
+        margin-left: var(--ms-resources-filter-width);
+    }
+}
+
+:has(.ms-resource-detail._visible) {
+    .gn-resource-page-catalog-section:not(._panel) {
+        width: calc(100% - var(--ms-resource-detail-width));
+    }
+    &:has(.ms-resources-filter._visible) {
+        .gn-resource-page-catalog-section:not(._panel) {
+            width: calc(100% - var(--ms-resource-detail-width) - var(--ms-resources-filter-width));
+        }
+    }
+}
+:has(.gn-resource-page-catalog) {
+    // ensure ms-container has higher z-index to correctly the overlay components (filters and details)
+    // if rendered inside the gn-resource-page-catalog page
+    #ms-container {
+        position: relative;
+        z-index: 15;
     }
 }

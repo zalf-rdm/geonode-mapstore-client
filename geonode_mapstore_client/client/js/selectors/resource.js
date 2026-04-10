@@ -12,7 +12,7 @@ import { compareMapChanges } from '@mapstore/framework/utils/MapUtils';
 import { currentStorySelector } from '@mapstore/framework/selectors/geostory';
 import { originalDataSelector } from '@mapstore/framework/selectors/dashboard';
 import { widgetsConfig } from '@mapstore/framework/selectors/widgets';
-import { ResourceTypes } from '@js/utils/ResourceUtils';
+import { ResourceTypes, RESOURCE_PUBLISHING_PROPERTIES, RESOURCE_OPTIONS_PROPERTIES, resourceToLayerConfig } from '@js/utils/ResourceUtils';
 import {
     getCurrentResourceDeleteLoading,
     getCurrentResourceCopyLoading
@@ -24,7 +24,14 @@ import isEqual from 'lodash/isEqual';
 import pick from 'lodash/pick';
 import isEmpty from 'lodash/isEmpty';
 import get from 'lodash/get';
+import omitBy from 'lodash/omitBy';
+import isNil from 'lodash/isNil';
 import { generateContextResource } from '@mapstore/framework/selectors/contextcreator';
+import { layerSettingSelector, getSelectedLayer as getSelectedNode } from '@mapstore/framework/selectors/layers';
+import { saveLayer } from '@mapstore/framework/utils/LayersUtils';
+
+const RESOURCE_MANAGEMENT_PROPERTIES_KEYS = Object.keys({...RESOURCE_PUBLISHING_PROPERTIES, ...RESOURCE_OPTIONS_PROPERTIES});
+
 /**
 * @module selectors/resource
 */
@@ -100,6 +107,10 @@ export const getSelectedLayerDataset = (state) => {
     return state?.gnresource?.selectedLayerDataset;
 };
 
+export const isResourceDetail = (state) => {
+    return get(state, 'gnresource.data["@ms-detail"]', false);
+};
+
 export const getCompactPermissions = (state) => {
     const compactPermissions = state?.gnresource?.compactPermissions || {};
     return compactPermissions;
@@ -161,6 +172,19 @@ export const getDataPayload = (state, resourceType) => {
         const { mapConfig, ...mapViewerConfig } = data || {};
         return mapViewerConfig || {};
     }
+    case ResourceTypes.DATASET: {
+        let currentLayerSettings = layerSettingSelector(state)?.options ?? {};
+        currentLayerSettings = omitBy(currentLayerSettings,
+            (value, key) => key === "opacity" && value === 1); // skip default value
+        const selectedLayer = getSelectedNode(state);
+        const omitKeys = ['extendedParams', 'availableStyles', 'infoFormats', 'style'];
+        const data = saveLayer(selectedLayer ?? {});
+        return omit({
+            ...data,
+            ...currentLayerSettings,
+            ...(selectedLayer && {fields: selectedLayer?.fields ?? {}})
+        }, omitKeys);
+    }
     default:
         return null;
     }
@@ -172,6 +196,21 @@ export const getExtentPayload = (state, resourceType) => {
         return getResourceExtent(state);
     }
     return null;
+};
+
+const compareObjects = (obj1, obj2) => {
+    if (!isEmpty(obj1) && !isEmpty(obj2)) {
+        return Object.keys(obj1).every((key) => {
+            const val1 = obj1[key];
+            const val2 = obj2?.[key];
+            if (isNil(val2)) return true;
+            if (typeof val1 === 'boolean') return val1 === (val2 ?? false);
+            if (typeof val1 === 'number') return val1 === (val2 ?? 0);
+            if (isEmpty(val1) && isEmpty(val2)) return true;
+            return isEqual(obj2?.[key], obj1[key]);
+        });
+    }
+    return false;
 };
 
 function removeProperty(value, paths) {
@@ -192,6 +231,21 @@ function isMapCenterEqual(initialCenter = {}, currentCenter = {}) {
     const CENTER_EPS = 1e-12;
     return initialCenter.crs === currentCenter.crs && Math.abs(initialCenter.x - currentCenter.x) < CENTER_EPS && Math.abs(initialCenter.y - currentCenter.y) < CENTER_EPS;
 }
+
+export const getInitialDatasetResource = (state) => {
+    const initialResource = state?.gnresource?.initialResource;
+    return initialResource && initialResource.resource_type === ResourceTypes.DATASET ? initialResource : null;
+};
+
+export const getInitialDatasetLayer = (state) => {
+    const initialResource = getInitialDatasetResource(state);
+    return initialResource && resourceToLayerConfig(omit(initialResource, ['default_style']));
+};
+
+export const getInitialDatasetLayerStyle = (state) => {
+    const initialResource = getInitialDatasetResource(state);
+    return initialResource ? resourceToLayerConfig(initialResource)?.style : null;
+};
 
 function isResourceDataEqual(state, initialData = {}, currentData = {}) {
     const resourceType = state?.gnresource?.type;
@@ -260,21 +314,92 @@ function isResourceDataEqual(state, initialData = {}, currentData = {}) {
             removeProperty(currentData, ['mapConfig'])
         );
     }
+    case ResourceTypes.DATASET: {
+        const selectedLayer = getSelectedNode(state);
+        const selectedLayerInitial = getSelectedLayer(state);
+        const initialLayerData = {...selectedLayerInitial, ...initialData};
+        const initialStyle = getInitialDatasetLayerStyle(state);
+
+        const isSettingsEqual = compareObjects(omit(currentData, ['style', 'fields']),
+            omit(initialLayerData, ['style', 'fields', 'extendedParams', 'pk', '_v_', 'isDataset', 'perms']));
+        const isStyleEqual = isEmpty(initialStyle) || isEmpty(selectedLayer?.style) ? true
+            : selectedLayer?.style === initialStyle;
+        const isAttributesEqual = isEmpty(selectedLayer) ? true
+            : !isEmpty(initialLayerData) && isEqual(
+                isEmpty(initialLayerData?.fields) ? {} : initialLayerData?.fields,
+                isEmpty(selectedLayer?.fields) ? {} : selectedLayer?.fields
+            );
+
+        return isSettingsEqual && isAttributesEqual && isStyleEqual;
+    }
     default:
         return true;
     }
 }
 
-export const isNewMapViewerResource = (state) => {
-    const isNew = state?.gnresource?.params?.pk === "new";
-    const isMapViewer = state?.gnresource?.type === ResourceTypes.VIEWER;
-    return isNew && isMapViewer;
+export const isNewResourcePk = (state) => {
+    return state?.gnresource?.params?.pk === "new";
+};
+
+export const isNewMapDirty = (state) => {
+    const mapConfigRawData = state?.mapConfigRawData;
+    if (!mapConfigRawData) {
+        return false;
+    }
+    const currentMapData = mapSaveSelector(state);
+    return !compareMapChanges(mapConfigRawData, currentMapData);
+};
+
+export const isNewDashboardDirty = (state) => {
+    const currentData = getDataPayload(state, ResourceTypes.DASHBOARD);
+    const widgets = currentData?.widgets || [];
+    const layouts = currentData?.layouts || [];
+    return widgets.length > 0 ||
+    layouts.length > 1 ||
+    (layouts.length === 1 &&
+        (layouts[0].name !== "Main view" || layouts[0].color !== null) // Default layout name is "Main view"
+    );
+};
+
+export const isNewGeoStoryDirty = (state) => {
+    const currentData = getDataPayload(state, ResourceTypes.GEOSTORY);
+    if (!currentData) return false;
+
+    const defaultConfig = currentStorySelector(state)?.defaultGeoStoryConfig ?? {};
+    return (
+        currentData.sections?.length > 1 || // More than the default title section
+        currentData.sections?.[0]?.contents?.[0]?.html?.trim() || // Title section has content
+        currentData.sections?.[0]?.title !== defaultConfig.sections?.[0]?.title || // Title changed from default
+        currentData.resources?.length > 0 || // Has resources
+        !isEqual( // Settings changed from default
+            omitBy(currentData.settings || {}, isNil),
+            omitBy(defaultConfig.settings || {}, isNil)
+        )
+    );
+};
+
+const isNewResourceDirty = (state) => {
+    const resourceType = state?.gnresource?.type;
+
+    switch (resourceType) {
+    case ResourceTypes.MAP:
+        return isNewMapDirty(state);
+    case ResourceTypes.VIEWER:
+        return true;
+    case ResourceTypes.DASHBOARD:
+        return isNewDashboardDirty(state);
+    case ResourceTypes.GEOSTORY:
+        return isNewGeoStoryDirty(state);
+    default:
+        return false;
+    }
 };
 
 export const getResourceDirtyState = (state) => {
-    if (isNewMapViewerResource(state)) {
-        return true;
+    if (isNewResourcePk(state)) {
+        return isNewResourceDirty(state);
     }
+
     const canEdit = canEditPermissions(state);
     const isDeleting = getCurrentResourceDeleteLoading(state);
     const isCopying = getCurrentResourceCopyLoading(state);
@@ -282,8 +407,12 @@ export const getResourceDirtyState = (state) => {
         return null;
     }
     const resourceType = state?.gnresource?.type;
-    const metadataKeys = ['title', 'abstract', 'data', 'extent'];
-    const { data: initialData = {}, ...resource } = pick(state?.gnresource?.initialResource || {}, metadataKeys);
+    let metadataKeys = ['title', 'abstract', 'data', 'extent', 'group', ...RESOURCE_MANAGEMENT_PROPERTIES_KEYS];
+    if (resourceType === ResourceTypes.DATASET) {
+        metadataKeys = metadataKeys.concat('timeseries');
+    }
+    let { data: initialData = {}, ...resource } = pick(state?.gnresource?.initialResource || {}, metadataKeys);
+    if (isResourceDetail(state)) initialData = {}; // detail page allows only metadata editing. Data is not editable.
     const { compactPermissions, geoLimits } = getPermissionsPayload(state);
     const currentData = JSON.parse(JSON.stringify(getDataPayload(state) || {})); // JSON stringify is needed to remove undefined values
     // omitting data on thumbnail
@@ -348,3 +477,5 @@ export const getGeoNodeResourceFromDashboard = (state) => get(originalDataSelect
 export const defaultViewerPluginsSelector = (state) => {
     return state?.gnresource?.defaultViewerPlugins ?? [];
 };
+
+export const getResourceLoading = (state) => state?.gnresource?.loading;

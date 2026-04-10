@@ -1,0 +1,494 @@
+/*
+ * Copyright 2025, GeoSolutions Sas.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+import React, { useEffect, useState } from 'react';
+import { createPlugin } from '@mapstore/framework/utils/PluginsUtils';
+import { connect } from 'react-redux';
+import { createStructuredSelector, createSelector } from 'reselect';
+import PropTypes from 'prop-types';
+
+import controls from '@mapstore/framework/reducers/controls';
+import config from '@mapstore/framework/reducers/config';
+import usePluginItems from '@mapstore/framework/hooks/usePluginItems';
+import { mapInfoSelector } from '@mapstore/framework/selectors/map';
+import ResourcesPanelWrapper from '@mapstore/framework/plugins/ResourcesCatalog/components/ResourcesPanelWrapper';
+import TargetSelectorPortal from '@mapstore/framework/plugins/ResourcesCatalog/components/TargetSelectorPortal';
+import useResourcePanelWrapper from '@mapstore/framework/plugins/ResourcesCatalog/hooks/useResourcePanelWrapper';
+import { getShowDetails } from '@mapstore/framework/plugins/ResourcesCatalog/selectors/resources';
+import { setShowDetails, setSelectedResource, setDetailPanelTab } from '@mapstore/framework/plugins/ResourcesCatalog/actions/resources';
+import PendingStatePrompt from '@mapstore/framework/plugins/ResourcesCatalog/containers/PendingStatePrompt';
+import Button from '@mapstore/framework/components/layout/Button';
+import Message from '@mapstore/framework/components/I18N/Message';
+
+import {
+    getResourceData,
+    getResourceLoading,
+    getResourceDirtyState,
+    canEditPermissions,
+    isNewResource,
+    getResourceId
+} from '@js/selectors/resource';
+import { requestResource, setResource } from '@js/actions/gnresource';
+import gnresource from '@js/reducers/gnresource';
+import useDetectClickOut from '@js/hooks/useDetectClickOut';
+import tabComponents from '@js/plugins/ResourceDetails/containers/tabComponents';
+import DetailsPanel from '@js/plugins/ResourceDetails/containers/DetailsPanel';
+
+/**
+* @module ResourceDetails
+*/
+
+/**
+ * render a panel for detail information about a resource inside the viewer pages
+ * @name ResourceDetails
+ * @prop {array} tabs array of tab object representing the structure of the displayed info properties
+ * @example
+ * {
+ *  "name": "ResourceDetails",
+ *  "cfg": {
+ *      "tabs": [
+ *          {
+ *              "type": "tab",
+ *              "id": "info",
+ *              "labelId": "gnviewer.info",
+ *              "items": [
+ *                  {
+ *                      "type": "text",
+ *                      "labelId": "gnviewer.title",
+ *                      "value": "{get(state('gnResourceData'), 'title')}"
+ *                  },
+ *                  {
+ *                      "type": "link",
+ *                      "labelId": "gnviewer.owner",
+ *                      "href": "{getOwnerProfileUrl(state('gnResourceData'))}",
+ *                      "value": "{getUserResourceName(context.get(state('gnResourceData'), 'owner'))}",
+ *                      "disableIf": "{not get(state('gnResourceData'), 'owner.username')}"
+ *                  },
+ *                  {
+ *                      "type": "date",
+ *                      "format": "MMMM Do YYYY",
+ *                      "labelId": "{getDateTypeLabelId(state('gnResourceData'))}",
+ *                      "value": "{get(state('gnResourceData'), 'date')}"
+ *                  },
+ *                  {
+ *                      "type": "query",
+ *                      "labelId": "gnviewer.resourceType",
+ *                      "valueId": "{getResourceTypeLabelId(state('gnResourceData'))}",
+ *                      "pathname": "/",
+ *                      "query": {
+ *                          "f": "{get(state('gnResourceData'), 'resource_type')}"
+ *                      }
+ *                  },
+ *                  {
+ *                      "type": "html",
+ *                      "labelId": "gnviewer.supplementalInformation",
+ *                      "value": "{get(state('gnResourceData'), 'supplemental_information')}"
+ *                  }
+ *              ]
+ *          }
+ *      ]
+ *  }
+ * }
+ */
+function ResourceDetailsPanel({
+    tabs = [
+        {
+            "type": "tab",
+            "id": "info",
+            "labelId": "gnviewer.info",
+            "items": [
+                {
+                    "type": "text",
+                    "labelId": "gnviewer.title",
+                    "value": "{get(state('gnResourceData'), 'title')}"
+                },
+                {
+                    "type": "link",
+                    "labelId": "gnviewer.owner",
+                    "href": "{getOwnerProfileUrl(state('gnResourceData'))}",
+                    "value": "{getUserResourceName(context.get(state('gnResourceData'), 'owner'))}",
+                    "disableIf": "{not get(state('gnResourceData'), 'owner.username')}"
+                },
+                {
+                    "type": "date",
+                    "format": "YYYY-MM-DD HH:mm",
+                    "labelId": "{getDateTypeLabelId(state('gnResourceData'))}",
+                    "value": "{get(state('gnResourceData'), 'date')}"
+                },
+                {
+                    "type": "date",
+                    "format": "YYYY-MM-DD HH:mm",
+                    "labelId": "gnviewer.created",
+                    "value": "{get(state('gnResourceData'), 'created')}"
+                },
+                {
+                    "type": "date",
+                    "format": "YYYY-MM-DD HH:mm",
+                    "labelId": "gnviewer.lastModified",
+                    "value": "{get(state('gnResourceData'), 'last_updated')}"
+                },
+                {
+                    "type": "query",
+                    "labelId": "gnviewer.resourceType",
+                    "valueId": "{getResourceTypeLabelId(state('gnResourceData'))}",
+                    "pathname": "/",
+                    "query": {
+                        "f": "{get(state('gnResourceData'), 'resource_type')}"
+                    }
+                },
+                {
+                    "type": "{getDocumentSourceFieldType(state('gnResourceSelectedLayerDataset'))}",
+                    "labelId": "gnviewer.sourceType",
+                    "value": "{get(state('gnResourceData'), 'sourcetype', '').toLowerCase()}",
+                    "href": "{get(state('gnResourceData'), 'href')}"
+                },
+                {
+                    "type": "query",
+                    "labelId": "gnviewer.category",
+                    "value": "{get(state('gnResourceData'), 'category.gn_description')}",
+                    "pathname": "/",
+                    "query": {
+                        "filter{category.identifier.in}": "{get(state('gnResourceData'), 'category.identifier')}"
+                    }
+                },
+                {
+                    "type": "link",
+                    "labelId": "gnviewer.pointOfContact",
+                    "value": "{getUserResourceNames(get(state('gnResourceData'), 'poc'))}",
+                    "disableIf": "{not get(state('gnResourceData'), 'poc')}"
+                },
+                {
+                    "type": "query",
+                    "labelId": "gnviewer.keywords",
+                    "value": "{get(state('gnResourceData'), 'keywords')}",
+                    "valueKey": "name",
+                    "pathname": "/",
+                    "queryTemplate": {
+                        "filter{keywords.slug.in}": "${slug}"
+                    }
+                },
+                {
+                    "type": "query",
+                    "labelId": "gnviewer.regions",
+                    "value": "{get(state('gnResourceData'), 'regions')}",
+                    "valueKey": "name",
+                    "pathname": "/",
+                    "queryTemplate": {
+                        "filter{regions.code.in}": "${code}"
+                    }
+                },
+                {
+                    "type": "text",
+                    "labelId": "gnviewer.attribution",
+                    "value": "{get(state('gnResourceData'), 'attribution')}"
+                },
+                {
+                    "type": "text",
+                    "labelId": "gnviewer.language",
+                    "value": "{get(state('gnResourceData'), 'language')}"
+                },
+                {
+                    "type": "html",
+                    "labelId": "gnviewer.supplementalInformation",
+                    "value": "{get(state('gnResourceData'), 'supplemental_information')}"
+                },
+                {
+                    "type": "date",
+                    "format": "YYYY-MM-DD HH:mm",
+                    "labelId": "gnviewer.temporalExtent",
+                    "value": {
+                        "start": "{get(state('gnResourceData'), 'temporal_extent_start')}",
+                        "end": "{get(state('gnResourceData'), 'temporal_extent_end')}"
+                    }
+                },
+                {
+                    "type": "link",
+                    "style": "label",
+                    "labelId": "gnviewer.viewFullMetadata",
+                    "href": "{getMetadataDetailUrl(state('gnResourceData'))}",
+                    "disableIf": "{not getMetadataDetailUrl(state('gnResourceData'))}"
+                }
+            ]
+        },
+        {
+            "type": "locations",
+            "id": "locations",
+            "labelId": "gnviewer.locations",
+            "items": "{getExtentObject(state('gnResourceData'))}"
+        },
+        {
+            "type": "relations",
+            "id": "related",
+            "labelId": "gnviewer.linkedResources.label",
+            "items": "{get(state('gnResourceData'), 'linkedResources')}"
+        },
+        {
+            "type": "assets",
+            "id": "assets",
+            "labelId": "gnviewer.assets",
+            "items": "{get(state('gnResourceData'), 'assets')}",
+            "disableIf": "{not resourceHasPermission(state('gnResourceData'), 'change_resourcebase')}"
+        },
+        {
+            "type": "data",
+            "id": "data",
+            "labelId": "gnviewer.data",
+            "disableIf": "{get(state('gnResourceData'), 'resource_type') !== 'dataset'}",
+            "items": "{get(state('gnResourceData'), 'attribute_set')}"
+        },
+        {
+            "type": "share",
+            "id": "share",
+            "labelId": "gnviewer.share",
+            "disableIf": "{not canAccessPermissions(state('gnResourceData'))}",
+            "items": [true]
+        },
+        {
+            "type": "settings",
+            "id": "settings",
+            "labelId": "gnviewer.settings",
+            "disableIf": "{not canManageResourceSettings(state('gnResourceData'))}",
+            "items": [true]
+        }
+    ],
+    items,
+    editable = true,
+    canEdit,
+    targetSelector,
+    headerNodeSelector = '#gn-brand-navbar',
+    navbarNodeSelector = '#ms-action-navbar',
+    footerNodeSelector = '.gn-footer',
+    width,
+    height,
+    show,
+    onShow,
+    onClose,
+    enableFilters,
+    resource,
+    resourcesGridId,
+    loading,
+    pendingChanges,
+    enablePreview,
+    editingOverlay,
+    closeOnClickOut,
+    showViewerButton,
+    onClearResource
+}, context) {
+
+    const [confirmModal, setConfirmModal] = useState(false);
+    const editing = canEdit && editable;
+    const isViewer = !resource?.['@ms-detail'];
+
+    const {
+        stickyTop,
+        stickyBottom
+    } = useResourcePanelWrapper({
+        headerNodeSelector,
+        navbarNodeSelector,
+        footerNodeSelector,
+        width,
+        height,
+        active: true
+    });
+
+    function handleConfirm() {
+        onShow(false);
+        onClose(null);
+        !isViewer && onClearResource(null);
+    }
+
+    function handleClose() {
+        if (pendingChanges && !isViewer) {
+            setConfirmModal(true);
+        } else {
+            handleConfirm();
+        }
+    }
+
+    useEffect(() => {
+        return () => {
+            // close when unmount
+            handleClose();
+        };
+    }, []);
+
+    const node = useDetectClickOut({
+        extraNodes: ['.ms-popover-overlay'],
+        disabled: !closeOnClickOut || !show,
+        onClickOut: () => {
+            handleClose();
+        }
+    });
+
+    const { loadedPlugins } = context;
+    const configuredItems = usePluginItems({ items, loadedPlugins }, [resource?.pk]);
+    const toolbarItems = [
+        ...configuredItems.filter(item => item.target === "toolbar")
+    ].sort((a, b) => a.position - b.position);
+
+    return (
+        <TargetSelectorPortal targetSelector={targetSelector}>
+            <ResourcesPanelWrapper
+                className="ms-resource-detail shadow-xl"
+                top={stickyTop}
+                bottom={stickyBottom}
+                show={show}
+                enabled={show}
+                editing={editingOverlay && pendingChanges}
+                ref={node}
+            >
+                <DetailsPanel
+                    resource={resource}
+                    loading={loading}
+                    toolbarItems={toolbarItems}
+                    onClose={handleClose}
+                    editing={editing}
+                    enableFilters={enableFilters}
+                    enablePreview={enablePreview}
+                    tabs={tabs}
+                    tabComponents={tabComponents}
+                    resourcesGridId={resourcesGridId}
+                    showViewerButton={showViewerButton}
+                />
+            </ResourcesPanelWrapper>
+            <PendingStatePrompt
+                show={!!confirmModal}
+                onCancel={() => setConfirmModal(false)}
+                onConfirm={handleConfirm}
+                pendingState={!!pendingChanges}
+                titleId="resourcesCatalog.detailsPendingChangesTitle"
+                descriptionId="resourcesCatalog.detailsPendingChangesDescription"
+                cancelId="resourcesCatalog.detailsPendingChangesCancel"
+                confirmId="resourcesCatalog.detailsPendingChangesConfirm"
+                variant="danger"
+            />
+        </TargetSelectorPortal>
+    );
+}
+
+ResourceDetailsPanel.contextTypes = {
+    loadedPlugins: PropTypes.object,
+    plugins: PropTypes.object
+};
+
+const ResourceDetails = ({ defaultOpen, ...props }) => {
+    useEffect(() => {
+        if (props?.resource?.pk && defaultOpen) {
+            props.onShow(true);
+        }
+    }, [props?.resource?.pk, defaultOpen]);
+    return props?.resource?.pk && props.show ? <ResourceDetailsPanel {...props}/> : null;
+};
+
+const ResourceDetailsPlugin = connect(
+    createStructuredSelector({
+        resource: getResourceData,
+        show: getShowDetails,
+        loading: getResourceLoading,
+        canEdit: canEditPermissions,
+        pendingChanges: getResourceDirtyState
+    }),
+    {
+        onShow: setShowDetails,
+        onClose: setSelectedResource,
+        onClearResource: setResource
+    }
+)(ResourceDetails);
+
+export default createPlugin('ResourceDetails', {
+    component: ResourceDetailsPlugin,
+    containers: {
+        ActionNavbar: [{
+            name: 'ResourceDetailsButton',
+            Component: connect((state) => ({resource: getResourceData(state)}), { onShow: setShowDetails })(({ component, resourcesGridId, onShow, resource }) => {
+                if (!resource?.pk) return null;
+
+                const Component = component;
+                function handleClick() {
+                    onShow(true, resourcesGridId);
+                }
+                return Component ? (
+                    <Component
+                        onClick={handleClick}
+                        glyph="details"
+                        square
+                        labelId="resourcesCatalog.viewResourceProperties"
+                    />
+                ) : null;
+            }),
+            priority: 1,
+            doNotHide: true
+        }, {
+            name: 'ShareActionButton',
+            Component: connect(
+                createSelector(
+                    isNewResource,
+                    getResourceId,
+                    mapInfoSelector,
+                    (isNew, resourceId, mapInfo) => ({
+                        enabled: !isNew && (resourceId || mapInfo?.id)
+                    })
+                ),
+                {
+                    onSelectTab: setDetailPanelTab,
+                    onShowDetails: setShowDetails
+                }
+            )(({ enabled, size, onSelectTab, onShowDetails }) => {
+                return enabled
+                    ? <Button
+                        size={size}
+                        onClick={() => {
+                            onShowDetails(true);
+                            onSelectTab('share');
+                        }}
+                    >
+                        <Message msgId="share.title"/>
+                    </Button>
+                    : null;
+            }),
+            priority: 1,
+            doNotHide: true
+        }],
+        ResourcesGrid: {
+            priority: 2,
+            target: 'card-buttons',
+            position: 2,
+            Component: connect(
+                createStructuredSelector({
+                    selectedResource: getResourceData
+                }),
+                {
+                    onSelect: requestResource,
+                    onShow: setShowDetails
+                }
+            )(({ resourcesGridId, resource, onSelect, component, selectedResource, onShow }) => {
+                const Component = component;
+                function handleClick() {
+                    if (!selectedResource['@ms-detail'] || selectedResource?.pk !== resource?.pk) {
+                        onSelect(resource, resourcesGridId);
+                    }
+                    onShow(true, resourcesGridId);
+                }
+                return (
+                    <Component
+                        onClick={handleClick}
+                        glyph="details"
+                        square
+                        labelId="resourcesCatalog.viewResourceProperties"
+                    />
+                );
+            }),
+            doNotHide: true
+        }
+    },
+    reducers: {
+        gnresource,
+        controls,
+        config
+    }
+});
