@@ -1,9 +1,4 @@
-<<<<<<<< HEAD:geonode_mapstore_client/static/mapstore/dist/js/95404.fd95aa42438f54c7.chunk.js.LICENSE.txt
-/*! @license DOMPurify 3.2.7 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.2.7/LICENSE */
-========
 /*! @license DOMPurify 3.3.3 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.3.3/LICENSE */
->>>>>>>> b4a45c7b65f7abc101f389902d2152d25dceca58:geonode_mapstore_client/static/mapstore/dist/js/6714.4336e417d051bd3c.chunk.js.LICENSE.txt
-
 /**
  * @license
  * Copyright (c) 2014-2015, NVIDIA CORPORATION. All rights reserved.

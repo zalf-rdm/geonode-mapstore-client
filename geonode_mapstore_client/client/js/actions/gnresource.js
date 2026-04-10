@@ -395,8 +395,6 @@ export function setLayerDataset(layerId) {
         layerId
     };
 }
-<<<<<<< HEAD
-=======
 
 export function requestResource(resource) {
     return {
@@ -404,4 +402,3 @@ export function requestResource(resource) {
         resource
     };
 }
->>>>>>> b4a45c7b65f7abc101f389902d2152d25dceca58
