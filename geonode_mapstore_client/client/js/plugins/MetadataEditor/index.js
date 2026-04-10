@@ -111,6 +111,19 @@ const BackToButton = ({ size, variant, resource }) => {
 
 const BackToButtonPlugin = connectMetadata(withRouter(BackToButton));
 
+const SyncMetadataButton = ({ size, variant, resource, readOnly }) => {
+    if (readOnly || !resource || resource.resource_type !== 'map') {
+        return null;
+    }
+    return (
+        <Button size={size} variant={variant} href={`/maps/${resource.pk}/metadata_sync`}>
+            <Message msgId="gnviewer.syncMetadata" />
+        </Button>
+    );
+};
+
+const SyncMetadataButtonPlugin = connectMetadata(SyncMetadataButton);
+
 export default createPlugin('MetadataEditor', {
     component: MetadataEditorPlugin,
     containers: {
@@ -122,6 +135,10 @@ export default createPlugin('MetadataEditor', {
             {
                 name: 'MetadataEditorBackTo',
                 Component: BackToButtonPlugin
+            },
+            {
+                name: 'MetadataEditorSyncMetadata',
+                Component: SyncMetadataButtonPlugin
             }
         ]
     },
