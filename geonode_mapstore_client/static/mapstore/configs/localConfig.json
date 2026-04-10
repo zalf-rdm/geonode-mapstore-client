@@ -4255,6 +4255,10 @@
                         },
                         {
                             "type": "plugin",
+                            "name": "MetadataEditorSyncMetadata"
+                        },
+                        {
+                            "type": "plugin",
                             "name": "MetadataViewer"
                         }
                     ]
