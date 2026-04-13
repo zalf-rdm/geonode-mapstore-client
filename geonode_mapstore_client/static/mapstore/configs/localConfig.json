@@ -2157,6 +2157,12 @@
                                     "labelId": "gnviewer.editMetadata"
                                 },
                                 {
+                                    "type": "link",
+                                    "href": "{'/maps/' + (state('gnResourceData') || {}).pk + '/metadata_sync'}",
+                                    "labelId": "gnviewer.syncMetadata",
+                                    "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'change_resourcebase_metadata')}"
+                                },
+                                {
                                     "type": "divider",
                                     "disableIf": "{get(state('resourceParams'), 'appPk')}"
                                 },
