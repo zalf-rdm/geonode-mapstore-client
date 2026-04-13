@@ -111,7 +111,7 @@ const BackToButton = ({ size, variant, resource }) => {
 
 const BackToButtonPlugin = connectMetadata(withRouter(BackToButton));
 
-const SyncMetadataButton = ({ size, variant, resource, readOnly }) => {
+const SyncMetadataButton = ({ size, variant, resource, readOnly, ...rest }) => { // eslint-disable-line no-unused-vars
     if (readOnly || !resource || resource.resource_type !== 'map') {
         return null;
     }

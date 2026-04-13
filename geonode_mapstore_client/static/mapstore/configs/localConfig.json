@@ -2158,7 +2158,7 @@
                                 },
                                 {
                                     "type": "link",
-                                    "href": "{'/maps/' + (state('gnResourceData') || {}).pk + '/metadata_sync'}",
+                                    "href": "{'/maps/' + context.get(state('gnResourceData'), 'pk') + '/metadata_sync'}",
                                     "labelId": "gnviewer.syncMetadata",
                                     "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'change_resourcebase_metadata')}"
                                 },
