@@ -411,9 +411,6 @@
                     }
                 }
             },
-<<<<<<< HEAD
-            "allResources": "All resources"
-=======
             "allResources": "All resources",
             "assets": "Assets",
             "settings": "Paramètres",
@@ -436,7 +433,6 @@
             "uploadCreated": "Créé",
             "replaceDataset": "Remplacer L'Ensemble De Données",
             "replaceDatasetTitle": "Remplacer l'ensemble de données"
->>>>>>> origin
         }
     }
 }

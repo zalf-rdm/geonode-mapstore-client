@@ -381,9 +381,6 @@
                     }
                 }
             },
-<<<<<<< HEAD
-            "allResources": "All resources"
-=======
             "allResources": "All resources",
             "assets": "Assets",
             "settings": "Settings",
@@ -406,7 +403,6 @@
             "uploadCreated": "Created",
             "replaceDataset": "Replace Dataset",
             "replaceDatasetTitle": "Replace dataset"
->>>>>>> origin
         }
     }
 }

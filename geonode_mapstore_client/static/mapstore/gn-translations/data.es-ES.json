@@ -410,9 +410,6 @@
                     }
                 }
             },
-<<<<<<< HEAD
-            "allResources": "All resources"
-=======
             "allResources": "All resources",
             "assets": "Assets",
             "settings": "Configuracion",
@@ -435,7 +432,6 @@
             "uploadCreated": "Creado",
             "replaceDataset": "Reemplazar Conjunto De Datos",
             "replaceDatasetTitle": "Reemplazar conjunto de datos"
->>>>>>> origin
         }
     }
 }
