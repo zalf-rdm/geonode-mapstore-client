@@ -55,6 +55,7 @@ export function TableComponent({ owsUrl, typeName }) {
 
     if (error) {
         console.error(error);
+        return <div>Error loading data: {error.message || 'An unexpected error occurred.'}</div>;
     }
     if (!rows) {
         return <div>No data available!</div>

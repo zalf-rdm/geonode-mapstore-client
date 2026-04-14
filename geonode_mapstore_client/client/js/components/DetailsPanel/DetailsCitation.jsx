@@ -243,10 +243,10 @@ const generators = {
 function DetailsCitation({ resource }) {
     const [activeFormat, setActiveFormat] = useState('apa');
     const [copied, setCopied] = useState(false);
-    const isMounted = useRef(true);
+    const timeoutIdRef = useRef(null);
 
     useEffect(() => {
-        return () => { isMounted.current = false; };
+        return () => { clearTimeout(timeoutIdRef.current); };
     }, []);
 
     const citationText = (generators[activeFormat] || generateAPA)(resource);
@@ -254,8 +254,9 @@ function DetailsCitation({ resource }) {
 
     const handleCopy = () => {
         setCopied(true);
-        setTimeout(() => {
-            if (isMounted.current) setCopied(false);
+        clearTimeout(timeoutIdRef.current);
+        timeoutIdRef.current = setTimeout(() => {
+            setCopied(false);
         }, 700);
     };
 
