@@ -158,15 +158,18 @@
             },
             "errors": {
                 "noPermissions": "Sie sind nicht berechtigt eine GeoStory hinzuzufügen"
+            },
+            "print": {
+                "author": "Autor",
+                "authorPlaceholder": "Geben Sie einen Autorennamen ein...",
+                "copyright": "Urheberrecht",
+                "copyrightPlaceholder": "Geben Sie ein Urheberrecht ein..."
             }
         },
         "gnviewer": {
-            "citation": "Daten zitieren:",
-            "citationFormat": "Format",
-            "copyCitation": "Zitation kopieren",
-            "citationCopied": "Kopiert!",
             "edit": "Bearbeiten",
-            "export": "Export",
+            "export": "Exportieren",
+            "exportData": "Daten exportieren",
             "editInfo": "Informationen anzeigen",
             "editMetadata": "Metadaten bearbeiten",
             "editStyle": "Stil bearbeiten",
@@ -420,26 +423,7 @@
             },
             "allResources": "All resources",
             "assets": "Assets",
-            "settings": "Einstellungen",
-            "resourceManagement": "Ressourcenverwaltung",
-            "preserveUploadedMetadata": "Hochgeladene Metadaten beibehalten",
-            "approveResource": "Genehmigt",
-            "publishResource": "Veröffentlicht",
-            "featureResource": "Hervorgehoben",
-            "advertiseResource": "Beworben",
-            "preserveUploadedMetadataTooltip": "Behalte die hochgeladene ISO-Metadatendatei, anstatt sie zu generieren",
-            "approveResourceTooltip": "Diese Ressource genehmigen (wird vom erweiterten Workflow verwendet)",
-            "publishResourceTooltip": "Diese Ressource veröffentlichen (wird vom erweiterten Workflow verwendet)",
-            "featureResourceTooltip": "Diese Ressource zu den vorgestellten Ressourcen hinzufügen",
-            "advertiseResourceTooltip": "Diese Ressource durchsuchbar machen",
-            "includeFullscreen": "Vollbild einschließen",
-            "reload": "Neu laden",
-            "uploadDatasetStyle": "Datensatzstil hochladen",
-            "uploadDatasetMetadata": "Datensatzmetadaten hochladen",
-            "uploadName": "Name",
-            "uploadCreated": "Erstellt",
-            "replaceDataset": "Datensatz Ersetzen",
-            "replaceDatasetTitle": "Datensatz ersetzen"
+            "includeFullscreen": "Vollbild einschließen"
         }
     }
 }

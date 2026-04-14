@@ -1,15 +1,15 @@
 # This is a basic workflow to help you get started with Actions
 
-name: "datapackage_tabular-data (build)"
+name: "ZALF main (build)"
 
 concurrency: 
-  group: "datapackage_tabular-data_build"
+  group: "main"
   cancel-in-progress: true
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push events but only for the 4.3.x branch
+  # Triggers the workflow on push events but only for the main branch
   push:
-    branches: [ datapackage_tabular-data ]
+    branches: [ main ]
     paths: 
       - "VERSION"
       - "geonode_mapstore_client/client/**"
@@ -27,8 +27,8 @@ jobs:
     steps:
       - name: "Checking out"
         uses: actions/checkout@v4
-      - name: Checkout submodules
-        run: git submodule update --init --recursive
+        with:
+          submodules: "recursive"
 
       ###########
       # SET UP 
@@ -71,8 +71,8 @@ jobs:
         run: git add --all
         
       - name: "Create Pull Request"
-        uses: peter-evans/create-pull-request@v4
+        uses: peter-evans/create-pull-request@v6
         with:
-          title: "[datapackage_tabular-data] new JS dist build"
-          body: "CI build on branch `datapackage_tabular-data`"
+          title: "[main] new JS dist build"
+          body: "CI build on branch `main`"
           delete-branch: true

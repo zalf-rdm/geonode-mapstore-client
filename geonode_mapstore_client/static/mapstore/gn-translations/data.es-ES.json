@@ -155,11 +155,18 @@
             },
             "errors": {
                 "noPermissions": "No tienes permisos para agregar una geohistoria"
+            },
+            "print": {
+                "author": "Autor",
+                "authorPlaceholder": "Ingrese un nombre de autor...",
+                "copyright": "Derechos de autor",
+                "copyrightPlaceholder": "Ingrese un derecho de autor..."
             }
         },
         "gnviewer": {
             "edit": "Editar",
             "export": "Exportar",
+            "exportData": "Exportar datos",
             "editInfo": "Editar información",
             "editMetadata": "Editar Metadatos",
             "editStyle": "Editar Estilo",
@@ -412,26 +419,7 @@
             },
             "allResources": "All resources",
             "assets": "Assets",
-            "settings": "Configuracion",
-            "resourceManagement": "Gestión de recursos",
-            "preserveUploadedMetadata": "Conservar metadatos cargados",
-            "approveResource": "Aprobado",
-            "publishResource": "Publicado",
-            "featureResource": "Destacado",
-            "advertiseResource": "Anunciado",
-            "preserveUploadedMetadataTooltip": "Conservar el archivo de metadatos ISO cargado en lugar de generarlo",
-            "approveResourceTooltip": "Aprobar este recurso (utilizado por el flujo de trabajo avanzado)",
-            "publishResourceTooltip": "Publicar este recurso (utilizado por el flujo de trabajo avanzado)",
-            "featureResourceTooltip": "Agregar este recurso a los recursos destacados",
-            "advertiseResourceTooltip": "Hacer que este recurso sea buscable",
-            "includeFullscreen": "Incluir pantalla completa",
-            "reload": "Recargar",
-            "uploadDatasetStyle": "Estilo de conjunto de datos de carga",
-            "uploadDatasetMetadata": "Metadatos del conjunto de datos de carga",
-            "uploadName": "Nombre",
-            "uploadCreated": "Creado",
-            "replaceDataset": "Reemplazar Conjunto De Datos",
-            "replaceDatasetTitle": "Reemplazar conjunto de datos"
+            "includeFullscreen": "Incluir pantalla completa"
         }
     }
 }

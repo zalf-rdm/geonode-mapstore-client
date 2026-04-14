@@ -205,8 +205,12 @@
             },
             "enableInteractiveLegendInfo": {
                 "label": "Abilita leggenda interattiva",
-                "info": "Se questa opzione è abilitata, è possibile applicare il filtro per legenda facendo clic sugli elementi della legenda di questo layer dal sommario. Nota: questo parametro richiede configurazioni specifiche su GeoServer",
+                "info": "Se questa opzione è abilitata, il filtro per legenda può essere applicato facendo clic sugli elementi della legenda di questo livello dalla TOC. Inoltre, questo abilita anche la legenda dinamica. Nota: Questo parametro richiede configurazioni specifiche su GeoServer",
                 "fetchError": "Impossibile ottenere le informazioni sulla leggenda dal servizio"
+            },
+            "enableDynamicLegend": {
+                "label": "Abilita legenda dinamica",
+                "info": "Se questa opzione è abilitata, la legenda verrà aggiornata in base alla vista della mappa e ai filtri dei livelli"
             },
             "enableLocalizedLayerStyles": {
                 "label": "Abilita stile localizzato",
@@ -240,7 +244,10 @@
               "clearCustomizationConfirm": "Sei sicuro di voler rimuovere tutte le modifiche effettuate ai campi?",
               "error": "Non è stato possibile recuperare i campi dalla sorgente dati"
             },
-            "disableFeaturesEditing": "Disabilita la modifica sulla tabella degli attributi"
+            "disableFeaturesEditing": "Disabilita la modifica sulla tabella degli attributi",
+            "interactiveLegend": {
+                "incompatibleFilterWarning": "I filtri della legenda sono incompatibili con il filtro del layer attivo, oppure non ci sono feature visibili all'interno della vista della mappa. Clicca su reset per cancellare i filtri della legenda",    "resetLegendFilter": "Reset",
+                "noLegendData": "Nessun elemento della legenda da mostrare"    }
         },
         "localizedInput": {
           "localize": "Traduci questo testo...",
@@ -514,7 +521,15 @@
               "skyAtmosphere": "Mostra l'atmosfera del cielo",
               "groundAtmosphere": "Mostra l'atmosfera del terreno",
               "fog": "Mostra nebbia",
-              "depthTest": "Abilita il depthTest sul terreno"
+              "depthTest": "Abilita il depthTest sul terreno",
+              "lightings": {
+                "title": "Opzioni di Illuminazione",
+                "placeholder": "Seleziona l'opzione di illuminazione",
+                "flashlightOption": "Torcia elettrica",
+                "sunlightOption": "Luce solare",
+                "dateTimeOption": "Data-Ora UTC specifica",
+                "dateTimePlaceholder": "Seleziona la data e l'ora"
+            }
             },
             "thumbnailError": {
                 "error403": "Non disponi dei permessi per aggiornare la thumbnail",
@@ -1603,6 +1618,18 @@
             "servicePlaceholder": "seleziona un servizio",
             "url": "Url",
             "urlPlaceholder": "inserisci un url",
+            "urlPlaceHolders": {
+              "wfs": "e.g. https://mydomain.com/geoserver/wfs",
+              "wmts": "e.g. https://mydomain.com/geoserver/gwc/service/wmts",
+              "wms": "e.g. https://mydomain.com/geoserver/wms",
+              "csw": "e.g. https://mydomain.com/geoserver/csw",
+              "tms": "e.g. https://mydomain.com/geoserver/gwc/service/tms/1.0.0",
+              "custom": "e.g. https://{s}.myUrl.com/{variant}/{z}/{x}/{y}",
+              "3dtiles": "e.g. https://mydomain.com/tileset.json",
+              "cog": "e.g. https://mydomain.com/cog.tif",
+              "model": "e.g. https://mydomain.com/filename.ifc",
+              "arcgis": "e.g. https://mydomain.com/arcgis/rest/services"
+            },
             "type": "Tipo",
             "serviceTitle": "Titolo",
             "serviceTitlePlaceholder": "inserisci un titolo",
@@ -1630,7 +1657,7 @@
             "showPreview": "Mostra la preview",
             "advancedSettings": "Impostazioni avanzate",
             "templateMetadataAvailable": "Metadati disponibili del formato Dublin Core: abstract, boundingBox, contributor, creator, description, format, identifier, references, rights, source, subject, temporal, title, type, uri",
-            "invalidUrlHttpProtocol": "L'URL specificato non è sicuro poiché utilizza HTTP. È necessario fornire un URL che utilizzi il protocollo HTTPS. Utilizzando HTTP, le richieste verranno gestite automaticamente per prevenire problemi di sicurezza del browser passando attraverso il proxy",
+            "invalidUrlHttpProtocol": "Questo catalogo non può essere aggiunto a quelli disponibili perché utilizza un protocollo http. Fornisci un URL di catalogo che utilizzi il protocollo https",
             "invalidArrayUsageForUrl": "Non è stato possibile leggere correttamente l'URL del catalogo",
             "notification": {
                 "errorTitle": "Errore",
@@ -2071,6 +2098,7 @@
                     "useTheSelectedLayer": "Usa il livello selezionato",
                     "connectToAMap": "Connetti ad un altro widget",
                     "connectToTheMap": "Collegati alla mappa",
+                    "connectToTheTable": "Connetti alla tabella",
                     "selectMapToConnect": "Seleziona il widget da connettere",
                     "clearConnection": "Disconnetti",
                     "disableConnectToMap": "Operazione non disponibile",

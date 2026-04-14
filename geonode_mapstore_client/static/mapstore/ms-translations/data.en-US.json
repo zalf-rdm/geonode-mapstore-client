@@ -205,8 +205,12 @@
             },
             "enableInteractiveLegendInfo": {
                 "label": "Enable interactive legend",
-                "info": "If this option is enabled, filter by legend can be applied by clicking on legend items of this layer from the TOC. Note: This parameter requires specific configurations on GeoServer",
+                "info": "If this option is enabled, filter by legend can be applied by clicking on legend items of this layer from the TOC. Additionally, this also enables the dynamic legend. Note: This parameter requires specific configurations on GeoServer",
                 "fetchError": "Failed to retrieve the legend info from the service"
+            },
+            "enableDynamicLegend": {
+                "label": "Enable dynamic legend",
+                "info": "If this option is enabled, the legend will be updated based on the map viewport and layer filters"
             },
             "enableLocalizedLayerStyles": {
                 "label": "Enable localized style",
@@ -240,7 +244,12 @@
               "clearCustomizationConfirm": "Are you sure you want to remove all customizations?",
               "error": "It was not possible to automatically load the fields"
             },
-          "disableFeaturesEditing": "Disable editing on Attribute table"
+          "disableFeaturesEditing": "Disable editing on Attribute table",
+          "interactiveLegend": {
+            "incompatibleFilterWarning": "Legend filters are incompatible with the active layer filter, or no visible features are within the map view. Click reset to clear legend filters",
+            "resetLegendFilter": "Reset",
+            "noLegendData": "No legend items to show"
+          }
         },
         "localizedInput": {
           "localize": "Localize this text...",
@@ -514,7 +523,15 @@
               "skyAtmosphere": "Show sky atmosphere",
               "groundAtmosphere": "Show ground atmosphere",
               "fog": "Show fog",
-              "depthTest": "Enable depth test against terrain"
+              "depthTest": "Enable depth test against terrain",
+              "lightings": {
+                "title": "Lighting Options",
+                "placeholder": "Select the lighting option",
+                "flashlightOption": "Flashlight",
+                "sunlightOption": "Sunlight",
+                "dateTimeOption": "Specific UTC Date-Time",
+                "dateTimePlaceholder": "Select the dateTime"
+              }
             },
             "thumbnailError": {
                 "error403": "You are not allowed to update the thumbnail",
@@ -1603,6 +1620,18 @@
             "servicePlaceholder": "type a service",
             "url": "URL",
             "urlPlaceholder": "type a URL",
+            "urlPlaceHolders": {
+                "wfs": "e.g. https://mydomain.com/geoserver/wfs",
+                "wmts": "e.g. https://mydomain.com/geoserver/gwc/service/wmts",
+                "wms": "e.g. https://mydomain.com/geoserver/wms",
+                "csw": "e.g. https://mydomain.com/geoserver/csw",
+                "tms": "e.g. https://mydomain.com/geoserver/gwc/service/tms/1.0.0",
+                "custom": "e.g. https://{s}.myUrl.com/{variant}/{z}/{x}/{y}",
+                "3dtiles": "e.g. https://mydomain.com/tileset.json",
+                "cog": "e.g. https://mydomain.com/cog.tif",
+                "model": "e.g. https://mydomain.com/filename.ifc",
+                "arcgis": "e.g. https://mydomain.com/arcgis/rest/services"
+            },
             "type": "Type",
             "serviceTitle": "Title",
             "serviceTitlePlaceholder": "type a title",
@@ -1630,7 +1659,7 @@
             "showPreview": "Show preview",
             "advancedSettings": "Advanced settings",
             "templateMetadataAvailable": "Metadata available from Dublin Core format: abstract, boundingBox, contributor, creator, description, format, identifier, references, rights, source, subject, temporal, title, type, uri",
-            "invalidUrlHttpProtocol": "The specified URL is not secure as it uses HTTP. An URL using HTTPs protocol should be provided. Using HTTP, requests will be handled automatically to prevent browser security issues by passing through the proxy",
+            "invalidUrlHttpProtocol": "This catalog cannot be added to the available ones because it uses an http protocol. Please provide a catalog url that uses https protocol",
             "invalidArrayUsageForUrl": "The catalog URL could not be parsed correctly",
             "notification": {
                 "errorTitle": "Error",
@@ -2072,6 +2101,7 @@
                     "useTheSelectedLayer": "Use the selected layer",
                     "connectToAMap": "Connect to another widget",
                     "connectToTheMap": "Connect to the map",
+                    "connectToTheTable": "Connect to the table",
                     "selectMapToConnect": "Select the widget to connect",
                     "clearConnection": "Clear connection",
                     "disableConnectToMap": "Operation unavailable",

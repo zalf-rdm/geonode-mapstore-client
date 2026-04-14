@@ -205,8 +205,12 @@
             },
             "enableInteractiveLegendInfo": {
                 "label": "Aktivieren Sie die interaktive Legende",
-                "info": "Wenn diese Option aktiviert ist, kann der Filter nach Legende angewendet werden, indem im Inhaltsverzeichnis auf Legendenelemente dieser Ebene geklickt wird. Hinweis: Diese Einstellung benötigt spezifische Konfigurationen im GeoServer",
+                "info": "Wenn diese Option aktiviert ist, kann der Filter nach Legende angewendet werden, indem im Inhaltsverzeichnis auf Legendenelemente dieser Ebene geklickt wird. Zusätzlich wird auch die dynamische Legende aktiviert. Hinweis: Dieser Parameter erfordert spezifische Konfigurationen im GeoServer",
                 "fetchError": "Die Legenden Informationen konnten nicht vom Dienst abgerufen werden"
+            },
+            "enableDynamicLegend": {
+                "label": "Dynamische Legende aktivieren",
+                "info": "Wenn diese Option aktiviert ist, wird die Legende basierend auf dem Kartenansichtsfenster und den Ebenenfiltern aktualisiert"
             },
             "enableLocalizedLayerStyles": {
                 "label": "Lokalisierten Stil aktivieren",
@@ -240,7 +244,12 @@
               "clearCustomizationConfirm": "Möchten Sie wirklich alle Anpassungen entfernen?",
               "error": "Die Felder konnten nicht automatisch geladen werden"
             },
-            "disableFeaturesEditing": "Deaktivieren Sie die Bearbeitung der Attributtabelle"
+            "disableFeaturesEditing": "Deaktivieren Sie die Bearbeitung der Attributtabelle",
+            "interactiveLegend": {
+                "incompatibleFilterWarning": "Legendenfilter sind mit dem aktiven Ebenenfilter nicht kompatibel oder es sind keine sichtbaren Features im Kartenansichtsfenster vorhanden. Klicken Sie auf Zurücksetzen, um die Legendenfilter zu löschen",
+                "resetLegendFilter": "Zurücksetzen",
+                "noLegendData": "Keine Legenden Elemente zum Anzeigen"
+            }
         },
         "localizedInput": {
           "localize": "Diesen Text lokalisieren...",
@@ -552,7 +561,15 @@
               "skyAtmosphere": "Himmelsatmosphäre zeigen",
               "groundAtmosphere": "Atmosphäre auf dem Gelände anzeigen",
               "fog": "Nebel anzeigen",
-              "depthTest": "Tiefentest gegen Gelände aktivieren"
+              "depthTest": "Tiefentest gegen Gelände aktivieren",
+              "lightings": {
+                    "title": "Beleuchtungsoptionen",
+                    "placeholder": "Wähle die Beleuchtungsoption aus",
+                    "flashlightOption": "Taschenlampe",
+                    "sunlightOption": "Sonnenlicht",
+                    "dateTimeOption": "Spezifisches UTC-Datum-Uhrzeit",
+                    "dateTimePlaceholder": "Wählen Sie Datum und Uhrzeit"
+                }
             },
             "thumbnailError": {
                 "error403": "Sie haben keine Berechtigung um Miniaturansichten hochzuladen",
@@ -1642,6 +1659,18 @@
             "servicePlaceholder": "Geben Sie einen Service ein",
             "url": "Url",
             "urlPlaceholder": "Geben Sie eine URL ein",
+            "urlPlaceHolders": {
+                "wfs": "z.B. https://mydomain.com/geoserver/wfs",
+                "wmts": "z.B. https://mydomain.com/geoserver/gwc/service/wmts",
+                "wms": "z.B. https://mydomain.com/geoserver/wms",
+                "csw": "z.B. https://mydomain.com/geoserver/csw",
+                "tms": "z.B. https://mydomain.com/geoserver/gwc/service/tms/1.0.0",
+                "custom": "z.B. https://{s}.myUrl.com/{variant}/{z}/{x}/{y}",
+                "3dtiles": "z.B. https://mydomain.com/tileset.json",
+                "cog": "z.B. https://mydomain.com/cog.tif",
+                "model": "z.B. https://mydomain.com/filename.ifc",
+                "arcgis": "z.B. https://mydomain.com/arcgis/rest/services"
+            },
             "type": "Typ",
             "serviceTitle": "Titel",
             "serviceTitlePlaceholder": "Geben Sie einen Titel ein",
@@ -1669,7 +1698,7 @@
             "showPreview": "Vorschau zeigen",
             "advancedSettings": "Erweiterte Einstellungen",
             "templateMetadataAvailable": "Metadaten im Dublin Core-Format verfügbar: abstract, boundingBox, contributor, creator, description, format, identifier, references, rights, source, subject, temporal, title, type, uri",
-            "invalidUrlHttpProtocol": "Die angegebene URL ist nicht sicher, da sie HTTP verwendet. Eine URL, die das HTTPS-Protokoll verwendet, sollte bereitgestellt werden. Bei der Verwendung von HTTP werden Anfragen automatisch verarbeitet, um Browser-Sicherheitsprobleme zu verhindern, indem sie über den Proxy geleitet werden",
+            "invalidUrlHttpProtocol": "Dieser Katalog kann nicht zu den verfügbaren hinzugefügt werden, da er ein http-Protokoll verwendet. Bitte geben Sie eine Katalog-URL an, die das https-Protokoll verwendet.",
             "invalidArrayUsageForUrl": "Die Katalog-URL konnte nicht korrekt gelesen werden",
             "notification": {
                 "errorTitle": "Error",
@@ -2110,6 +2139,7 @@
                     "useTheSelectedLayer": "Verwende die ausgewählte Ebene",
                     "connectToAMap": "Stellen Sie eine Verbindung zu einem anderen Widget her",
                     "connectToTheMap": "Verbinden Sie sich mit der Karte",
+                    "connectToTheTable": "Verbinden Sie sich mit der Tabelle",
                     "selectMapToConnect": "Wählen Sie das zu verbindende Widget aus",
                     "clearConnection": "Verbindung löschen",
                     "disableConnectToMap": "Vorgang nicht verfügbar",

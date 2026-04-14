@@ -13,8 +13,8 @@ import omit from 'lodash/omit';
 import { getConfigProp, convertFromLegacy, normalizeConfig } from '@mapstore/framework/utils/ConfigUtils';
 import { getGeoNodeLocalConfig, parseDevHostname } from '@js/utils/APIUtils';
 import { ProcessTypes, ProcessStatus } from '@js/utils/ResourceServiceUtils';
-import { uniqBy, orderBy, isString, isObject } from 'lodash';
-import { excludeGoogleBackground, extractTileMatrixFromSources } from '@mapstore/framework/utils/LayersUtils';
+import { uniqBy, orderBy, isString, isObject, pick, difference } from 'lodash';
+import { excludeGoogleBackground, extractTileMatrixFromSources, ServerTypes } from '@mapstore/framework/utils/LayersUtils';
 import { determineResourceType } from '@js/utils/FileUtils';
 import { isImageServerUrl } from '@mapstore/framework/utils/ArcGISUtils';
 
@@ -52,37 +52,14 @@ export const GXP_PTYPES = {
     'GN_WMS': 'gxp_geonodecataloguesource'
 };
 
-export const RESOURCE_MANAGEMENT_PROPERTIES = {
-    'metadata_uploaded_preserve': {
-        labelId: 'gnviewer.preserveUploadedMetadata',
-        tooltipId: 'gnviewer.preserveUploadedMetadataTooltip',
-        disabled: (perms = []) => !perms.includes('change_resourcebase')
-    },
-    'is_approved': {
-        labelId: 'gnviewer.approveResource',
-        tooltipId: 'gnviewer.approveResourceTooltip',
-        disabled: (perms = []) => !perms.includes('approve_resourcebase')
-    },
-    'is_published': {
-        labelId: 'gnviewer.publishResource',
-        tooltipId: 'gnviewer.publishResourceTooltip',
-        disabled: (perms = []) => !perms.includes('publish_resourcebase')
-    },
-    'featured': {
-        labelId: 'gnviewer.featureResource',
-        tooltipId: 'gnviewer.featureResourceTooltip',
-        disabled: (perms = []) => !perms.includes('feature_resourcebase')
-    },
-    'advertised': {
-        labelId: 'gnviewer.advertiseResource',
-        tooltipId: 'gnviewer.advertiseResourceTooltip',
-        disabled: (perms = []) => !perms.includes('change_resourcebase')
-    }
-};
-
-export const isDefaultDatasetSubtype = (subtype) => !subtype || ['vector', 'raster', 'remote', 'vector_time'].includes(subtype);
+export const isDefaultDatasetSubtype = (subtype) => !subtype || ['vector', 'raster', 'remote', 'vector_time', 'tabular'].includes(subtype);
 
 export const FEATURE_INFO_FORMAT = 'TEMPLATE';
+
+export const SOURCE_TYPES = {
+    LOCAL: 'LOCAL',
+    REMOTE: 'REMOTE'
+};
 
 const datasetAttributeSetToFields = ({ attribute_set: attributeSet = [] }) => {
     return attributeSet
@@ -117,7 +94,8 @@ export const resourceToLayerConfig = (resource) => {
         has_time: hasTime,
         default_style: defaultStyle,
         ptype,
-        subtype
+        subtype,
+        sourcetype
     } = resource;
 
     const bbox = getExtentFromResource(resource);
@@ -203,7 +181,10 @@ export const resourceToLayerConfig = (resource) => {
                 visibility: true,
                 ...(params && { params }),
                 extendedParams,
-                ...(fields && { fields })
+                ...(fields && { fields }),
+                ...(sourcetype === SOURCE_TYPES.REMOTE && !wmsUrl.includes('/geoserver/') && {
+                    serverType: ServerTypes.NO_VENDOR
+                })
             };
         }
     
@@ -251,7 +232,10 @@ export const resourceToLayerConfig = (resource) => {
             ...(params && { params }),
             ...(dimensions.length > 0 && ({ dimensions })),
             extendedParams,
-            ...(fields && { fields })
+            ...(fields && { fields }),
+            ...(sourcetype === SOURCE_TYPES.REMOTE && !wmsUrl.includes('/geoserver/') && {
+                serverType: ServerTypes.NO_VENDOR
+            })
         };
     }
 };
@@ -355,14 +339,14 @@ export const ResourceTypes = {
 };
 
 export const isDocumentExternalSource = (resource) => {
-    return resource && resource.resource_type === ResourceTypes.DOCUMENT && resource.sourcetype === 'REMOTE';
+    return resource && resource.resource_type === ResourceTypes.DOCUMENT && resource.sourcetype === SOURCE_TYPES.REMOTE;
 };
 
 export const getResourceTypesInfo = () => ({
     [ResourceTypes.DATASET]: {
         icon: 'database',
         canPreviewed: (resource) => resourceHasPermission(resource, 'view_resourcebase'),
-        formatEmbedUrl: (resource) => resource.embed_url && parseDevHostname(updateUrlQueryParameter(resource.embed_url, {
+        formatEmbedUrl: (resource) => resource?.subtype !== "tabular" && resource.embed_url && parseDevHostname(updateUrlQueryParameter(resource.embed_url, {
             config: 'dataset_preview'
         })),
         formatDetailUrl: (resource) => resource?.detail_url && parseDevHostname(resource.detail_url),
@@ -413,26 +397,7 @@ export const getResourceTypesInfo = () => ({
         canPreviewed: (resource) => resourceHasPermission(resource, 'view_resourcebase'),
         formatEmbedUrl: () => false,
         formatDetailUrl: (resource) => resource?.detail_url && parseDevHostname(resource.detail_url),
-        formatMetadataUrl: (resource) => (`/apps/${resource.pk}/metadata`),
-        catalogPageUrl: '/all'
-    },
-    ["tabular"]: {
-        icon: 'table',
-        name: 'Table',
-        canPreviewed: (resource) => resourceHasPermission(resource, 'view_resourcebase'),
-        formatEmbedUrl: () => false,
-        formatDetailUrl: (resource) => resource?.detail_url && parseDevHostname(resource.detail_url),
-        formatMetadataUrl: (resource) => (`/apps/${resource.pk}/metadata`),
-        catalogPageUrl: '/all'
-    },
-    ["tabular-collection"]: {
-        icon: 'files-o',
-        name: 'TableCollection',
-        canPreviewed: (resource) => resourceHasPermission(resource, 'view_resourcebase'),
-        formatEmbedUrl: () => false,
-        formatDetailUrl: (resource) => resource?.detail_url && parseDevHostname(resource.detail_url),
-        formatMetadataUrl: (resource) => (`/apps/${resource.pk}/metadata`),
-        catalogPageUrl: '/all'
+        formatMetadataUrl: (resource) => (`/apps/${resource.pk}/metadata`)
     }
 });
 
@@ -789,6 +754,45 @@ export const cleanUrl = (targetUrl) => {
         ...(hash && { hash })
     });
 };
+
+export const parseUploadFiles = (data) => {
+    const { uploadFiles = {}, supportedDatasetTypes = [], supportedOptionalExtensions = [], supportedRequiresExtensions = [] } = data;
+    const mainFileTypes = supportedDatasetTypes.filter(file => !file.needsFiles);
+    const mainFileTypeKeys = mainFileTypes.map(({ id }) => id);
+
+    return Object.keys(uploadFiles)
+        .reduce((acc, baseName) => {
+            const uploadFile = uploadFiles[baseName] || {};
+            const { requires = [], ext = [], optional = [], needsFiles = [] } = supportedDatasetTypes.find(({ id }) => id === uploadFile.type) || {};
+            const cleanedFiles = pick(uploadFile.files, [...requires, ...ext, ...optional, ...needsFiles]);
+            const filesKeys = Object.keys(cleanedFiles);
+            const files = requires.length > 0
+                ? cleanedFiles
+                : filesKeys.length > 1
+                    ? pick(cleanedFiles, supportedOptionalExtensions.includes(ext[0]) ? [...needsFiles, ext[0]] : ext[0])
+                    : cleanedFiles;
+            const newFileKeys = Object.keys(files);
+            const requiredFilesIncluded = newFileKeys.filter((id) => supportedRequiresExtensions.includes(id)) || [];
+            const missingExt = requires.length > 0
+                ? requires.filter((fileExt) => !filesKeys.includes(fileExt))
+                : requiredFilesIncluded.length > 0 ? difference(supportedRequiresExtensions, requiredFilesIncluded) : [];
+
+            const mainExt = filesKeys.find(key => ext.includes(key));
+            const addMissingFiles = supportedOptionalExtensions.includes(mainExt) && missingExt?.length === 0 && !(mainFileTypeKeys.some((type) => newFileKeys.includes(type)));
+
+            return {
+                ...acc,
+                [baseName]: {
+                    ...uploadFile,
+                    mainExt,
+                    files,
+                    missingExt,
+                    addMissingFiles
+                }
+            };
+        }, {});
+};
+
 
 export const getResourceImageSource = (image) => {
     return image ? image : 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPAAAADICAIAAABZHvsFAAAACXBIWXMAAC4jAAAuIwF4pT92AAABiklEQVR42u3SAQ0AAAjDMMC/5+MAAaSVsKyTFHwxEmBoMDQYGgyNocHQYGgwNBgaQ4OhwdBgaDA0hgZDg6HB0GBoDA2GBkODocHQGBoMDYYGQ4OhMTQYGgwNhgZDY2gwNBgaDI2hwdBgaDA0GBpDg6HB0GBoMDSGBkODocHQYGgMDYYGQ4OhwdAYGgwNhgZDg6ExNBgaDA2GBkNjaDA0GBoMDYbG0GBoMDQYGkODocHQYGgwNIYGQ4OhwdBgaAwNhgZDg6HB0BgaDA2GBkODoTE0GBoMDYYGQ2NoMDQYGgwNhsbQYGgwNBgaQ4OhwdBgaDA0hgZDg6HB0GBoDA2GBkODocHQGBoMDYYGQ4OhMTQYGgwNhgZDY2gwNBgaDA2GxtBgaDA0GBoMjaHB0GBoMDSGBkODocHQYGgMDYYGQ4OhwdAYGgwNhgZDg6ExNBgaDA2GBkNjaDA0GBoMDYbG0GBoMDQYGgyNocHQYGgwNIYGQ4OhwdBgaAwNhgZDg6HB0BgaDA2GBkPDbQH4OQSN0W8qegAAAABJRU5ErkJggg==';

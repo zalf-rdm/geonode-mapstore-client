@@ -157,11 +157,18 @@
             },
             "errors": {
                 "noPermissions": "Non hai i permessi per aggiungere una geostoria"
+            },
+            "print": {
+                "author": "Autore",
+                "authorPlaceholder": "Inserisci il nome dell'autore...",
+                "copyright": "Copyright",
+                "copyrightPlaceholder": "Inserisci un copyright..."
             }
         },
         "gnviewer": {
             "edit": "Modifica",
             "export": "Esporta",
+            "exportData": "Esporta Dati",
             "editMetadata": "Modifica Metadati",
             "view": "Visualizza",
             "viewMetadata": "Visualizza i metadati",
@@ -415,26 +422,7 @@
             },
             "allResources": "All resources",
             "assets": "Assets",
-            "settings": "Impostazioni",
-            "resourceManagement": "Gestione della risorsa",
-            "preserveUploadedMetadata": "Conserva i metadati caricati",
-            "approveResource": "Approvata",
-            "publishResource": "Pubblicata",
-            "featureResource": "In evidenza",
-            "advertiseResource": "Pubblicizzata",
-            "preserveUploadedMetadataTooltip": "Conserva il file dei metadati ISO caricato invece di generarlo",
-            "approveResourceTooltip": "Approva questa risorsa (utilizzata dall' Advanced Workflow)",
-            "publishResourceTooltip": "Pubblica questa risorsa (utilizzata dall' Advanced Workflow)",
-            "featureResourceTooltip": "Aggiungi questa risorsa alle risorse in evidenza",
-            "advertiseResourceTooltip": "Rendi questa risorsa ricercabile",
-            "includeFullscreen": "Includi fullscreen",
-            "reload": "Ricarica",
-            "uploadDatasetStyle": "Carica stile del dataset",
-            "uploadDatasetMetadata": "Carica i metadati del dataset",
-            "uploadName": "Nome",
-            "uploadCreated": "Data creazione",
-            "replaceDataset": "Sostituisci Dataset",
-            "replaceDatasetTitle": "Sostituisci dataset"
+            "includeFullscreen": "Includi fullscreen"
         }
     }
 }

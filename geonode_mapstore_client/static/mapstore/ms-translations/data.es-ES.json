@@ -202,8 +202,12 @@
             },
             "enableInteractiveLegendInfo": {
                 "label": "Habilitar una leyenda interactiva",
-                "info": "Si esta opción está habilitada, se puede aplicar el filtro por leyenda haciendo clic en los elementos de leyenda de esta capa desde el TOC. Nota: este parámetro requiere configuraciones específicas en GeoServer",
+                "info": "Si esta opción está habilitada, se puede aplicar el filtro por leyenda haciendo clic en los elementos de leyenda de esta capa desde el TOC. Además, esto también habilita la leyenda dinámica. Nota: Este parámetro requiere configuraciones específicas en GeoServer",
                 "fetchError": "No se pudo obtener la información de la leyenda del servicio"
+            },
+            "enableDynamicLegend": {
+                "label": "Habilitar leyenda dinámica",
+                "info": "Si esta opción está habilitada, la leyenda se actualizará en función de la ventana del mapa y los filtros de capa"
             },
             "templateFormatInfoAlertExample": "La identificación de la característica es <span style='white-space:nowrap'>${ properties.datos }</span> ora <span style='white-space:nowrap'>${ properties['datos-valor'] }</span>",
             "templateError": "Hubo un error al aplicar la plantilla a la información devuelta por el servidor, verifique la plantilla",
@@ -240,7 +244,12 @@
               "clearCustomizationConfirm": "¿Está seguro de que desea borrar la personalización de los campos?",
               "error": "Error al recuperar los campos"
             },
-            "disableFeaturesEditing": "Deshabilitar la edición en la tabla de atributos"
+            "disableFeaturesEditing": "Deshabilitar la edición en la tabla de atributos",
+            "interactiveLegend": {
+                "incompatibleFilterWarning": "Los filtros de leyenda son incompatibles con el filtro de capa activo, o no hay características visibles dentro de la vista del mapa. Haga clic en restablecer para borrar los filtros de leyenda",
+                "resetLegendFilter": "Restablecer",
+                "noLegendData": "No hay elementos de leyenda para mostrar"
+            }
         },
         "localizedInput": {
           "localize": "Localizar cadena...",
@@ -514,7 +523,15 @@
               "skyAtmosphere": "Mostrar la atmósfera del cielo",
               "groundAtmosphere": "Mostrar la atmósfera de la superficie",
               "fog": "Mostrar niebla",
-              "depthTest": "Activar depthTest contra el terreno"
+              "depthTest": "Activar depthTest contra el terreno",
+              "lightings": {
+                    "title": "Opciones de Iluminación",
+                    "placeholder": "Selecciona la opción de iluminación",
+                    "flashlightOption": "Linterna",
+                    "sunlightOption": "Luz solar",
+                    "dateTimeOption": "Fecha-Hora UTC específica",
+                    "dateTimePlaceholder": "Seleccione la fecha y hora"
+                }
             },
             "thumbnailError": {
                 "error403": "Error al modificar la miniatura",
@@ -1604,6 +1621,18 @@
             "service": "Servicio",
             "url": "Url",
             "urlPlaceholder": "escribe la URL",
+            "urlPlaceHolders": {
+                "wfs": "p.ej. https://mydomain.com/geoserver/wfs",
+                "wmts": "p.ej. https://mydomain.com/geoserver/gwc/service/wmts",
+                "wms": "p.ej. https://mydomain.com/geoserver/wms",
+                "csw": "p.ej. https://mydomain.com/geoserver/csw",
+                "tms": "p.ej. https://mydomain.com/geoserver/gwc/service/tms/1.0.0",
+                "custom": "p.ej. https://{s}.myUrl.com/{variant}/{z}/{x}/{y}",
+                "3dtiles": "p.ej. https://mydomain.com/tileset.json",
+                "cog": "p.ej. https://mydomain.com/cog.tif",
+                "model": "p.ej. https://mydomain.com/filename.ifc",
+                "arcgis": "p.ej. https://mydomain.com/arcgis/rest/services"
+            },
             "type": "Tipo",
             "serviceTitle": "Título",
             "serviceTitlePlaceholder": "escribe un título",
@@ -1631,7 +1660,7 @@
             "showPreview": "Mostrar vista previa",
             "advancedSettings": "Ajustes avanzados",
             "templateMetadataAvailable": "Metadatos disponibles en formato Dublin Core: abstract, boundingBox, contributor, creator, description, format, identifier, references, rights, source, subject, temporal, title, type, uri",
-            "invalidUrlHttpProtocol": "La URL especificada no es segura ya que utiliza HTTP. Se debe proporcionar una URL que utilice el protocolo HTTPS. Al utilizar HTTP, las solicitudes se manejarán automáticamente para prevenir problemas de seguridad del navegador al pasar a través del proxy",
+            "invalidUrlHttpProtocol": "Este catálogo no se puede agregar a los disponibles porque usa un protocolo http. Proporcione una URL del catálogo que utilice el protocolo https",
             "invalidArrayUsageForUrl": "La URL del catálogo no se pudo leer correctamente.",
             "notification": {
                 "errorTitle": "Error",
@@ -2072,6 +2101,7 @@
                     "useTheSelectedLayer": "Usar la capa seleccionada",
                     "connectToAMap": "Conectarse a otro widget",
                     "connectToTheMap": "Conectar al mapa",
+                    "connectToTheTable": "Conectar a la tabla",
                     "selectMapToConnect": "Seleccione el widget para conectarse",
                     "clearConnection": "Borrar conexión",
                     "disableConnectToMap": "Operación no disponible",

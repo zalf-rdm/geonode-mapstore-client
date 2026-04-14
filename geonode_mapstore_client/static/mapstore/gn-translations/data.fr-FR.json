@@ -155,11 +155,18 @@
             },
             "errors": {
                 "noPermissions": "Vous n'êtes pas autorisé à ajouter une geostory"
+            },
+            "print": {
+                "author": "Auteur",
+                "authorPlaceholder": "Entrez un nom d'auteur...",
+                "copyright": "Droits d'auteur",
+                "copyrightPlaceholder": "Entrez des droits d'auteur..."
             }
         },
         "gnviewer": {
             "edit": "Éditer",
             "export": "Exportation",
+            "exportData": "Exporter les données",
             "editMetadata": "Modifier les Métadonnées",
             "view": "Vue",
             "viewMetadata": "Afficher les métadonnées",
@@ -413,26 +420,7 @@
             },
             "allResources": "All resources",
             "assets": "Assets",
-            "settings": "Paramètres",
-            "resourceManagement": "Gestion des ressources",
-            "preserveUploadedMetadata": "Conserver les métadonnées téléchargées",
-            "approveResource": "Approuvé",
-            "publishResource": "Publié",
-            "featureResource": "En vedette",
-            "advertiseResource": "Annoncé",
-            "preserveUploadedMetadataTooltip": "Conserver le fichier de métadonnées ISO téléchargé au lieu de le générer",
-            "approveResourceTooltip": "Approuver cette ressource (utilisé par le flux de travail avancé)",
-            "publishResourceTooltip": "Publier cette ressource (utilisé par le flux de travail avancé)",
-            "featureResourceTooltip": "Ajouter cette ressource aux ressources en vedette",
-            "advertiseResourceTooltip": "Rendre cette ressource consultable",
-            "includeFullscreen": "Inclure le plein écran",
-            "reload": "Recharge",
-            "uploadDatasetStyle": "Télécharger le style du jeu de données",
-            "uploadDatasetMetadata": "Télécharger les métadonnées du jeu de données",
-            "uploadName": "Nom",
-            "uploadCreated": "Créé",
-            "replaceDataset": "Remplacer L'Ensemble De Données",
-            "replaceDatasetTitle": "Remplacer l'ensemble de données"
+            "includeFullscreen": "Inclure le plein écran"
         }
     }
 }
