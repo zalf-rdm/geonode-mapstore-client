@@ -160,6 +160,11 @@
             }
         },
         "gnviewer": {
+            "citation": "Daten zitieren:",
+            "citationBibTeX": "BibTeX",
+            "citationRIS": "RIS",
+            "copyCitation": "Zitation kopieren",
+            "citationCopied": "Kopiert!",
             "edit": "Bearbeiten",
             "export": "Export",
             "editInfo": "Informationen anzeigen",

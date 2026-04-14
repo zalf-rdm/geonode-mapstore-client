@@ -223,7 +223,9 @@ def run_setup_hooks(*args, **kwargs):
             "temporal_extent_start",
             "thumbnail_url",
             "title",
-            "uuid"
+            "uuid",
+            "author",
+            "publisher"
         ],
     }
     settings.REST_API_PRESETS["map_viewer"] = {
