@@ -87,15 +87,11 @@
             .color-var(@theme-vars[main-color]);
         }
         .gn-details-citation-code {
-            color: #333 !important;
-            background-color: #ffffff !important;
-        }
-        .gn-details-citation-format-btn {
             .color-var(@theme-vars[main-color]);
-            &.active {
-                .color-var(@theme-vars[primary]);
-                .border-color-var(@theme-vars[primary]);
-            }
+            .background-color-var(@theme-vars[main-bg]);
+        }
+        .gn-details-citation-dropdown .dropdown-toggle {
+            .color-var(@theme-vars[main-color]);
         }
     }
 }
@@ -658,27 +654,24 @@
         align-items: center;
         gap: 4px;
 
-        .gn-details-citation-format-btn {
-            border: 1px solid transparent;
-            border-radius: @border-radius-base;
-            background: transparent;
-            padding: 1px 8px;
-            font-size: @font-size-small;
-            line-height: 1.6;
-            opacity: 0.6;
-            transition: opacity 0.15s, border-color 0.15s;
-            &:hover {
-                opacity: 1;
+        .gn-details-citation-dropdown {
+            .dropdown-toggle {
+                border: 1px solid transparent;
+                border-radius: @border-radius-base;
+                background: transparent;
+                padding: 1px 8px;
+                font-size: @font-size-small;
+                line-height: 1.6;
+                &:hover {
+                    border-color: currentColor;
+                }
             }
-            &.active {
-                opacity: 1;
-                font-weight: 600;
+            &.open .dropdown-toggle {
                 border-color: currentColor;
             }
         }
 
         .btn:last-child {
-            margin-left: 2px;
             opacity: 0.7;
             &:hover { opacity: 1; }
         }

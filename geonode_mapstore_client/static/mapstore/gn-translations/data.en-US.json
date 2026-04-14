@@ -161,8 +161,7 @@
         },
         "gnviewer": {
             "citation": "Cite data:",
-            "citationBibTeX": "BibTeX",
-            "citationRIS": "RIS",
+            "citationFormat": "Format",
             "copyCitation": "Copy citation",
             "citationCopied": "Copied!",
             "edit": "Edit",

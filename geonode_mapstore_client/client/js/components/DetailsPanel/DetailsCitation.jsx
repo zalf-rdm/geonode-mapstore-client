@@ -9,19 +9,34 @@
 import React, { useState, useRef, useEffect } from 'react';
 import CopyToClipboardCmp from 'react-copy-to-clipboard';
 import Button from '@js/components/Button';
+import Dropdown from '@js/components/Dropdown';
 import FaIcon from '@js/components/FaIcon';
 import Message from '@mapstore/framework/components/I18N/Message';
 import tooltip from '@mapstore/framework/components/misc/enhancers/tooltip';
 
 const CopyToClipboard = tooltip(CopyToClipboardCmp);
 
-function formatAuthorName(person) {
+const FORMATS = [
+    { key: 'apa',       label: 'APA' },
+    { key: 'harvard',   label: 'Harvard' },
+    { key: 'mla',       label: 'MLA' },
+    { key: 'vancouver', label: 'Vancouver' },
+    { key: 'chicago',   label: 'Chicago' },
+    { key: 'ieee',      label: 'IEEE' },
+    { key: 'bibtex',    label: 'BibTeX' },
+    { key: 'ris',       label: 'RIS' }
+];
+
+function formatAuthorName(person, style) {
     const last = (person.last_name || '').trim();
     const first = (person.first_name || '').trim();
-    if (last && first) return `${last}, ${first}`;
-    if (last) return last;
-    if (first) return first;
-    return person.username || '';
+    const initials = first.split(/\s+/).map(n => n[0] + '.').join(' ');
+    switch (style) {
+    case 'firstInitials': return last && first ? `${last}, ${initials}` : last || first || person.username || '';
+    case 'firstFull':     return last && first ? `${last}, ${first}` : last || first || person.username || '';
+    case 'fullNormal':    return last && first ? `${first} ${last}` : last || first || person.username || '';
+    default:              return last && first ? `${last}, ${first}` : last || first || person.username || '';
+    }
 }
 
 function getSortedAuthors(resource) {
@@ -49,6 +64,28 @@ function getYear(resource) {
     return isNaN(year) ? null : String(year);
 }
 
+function getResourceUrl(resource) {
+    if (resource?.doi) return resource.doi.startsWith('http') ? resource.doi : `https://doi.org/${resource.doi}`;
+    if (resource?.uuid) return `${window.location.origin}/catalogue/#/uuid/${resource.uuid}`;
+    const raw = resource?.detail_url || '';
+    return raw ? (raw.startsWith('http') ? raw : `${window.location.origin}${raw}`) : '';
+}
+
+function formatAuthorList(authors, style, maxBeforeEtAl) {
+    if (authors.length === 0) return '';
+    if (maxBeforeEtAl && authors.length > maxBeforeEtAl) {
+        return formatAuthorName(authors[0], style) + ' et al.';
+    }
+    const names = authors.map(a => formatAuthorName(a, style));
+    if (names.length === 1) return names[0];
+    return names.slice(0, -1).join(', ') + ' & ' + names[names.length - 1];
+}
+
+function getRawDoi(resource) {
+    if (!resource?.doi) return null;
+    return resource.doi.replace(/^https?:\/\/(dx\.)?doi\.org\//, '');
+}
+
 function generateBibTeX(resource) {
     const authors = getSortedAuthors(resource);
     const year = getYear(resource);
@@ -61,23 +98,14 @@ function generateBibTeX(resource) {
     const entries = [];
     entries.push(`  title     = {${resource?.title || ''}}`);
     if (authors.length > 0) {
-        entries.push(`  author    = {${authors.map(formatAuthorName).join(' and ')}}`);
+        entries.push(`  author    = {${authors.map(a => formatAuthorName(a, 'firstFull')).join(' and ')}}`);
     }
-    if (publisher) {
-        entries.push(`  publisher = {${publisher}}`);
-    }
-    if (year) {
-        entries.push(`  year      = {${year}}`);
-    }
-    if (resource?.doi) {
-        entries.push(`  doi       = {${resource.doi}}`);
-    }
-    const url = resource?.detail_url
-        ? `${window.location.origin}${resource.detail_url}`
-        : '';
-    if (url) {
-        entries.push(`  url       = {${url}}`);
-    }
+    if (publisher) entries.push(`  publisher = {${publisher}}`);
+    if (year) entries.push(`  year      = {${year}}`);
+    const doi = getRawDoi(resource);
+    if (doi) entries.push(`  doi       = {${doi}}`);
+    const url = getResourceUrl(resource);
+    if (url) entries.push(`  url       = {${url}}`);
     return `@misc{${key},\n${entries.join(',\n')}\n}`;
 }
 
@@ -86,44 +114,143 @@ function generateRIS(resource) {
     const year = getYear(resource);
     const publisher = getPublisher(resource);
 
-    const lines = [];
-    lines.push('TY  - DATA');
+    const lines = ['TY  - DATA'];
     lines.push(`TI  - ${resource?.title || ''}`);
-    authors.forEach(a => {
-        lines.push(`AU  - ${formatAuthorName(a)}`);
-    });
-    if (publisher) {
-        lines.push(`PB  - ${publisher}`);
-    }
-    if (year) {
-        lines.push(`PY  - ${year}`);
-    }
-    if (resource?.doi) {
-        lines.push(`DO  - ${resource.doi}`);
-    }
-    const url = resource?.detail_url
-        ? `${window.location.origin}${resource.detail_url}`
-        : '';
-    if (url) {
-        lines.push(`UR  - ${url}`);
-    }
+    authors.forEach(a => lines.push(`AU  - ${formatAuthorName(a, 'firstFull')}`));
+    if (publisher) lines.push(`PB  - ${publisher}`);
+    if (year) lines.push(`PY  - ${year}`);
+    const doi = getRawDoi(resource);
+    if (doi) lines.push(`DO  - ${doi}`);
+    const url = getResourceUrl(resource);
+    if (url) lines.push(`UR  - ${url}`);
     lines.push('ER  -');
     return lines.join('\n');
 }
 
+function generateAPA(resource) {
+    const authors = getSortedAuthors(resource);
+    const year = getYear(resource);
+    const publisher = getPublisher(resource);
+    const link = getResourceUrl(resource);
+
+    const authorStr = formatAuthorList(authors, 'firstInitials', 20);
+    const yearStr = year ? ` (${year}).` : '.';
+    const titleStr = resource?.title ? ` ${resource.title}.` : '';
+    const publisherStr = publisher ? ` ${publisher}.` : '';
+    const linkStr = link ? ` ${link}` : '';
+    return `${authorStr}${yearStr}${titleStr}${publisherStr}${linkStr}`.trim();
+}
+
+function generateHarvard(resource) {
+    const authors = getSortedAuthors(resource);
+    const year = getYear(resource);
+    const publisher = getPublisher(resource);
+    const link = getResourceUrl(resource);
+
+    const authorStr = formatAuthorList(authors, 'firstInitials', 0);
+    const yearStr = year ? ` ${year}.` : '.';
+    const titleStr = resource?.title ? ` ${resource.title}.` : '';
+    const publisherStr = publisher ? ` ${publisher}.` : '';
+    const linkStr = link ? ` Available at: ${link}` : '';
+    return `${authorStr}${yearStr}${titleStr}${publisherStr}${linkStr}`.trim();
+}
+
+function generateMLA(resource) {
+    const authors = getSortedAuthors(resource);
+    const year = getYear(resource);
+    const publisher = getPublisher(resource);
+    const link = getResourceUrl(resource);
+
+    let authorStr = '';
+    if (authors.length === 1) {
+        authorStr = formatAuthorName(authors[0], 'firstFull') + '.';
+    } else if (authors.length === 2) {
+        authorStr = formatAuthorName(authors[0], 'firstFull') + ', and ' + formatAuthorName(authors[1], 'fullNormal') + '.';
+    } else if (authors.length > 2) {
+        authorStr = formatAuthorName(authors[0], 'firstFull') + ', et al.';
+    }
+    const titleStr = resource?.title ? ` "${resource.title}."` : '';
+    const publisherStr = publisher ? ` ${publisher},` : '';
+    const yearStr = year ? ` ${year}.` : '';
+    const linkStr = link ? ` ${link}.` : '';
+    return `${authorStr}${titleStr}${publisherStr}${yearStr}${linkStr}`.trim();
+}
+
+function generateVancouver(resource) {
+    const authors = getSortedAuthors(resource);
+    const year = getYear(resource);
+    const publisher = getPublisher(resource);
+    const link = getResourceUrl(resource);
+
+    const authorStr = authors.length > 6
+        ? authors.slice(0, 6).map(a => formatAuthorName(a, 'firstInitials')).join(', ') + ' et al.'
+        : authors.map(a => formatAuthorName(a, 'firstInitials')).join(', ');
+    const yearStr = year ? ` ${year}.` : '.';
+    const titleStr = resource?.title ? ` ${resource.title}.` : '';
+    const publisherStr = publisher ? ` ${publisher};` : '';
+    const linkStr = link ? ` Available from: ${link}` : '';
+    return `${authorStr}${yearStr}${titleStr}${publisherStr}${linkStr}`.trim();
+}
+
+function generateChicago(resource) {
+    const authors = getSortedAuthors(resource);
+    const year = getYear(resource);
+    const publisher = getPublisher(resource);
+    const link = getResourceUrl(resource);
+
+    let authorStr = '';
+    if (authors.length === 1) {
+        authorStr = formatAuthorName(authors[0], 'firstFull') + '.';
+    } else if (authors.length > 1) {
+        authorStr = formatAuthorName(authors[0], 'firstFull');
+        const rest = authors.slice(1).map(a => formatAuthorName(a, 'fullNormal'));
+        authorStr += ', and ' + rest.join(', and ') + '.';
+    }
+    const titleStr = resource?.title ? ` "${resource.title}."` : '';
+    const publisherStr = publisher ? ` ${publisher},` : '';
+    const yearStr = year ? ` ${year}.` : '';
+    const linkStr = link ? ` ${link}.` : '';
+    return `${authorStr}${titleStr}${publisherStr}${yearStr}${linkStr}`.trim();
+}
+
+function generateIEEE(resource) {
+    const authors = getSortedAuthors(resource);
+    const year = getYear(resource);
+    const publisher = getPublisher(resource);
+    const link = getResourceUrl(resource);
+
+    const authorStr = authors.length > 6
+        ? authors.slice(0, 6).map(a => formatAuthorName(a, 'firstInitials')).join(', ') + ' et al.,'
+        : authors.map(a => formatAuthorName(a, 'firstInitials')).join(', ') + (authors.length ? ',' : '');
+    const titleStr = resource?.title ? ` "${resource.title},"` : '';
+    const publisherStr = publisher ? ` ${publisher},` : '';
+    const yearStr = year ? ` ${year}.` : '';
+    const linkStr = link ? ` [Online]. Available: ${link}` : '';
+    return `${authorStr}${titleStr}${publisherStr}${yearStr}${linkStr}`.trim();
+}
+
+const generators = {
+    bibtex:    generateBibTeX,
+    ris:       generateRIS,
+    apa:       generateAPA,
+    harvard:   generateHarvard,
+    mla:       generateMLA,
+    vancouver: generateVancouver,
+    chicago:   generateChicago,
+    ieee:      generateIEEE
+};
+
 function DetailsCitation({ resource }) {
-    const [activeFormat, setActiveFormat] = useState('bibtex');
+    const [activeFormat, setActiveFormat] = useState('apa');
     const [copied, setCopied] = useState(false);
     const isMounted = useRef(true);
 
     useEffect(() => {
-        isMounted.current = true;
         return () => { isMounted.current = false; };
     }, []);
 
-    const citationText = activeFormat === 'bibtex'
-        ? generateBibTeX(resource)
-        : generateRIS(resource);
+    const citationText = (generators[activeFormat] || generateAPA)(resource);
+    const activeLabel = FORMATS.find(f => f.key === activeFormat)?.label || activeFormat;
 
     const handleCopy = () => {
         setCopied(true);
@@ -139,22 +266,22 @@ function DetailsCitation({ resource }) {
                     <Message msgId="gnviewer.citation" />
                 </div>
                 <div className="gn-details-citation-actions">
-                    <Button
-                        className={`gn-details-citation-format-btn${activeFormat === 'bibtex' ? ' active' : ''}`}
-                        variant="default"
-                        bsSize="xs"
-                        onClick={() => setActiveFormat('bibtex')}
-                    >
-                        <Message msgId="gnviewer.citationBibTeX" />
-                    </Button>
-                    <Button
-                        className={`gn-details-citation-format-btn${activeFormat === 'ris' ? ' active' : ''}`}
-                        variant="default"
-                        bsSize="xs"
-                        onClick={() => setActiveFormat('ris')}
-                    >
-                        <Message msgId="gnviewer.citationRIS" />
-                    </Button>
+                    <Dropdown id="gn-citation-format-dropdown" className="gn-details-citation-dropdown">
+                        <Dropdown.Toggle variant="default" bsSize="xs" noCaret>
+                            {activeLabel} <FaIcon name="caret-down" />
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu>
+                            {FORMATS.map(f => (
+                                <Dropdown.Item
+                                    key={f.key}
+                                    active={activeFormat === f.key}
+                                    onSelect={() => setActiveFormat(f.key)}
+                                >
+                                    {f.label}
+                                </Dropdown.Item>
+                            ))}
+                        </Dropdown.Menu>
+                    </Dropdown>
                     <CopyToClipboard
                         tooltipPosition="top"
                         tooltipId={copied ? 'gnviewer.citationCopied' : 'gnviewer.copyCitation'}

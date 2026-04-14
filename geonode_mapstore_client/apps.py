@@ -225,7 +225,8 @@ def run_setup_hooks(*args, **kwargs):
             "title",
             "uuid",
             "author",
-            "publisher"
+            "publisher",
+            "doi"
         ],
     }
     settings.REST_API_PRESETS["map_viewer"] = {
