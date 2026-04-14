@@ -49,7 +49,7 @@ export const TABULAR_ROUTES = [
         component: appRouteComponentTypes.VIEWER,
         shouldNotRequestResources: true
     }
-]
+];
 
 export const TABULARCOLLECTION_ROUTES = [
     {
@@ -63,7 +63,7 @@ export const TABULARCOLLECTION_ROUTES = [
         component: appRouteComponentTypes.VIEWER,
         shouldNotRequestResources: true
     }
-]
+];
 
 export const DASHBOARD_ROUTES = [{
     name: 'dashboard_embed',

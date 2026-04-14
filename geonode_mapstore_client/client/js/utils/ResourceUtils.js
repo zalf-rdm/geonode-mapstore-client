@@ -187,7 +187,7 @@ export const resourceToLayerConfig = (resource) => {
                 })
             };
         }
-    
+
         const dimensions = [
             ...(hasTime ? [{
                 name: 'time',
@@ -531,8 +531,8 @@ export function toGeoNodeMapConfig(data) {
     const maplayers = getGeoNodeMapLayers(data);
     return {
         maplayers
-        //serializer field "thumbnail_url" is readonly :( 
-        //thumbnail_url: tabular ? "/static/importer_datapackage/table-icon.jpg" : undefined
+        // serializer field "thumbnail_url" is readonly :(
+        // thumbnail_url: tabular ? "/static/importer_datapackage/table-icon.jpg" : undefined
     };
 }
 

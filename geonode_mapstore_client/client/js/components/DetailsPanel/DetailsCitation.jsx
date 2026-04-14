@@ -230,14 +230,14 @@ function generateIEEE(resource) {
 }
 
 const generators = {
-    bibtex:    generateBibTeX,
-    ris:       generateRIS,
-    apa:       generateAPA,
-    harvard:   generateHarvard,
-    mla:       generateMLA,
+    bibtex: generateBibTeX,
+    ris: generateRIS,
+    apa: generateAPA,
+    harvard: generateHarvard,
+    mla: generateMLA,
     vancouver: generateVancouver,
-    chicago:   generateChicago,
-    ieee:      generateIEEE
+    chicago: generateChicago,
+    ieee: generateIEEE
 };
 
 function DetailsCitation({ resource }) {
