@@ -10,6 +10,7 @@ import main from '@mapstore/framework/components/app/main';
 import ViewerRoute from '@js/routes/Viewer';
 import MainLoader from '@js/components/MainLoader';
 import Router, { withRoutes } from '@js/components/Router';
+import controls from '@mapstore/framework/reducers/controls';
 import security from '@mapstore/framework/reducers/security';
 import gnresource from '@js/reducers/gnresource';
 import gnsettings from '@js/reducers/gnsettings';
@@ -23,7 +24,8 @@ import {
     setupConfiguration,
     initializeApp,
     getPluginsConfiguration,
-    getPluginsConfigOverride
+    getPluginsConfigOverride,
+    addQueryPlugins
 } from '@js/utils/AppUtils';
 import pluginsDefinition, { storeEpicsNamesToExclude } from '@js/plugins/index';
 import ReactSwipe from 'react-swipeable-views';
@@ -78,10 +80,8 @@ export function initTabularApp({ appRoutes, resourceType }) {
                             onStoreInit,
                             geoNodePageConfig,
                             targetId = 'ms-container',
-                            settings
-                        }) => {
-
-                            const appEpics = {
+                        settings,
+                        query
                                 ...configEpics,
                                 ...gnresourceEpics
                             };
@@ -91,7 +91,10 @@ export function initTabularApp({ appRoutes, resourceType }) {
                             main({
                                 targetId,
                                 appComponent: withRoutes(routes)(ConnectedRouter),
-                                pluginsConfig: getPluginsConfigOverride(getPluginsConfiguration(localConfig.plugins, pluginsConfigKey)),
+                                pluginsConfig: addQueryPlugins(
+                                    getPluginsConfigOverride(getPluginsConfiguration(localConfig.plugins, pluginsConfigKey)),
+                                    query
+                                ),
                                 loaderComponent: MainLoader,
                                 pluginsDef: {
                                     plugins: {
@@ -109,6 +112,7 @@ export function initTabularApp({ appRoutes, resourceType }) {
                                 },
                                 themeCfg: null,
                                 appReducers: {
+                                    controls,
                                     gnresource,
                                     gnsettings,
                                     security
