@@ -148,7 +148,8 @@
             "noPreview": "Un'anteprima non è disponibile per questa risorsa",
             "na": "N/D",
             "emptyFilterItems": "Nessun elemento da visualizzare",
-            "loadingItems": "Caricamento elementi..."
+            "loadingItems": "Caricamento elementi...",
+            "3dtiles": "3D Tiles"
         },
         "viewer": {
             "document": {
@@ -291,6 +292,11 @@
             "supportedFiles": "Estensioni supportate",
             "unsupportedFiles": "File non supportati per il caricamento",
             "upload": "Carica",
+            "addFromUrl": "Aggiungi da URL...",
+            "invalidUrl": "Inserisci un URL assoluto valido",
+            "unsupportedUrlServiceType": "Seleziona un tipo di servizio",
+            "remoteResourceURLPlaceholder": "URL risorsa...",
+            "invalidRemoteUploadMessageErrorTooltip": "Il processo di caricamento non è riuscito. Controlla la validità dell'URL e prova a caricarlo di nuovo",
 
             "uploadDataset": "Carica un dataset",
             "dragAndDropFile": "Trascina e rilascia un file da caricare",
@@ -407,7 +413,32 @@
                     }
                 }
             },
+<<<<<<< HEAD
             "allResources": "All resources"
+=======
+            "allResources": "All resources",
+            "assets": "Assets",
+            "settings": "Impostazioni",
+            "resourceManagement": "Gestione della risorsa",
+            "preserveUploadedMetadata": "Conserva i metadati caricati",
+            "approveResource": "Approvata",
+            "publishResource": "Pubblicata",
+            "featureResource": "In evidenza",
+            "advertiseResource": "Pubblicizzata",
+            "preserveUploadedMetadataTooltip": "Conserva il file dei metadati ISO caricato invece di generarlo",
+            "approveResourceTooltip": "Approva questa risorsa (utilizzata dall' Advanced Workflow)",
+            "publishResourceTooltip": "Pubblica questa risorsa (utilizzata dall' Advanced Workflow)",
+            "featureResourceTooltip": "Aggiungi questa risorsa alle risorse in evidenza",
+            "advertiseResourceTooltip": "Rendi questa risorsa ricercabile",
+            "includeFullscreen": "Includi fullscreen",
+            "reload": "Ricarica",
+            "uploadDatasetStyle": "Carica stile del dataset",
+            "uploadDatasetMetadata": "Carica i metadati del dataset",
+            "uploadName": "Nome",
+            "uploadCreated": "Data creazione",
+            "replaceDataset": "Sostituisci Dataset",
+            "replaceDatasetTitle": "Sostituisci dataset"
+>>>>>>> origin
         }
     }
 }

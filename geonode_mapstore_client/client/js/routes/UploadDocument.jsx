@@ -6,287 +6,119 @@
  * LICENSE file in the root directory of this source tree.
 */
 
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import uniqBy from 'lodash/uniqBy';
-import omit from 'lodash/omit';
-import isEmpty from 'lodash/isEmpty';
-import isNil from 'lodash/isNil';
-import uuidv1 from 'uuid/v1';
+import UploadPanel from '@js/plugins/Operation/components/UploadPanel';
+import ExecutionRequestTable from '@js/plugins/Operation/components/ExecutionRequestTable';
+import useUpload from '@js/plugins/Operation/hooks/useUpload';
+import {
+    getUploadMainFile,
+    getUploadProperty,
+    getSupportedFilesByResourceType,
+    getMaxParallelUploads,
+    getMaxAllowedSizeByResourceType,
+    hasExtensionInUrl,
+    getUploadFileName
+} from '@js/utils/UploadUtils';
 
-import { uploadDocument } from '@js/api/geonode/v2';
-import axios from '@mapstore/framework/libs/ajax';
-import { getConfigProp } from '@mapstore/framework/utils/ConfigUtils';
-import UploadListContainer from '@js/routes/upload/UploadListContainer';
-import UploadContainer from '@js/routes/upload/UploadContainer';
-import { getFileNameParts } from '@js/utils/FileUtils';
+function UploadDocument({}) {
 
-function getAllowedDocumentTypes() {
-    const { allowedDocumentTypes } = getConfigProp('geoNodeSettings') || [];
-    return allowedDocumentTypes;
-}
+    const [requests, setRequests] = useState([]);
 
-const cancelTokens = {};
-const sources = {};
-
-function UploadList({
-    children,
-    onChange
-}) {
-
-    const [waitingUploads, setWaitingUploads] = useState({});
-    const [unsupported, setUnsupported] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [uploadContainerProgress, setUploadContainerProgress] = useState({});
-    const [uploadUrls, setUploadUrls] = useState([]);
-
-    function updateWaitingUploads(uploadFiles) {
-        setWaitingUploads(uploadFiles);
-    }
-
-    function handleDrop(files) {
-        const checkedFiles = files.map((file) => {
-            const { ext } = getFileNameParts(file);
-            return {
-                supported: !!(getAllowedDocumentTypes().includes(ext)),
-                file
-            };
-        });
-        const unsupportedFiles = checkedFiles.filter(({ supported }) => !supported);
-        const uploadsGroupedByName = checkedFiles
-            .filter(({ supported }) => supported)
-            .reduce((acc, { file }) => {
-                const { ext, baseName } = getFileNameParts(file);
-                return {
-                    ...acc,
-                    [baseName]: {
-                        files: {
-                            [ext]: file
-                        }
-                    }
-                };
-            }, {});
-
-        const newWaitingUploads = { ...waitingUploads, ...uploadsGroupedByName };
-        updateWaitingUploads(newWaitingUploads);
-        setUnsupported(unsupportedFiles);
-    }
-
-    const onUnsupportedUrl = (unsupportedUrls) => {
-        setUnsupported(unsupported
-            ?.filter(({file} = {})=> file)
-            ?.concat(
-                uniqBy(unsupportedUrls
-                    ?.filter(({ supported } = {}) => !isNil(supported) && !supported)
-                    ?.map(({docUrl} = {}) => ({url: {name: docUrl}})), 'url.name')
-            ));
-    };
-
-    const handleAddUrl = (docUrls) => {
-        let _uploadUrls = [...uploadUrls];
-        const emptyBaseName = 'empty-url';
-        if (isEmpty(docUrls)) {
-            if (!uploadUrls.some(doc => doc.baseName === emptyBaseName || isEmpty(doc.docUrl))) {
-                _uploadUrls = _uploadUrls.concat({
-                    docUrl: '',
-                    extension: '',
-                    baseName: emptyBaseName
-                });
-                setUploadUrls(_uploadUrls);
+    const api = {
+        upload: {
+            url: '/documents/upload?no__redirect=true',
+            body: {
+                file: {
+                    'title': getUploadFileName,
+                    'doc_file': getUploadMainFile
+                },
+                remote: {
+                    'title': getUploadFileName,
+                    'doc_url': getUploadProperty('url'),
+                    'extension': getUploadProperty('remoteType')
+                }
             }
         }
-        let _waitingUploads = {...waitingUploads};
-        const waitingUploadUrls = docUrls
-            ?.filter(({ supported }) => supported)
-            ?.reduce((acc, documentUrl) => {
-                const { extension, baseName, docUrl } = documentUrl;
-                return {
-                    ...acc,
-                    [baseName]: {
-                        urls: {
-                            [extension]: docUrl
+    };
+
+    const {
+        progress,
+        loading: uploadLoading,
+        errors,
+        completed,
+        cancelRequest,
+        uploadRequest
+    } = useUpload({
+        api: api.upload,
+        onComplete: (responses, successfulUploads) => {
+            setRequests(prevRequests =>[
+                ...successfulUploads.map(({ data, upload }) => {
+                    return {
+                        exec_id: upload.id,
+                        name: getUploadFileName({ upload }),
+                        created: Date.now(),
+                        status: 'finished',
+                        output_params: {
+                            resources: [
+                                {
+                                    detail_url: data.url
+                                }
+                            ]
                         }
-                    }
-                };
-            }, {});
-        _waitingUploads = {..._waitingUploads, ...waitingUploadUrls};
-        updateWaitingUploads(_waitingUploads);
-        onUnsupportedUrl((isEmpty(docUrls) ? uploadUrls : docUrls));
-    };
-
-    const documentUploadProgress = (fileName) => (progress) => {
-        const percentCompleted = Math.floor((progress.loaded * 100) / progress.total);
-        setUploadContainerProgress((prevFiles) => ({ ...prevFiles, [fileName]: percentCompleted }));
-    };
-
-    const removeFile = (waiting, name) => {
-        const uploadFiles = omit(waiting, name);
-        updateWaitingUploads(uploadFiles);
-    };
-
-    const removeUrl = (onRemove) => {
-        onRemove(onUnsupportedUrl);
-    };
-
-    const onSuccessfulUpload = (successfulUploads) => {
-        const successfulUploadsNames = successfulUploads.map(({ baseName }) => baseName);
-        updateWaitingUploads(omit(waitingUploads, successfulUploadsNames));
-        setUploadUrls(uploadUrls?.filter(({baseName} = {}) => !successfulUploadsNames?.includes(baseName)));
-    };
-
-    function handleUploadProcess() {
-        if (!loading) {
-            setLoading(true);
-            setUnsupported([]);
-            axios.all(Object.keys(waitingUploads).map((baseName) => {
-                const readyUpload = waitingUploads[baseName];
-                cancelTokens[baseName] = axios.CancelToken;
-                sources[baseName] = cancelTokens[baseName].source();
-                let payload;
-                if (readyUpload.files) {
-                    const fileExt = Object.keys(readyUpload.files);
-                    const file = readyUpload.files[fileExt[0]];
-                    payload = {title: file?.name, file};
-                } else if (readyUpload.urls) {
-                    const [urlExt] = Object.keys(readyUpload.urls);
-                    const url = readyUpload.urls[urlExt];
-                    payload = {title: baseName, url, extension: urlExt};
-                }
-                const fileName = payload.title;
-                return uploadDocument({
-                    ...payload,
-                    config: {
-                        onUploadProgress: documentUploadProgress(baseName),
-                        cancelToken: sources[baseName].token
-                    }
-                })
-                    .then((data) => ({ status: 'SUCCESS', data, fileName, baseName }))
-                    .catch((error) => {
-                        if (axios.isCancel(error)) {
-                            return { status: 'INVALID', error: 'CANCELED', fileName, baseName };
-                        }
-                        const { data } = error;
-                        return { status: 'INVALID', error: data, fileName, baseName };
-                    });
-            }))
-                .then((responses) => {
-                    const successfulUploads = responses.filter(({ status }) => status === 'SUCCESS');
-
-                    if (successfulUploads.length > 0) {
-                        onSuccessfulUpload(successfulUploads);
-                    }
-                    onChange(responses.map(({ status, fileName: name, data, error }) => {
-                        return {
-                            id: uuidv1(),
-                            name,
-                            progress: 100,
-                            state: status,
-                            detail_url: data?.url,
-                            create_date: Date.now(),
-                            error
-                        };
-                    }));
-                    setLoading(false);
-                })
-                .catch(() => {
-                    setLoading(false);
-                });
+                    };
+                }),
+                ...prevRequests
+            ]);
         }
-    }
+    });
 
-    const handleCancelSingleUpload = useCallback((baseName) => {
-        setUploadContainerProgress((prevFiles) => ({ ...prevFiles, [baseName]: undefined }));
-        return sources[baseName].cancel();
-    }, []);
-
-    const handleCancelAllUploads = useCallback((files) => {
-        return files.forEach((file) => sources[file].cancel());
-    }, []);
-
-    const { maxParallelUploads } = getConfigProp('geoNodeSettings');
-
-    const isDisableUpload = () => {
-        return (
-            Object.keys(waitingUploads).length === 0
-            || uploadUrls.some(({supported} = {}) => supported === false)
-        );
-    };
+    const supportedFiles = getSupportedFilesByResourceType('document');
     return (
-        <UploadContainer
-            waitingUploads={waitingUploads}
-            onDrop={handleDrop}
-            onAddUrl={handleAddUrl}
-            supportedLabels={getAllowedDocumentTypes().map((ext) => `.${ext}`).join(', ')}
-            onRemove={(baseName) => removeFile(waitingUploads, baseName)}
-            unsupported={unsupported}
-            disabledUpload={isDisableUpload()}
-            disableOnParallelLmit={Object.keys(waitingUploads).length > maxParallelUploads}
-            onUpload={handleUploadProcess}
-            loading={loading}
-            progress={uploadContainerProgress}
-            type="document"
-            abort={handleCancelSingleUpload}
-            abortAll={handleCancelAllUploads}
-            setUploadUrls={setUploadUrls}
-            uploadUrls={uploadUrls}
-            onRemoveUrl={removeUrl}
+        <UploadPanel
+            enableRemoteUploads
+            supportedFiles={supportedFiles}
+            maxParallelUploads={getMaxParallelUploads()}
+            maxAllowedSize={getMaxAllowedSizeByResourceType('document')}
+            progress={progress}
+            loading={uploadLoading}
+            errors={errors}
+            completed={completed}
+            onCancel={cancelRequest}
+            onUpload={uploadRequest}
+            remoteTypes={supportedFiles.map(({ required_ext: ext }) => ({ value: `.${ext[0]}`, label: `.${ext[0]}` }))}
+            remoteTypeErrorMessageId="gnviewer.unsupportedUrlExtension"
+            remoteTypesPlaceholder="ext"
+            remoteTypeFromUrl
+            isRemoteTypesDisabled={(data) => {
+                return !data?.validation?.isValidRemoteUrl || hasExtensionInUrl(data);
+            }}
         >
-            {children}
-        </UploadContainer>
-    );
-}
-
-function ProcessingUploadList({
-    uploads: pendingUploads
-}) {
-
-    const [filterText, setFilterText] = useState('');
-
-    return (
-        <UploadListContainer
-            filterText={filterText}
-            onFilter={setFilterText}
-            pendingUploads={pendingUploads}
-            placeholderMsgId="gnviewer.filterPendingUploadDocument"
-            noFilterMatchMsgId="gnviewer.filterNoMatchUploadDocument"
-            titleMsgId="gnviewer.uploadDocument"
-            descriptionMsgId="gnviewer.dragAndDropFile"
-            resourceType="document"
-        />
-    );
-}
-
-function UploadDataset({}) {
-
-    const [pendingUploads, setPendingUploads] = useState([]);
-
-    function parseUploadResponse(response) {
-        return uniqBy([...response], 'id');
-    }
-
-    return (
-        <UploadList
-            onChange={(successfulUploads) => setPendingUploads(parseUploadResponse([...successfulUploads, ...pendingUploads]))}
-        >
-            <ProcessingUploadList
-                uploads={pendingUploads}
+            <ExecutionRequestTable
+                iconName="file"
+                titleMsgId="gnviewer.uploadDocument"
+                descriptionMsgId="gnviewer.dragAndDropFile"
+                requests={requests}
+                onDelete={(deleteId) => {
+                    setRequests(prevRequests => prevRequests.filter(request => request.exec_id !== deleteId));
+                }}
             />
-        </UploadList>
+        </UploadPanel>
     );
 }
 
-UploadDataset.propTypes = {
+UploadDocument.propTypes = {
     location: PropTypes.object
 };
 
-UploadDataset.defaultProps = {
+UploadDocument.defaultProps = {
 
 };
 
-const ConnectedUploadDataset = connect(
+const ConnectedUploadDocument = connect(
     createSelector([], () => ({}))
-)(UploadDataset);
+)(UploadDocument);
 
-export default ConnectedUploadDataset;
+export default ConnectedUploadDocument;

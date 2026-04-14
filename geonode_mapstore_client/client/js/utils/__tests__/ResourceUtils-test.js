@@ -25,14 +25,14 @@ import {
     processUploadResponse,
     parseUploadResponse,
     cleanUrl,
-    parseUploadFiles,
     getResourceTypesInfo,
     ResourceTypes,
     FEATURE_INFO_FORMAT,
     isDocumentExternalSource,
     getDownloadUrlInfo,
     getCataloguePath,
-    getResourceWithLinkedResources
+    getResourceWithLinkedResources,
+    getResourceAdditionalProperties
 } from '../ResourceUtils';
 
 describe('Test Resource Utils', () => {
@@ -672,217 +672,6 @@ describe('Test Resource Utils', () => {
         expect(url).toEqual('https://test.com/dataset/808');
     });
 
-    it('should parse upload files', () => {
-        const data = {
-            uploadFiles: {
-                TestFile: {
-                    type: 'shp',
-                    files: {
-                        dbf: { name: "TestFile.dbf" },
-                        prj: { name: "TestFile.prj" },
-                        shp: { name: "TestFile.shp" },
-                        shx: { name: "TestFile.shx" },
-                        sld: { name: "TestFile.sld" },
-                        xml: { name: "TestFile.xml" }
-                    }
-                }
-            },
-            supportedDatasetTypes: [
-                {
-                    id: 'shp',
-                    label: 'ESRI Shapefile',
-                    format: 'vector',
-                    ext: ['shp'],
-                    requires: ['shp', 'prj', 'dbf', 'shx'],
-                    optional: ['xml', 'sld']
-                },
-                {
-                    id: 'tiff',
-                    label: 'GeoTIFF',
-                    format: 'raster',
-                    ext: ['tiff', 'tif'],
-                    mimeType: ['image/tiff'],
-                    optional: ['xml', 'sld']
-                },
-                {
-                    id: 'csv',
-                    label: 'Comma Separated Value (CSV)',
-                    format: 'vector',
-                    ext: ['csv'],
-                    mimeType: ['text/csv'],
-                    optional: ['xml', 'sld']
-                },
-                {
-                    id: 'zip',
-                    label: 'Zip Archive',
-                    format: 'archive',
-                    ext: ['zip'],
-                    mimeType: ['application/zip'],
-                    optional: ['xml', 'sld']
-                },
-                {
-                    id: 'xml',
-                    label: 'XML Metadata File',
-                    format: 'metadata',
-                    ext: ['xml'],
-                    mimeType: ['application/json'],
-                    needsFiles: [
-                        'shp',
-                        'prj',
-                        'dbf',
-                        'shx',
-                        'csv',
-                        'tiff',
-                        'zip',
-                        'sld'
-                    ]
-                },
-                {
-                    id: 'sld',
-                    label: 'Styled Layer Descriptor (SLD)',
-                    format: 'metadata',
-                    ext: ['sld'],
-                    mimeType: ['application/json'],
-                    needsFiles: [
-                        'shp',
-                        'prj',
-                        'dbf',
-                        'shx',
-                        'csv',
-                        'tiff',
-                        'zip',
-                        'xml'
-                    ]
-                }
-            ],
-            supportedOptionalExtensions: [
-                'xml',
-                'sld',
-                'xml',
-                'sld',
-                'xml',
-                'sld',
-                'xml',
-                'sld'
-            ],
-            supportedRequiresExtensions: ['shp', 'prj', 'dbf', 'shx']
-        };
-
-        expect(parseUploadFiles(data)).toEqual({
-            TestFile: {
-                type: "shp",
-                files: {
-                    dbf: { name: "TestFile.dbf" },
-                    prj: { name: "TestFile.prj" },
-                    shp: { name: "TestFile.shp" },
-                    shx: { name: "TestFile.shx" },
-                    sld: { name: "TestFile.sld" },
-                    xml: { name: "TestFile.xml" }
-                },
-                mainExt: "shp",
-                missingExt: [],
-                addMissingFiles: false
-            }
-        });
-    });
-
-    it('request for missing files', () => {
-        const data = {
-            uploadFiles: {
-                TestFile: {
-                    type: 'xml',
-                    files: {
-                        sld: { name: "TestFile.sld" },
-                        xml: { name: "TestFile.xml" }
-                    }
-                }
-            },
-            supportedDatasetTypes: [
-                {
-                    id: 'shp',
-                    label: 'ESRI Shapefile',
-                    format: 'vector',
-                    ext: ['shp'],
-                    requires: ['shp', 'prj', 'dbf', 'shx'],
-                    optional: ['xml', 'sld']
-                },
-                {
-                    id: 'tiff',
-                    label: 'GeoTIFF',
-                    format: 'raster',
-                    ext: ['tiff', 'tif'],
-                    mimeType: ['image/tiff'],
-                    optional: ['xml', 'sld']
-                },
-                {
-                    id: 'csv',
-                    label: 'Comma Separated Value (CSV)',
-                    format: 'vector',
-                    ext: ['csv'],
-                    mimeType: ['text/csv'],
-                    optional: ['xml', 'sld']
-                },
-                {
-                    id: 'zip',
-                    label: 'Zip Archive',
-                    format: 'archive',
-                    ext: ['zip'],
-                    mimeType: ['application/zip'],
-                    optional: ['xml', 'sld']
-                },
-                {
-                    id: 'xml',
-                    label: 'XML Metadata File',
-                    format: 'metadata',
-                    ext: ['xml'],
-                    mimeType: ['application/json'],
-                    needsFiles: [
-                        'shp',
-                        'prj',
-                        'dbf',
-                        'shx',
-                        'csv',
-                        'tiff',
-                        'zip',
-                        'sld'
-                    ]
-                },
-                {
-                    id: 'sld',
-                    label: 'Styled Layer Descriptor (SLD)',
-                    format: 'metadata',
-                    ext: ['sld'],
-                    mimeType: ['application/json'],
-                    needsFiles: [
-                        'shp',
-                        'prj',
-                        'dbf',
-                        'shx',
-                        'csv',
-                        'tiff',
-                        'zip',
-                        'xml'
-                    ]
-                }
-            ],
-            supportedOptionalExtensions: [
-                'xml',
-                'sld',
-                'xml',
-                'sld',
-                'xml',
-                'sld',
-                'xml',
-                'sld'
-            ],
-            supportedRequiresExtensions: ['shp', 'prj', 'dbf', 'shx']
-        };
-
-        const parsedFiles = parseUploadFiles(data);
-        const baseName = 'TestFile';
-
-        expect(parsedFiles[baseName].addMissingFiles).toEqual(true);
-    });
     describe('Test getResourceTypesInfo', () => {
         it('test dataset of getResourceTypesInfo', () => {
             const {
@@ -1047,5 +836,117 @@ describe('Test Resource Utils', () => {
             .toEqual({pk: 1, linkedResources: {linkedBy: ["1"], linkedTo: ["1"]}});
         expect(getResourceWithLinkedResources({linked_resources: {linked_to: ["1"], linked_by: ["1"]}}))
             .toEqual({linkedResources: {linkedBy: ["1"], linkedTo: ["1"]}});
+    });
+    it('getResourceAdditionalProperties', () => {
+        expect(getResourceAdditionalProperties({})).toEqual({});
+        expect(getResourceAdditionalProperties()).toEqual({});
+        expect(getResourceAdditionalProperties({pk: 1, linked_resources: {linked_to: ["1"], linked_by: ["1"]}}))
+            .toEqual({pk: 1, linkedResources: {linkedBy: ["1"], linkedTo: ["1"]}});
+        expect(getResourceAdditionalProperties({
+            pk: 1,
+            links: [
+                {
+                    extension: '3dtiles',
+                    extras: {
+                        type: 'asset',
+                        content: {
+                            title: 'Original',
+                            description: null,
+                            type: '3dtiles',
+                            download_url: '/api/v2/assets/12/download'
+                        }
+                    },
+                    link_type: 'uploaded',
+                    mime: '',
+                    name: 'tileset',
+                    url: '/path'
+                },
+                {
+                    extension: '3dtiles',
+                    extras: {
+                        type: 'asset',
+                        content: {
+                            title: null,
+                            description: null,
+                            type: '3dtiles',
+                            download_url: '/api/v2/assets/12/download'
+                        }
+                    },
+                    link_type: 'uploaded',
+                    mime: '',
+                    name: 'tileset',
+                    url: '/path'
+                },
+                {
+                    extension: 'xml',
+                    link_type: 'metadata',
+                    mime: 'text/xml',
+                    name: 'ISO',
+                    url: '/path'
+                }
+            ]
+        }))
+            .toEqual({
+                pk: 1,
+                assets: [
+                    {
+                        extension: '3dtiles',
+                        extras: {
+                            type: 'asset',
+                            content: {
+                                title: 'Original',
+                                description: null,
+                                type: '3dtiles',
+                                download_url: '/api/v2/assets/12/download'
+                            }
+                        },
+                        link_type: 'uploaded',
+                        mime: '',
+                        name: 'tileset',
+                        url: '/path'
+                    }
+                ],
+                links: [
+                    {
+                        extension: '3dtiles',
+                        extras: {
+                            type: 'asset',
+                            content: {
+                                title: 'Original',
+                                description: null,
+                                type: '3dtiles',
+                                download_url: '/api/v2/assets/12/download'
+                            }
+                        },
+                        link_type: 'uploaded',
+                        mime: '',
+                        name: 'tileset',
+                        url: '/path'
+                    },
+                    {
+                        extension: '3dtiles',
+                        extras: {
+                            type: 'asset',
+                            content: {
+                                title: null,
+                                description: null,
+                                type: '3dtiles',
+                                download_url: '/api/v2/assets/12/download'
+                            }
+                        },
+                        link_type: 'uploaded',
+                        mime: '',
+                        name: 'tileset',
+                        url: '/path'
+                    },
+                    {
+                        extension: 'xml',
+                        link_type: 'metadata',
+                        mime: 'text/xml',
+                        name: 'ISO',
+                        url: '/path'
+                    }
+                ]
+            });
     });
 });

@@ -16,12 +16,14 @@ import { getPluginsContext } from '@js/utils/PluginsContextUtils';
 import { toModulePlugin as msToModulePlugin } from '@mapstore/framework/utils/ModulePluginsUtils';
 
 import TOCPlugin from '@mapstore/framework/plugins/TOC';
+import OperationPlugin from '@js/plugins/Operation';
 
 let epicsNamesToExclude = [
     'loadGeostoryEpic',
     'reloadGeoStoryOnLoginLogout',
     'loadStoryOnHistoryPop',
-    'saveGeoStoryResource'
+    'saveGeoStoryResource',
+    'storeDetailsInfoDashboardEpic'
 ];
 
 // we need to exclude epics that have been initialized already at app level
@@ -32,7 +34,7 @@ export const storeEpicsNamesToExclude = (epics) => {
     epicsNamesToExclude = uniq(epicsNamesToExclude);
 };
 
-function cleanEpics(epics, excludedNames = []) {
+export function cleanEpics(epics, excludedNames = epicsNamesToExclude) {
     const containsExcludedEpic = !!excludedNames.find((epicName) => epics[epicName]);
     if (containsExcludedEpic) {
         return omit(epics, excludedNames);
@@ -61,6 +63,7 @@ const toModulePlugin = (...args) => {
 
 export const plugins = {
     TOCPlugin,
+    OperationPlugin,
     LayerDownloadPlugin: toModulePlugin(
         'LayerDownload',
         () => import(/* webpackChunkName: 'plugins/layer-download' */ '@mapstore/framework/plugins/LayerDownload'),

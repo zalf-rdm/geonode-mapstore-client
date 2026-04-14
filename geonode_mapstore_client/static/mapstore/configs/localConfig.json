@@ -85,8 +85,8 @@
             "path": "gnresource.viewerLinkedResource"
         },
         {
-            "name": "isSelectedLayerDataset",
-            "path": "gnresource.selectedLayerIsDataset"
+            "name": "selectedLayer",
+            "path": "gnresource.selectedLayer"
         }
     ],
     "projectionDefs": [],
@@ -1123,7 +1123,6 @@
                                     "type": "plugin",
                                     "name": "DeleteResource",
                                     "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'delete_resourcebase')}"
-                                    
                                 }
                             ]
                         },
@@ -1144,7 +1143,7 @@
                                     "type": "link",
                                     "href": "{'#/dataset/' + (state('gnResourceData') || {}).pk + '/edit/data'}",
                                     "labelId": "gnviewer.viewData",
-                                    "disableIf": "{state('gnResourceData') && (state('gnResourceData').subtype === 'raster' || state('gnResourceData').subtype === 'remote')}"
+                                    "disableIf": "{state('gnResourceData') && ['raster', 'remote', '3dtiles'].includes(state('gnResourceData').subtype)}"
                                 }
                             ]
                         },
@@ -1171,15 +1170,19 @@
                                     "labelId": "gnviewer.editMetadata"
                                 },
                                 {
-                                    "type": "link",
-                                    "href": "{'/datasets/' + (state('gnResourceData') || {}).alternate + '/style_upload'}",
-                                    "labelId": "gnviewer.styleUpload",
+                                    "type": "plugin",
+                                    "name": "OperationUploadStyle",
                                     "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'change_dataset_style')}"
                                 },
                                 {
-                                    "type": "link",
-                                    "href": "{'/datasets/' + (state('gnResourceData') || {}).alternate + '/metadata_upload'}",
-                                    "labelId": "gnviewer.metadataUpload"
+                                    "type": "plugin",
+                                    "name": "OperationUploadMetadata",
+                                    "disableIf": "{state('gnResourceData').subtype === '3dtiles'}"
+                                },
+                                {
+                                    "type": "plugin",
+                                    "name": "OperationReplaceDataset",
+                                    "disableIf": "{state('gnResourceData').sourcetype === '3dtiles'}"
                                 }
                             ]
                         },
@@ -1212,7 +1215,7 @@
                         },
                         {
                             "type": "link",
-                            "href": "{'#/map/new?gn-dataset=' + (state('gnResourceData') || {}).pk}",
+                            "href": "{context.getCreateNewMapLink(state('gnResourceData'))}",
                             "labelId": "gnviewer.createMap",
                             "disableIf": "{!(state('user') && state('user').perms && state('user').perms.includes('add_resource'))}"
                         }
@@ -1388,6 +1391,21 @@
                             "id": "related",
                             "labelId": "gnviewer.linkedResources.label",
                             "items": "{context.get(state('gnResourceData'), 'linkedResources')}"
+                        },
+                        {
+                            "type": "assets",
+                            "id": "assets",
+                            "labelId": "gnviewer.assets",
+                            "items": "{context.get(state('gnResourceData'), 'assets')}"
+                        },
+                        {
+                            "type": "settings",
+                            "id": "settings",
+                            "labelId": "gnviewer.settings",
+                            "disableIf": "{!context.canManageResourceSettings(state('gnResourceData'))}",
+                            "items": [
+                                true
+                            ]
                         }
                     ]
                 }
@@ -1691,10 +1709,6 @@
                             "name": "queryform.spatialfilter.operations.intersects"
                         },
                         {
-                            "id": "BBOX",
-                            "name": "queryform.spatialfilter.operations.bbox"
-                        },
-                        {
                             "id": "CONTAINS",
                             "name": "queryform.spatialfilter.operations.contains"
                         },
@@ -1764,6 +1778,127 @@
             },
             {
                 "name": "SidebarMenu"
+            },
+            {
+                "name": "Operation",
+                "cfg": {
+                    "id": "upload-style",
+                    "labelId": "gnviewer.styleUpload",
+                    "containerPosition": "header",
+                    "blocking": true,
+                    "iconName": "paint-brush",
+                    "titleMsgId": "gnviewer.uploadDatasetStyle",
+                    "action": "resource_style_upload",
+                    "api": {
+                        "upload": {
+                            "url": "{context.getEndpointUrl('uploads', '/upload')}",
+                            "maxParallelUploads": 1,
+                            "body": {
+                                "file": {
+                                    "resource_pk": "{context.get(state('gnResourceData'), 'pk')}",
+                                    "base_file": "{context.getUploadMainFile}",
+                                    "action": "resource_style_upload"
+                                }
+                            },
+                            "supportedFiles": "{context.getSupportedFilesByResourceType('dataset', { actions: ['resource_style_upload'] })}"
+                        },
+                        "executionRequest": {
+                            "url": "{context.getEndpointUrl('executionrequest')}",
+                            "params": {
+                                "filter{action}": "resource_style_upload",
+                                "sort[]": "-created",
+                                "filter{geonode_resource}": "{context.get(state('gnResourceData'), 'pk')}"
+                            }
+                        }
+                    }
+                },
+                "override": {
+                    "ActionNavbar": {
+                        "name": "OperationUploadStyle"
+                    }
+                }
+            },
+            {
+                "name": "Operation",
+                "cfg": {
+                    "id": "upload-metadata",
+                    "labelId": "gnviewer.metadataUpload",
+                    "containerPosition": "header",
+                    "iconName": "file-code-o",
+                    "titleMsgId": "gnviewer.uploadDatasetMetadata",
+                    "blocking": true,
+                    "action": "resource_metadata_upload",
+                    "pageReload": true,
+                    "api": {
+                        "upload": {
+                            "url": "{context.getEndpointUrl('uploads', '/upload')}",
+                            "maxParallelUploads": 1,
+                            "body": {
+                                "file": {
+                                    "resource_pk": "{context.get(state('gnResourceData'), 'pk')}",
+                                    "base_file": "{context.getUploadMainFile}",
+                                    "action": "resource_metadata_upload"
+                                }
+                            },
+                            "supportedFiles": "{context.getSupportedFilesByResourceType('dataset', { actions: ['resource_metadata_upload'] })}"
+                        },
+                        "executionRequest": {
+                            "url": "{context.getEndpointUrl('executionrequest')}",
+                            "params": {
+                                "filter{action}": "resource_metadata_upload",
+                                "sort[]": "-created",
+                                "filter{geonode_resource}": "{context.get(state('gnResourceData'), 'pk')}"
+                            }
+                        }
+                    }
+                },
+                "override": {
+                    "ActionNavbar": {
+                        "name": "OperationUploadMetadata"
+                    }
+                }
+            },
+            {
+                "name": "Operation",
+                "cfg": {
+                    "id": "replace-dataset",
+                    "labelId": "gnviewer.replaceDataset",
+                    "containerPosition": "header",
+                    "iconName": "refresh",
+                    "titleMsgId": "gnviewer.replaceDatasetTitle",
+                    "blocking": true,
+                    "action": "replace",
+                    "pageReload": true,
+                    "api": {
+                        "upload": {
+                            "url": "{context.getEndpointUrl('uploads', '/upload')}",
+                            "maxParallelUploads": 1,
+                            "body": {
+                                "file": {
+                                    "resource_pk": "{context.get(state('gnResourceData'), 'pk')}",
+                                    "base_file": "{context.getUploadMainFile}",
+                                    "store_spatial_files": true,
+                                    "overwrite_existing_layer": true,
+                                    "action": "replace"
+                                }
+                            },
+                            "supportedFiles": "{context.getSupportedFilesByResourceType('dataset', { actions: ['replace'] })}"
+                        },
+                        "executionRequest": {
+                            "url": "{context.getEndpointUrl('executionrequest')}",
+                            "params": {
+                                "filter{action}": "replace",
+                                "sort[]": "-created",
+                                "filter{geonode_resource}": "{context.get(state('gnResourceData'), 'pk')}"
+                            }
+                        }
+                    }
+                },
+                "override": {
+                    "ActionNavbar": {
+                        "name": "OperationReplaceDataset"
+                    }
+                }
             }
         ],
         "dataset_edit_data_viewer": [
@@ -1815,10 +1950,6 @@
                         {
                             "id": "INTERSECTS",
                             "name": "queryform.spatialfilter.operations.intersects"
-                        },
-                        {
-                            "id": "BBOX",
-                            "name": "queryform.spatialfilter.operations.bbox"
                         },
                         {
                             "id": "CONTAINS",
@@ -2282,6 +2413,21 @@
                             "id": "related",
                             "labelId": "gnviewer.linkedResources.label",
                             "items": "{context.get(state('gnResourceData'), 'linkedResources')}"
+                        },
+                        {
+                            "type": "assets",
+                            "id": "assets",
+                            "labelId": "gnviewer.assets",
+                            "items": "{context.get(state('gnResourceData'), 'assets')}"
+                        },
+                        {
+                            "type": "settings",
+                            "id": "settings",
+                            "labelId": "gnviewer.settings",
+                            "disableIf": "{!context.canManageResourceSettings(state('gnResourceData'))}",
+                            "items": [
+                                true
+                            ]
                         }
                     ]
                 }
@@ -2578,10 +2724,6 @@
                             "name": "queryform.spatialfilter.operations.intersects"
                         },
                         {
-                            "id": "BBOX",
-                            "name": "queryform.spatialfilter.operations.bbox"
-                        },
-                        {
                             "id": "CONTAINS",
                             "name": "queryform.spatialfilter.operations.contains"
                         },
@@ -2647,14 +2789,14 @@
                 "name": "LayerSettings",
                 "mandatory": true,
                 "cfg": {
-                    "disablePluginIf":"{!state('isSelectedLayerDataset')}"
+                    "disablePluginIf": "{context.hasDefaultSettings(state('selectedLayer'))}"
                 }
             },
             {
                 "name": "TOCItemsSettings",
                 "mandatory": true,
                 "cfg": {
-                    "disablePluginIf":"{state('isSelectedLayerDataset')}"
+                    "disablePluginIf": "{!context.hasDefaultSettings(state('selectedLayer'))}"
                 }
             },
             {
@@ -2978,6 +3120,21 @@
                             "id": "related",
                             "labelId": "gnviewer.linkedResources.label",
                             "items": "{context.get(state('gnResourceData'), 'linkedResources')}"
+                        },
+                        {
+                            "type": "assets",
+                            "id": "assets",
+                            "labelId": "gnviewer.assets",
+                            "items": "{context.get(state('gnResourceData'), 'assets')}"
+                        },
+                        {
+                            "type": "settings",
+                            "id": "settings",
+                            "labelId": "gnviewer.settings",
+                            "disableIf": "{!context.canManageResourceSettings(state('gnResourceData'))}",
+                            "items": [
+                                true
+                            ]
                         }
                     ]
                 }
@@ -3313,6 +3470,21 @@
                             "id": "related",
                             "labelId": "gnviewer.linkedResources.label",
                             "items": "{context.get(state('gnResourceData'), 'linkedResources')}"
+                        },
+                        {
+                            "type": "assets",
+                            "id": "assets",
+                            "labelId": "gnviewer.assets",
+                            "items": "{context.get(state('gnResourceData'), 'assets')}"
+                        },
+                        {
+                            "type": "settings",
+                            "id": "settings",
+                            "labelId": "gnviewer.settings",
+                            "disableIf": "{!context.canManageResourceSettings(state('gnResourceData'))}",
+                            "items": [
+                                true
+                            ]
                         }
                     ]
                 }
@@ -3362,7 +3534,6 @@
                                     "type": "plugin",
                                     "name": "Save",
                                     "disableIf": "{!state('isNewResource') && !context.resourceHasPermission(state('gnResourceData'), 'change_resourcebase') && !context.canCopyResource(state('gnResourceData'), state('user'))}"
-
                                 },
                                 {
                                     "type": "plugin",
@@ -3577,6 +3748,21 @@
                             "id": "related",
                             "labelId": "gnviewer.linkedResources.label",
                             "items": "{context.get(state('gnResourceData'), 'linkedResources')}"
+                        },
+                        {
+                            "type": "assets",
+                            "id": "assets",
+                            "labelId": "gnviewer.assets",
+                            "items": "{context.get(state('gnResourceData'), 'assets')}"
+                        },
+                        {
+                            "type": "settings",
+                            "id": "settings",
+                            "labelId": "gnviewer.settings",
+                            "disableIf": "{!context.canManageResourceSettings(state('gnResourceData'))}",
+                            "items": [
+                                true
+                            ]
                         }
                     ]
                 }
@@ -3615,8 +3801,37 @@
                     "containerPosition": "leftColumn",
                     "toolsOptions": {
                         "hideCrossLayer": true,
-                        "hideSpatialFilter": true
-                    }
+                        "useEmbeddedMap": true
+                    },
+                    "spatialPanelExpanded": false,
+                    "spatialOperations": [
+                        {
+                            "id": "INTERSECTS",
+                            "name": "queryform.spatialfilter.operations.intersects"
+                        },
+                        {
+                            "id": "CONTAINS",
+                            "name": "queryform.spatialfilter.operations.contains"
+                        },
+                        {
+                            "id": "WITHIN",
+                            "name": "queryform.spatialfilter.operations.within"
+                        }
+                    ],
+                    "spatialMethodOptions": [
+                        {
+                            "id": "BBOX",
+                            "name": "queryform.spatialfilter.methods.box"
+                        },
+                        {
+                            "id": "Circle",
+                            "name": "queryform.spatialfilter.methods.circle"
+                        },
+                        {
+                            "id": "Polygon",
+                            "name": "queryform.spatialfilter.methods.poly"
+                        }
+                    ]
                 }
             },
             {
@@ -4111,6 +4326,12 @@
                             "id": "related",
                             "labelId": "gnviewer.linkedResources.label",
                             "items": "{context.get(state('gnResourceData'), 'linkedResources')}"
+                        },
+                        {
+                            "type": "assets",
+                            "id": "assets",
+                            "labelId": "gnviewer.assets",
+                            "items": "{context.get(state('gnResourceData'), 'assets')}"
                         }
                     ],
                     "allPage": {},
@@ -4130,80 +4351,80 @@
                         ],
                         "filtersFormItems": [
                             {
-                              "type": "search"
+                                "type": "search"
                             },
                             {
-                              "type": "group",
-                              "labelId": "gnhome.customFiltersTitle",
-                              "items": [
-                                {
-                                  "id": "my-resources",
-                                  "labelId": "gnhome.myResources",
-                                  "type": "filter",
-                                  "disableIf": "{!state('user')}"
-                                },
-                                {
-                                  "id": "favorite",
-                                  "labelId": "gnhome.favorites",
-                                  "type": "filter",
-                                  "disableIf": "{!state('user')}"
-                                },
-                                {
-                                  "id": "featured",
-                                  "labelId": "gnhome.featuredList",
-                                  "type": "filter"
-                                },
-                                {
-                                  "id": "unpublished",
-                                  "labelId": "gnhome.unpublished",
-                                  "type": "filter",
-                                  "disableIf": "{!state('user')}"
-                                },
-                                {
-                                  "id": "pending-approval",
-                                  "labelId": "gnhome.pendingApproval",
-                                  "type": "filter",
-                                  "disableIf": "{!state('user')}"
-                                }
-                              ]
+                                "type": "group",
+                                "labelId": "gnhome.customFiltersTitle",
+                                "items": [
+                                    {
+                                        "id": "my-resources",
+                                        "labelId": "gnhome.myResources",
+                                        "type": "filter",
+                                        "disableIf": "{!state('user')}"
+                                    },
+                                    {
+                                        "id": "favorite",
+                                        "labelId": "gnhome.favorites",
+                                        "type": "filter",
+                                        "disableIf": "{!state('user')}"
+                                    },
+                                    {
+                                        "id": "featured",
+                                        "labelId": "gnhome.featuredList",
+                                        "type": "filter"
+                                    },
+                                    {
+                                        "id": "unpublished",
+                                        "labelId": "gnhome.unpublished",
+                                        "type": "filter",
+                                        "disableIf": "{!state('user')}"
+                                    },
+                                    {
+                                        "id": "pending-approval",
+                                        "labelId": "gnhome.pendingApproval",
+                                        "type": "filter",
+                                        "disableIf": "{!state('user')}"
+                                    }
+                                ]
                             },
                             {
-                              "type": "divider",
-                              "disableIf": "{!state('user')}"
+                                "type": "divider",
+                                "disableIf": "{!state('user')}"
                             },
                             {
-                              "type": "select",
-                              "facet": "category"
+                                "type": "select",
+                                "facet": "category"
                             },
                             {
-                              "type": "select",
-                              "facet": "keyword"
+                                "type": "select",
+                                "facet": "keyword"
                             },
                             {
-                              "type": "select",
-                              "facet": "place"
+                                "type": "select",
+                                "facet": "place"
                             },
                             {
-                              "type": "select",
-                              "facet": "user"
+                                "type": "select",
+                                "facet": "user"
                             },
                             {
-                              "type": "select",
-                              "facet": "group"
+                                "type": "select",
+                                "facet": "group"
                             },
                             {
-                              "type": "accordion",
-                              "style": "facet",
-                              "facet": "thesaurus"
+                                "type": "accordion",
+                                "style": "facet",
+                                "facet": "thesaurus"
                             },
                             {
-                              "type": "date-range",
-                              "filterKey": "date",
-                              "labelId": "gnviewer.dateFilter"
+                                "type": "date-range",
+                                "filterKey": "date",
+                                "labelId": "gnviewer.dateFilter"
                             },
                             {
-                              "labelId": "gnviewer.extent",
-                              "type": "extent"
+                                "labelId": "gnviewer.extent",
+                                "type": "extent"
                             }
                         ]
                     },
@@ -4212,186 +4433,191 @@
                             "resource": "document"
                         },
                         "menuItems": [
-                          {
-                            "disableIf": "{(state('settings') && state('settings').isMobile) || !(state('user') && state('user').perms && state('user').perms.includes('add_resource')) ? true : false}",
-                            "variant": "primary",
-                            "labelId": "gnhome.new",
-                            "value": "document",
-                            "type": "link",
-                            "href": "{context.getCataloguePath('/catalogue/#/upload/document')}"
-                          }
+                            {
+                                "disableIf": "{(state('settings') && state('settings').isMobile) || !(state('user') && state('user').perms && state('user').perms.includes('add_resource')) ? true : false}",
+                                "variant": "primary",
+                                "labelId": "gnhome.new",
+                                "value": "document",
+                                "type": "link",
+                                "href": "{context.getCataloguePath('/catalogue/#/upload/document')}"
+                            }
                         ],
                         "filtersFormItems": [
                             {
-                              "type": "search"
+                                "type": "search"
                             },
                             {
-                              "type": "group",
-                              "labelId": "gnhome.customFiltersTitle",
-                              "items": [
-                                {
-                                  "id": "my-resources",
-                                  "labelId": "gnhome.myResources",
-                                  "type": "filter",
-                                  "disableIf": "{!state('user')}"
-                                },
-                                {
-                                  "id": "favorite",
-                                  "labelId": "gnhome.favorites",
-                                  "type": "filter",
-                                  "disableIf": "{!state('user')}"
-                                },
-                                {
-                                  "id": "featured",
-                                  "labelId": "gnhome.featuredList",
-                                  "type": "filter"
-                                },
-                                {
-                                  "id": "unpublished",
-                                  "labelId": "gnhome.unpublished",
-                                  "type": "filter",
-                                  "disableIf": "{!state('user')}"
-                                },
-                                {
-                                  "id": "pending-approval",
-                                  "labelId": "gnhome.pendingApproval",
-                                  "type": "filter",
-                                  "disableIf": "{!state('user')}"
-                                }
-                              ]
+                                "type": "group",
+                                "labelId": "gnhome.customFiltersTitle",
+                                "items": [
+                                    {
+                                        "id": "my-resources",
+                                        "labelId": "gnhome.myResources",
+                                        "type": "filter",
+                                        "disableIf": "{!state('user')}"
+                                    },
+                                    {
+                                        "id": "favorite",
+                                        "labelId": "gnhome.favorites",
+                                        "type": "filter",
+                                        "disableIf": "{!state('user')}"
+                                    },
+                                    {
+                                        "id": "featured",
+                                        "labelId": "gnhome.featuredList",
+                                        "type": "filter"
+                                    },
+                                    {
+                                        "id": "unpublished",
+                                        "labelId": "gnhome.unpublished",
+                                        "type": "filter",
+                                        "disableIf": "{!state('user')}"
+                                    },
+                                    {
+                                        "id": "pending-approval",
+                                        "labelId": "gnhome.pendingApproval",
+                                        "type": "filter",
+                                        "disableIf": "{!state('user')}"
+                                    },
+                                    {
+                                        "id": "remote",
+                                        "labelId": "gnhome.remote",
+                                        "type": "filter"
+                                    }
+                                ]
                             },
                             {
-                              "type": "divider",
-                              "disableIf": "{!state('user')}"
+                                "type": "divider",
+                                "disableIf": "{!state('user')}"
                             },
                             {
-                              "type": "select",
-                              "facet": "category"
+                                "type": "select",
+                                "facet": "category"
                             },
                             {
-                              "type": "select",
-                              "facet": "keyword"
+                                "type": "select",
+                                "facet": "keyword"
                             },
                             {
-                              "type": "select",
-                              "facet": "place"
+                                "type": "select",
+                                "facet": "place"
                             },
                             {
-                              "type": "select",
-                              "facet": "user"
+                                "type": "select",
+                                "facet": "user"
                             },
                             {
-                              "type": "select",
-                              "facet": "group"
+                                "type": "select",
+                                "facet": "group"
                             },
                             {
-                              "type": "accordion",
-                              "style": "facet",
-                              "facet": "thesaurus"
+                                "type": "accordion",
+                                "style": "facet",
+                                "facet": "thesaurus"
                             },
                             {
-                              "type": "date-range",
-                              "filterKey": "date",
-                              "labelId": "gnviewer.dateFilter"
+                                "type": "date-range",
+                                "filterKey": "date",
+                                "labelId": "gnviewer.dateFilter"
                             },
                             {
-                              "labelId": "gnviewer.extent",
-                              "type": "extent"
+                                "labelId": "gnviewer.extent",
+                                "type": "extent"
                             }
-                          ]
+                        ]
                     },
                     "dashboardsPage": {
                         "defaultQuery": {
                             "resource": "dashboard"
                         },
                         "menuItems": [
-                          {
-                            "disableIf": "{(state('settings') && state('settings').isMobile) || !(state('user') && state('user').perms && state('user').perms.includes('add_resource'))}",
-                            "variant": "primary",
-                            "labelId": "gnhome.new",
-                            "value": "dashboard",
-                            "type": "link",
-                            "href": "{context.getCataloguePath('/catalogue/#/dashboard/new')}"
-                          }
+                            {
+                                "disableIf": "{(state('settings') && state('settings').isMobile) || !(state('user') && state('user').perms && state('user').perms.includes('add_resource'))}",
+                                "variant": "primary",
+                                "labelId": "gnhome.new",
+                                "value": "dashboard",
+                                "type": "link",
+                                "href": "{context.getCataloguePath('/catalogue/#/dashboard/new')}"
+                            }
                         ],
                         "filtersFormItems": [
                             {
-                              "type": "search"
+                                "type": "search"
                             },
                             {
-                              "type": "group",
-                              "labelId": "gnhome.customFiltersTitle",
-                              "items": [
-                                {
-                                  "id": "my-resources",
-                                  "labelId": "gnhome.myResources",
-                                  "type": "filter",
-                                  "disableIf": "{!state('user')}"
-                                },
-                                {
-                                  "id": "favorite",
-                                  "labelId": "gnhome.favorites",
-                                  "type": "filter",
-                                  "disableIf": "{!state('user')}"
-                                },
-                                {
-                                  "id": "featured",
-                                  "labelId": "gnhome.featuredList",
-                                  "type": "filter"
-                                },
-                                {
-                                  "id": "unpublished",
-                                  "labelId": "gnhome.unpublished",
-                                  "type": "filter",
-                                  "disableIf": "{!state('user')}"
-                                },
-                                {
-                                  "id": "pending-approval",
-                                  "labelId": "gnhome.pendingApproval",
-                                  "type": "filter",
-                                  "disableIf": "{!state('user')}"
-                                }
-                              ]
+                                "type": "group",
+                                "labelId": "gnhome.customFiltersTitle",
+                                "items": [
+                                    {
+                                        "id": "my-resources",
+                                        "labelId": "gnhome.myResources",
+                                        "type": "filter",
+                                        "disableIf": "{!state('user')}"
+                                    },
+                                    {
+                                        "id": "favorite",
+                                        "labelId": "gnhome.favorites",
+                                        "type": "filter",
+                                        "disableIf": "{!state('user')}"
+                                    },
+                                    {
+                                        "id": "featured",
+                                        "labelId": "gnhome.featuredList",
+                                        "type": "filter"
+                                    },
+                                    {
+                                        "id": "unpublished",
+                                        "labelId": "gnhome.unpublished",
+                                        "type": "filter",
+                                        "disableIf": "{!state('user')}"
+                                    },
+                                    {
+                                        "id": "pending-approval",
+                                        "labelId": "gnhome.pendingApproval",
+                                        "type": "filter",
+                                        "disableIf": "{!state('user')}"
+                                    }
+                                ]
                             },
                             {
-                              "type": "divider",
-                              "disableIf": "{!state('user')}"
+                                "type": "divider",
+                                "disableIf": "{!state('user')}"
                             },
                             {
-                              "type": "select",
-                              "facet": "category"
+                                "type": "select",
+                                "facet": "category"
                             },
                             {
-                              "type": "select",
-                              "facet": "keyword"
+                                "type": "select",
+                                "facet": "keyword"
                             },
                             {
-                              "type": "select",
-                              "facet": "place"
+                                "type": "select",
+                                "facet": "place"
                             },
                             {
-                              "type": "select",
-                              "facet": "user"
+                                "type": "select",
+                                "facet": "user"
                             },
                             {
-                              "type": "select",
-                              "facet": "group"
+                                "type": "select",
+                                "facet": "group"
                             },
                             {
-                              "type": "accordion",
-                              "style": "facet",
-                              "facet": "thesaurus"
+                                "type": "accordion",
+                                "style": "facet",
+                                "facet": "thesaurus"
                             },
                             {
-                              "type": "date-range",
-                              "filterKey": "date",
-                              "labelId": "gnviewer.dateFilter"
+                                "type": "date-range",
+                                "filterKey": "date",
+                                "labelId": "gnviewer.dateFilter"
                             },
                             {
-                              "labelId": "gnviewer.extent",
-                              "type": "extent"
+                                "labelId": "gnviewer.extent",
+                                "type": "extent"
                             }
-                          ]
+                        ]
                     },
                     "datasetsPage": {
                         "defaultQuery": {
@@ -4406,124 +4632,129 @@
                                 "responsive": true,
                                 "noCaret": true,
                                 "items": [
-                                  {
-                                    "labelId": "gnhome.uploadDataset",
-                                    "value": "layer",
-                                    "type": "link",
-                                    "href": "{context.getCataloguePath('/catalogue/#/upload/dataset')}"
-                                  },
-                                  {
-                                    "labelId": "gnhome.createDataset",
-                                    "value": "layer",
-                                    "type": "link",
-                                    "href": "/createlayer/",
-                                    "disableIf": "{!(state('settings') && state('settings').createLayer)}"
-                                  },
-                                  {
-                                    "labelId": "gnhome.remoteServices",
-                                    "value": "remote",
-                                    "type": "link",
-                                    "href": "/services/?limit=5"
-                                  }
+                                    {
+                                        "labelId": "gnhome.uploadDataset",
+                                        "value": "layer",
+                                        "type": "link",
+                                        "href": "{context.getCataloguePath('/catalogue/#/upload/dataset')}"
+                                    },
+                                    {
+                                        "labelId": "gnhome.createDataset",
+                                        "value": "layer",
+                                        "type": "link",
+                                        "href": "/createlayer/",
+                                        "disableIf": "{!(state('settings') && state('settings').createLayer)}"
+                                    },
+                                    {
+                                        "labelId": "gnhome.remoteServices",
+                                        "value": "remote",
+                                        "type": "link",
+                                        "href": "/services/?limit=5"
+                                    }
                                 ]
                             }
                         ],
                         "filtersFormItems": [
                             {
-                              "type": "search"
+                                "type": "search"
                             },
                             {
-                              "type": "group",
-                              "labelId": "gnhome.customFiltersTitle",
-                              "items": [
-                                {
-                                  "id": "my-resources",
-                                  "labelId": "gnhome.myResources",
-                                  "type": "filter",
-                                  "disableIf": "{!state('user')}"
-                                },
-                                {
-                                  "id": "favorite",
-                                  "labelId": "gnhome.favorites",
-                                  "type": "filter",
-                                  "disableIf": "{!state('user')}"
-                                },
-                                {
-                                  "id": "featured",
-                                  "labelId": "gnhome.featuredList",
-                                  "type": "filter"
-                                },
-                                {
-                                  "id": "unpublished",
-                                  "labelId": "gnhome.unpublished",
-                                  "type": "filter",
-                                  "disableIf": "{!state('user')}"
-                                },
-                                {
-                                  "id": "pending-approval",
-                                  "labelId": "gnhome.pendingApproval",
-                                  "type": "filter",
-                                  "disableIf": "{!state('user')}"
-                                },
-                                {
-                                    "id": "store-vector",
-                                    "labelId": "gnhome.vector",
-                                    "type": "filter"
-                                  },
-                                  {
-                                    "id": "store-raster",
-                                    "labelId": "gnhome.raster",
-                                    "type": "filter"
-                                  },
-                                  {
-                                    "id": "store-remote",
-                                    "labelId": "gnhome.remote",
-                                    "type": "filter"
-                                  },
-                                  {
-                                    "id": "store-time-series",
-                                    "labelId": "gnhome.timeSeries",
-                                    "type": "filter"
-                                  }
-                              ]
+                                "type": "group",
+                                "labelId": "gnhome.customFiltersTitle",
+                                "items": [
+                                    {
+                                        "id": "my-resources",
+                                        "labelId": "gnhome.myResources",
+                                        "type": "filter",
+                                        "disableIf": "{!state('user')}"
+                                    },
+                                    {
+                                        "id": "favorite",
+                                        "labelId": "gnhome.favorites",
+                                        "type": "filter",
+                                        "disableIf": "{!state('user')}"
+                                    },
+                                    {
+                                        "id": "featured",
+                                        "labelId": "gnhome.featuredList",
+                                        "type": "filter"
+                                    },
+                                    {
+                                        "id": "unpublished",
+                                        "labelId": "gnhome.unpublished",
+                                        "type": "filter",
+                                        "disableIf": "{!state('user')}"
+                                    },
+                                    {
+                                        "id": "pending-approval",
+                                        "labelId": "gnhome.pendingApproval",
+                                        "type": "filter",
+                                        "disableIf": "{!state('user')}"
+                                    },
+                                    {
+                                        "id": "remote",
+                                        "labelId": "gnhome.remote",
+                                        "type": "filter"
+                                    },
+                                    {
+                                        "id": "store-vector",
+                                        "labelId": "gnhome.vector",
+                                        "type": "filter"
+                                    },
+                                    {
+                                        "id": "store-raster",
+                                        "labelId": "gnhome.raster",
+                                        "type": "filter"
+                                    },
+                                    {
+                                        "id": "store-time-series",
+                                        "labelId": "gnhome.timeSeries",
+                                        "type": "filter"
+                                    },
+                                    {
+                                        "id": "3dtiles",
+                                        "labelId": "gnhome.3dtiles",
+                                        "type": "filter"
+                                    }
+                                ]
                             },
                             {
-                              "type": "divider",
-                              "disableIf": "{!state('user')}"
+                                "type": "divider",
+                                "disableIf": "{!state('user')}"
                             },
                             {
-                              "type": "select",
-                              "facet": "category"
+                                "type": "select",
+                                "facet": "category"
                             },
                             {
-                              "type": "select",
-                              "facet": "keyword"
+                                "type": "select",
+                                "facet": "keyword"
                             },
                             {
-                              "type": "select",
-                              "facet": "place"
+                                "type": "select",
+                                "facet": "place"
                             },
                             {
-                              "type": "select",
-                              "facet": "user"
+                                "type": "select",
+                                "facet": "user"
                             },
                             {
-                              "type": "select",
-                              "facet": "group"
+                                "type": "select",
+                                "facet": "group"
                             },
                             {
-                              "type": "accordion",
-                              "style": "facet",
-                              "facet": "thesaurus"
+                                "type": "accordion",
+                                "style": "facet",
+                                "facet": "thesaurus"
                             },
                             {
-                              "type": "date-range",
-                              "filterKey": "date",
-                              "labelId": "gnviewer.dateFilter"
+                                "type": "date-range",
+                                "filterKey": "date",
+                                "labelId": "gnviewer.dateFilter"
                             },
                             {
-                              "labelId": "gnviewer.extent",
-                              "type": "extent"
+                                "labelId": "gnviewer.extent",
+                                "type": "extent"
                             }
                         ]
                     },
@@ -4532,93 +4763,93 @@
                             "resource": "geostory"
                         },
                         "menuItems": [
-                          {
-                            "disableIf": "{(state('settings') && state('settings').isMobile) || !(state('user') && state('user').perms && state('user').perms.includes('add_resource'))}",
-                            "variant": "primary",
-                            "labelId": "gnhome.new",
-                            "value": "geostory",
-                            "type": "link",
-                            "href": "{context.getCataloguePath('/catalogue/#/geostory/new')}"
-                          }
+                            {
+                                "disableIf": "{(state('settings') && state('settings').isMobile) || !(state('user') && state('user').perms && state('user').perms.includes('add_resource'))}",
+                                "variant": "primary",
+                                "labelId": "gnhome.new",
+                                "value": "geostory",
+                                "type": "link",
+                                "href": "{context.getCataloguePath('/catalogue/#/geostory/new')}"
+                            }
                         ],
                         "filtersFormItems": [
                             {
-                              "type": "search"
+                                "type": "search"
                             },
                             {
-                              "type": "group",
-                              "labelId": "gnhome.customFiltersTitle",
-                              "items": [
-                                {
-                                  "id": "my-resources",
-                                  "labelId": "gnhome.myResources",
-                                  "type": "filter",
-                                  "disableIf": "{!state('user')}"
-                                },
-                                {
-                                  "id": "favorite",
-                                  "labelId": "gnhome.favorites",
-                                  "type": "filter",
-                                  "disableIf": "{!state('user')}"
-                                },
-                                {
-                                  "id": "featured",
-                                  "labelId": "gnhome.featuredList",
-                                  "type": "filter"
-                                },
-                                {
-                                  "id": "unpublished",
-                                  "labelId": "gnhome.unpublished",
-                                  "type": "filter",
-                                  "disableIf": "{!state('user')}"
-                                },
-                                {
-                                  "id": "pending-approval",
-                                  "labelId": "gnhome.pendingApproval",
-                                  "type": "filter",
-                                  "disableIf": "{!state('user')}"
-                                }
-                              ]
+                                "type": "group",
+                                "labelId": "gnhome.customFiltersTitle",
+                                "items": [
+                                    {
+                                        "id": "my-resources",
+                                        "labelId": "gnhome.myResources",
+                                        "type": "filter",
+                                        "disableIf": "{!state('user')}"
+                                    },
+                                    {
+                                        "id": "favorite",
+                                        "labelId": "gnhome.favorites",
+                                        "type": "filter",
+                                        "disableIf": "{!state('user')}"
+                                    },
+                                    {
+                                        "id": "featured",
+                                        "labelId": "gnhome.featuredList",
+                                        "type": "filter"
+                                    },
+                                    {
+                                        "id": "unpublished",
+                                        "labelId": "gnhome.unpublished",
+                                        "type": "filter",
+                                        "disableIf": "{!state('user')}"
+                                    },
+                                    {
+                                        "id": "pending-approval",
+                                        "labelId": "gnhome.pendingApproval",
+                                        "type": "filter",
+                                        "disableIf": "{!state('user')}"
+                                    }
+                                ]
                             },
                             {
-                              "type": "divider",
-                              "disableIf": "{!state('user')}"
+                                "type": "divider",
+                                "disableIf": "{!state('user')}"
                             },
                             {
-                              "type": "select",
-                              "facet": "category"
+                                "type": "select",
+                                "facet": "category"
                             },
                             {
-                              "type": "select",
-                              "facet": "keyword"
+                                "type": "select",
+                                "facet": "keyword"
                             },
                             {
-                              "type": "select",
-                              "facet": "place"
+                                "type": "select",
+                                "facet": "place"
                             },
                             {
-                              "type": "select",
-                              "facet": "user"
+                                "type": "select",
+                                "facet": "user"
                             },
                             {
-                              "type": "select",
-                              "facet": "group"
+                                "type": "select",
+                                "facet": "group"
                             },
                             {
-                              "type": "accordion",
-                              "style": "facet",
-                              "facet": "thesaurus"
+                                "type": "accordion",
+                                "style": "facet",
+                                "facet": "thesaurus"
                             },
                             {
-                              "type": "date-range",
-                              "filterKey": "date",
-                              "labelId": "gnviewer.dateFilter"
+                                "type": "date-range",
+                                "filterKey": "date",
+                                "labelId": "gnviewer.dateFilter"
                             },
                             {
-                              "labelId": "gnviewer.extent",
-                              "type": "extent"
+                                "labelId": "gnviewer.extent",
+                                "type": "extent"
                             }
-                          ]
+                        ]
                     }
                 }
             },
@@ -4877,6 +5108,21 @@
                             "id": "related",
                             "labelId": "gnviewer.linkedResources.label",
                             "items": "{context.get(state('gnResourceData'), 'linkedResources')}"
+                        },
+                        {
+                            "type": "assets",
+                            "id": "assets",
+                            "labelId": "gnviewer.assets",
+                            "items": "{context.get(state('gnResourceData'), 'assets')}"
+                        },
+                        {
+                            "type": "settings",
+                            "id": "settings",
+                            "labelId": "gnviewer.settings",
+                            "disableIf": "{!context.canManageResourceSettings(state('gnResourceData'))}",
+                            "items": [
+                                true
+                            ]
                         }
                     ]
                 }

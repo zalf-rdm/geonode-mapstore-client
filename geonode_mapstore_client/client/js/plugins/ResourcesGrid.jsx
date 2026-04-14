@@ -53,7 +53,7 @@ import FaIcon from '@js/components/FaIcon';
 import Button from '@js/components/Button';
 import useLocalStorage from '@js/hooks/useLocalStorage';
 import MainLoader from '@js/components/MainLoader';
-import detailViewerEpics from '@js/epics/detailviewer';
+import tabComponents from '@js/plugins/detailviewer/tabComponents';
 
 const ConnectedDetailsPanel = connect(
     createSelector([
@@ -66,7 +66,8 @@ const ConnectedDetailsPanel = connect(
         favorite: favorite,
         downloading,
         canDownload: resourceHasPermission(resource, 'download_resourcebase'),
-        resourceId: resource?.pk
+        resourceId: resource?.pk,
+        tabComponents
     })),
     {
         onFavorite: setFavoriteResource,
@@ -354,6 +355,11 @@ function ResourcesGrid({
                     disableIf: '{!state("user")}'
                 },
                 {
+                    id: 'remote',
+                    labelId: 'gnhome.remote',
+                    type: 'filter'
+                },
+                {
                     id: 'dataset',
                     labelId: 'gnhome.datasets',
                     type: 'filter',
@@ -369,13 +375,13 @@ function ResourcesGrid({
                             type: 'filter'
                         },
                         {
-                            id: 'store-remote',
-                            labelId: 'gnhome.remote',
+                            id: 'store-time-series',
+                            labelId: 'gnhome.timeSeries',
                             type: 'filter'
                         },
                         {
-                            id: 'store-time-series',
-                            labelId: 'gnhome.timeSeries',
+                            id: '3dtiles',
+                            labelId: 'gnhome.3dtiles',
                             type: 'filter'
                         }
                     ]
@@ -775,8 +781,7 @@ function ResourcesGrid({
                                         order={query?.sort}
                                         onClear={handleClear}
                                         onClick={handleShowFilterForm.bind(null, true)}
-                                        orderOptions={parsedConfig.order?.options}
-                                        defaultLabelId={parsedConfig.order?.defaultLabelId}
+                                        orderConfig={parsedConfig.order}
                                         totalResources={totalResources}
                                         totalFilters={queryFilters.length}
                                         filtersActive={!!(queryFilters.length > 0)}
@@ -821,7 +826,7 @@ function ResourcesGrid({
                                 scrollContainer={scrollContainerSelector ? document.querySelector(scrollContainerSelector) : undefined}
                                 getDetailHref={res => handleFormatHref({
                                     query: {
-                                        'd': `${res.pk};${res.resource_type}`
+                                        'd': `${res.pk};${res.resource_type}${res.subtype ? `;${res.subtype}` : ''}`
                                     },
                                     replaceQuery: true,
                                     excludeQueryKeys: []
@@ -894,8 +899,7 @@ export default createPlugin('ResourcesGrid', {
         ...gnsearchEpics,
         ...gnsaveEpics,
         ...resourceServiceEpics,
-        ...favoriteEpics,
-        ...detailViewerEpics
+        ...favoriteEpics
     },
     reducers: {
         gnsearch,

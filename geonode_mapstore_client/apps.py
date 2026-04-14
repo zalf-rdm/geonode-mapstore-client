@@ -227,6 +227,8 @@ def run_setup_hooks(*args, **kwargs):
             "author",
             "publisher",
             "doi"
+            "metadata_uploaded_preserve",
+            "featured"
         ],
     }
     settings.REST_API_PRESETS["map_viewer"] = {
@@ -255,6 +257,7 @@ def run_setup_hooks(*args, **kwargs):
     settings.PROXY_ALLOWED_PARAMS_NEEDLES += (
         "request=getfeatureinfo",
         "request=getcapabilities",
+        "request=getmap",
     )
     settings.PROXY_ALLOWED_PATH_NEEDLES += (
         "tileset.json",

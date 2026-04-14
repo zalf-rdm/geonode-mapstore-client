@@ -7,7 +7,7 @@
 // **************
 
 #gn-components-theme(@theme-vars) {
-    .gn-upload-dataset {
+    .gn-upload-panel {
         .background-color-var(@theme-vars[main-variant-bg]);
         .gn-main-event-container {
             .background-color-var(@theme-vars[main-variant-bg]);
@@ -62,13 +62,19 @@
             }
         }
     }
+    .gn-upload-processing {
+        .table > tbody > tr > td {
+            .background-color-var(@theme-vars[main-bg]);
+            .border-top-color-var(@theme-vars[main-variant-bg]);
+        }
+    }
 }
 
 // **************
 // Layout
 // **************
 
-.gn-upload-dataset {
+.gn-upload-panel {
     position: relative;
     width: 100%;
     height: 100%;
@@ -116,17 +122,16 @@
         overflow: auto;
     }
     .gn-upload-list-header {
-        &.document {
-            display: flex;
-            .add-url {
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
+        display: flex;
+        .add-url {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
         .btn {
             width: 100%;
             text-align: left;
+            font-size: @font-size-sm;
             > span {
                 margin-left: 0.25rem;
             }
@@ -140,6 +145,13 @@
         .alert {
             word-break: break-word;
         }
+    }
+    .gn-upload-list-cover {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
     }
 }
 
@@ -183,7 +195,7 @@
                     }
                 }
                 .Select-control {
-                    width: 70px;
+                    width: 85px;
                     border-left: none;
                     border-top: none;
                     border-right: none;
@@ -274,6 +286,16 @@
                 font-size: @font-size-lg;
             }
         }
+    }
+
+    &:has(:not(.gn-upload-processing-header)) {
+        padding: 1.0rem;
+    }
+    .table > tbody > tr > td {
+        font-weight: normal;
+        vertical-align: middle;
+        word-break: break-word;
+        border-top-width: 0.25rem;
     }
 }
 
