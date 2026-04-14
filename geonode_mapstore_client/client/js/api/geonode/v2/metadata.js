@@ -46,19 +46,14 @@ const parseUiSchema = (properties) => {
     }, {});
 };
 
-let metadataSchemas;
 export const getMetadataSchema = () => {
-    if (metadataSchemas) {
-        return Promise.resolve(metadataSchemas);
-    }
     return axios.get(getEndpointUrl(METADATA, '/schema/'))
         .then(({ data }) => {
             const schema = data;
-            metadataSchemas = {
+            return {
                 schema: schema,
                 uiSchema: parseUiSchema(schema?.properties || {})
             };
-            return metadataSchemas;
         });
 };
 
