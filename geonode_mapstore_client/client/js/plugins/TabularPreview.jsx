@@ -4,12 +4,12 @@ import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 
 import { createPlugin } from '@mapstore/framework/utils/PluginsUtils';
-import { describeFeatureType, getFeatureSimple } from '@mapstore/framework/api/WFS';
+import { getFeatureSimple } from '@mapstore/framework/api/WFS';
 
 import Table from '@js/components/Table';
 import resourceReducer from '@js/reducers/gnresource';
 
-function propertyToKey(property, index) {
+function propertyToKey(property) {
     return `${property}`;
 }
 
@@ -42,8 +42,8 @@ export function TableComponent({ owsUrl, typeName }) {
                 const data = await getFeatureSimple(owsUrl, { typeName });
                 setHeader(headerFromFeatures(data));
                 setRows(rowsFromFeatures(data));
-            } catch (error) {
-                setError(error);
+            } catch (err) {
+                setError(err);
             }
         };
         if (owsUrl) {

@@ -80,8 +80,11 @@ export function initTabularApp({ appRoutes, resourceType }) {
                             onStoreInit,
                             geoNodePageConfig,
                             targetId = 'ms-container',
-                        settings,
-                        query
+                            settings,
+                            query
+                        }) => {
+
+                            const appEpics = {
                                 ...configEpics,
                                 ...gnresourceEpics
                             };

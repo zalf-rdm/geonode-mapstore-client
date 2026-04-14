@@ -43,9 +43,9 @@ function getSortedAuthors(resource) {
     const authors = resource?.author;
     if (!authors || authors.length === 0) return [];
     return [...authors].sort((a, b) => {
-        if (a.order == null && b.order == null) return 0;
-        if (a.order == null) return 1;
-        if (b.order == null) return -1;
+        if (a.order === null && b.order === null) return 0;
+        if (a.order === null) return 1;
+        if (b.order === null) return -1;
         return a.order - b.order;
     });
 }
