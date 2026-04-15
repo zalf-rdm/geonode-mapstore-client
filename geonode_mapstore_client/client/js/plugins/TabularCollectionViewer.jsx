@@ -10,7 +10,7 @@ import resourceReducer from '@js/reducers/gnresource';
 import { TableComponent } from './TabularPreview';
 
 function TabbedTablesComponent({ owsUrl, tableLayers }) {
-    const [tabs, setTabs] = useState([])
+    const [tabs, setTabs] = useState([]);
     const [key, setKey] = useState(0);
 
     useEffect(() => {
@@ -19,7 +19,7 @@ function TabbedTablesComponent({ owsUrl, tableLayers }) {
                 <Tab key={i} eventKey={i} title={layer.name}>
                     <TableComponent owsUrl={owsUrl} typeName={layer.name} />
                 </Tab>
-            )
+            );
         }));
     }, [owsUrl, tableLayers]);
 
@@ -27,7 +27,7 @@ function TabbedTablesComponent({ owsUrl, tableLayers }) {
         const typeName = tableLayers[0].name;
         return (
             <TableComponent owsUrl={owsUrl} typeName={typeName} />
-        )
+        );
     }
 
     return (
@@ -36,25 +36,25 @@ function TabbedTablesComponent({ owsUrl, tableLayers }) {
             id="tabular-data-collection-tabs"
             defaultActiveKey={key}
             onSelect={ k => setKey(k) }
-            >
+        >
             {tabs}
         </Tabs>
     );
 
-};
+}
 
 TabbedTablesComponent.propTypes = {
     owsUrl: PropTypes.string,
-    typeName: PropTypes.array,
+    typeName: PropTypes.array
 };
 
 const TabularCollectionViewerPlugin = connect(
     createSelector([
         state => state?.gnresource?.data || null,
-        (state) => state?.gnsettings?.geoserverUrl,
-    ], (resource, geoserverUrl) => { 
-        const owsUrl = `${geoserverUrl}ows`
-        const tableLayers = resource.maplayers || []
+        (state) => state?.gnsettings?.geoserverUrl
+    ], (resource, geoserverUrl) => {
+        const owsUrl = `${geoserverUrl}ows`;
+        const tableLayers = resource.maplayers || [];
         return { owsUrl, tableLayers };
     })
 )(TabbedTablesComponent);

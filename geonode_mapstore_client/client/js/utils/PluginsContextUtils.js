@@ -14,8 +14,14 @@ import {
     isDocumentExternalSource,
     getCataloguePath
 } from '@js/utils/ResourceUtils';
+import {
+    getUploadMainFile,
+    getSupportedFilesByResourceType,
+    getUploadProperty
+} from '@js/utils/UploadUtils';
 import get from 'lodash/get';
 import isNil from 'lodash/isNil';
+import { getEndpointUrl } from '@js/api/geonode/v2/constants';
 
 function getUserResourceName(user) {
     return user?.first_name !== '' && user?.last_name !== ''
@@ -48,6 +54,12 @@ const hasDefaultSettings = (layer) => {
     return true;
 };
 
+const canManageResourceSettings = (resource) => {
+    const { perms } = resource || {};
+    const settingsPerms = ['feature_resourcebase', 'approve_resourcebase', 'publish_resourcebase'];
+    return !!(perms || []).find(perm => settingsPerms.includes(perm));
+};
+
 export const getPluginsContext = () => ({
     get,
     getMetadataUrl,
@@ -60,5 +72,10 @@ export const getPluginsContext = () => ({
     isDocumentExternalSource,
     getCataloguePath,
     getCreateNewMapLink,
-    hasDefaultSettings
+    hasDefaultSettings,
+    canManageResourceSettings,
+    getUploadMainFile,
+    getEndpointUrl,
+    getSupportedFilesByResourceType,
+    getUploadProperty
 });

@@ -8,7 +8,6 @@
 
 import axios from '@mapstore/framework/libs/ajax';
 import {
-    parseDevHostname,
     getApiToken,
     paramsSerializer,
     getGeoNodeConfig,
@@ -28,68 +27,30 @@ import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 import { getUserInfo } from '@js/api/geonode/user';
 import { ResourceTypes, availableResourceTypes, setAvailableResourceTypes, getDownloadUrlInfo, isDefaultDatasetSubtype } from '@js/utils/ResourceUtils';
-import { getConfigProp } from '@mapstore/framework/utils/ConfigUtils';
 import { mergeConfigsPatch } from '@mapstore/patcher';
 import { parseIcon } from '@js/utils/SearchUtils';
+import {
+    RESOURCES,
+    DOCUMENTS,
+    DATASETS,
+    MAPS,
+    GEOAPPS,
+    USERS,
+    RESOURCE_TYPES,
+    GROUPS,
+    EXECUTION_REQUEST,
+    FACETS,
+    getEndpoints as cGetEndpoints,
+    getEndpointUrl
+} from './constants';
+
+
+export const getEndpoints = cGetEndpoints;
 
 /**
  * Actions for GeoNode save workflow
  * @module api/geonode/v2
  */
-
-let endpoints = {
-    // default values
-    'resources': '/api/v2/resources',
-    'documents': '/api/v2/documents',
-    'datasets': '/api/v2/datasets',
-    'maps': '/api/v2/maps',
-    'geoapps': '/api/v2/geoapps',
-    'users': '/api/v2/users',
-    'resource_types': '/api/v2/resources/resource_types',
-    'categories': '/api/v2/categories',
-    'owners': '/api/v2/owners',
-    'keywords': '/api/v2/keywords',
-    'regions': '/api/v2/regions',
-    'groups': '/api/v2/groups',
-    'uploads': '/api/v2/uploads',
-    'status': '/api/v2/resource-service/execution-status',
-    'exectionRequest': '/api/v2/executionrequest',
-    'facets': '/api/v2/facets'
-};
-
-const RESOURCES = 'resources';
-const DOCUMENTS = 'documents';
-const DATASETS = 'datasets';
-const MAPS = 'maps';
-const GEOAPPS = 'geoapps';
-const USERS = 'users';
-const RESOURCE_TYPES = 'resource_types';
-const GROUPS = 'groups';
-const UPLOADS = 'uploads';
-const STATUS = 'status';
-const EXECUTIONREQUEST = 'exectionRequest';
-const FACETS = 'facets';
-
-export const setEndpoints = (data) => {
-    endpoints = { ...endpoints, ...data };
-};
-
-/**
- * get all thw endpoints available from API V2
- */
-export const getEndpoints = () => {
-    const apikey = getApiToken();
-    const endpointV2 = getGeoNodeLocalConfig('geoNodeApi.endpointV2', '/api/v2/');
-    return axios.get(parseDevHostname(endpointV2), {
-        params: {
-            ...(apikey && { apikey })
-        }
-    })
-        .then(({ data }) => {
-            setEndpoints(data);
-            return data;
-        });
-};
 
 function mergeCustomQuery(params, customQuery) {
     if (customQuery) {
@@ -144,7 +105,7 @@ export const getResources = ({
         'filter{metadata_only}': false, // exclude resources such as services
         api_preset: API_PRESET.CATALOGS
     };
-    return axios.get(parseDevHostname(endpoints[RESOURCES]), {
+    return axios.get(getEndpointUrl(RESOURCES), {
         params: _params,
         ...paramsSerializer()
     })
@@ -169,7 +130,7 @@ export const getMaps = ({
 }) => {
     return axios
         .get(
-            parseDevHostname(endpoints[MAPS]), {
+            getEndpointUrl(MAPS), {
                 // axios will format query params array to `key[]=value1&key[]=value2`
                 params: {
                     ...params,
@@ -204,7 +165,7 @@ export const getDatasets = ({
 }) => {
     return axios
         .get(
-            parseDevHostname(endpoints[RESOURCES]), {
+            getEndpointUrl(RESOURCES), {
                 // axios will format query params array to `key[]=value1&key[]=value2`
                 params: {
                     'filter{resource_type.in}': 'dataset',
@@ -239,7 +200,7 @@ export const getDocumentsByDocType = (docType = 'image', {
 
     return axios
         .get(
-            parseDevHostname(endpoints[DOCUMENTS]), {
+            getEndpointUrl(DOCUMENTS), {
                 params: {
                     ...params,
                     ...(q && {
@@ -267,23 +228,23 @@ export const getDocumentsByDocType = (docType = 'image', {
 };
 
 export const setMapThumbnail = (pk, body) => {
-    return axios.post(parseDevHostname(`${endpoints[RESOURCES]}/${pk}/set_thumbnail_from_bbox`), body)
+    return axios.post(getEndpointUrl(RESOURCES, `/${pk}/set_thumbnail_from_bbox`), body)
         .then(({ data }) => (data));
 };
 
 export const setResourceThumbnail = (pk, body) => {
-    return axios.put(parseDevHostname(`${endpoints[RESOURCES]}/${pk}/set_thumbnail`), body)
+    return axios.put(getEndpointUrl(RESOURCES, `/${pk}/set_thumbnail`), body)
         .then(({ data }) => data);
 };
 
 export const setFavoriteResource = (pk, favorite) => {
     const request = favorite ? axios.post : axios.delete;
-    return request(parseDevHostname(`${endpoints[RESOURCES]}/${pk}/favorite`))
+    return request(getEndpointUrl(RESOURCES, `/${pk}/favorite`))
         .then(({ data }) => data );
 };
 
 export const getResourceByPk = (pk) => {
-    return axios.get(parseDevHostname(`${endpoints[RESOURCES]}/${pk}`), {
+    return axios.get(getEndpointUrl(RESOURCES, `/${pk}`), {
         params: {
             api_preset: API_PRESET.VIEWER_COMMON
         }
@@ -292,7 +253,7 @@ export const getResourceByPk = (pk) => {
 };
 
 export const getLinkedResourcesByPk = (pk) => {
-    return axios.get(parseDevHostname(`${endpoints[RESOURCES]}/${pk}/linked_resources`), {
+    return axios.get(getEndpointUrl(RESOURCES, `/${pk}/linked_resources`), {
         params: {
             'page': 1,
             'page_size': 99999
@@ -302,7 +263,7 @@ export const getLinkedResourcesByPk = (pk) => {
 };
 
 export const setLinkedResourcesByPk = (sourcePk, targetPks) => {
-    return axios.post(parseDevHostname(`${endpoints[RESOURCES]}/${sourcePk}/linked_resources`),
+    return axios.post(getEndpointUrl(RESOURCES, `/${sourcePk}/linked_resources`),
         {
             target: castArray(targetPks)
         }
@@ -311,7 +272,7 @@ export const setLinkedResourcesByPk = (sourcePk, targetPks) => {
 };
 
 export const removeLinkedResourcesByPk = (sourcePk, targetPks) => {
-    return axios.delete(parseDevHostname(`${endpoints[RESOURCES]}/${sourcePk}/linked_resources`), {
+    return axios.delete(getEndpointUrl(RESOURCES, `/${sourcePk}/linked_resources`), {
         data: {
             target: castArray(targetPks)
         }
@@ -320,7 +281,7 @@ export const removeLinkedResourcesByPk = (sourcePk, targetPks) => {
 };
 
 export const getResourceByUuid = (uuid) => {
-    return axios.get(parseDevHostname(`${endpoints[RESOURCES]}`), {
+    return axios.get(getEndpointUrl(RESOURCES), {
         params: {
             'filter{uuid}': uuid,
             api_preset: API_PRESET.VIEWER_COMMON
@@ -330,7 +291,7 @@ export const getResourceByUuid = (uuid) => {
 };
 
 export const getDatasetByPk = (pk) => {
-    return axios.get(parseDevHostname(`${endpoints[DATASETS]}/${pk}`), {
+    return axios.get(getEndpointUrl(DATASETS, `/${pk}`), {
         params: {
             api_preset: [API_PRESET.VIEWER_COMMON, API_PRESET.DATASET]
         },
@@ -340,7 +301,7 @@ export const getDatasetByPk = (pk) => {
 };
 
 export const getDocumentByPk = (pk) => {
-    return axios.get(parseDevHostname(`${endpoints[DOCUMENTS]}/${pk}`), {
+    return axios.get(getEndpointUrl(DOCUMENTS, `/${pk}`), {
         params: {
             api_preset: [API_PRESET.VIEWER_COMMON, API_PRESET.DOCUMENT]
         },
@@ -351,7 +312,7 @@ export const getDocumentByPk = (pk) => {
 
 export const getDocumentsByPk = (pk) => {
     const pks = castArray(pk);
-    return axios.get(parseDevHostname(`${endpoints[DOCUMENTS]}/`), {
+    return axios.get(getEndpointUrl(DOCUMENTS), {
         params: {
             'filter{pk.in}': pks,
             page_size: pks.length,
@@ -363,7 +324,7 @@ export const getDocumentsByPk = (pk) => {
 };
 
 export const createGeoApp = (body) => {
-    return axios.post(parseDevHostname(`${endpoints[GEOAPPS]}`), body, {
+    return axios.post(getEndpointUrl(GEOAPPS), body, {
         params: {
             include: ['data']
         }
@@ -372,7 +333,7 @@ export const createGeoApp = (body) => {
 };
 
 export const getGeoAppByPk = (pk, params) => {
-    return axios.get(parseDevHostname(`${endpoints[GEOAPPS]}/${pk}`), {
+    return axios.get(getEndpointUrl(GEOAPPS, `/${pk}`), {
         params: {
             full: true,
             api_preset: API_PRESET.VIEWER_COMMON,
@@ -392,7 +353,7 @@ export const getGeoApps = ({
 }) => {
     return axios
         .get(
-            parseDevHostname(endpoints[GEOAPPS]), {
+            getEndpointUrl(GEOAPPS), {
                 // axios will format query params array to `key[]=value1&key[]=value2`
                 params: {
                     ...params,
@@ -419,7 +380,7 @@ export const getGeoApps = ({
 };
 
 export const updateGeoApp = (pk, body) => {
-    return axios.patch(parseDevHostname(`${endpoints[GEOAPPS]}/${pk}`), body, {
+    return axios.patch(getEndpointUrl(GEOAPPS, `/${pk}`), body, {
         params: {
             include: ['data']
         }
@@ -429,12 +390,12 @@ export const updateGeoApp = (pk, body) => {
 
 
 export const updateDataset = (pk, body) => {
-    return axios.patch(parseDevHostname(`${endpoints[DATASETS]}/${pk}`), body)
+    return axios.patch(getEndpointUrl(DATASETS, `/${pk}`), body)
         .then(({ data }) => (data.dataset));
 };
 
 export const updateDocument = (pk, body) => {
-    return axios.patch(parseDevHostname(`${endpoints[DOCUMENTS]}/${pk}`), body)
+    return axios.patch(getEndpointUrl(DOCUMENTS, `/${pk}`), body)
         .then(({ data }) => data.document);
 };
 
@@ -445,7 +406,7 @@ export const getUsers = ({
     ...params
 } = {}) => {
     return axios.get(
-        parseDevHostname(endpoints[USERS]),
+        getEndpointUrl(USERS),
         {
             params: {
                 ...params,
@@ -474,7 +435,7 @@ export const getGroups = ({
     ...params
 } = {}) => {
     return axios.get(
-        parseDevHostname(endpoints[GROUPS]),
+        getEndpointUrl(GROUPS),
         {
             params: {
                 ...params,
@@ -497,7 +458,7 @@ export const getGroups = ({
 };
 
 export const getUserByPk = (pk, apikey) => {
-    return axios.get(parseDevHostname(`${endpoints[USERS]}/${pk}`), {
+    return axios.get(getEndpointUrl(USERS, `/${pk}`), {
         params: {
             ...(apikey && { apikey })
         }
@@ -567,7 +528,7 @@ export const getResourceTypes = () => {
     if (availableResourceTypes) {
         return new Promise(resolve => resolve(availableResourceTypes));
     }
-    return axios.get(parseDevHostname(endpoints[RESOURCE_TYPES]))
+    return axios.get(getEndpointUrl(RESOURCE_TYPES))
         .then(({ data }) => {
             setAvailableResourceTypes(data?.resource_types || []);
             return [...availableResourceTypes];
@@ -575,7 +536,7 @@ export const getResourceTypes = () => {
 };
 
 export const getDatasetByName = name => {
-    const url = parseDevHostname(`${endpoints[DATASETS]}/?filter{alternate}=${name}`);
+    const url = getEndpointUrl(DATASETS, `/?filter{alternate}=${name}`);
     return axios.get(url, {
         params: {
             exclude: ['*'],
@@ -586,7 +547,7 @@ export const getDatasetByName = name => {
 };
 
 export const getDatasetsByName = names => {
-    const url = parseDevHostname(endpoints[DATASETS]);
+    const url = getEndpointUrl(DATASETS);
     return axios.get(url, {
         params: {
             page_size: names.length,
@@ -624,7 +585,7 @@ export const getResourcesTotalCount = () => {
 * @return {promise} it returns an object with the success map object response
 */
 export const createMap = (body = {}) => {
-    return axios.post(parseDevHostname(`${endpoints[MAPS]}`), body)
+    return axios.post(getEndpointUrl(MAPS), body)
         .then(({ data }) => data?.map);
 };
 
@@ -636,7 +597,7 @@ export const createMap = (body = {}) => {
 * @return {promise} it returns an object with the success map object response
 */
 export const updateMap = (id, body = {}) => {
-    return axios.patch(parseDevHostname(`${endpoints[MAPS]}/${id}/`),
+    return axios.patch(getEndpointUrl(MAPS, `/${id}/`),
         body,
         {
             params: {
@@ -654,7 +615,7 @@ export const updateMap = (id, body = {}) => {
 * @return {promise} it returns an object with the success map object response
 */
 export const getMapByPk = (pk) => {
-    return axios.get(parseDevHostname(`${endpoints[MAPS]}/${pk}/`),
+    return axios.get(getEndpointUrl(MAPS, `/${pk}/`),
         {
             params: {
                 api_preset: [API_PRESET.VIEWER_COMMON, API_PRESET.MAP]
@@ -666,7 +627,7 @@ export const getMapByPk = (pk) => {
 
 export const getMapsByPk = (pk) => {
     const pks = castArray(pk);
-    return axios.get(parseDevHostname(`${endpoints[MAPS]}/`),
+    return axios.get(getEndpointUrl(MAPS),
         {
             params: {
                 'filter{pk.in}': pks,
@@ -679,7 +640,7 @@ export const getMapsByPk = (pk) => {
 };
 
 export const getFeaturedResources = (page = 1, page_size =  4) => {
-    return axios.get(parseDevHostname(endpoints[RESOURCES]), {
+    return axios.get(getEndpointUrl(RESOURCES), {
         params: {
             page_size,
             page,
@@ -690,13 +651,13 @@ export const getFeaturedResources = (page = 1, page_size =  4) => {
 };
 
 export const getCompactPermissionsByPk = (pk) => {
-    return axios.get(parseDevHostname(`${endpoints[RESOURCES]}/${pk}/permissions`))
+    return axios.get(getEndpointUrl(RESOURCES, `/${pk}/permissions`))
         .then(({ data }) => data);
 };
 
 export const updateCompactPermissionsByPk = (pk, body) => {
     return axios({
-        url: parseDevHostname(`${endpoints[RESOURCES]}/${pk}/permissions`),
+        url: getEndpointUrl(RESOURCES, `/${pk}/permissions`),
         data: body,
         method: 'put'
     })
@@ -704,7 +665,7 @@ export const updateCompactPermissionsByPk = (pk, body) => {
 };
 
 export const deleteResource = (resource) => {
-    return axios.delete(parseDevHostname(`${endpoints[RESOURCES]}/${resource.pk}/delete`))
+    return axios.delete(getEndpointUrl(RESOURCES, `/${resource.pk}/delete`))
         .then(({ data }) => data);
 };
 
@@ -713,7 +674,7 @@ export const copyResource = (resource) => {
         title: resource.title,
         ...(resource.data && { data: resource.data })
     };
-    return axios.put(parseDevHostname(`${endpoints[RESOURCES]}/${resource.pk}/copy`), 'defaults=' + JSON.stringify(defaults))
+    return axios.put(getEndpointUrl(RESOURCES, `/${resource.pk}/copy`), 'defaults=' + JSON.stringify(defaults))
         .then(({ data }) => data);
 };
 
@@ -732,105 +693,8 @@ export const downloadResource = (resource) => {
         .then(({ data, headers }) => ({output: data, headers}));
 };
 
-export const getPendingExecutionRequests = () => {
-    return axios.get(parseDevHostname(endpoints[EXECUTIONREQUEST]), {
-        params: {
-            'filter{action}': 'import',
-            'filter{source}': 'upload',
-            'page': 1,
-            'page_size': 99999
-        }
-    })
-        .then(({ data }) => data?.requests)
-        .catch(() => null);
-};
-
-export const getProcessedUploadsById = (ids) => {
-    return axios.get(parseDevHostname(endpoints[UPLOADS]), {
-        params: {
-            'filter{state}': 'PROCESSED',
-            'page': 1,
-            'page_size': ids.length,
-            'filter{id.in}': ids
-        }
-    })
-        .then(({ data }) => data?.uploads);
-};
-
-export const getProcessedUploadsByImportId = (importIds) => {
-    return axios.get(parseDevHostname(endpoints[UPLOADS]), {
-        params: {
-            'filter{state}': 'PROCESSED',
-            'page': 1,
-            'page_size': importIds.length,
-            'filter{import_id.in}': importIds
-        }
-    })
-        .then(({ data }) => data?.uploads);
-};
-
-export const uploadDataset = ({
-    file,
-    auxiliaryFiles,
-    ext,
-    charset = 'UTF-8',
-    url,
-    title,
-    type,
-    config
-}) => {
-
-    if (url) {
-        return axios.post(`${parseDevHostname(endpoints[UPLOADS])}/upload`, {
-            url,
-            title,
-            type
-        }, config)
-            .then(({ data }) => (data));
-    }
-
-    const formData = new FormData();
-    formData.append('base_file', file);
-    formData.append('charset', charset);
-    formData.append('store_spatial_files', true);
-    const { timeEnabled } = getConfigProp('geoNodeSettings') || {};
-    if (timeEnabled) {
-        formData.append('time', ['csv', 'shp'].includes(ext) ? true : false);
-    }
-    Object.keys(auxiliaryFiles)
-        .forEach((auxExt) => {
-            formData.append(auxExt + '_file', auxiliaryFiles[auxExt]);
-        });
-    return axios.post(`${parseDevHostname(endpoints[UPLOADS])}/upload`, formData, config)
-        .then(({ data }) => (data));
-};
-
-export const uploadDocument = ({
-    title,
-    file,
-    url,
-    extension,
-    config
-}) => {
-    const formData = new FormData();
-    formData.append('title', title);
-    if (file) {
-        formData.append('doc_file', file);
-    } else if (url) {
-        formData.append('doc_url', url);
-        formData.append('extension', extension);
-    }
-    return axios.post(`/documents/upload?no__redirect=true`, formData, config)
-        .then(({ data }) => (data));
-};
-
-export const getExecutionStatus = (executionId) => {
-    return axios.get(`${parseDevHostname(endpoints[STATUS])}/${executionId}`)
-        .then(({ data }) => ({...data, id: executionId, create_date: data.created }));
-};
-
 export const deleteExecutionRequest = (executionId) => {
-    return axios.delete(`${parseDevHostname(endpoints[EXECUTIONREQUEST])}/${executionId}`);
+    return axios.delete(getEndpointUrl(EXECUTION_REQUEST, `/${executionId}`));
 };
 
 export const getResourceByTypeAndByPk = (type, pk, subtype) => {
@@ -849,7 +713,7 @@ export const getResourceByTypeAndByPk = (type, pk, subtype) => {
 
 export const getFacetItemsByFacetName = ({ name: facetName, style, filterKey, filters, setFilters}, { config, ...params }, customFilters) => {
     const updatedParams = getQueryParams(params, customFilters);
-    return axios.get(`${parseDevHostname(endpoints[FACETS])}/${facetName}`,
+    return axios.get(getEndpointUrl(FACETS, `/${facetName}`),
         { ...config,
             params: updatedParams,
             ...paramsSerializer()
@@ -903,7 +767,7 @@ export const getFacetItemsByFacetName = ({ name: facetName, style, filterKey, fi
 
 export const getFacetsByKey = (facet, filterParams) => {
     return axios
-        .get(parseDevHostname(endpoints[FACETS] + `/${facet}`), {params: {...filterParams}, ...paramsSerializer()})
+        .get(getEndpointUrl(FACETS, `/${facet}`), {params: {...filterParams}, ...paramsSerializer()})
         .then(({ data } = {}) => ({
             ...data?.topics,
             items: data?.topics?.items?.map(item => ({...item, facetName: facet}))
@@ -912,7 +776,7 @@ export const getFacetsByKey = (facet, filterParams) => {
 
 export const getFacetItems = (customFilters) => {
     return axios
-        .get(parseDevHostname(endpoints[FACETS]),
+        .get(getEndpointUrl(FACETS),
             {
                 params: {
                     include_config: true
@@ -959,11 +823,6 @@ export default {
     copyResource,
     downloadResource,
     getDatasets,
-    getPendingExecutionRequests,
-    getProcessedUploadsById,
-    getProcessedUploadsByImportId,
-    uploadDocument,
-    getExecutionStatus,
     deleteExecutionRequest,
     getResourceByTypeAndByPk,
     getFacetItems,

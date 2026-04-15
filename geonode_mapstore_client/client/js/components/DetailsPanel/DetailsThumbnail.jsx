@@ -133,7 +133,9 @@ function DetailsThumbnail({
                                 image={() => getResourceImageSource(resource?.thumbnail_url)}
                                 thumbnailUpdating={resourceThumbnailUpdating}
                             />
-                            {canCreateMapThumbnail ?
+                            {(!resource.subtype?.includes("tabular")
+                                && (resource.resource_type === ResourceTypes.MAP || resource.resource_type === ResourceTypes.DATASET)
+                                && (resource.ptype !== GXP_PTYPES.REST_IMG || resource.ptype !== GXP_PTYPES.REST_MAP)) ?
                                 <MapThumbnailButtonToolTip
                                     variant="default"
                                     onClick={() => onClose(!enableMapViewer)}
