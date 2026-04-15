@@ -1,3 +1,5 @@
+geonode_mapstore_client/static/mapstore/dist/js/*
+
 # build artifacts
 *.pyc
 *.bak
