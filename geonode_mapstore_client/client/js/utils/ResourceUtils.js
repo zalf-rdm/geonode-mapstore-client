@@ -16,7 +16,8 @@ import { ProcessTypes, ProcessStatus } from '@js/utils/ResourceServiceUtils';
 import { uniqBy, orderBy, isString, isObject, pick, difference } from 'lodash';
 import { excludeGoogleBackground, extractTileMatrixFromSources, ServerTypes } from '@mapstore/framework/utils/LayersUtils';
 import { determineResourceType } from '@js/utils/FileUtils';
-import { isImageServerUrl } from '@mapstore/framework/utils/ArcGISUtils';
+
+const isImageServerUrl = (serviceUrl = '') => serviceUrl.includes('ImageServer');
 
 /**
 * @module utils/ResourceUtils
