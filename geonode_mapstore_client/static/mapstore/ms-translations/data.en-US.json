@@ -203,15 +203,6 @@
               "legendHeight": "Height",
               "legendPreview": "Preview"
             },
-            "enableInteractiveLegendInfo": {
-                "label": "Enable interactive legend",
-                "info": "If this option is enabled, filter by legend can be applied by clicking on legend items of this layer from the TOC. Additionally, this also enables the dynamic legend. Note: This parameter requires specific configurations on GeoServer",
-                "fetchError": "Failed to retrieve the legend info from the service"
-            },
-            "enableDynamicLegend": {
-                "label": "Enable dynamic legend",
-                "info": "If this option is enabled, the legend will be updated based on the map viewport and layer filters"
-            },
             "enableLocalizedLayerStyles": {
                 "label": "Enable localized style",
                 "tooltip": "Note: This parameter requires specific configurations on GeoServer"
@@ -244,12 +235,7 @@
               "clearCustomizationConfirm": "Are you sure you want to remove all customizations?",
               "error": "It was not possible to automatically load the fields"
             },
-          "disableFeaturesEditing": "Disable editing on Attribute table",
-          "interactiveLegend": {
-            "incompatibleFilterWarning": "Legend filters are incompatible with the active layer filter, or no visible features are within the map view. Click reset to clear legend filters",
-            "resetLegendFilter": "Reset",
-            "noLegendData": "No legend items to show"
-          }
+          "disableFeaturesEditing": "Disable editing on Attribute table"
         },
         "localizedInput": {
           "localize": "Localize this text...",
@@ -388,8 +374,7 @@
             "Examples": "Examples",
             "LinkedinGroup": "Mapstore Linkedin Group",
             "scrollTop": "Scroll to the top of the page",
-            "footerDescription": "<strong>GeoSolutions</strong> <a href=\"mailto:sales@geosolutionsgroup.com\">sales@geosolutionsgroup.com</a>",
-            "footerCustomHTML": "<div><p>Please insert custom HTML into the translations to render a custom footer</p></div>"
+            "footerDescription": "<strong>GeoSolutions</strong> <a href=\"mailto:sales@geosolutionsgroup.com\">sales@geosolutionsgroup.com</a>"
         },
         "cookiesPolicyNotification": {
             "title": "This website uses cookies",
@@ -523,15 +508,7 @@
               "skyAtmosphere": "Show sky atmosphere",
               "groundAtmosphere": "Show ground atmosphere",
               "fog": "Show fog",
-              "depthTest": "Enable depth test against terrain",
-              "lightings": {
-                "title": "Lighting Options",
-                "placeholder": "Select the lighting option",
-                "flashlightOption": "Flashlight",
-                "sunlightOption": "Sunlight",
-                "dateTimeOption": "Specific UTC Date-Time",
-                "dateTimePlaceholder": "Select the dateTime"
-              }
+              "depthTest": "Enable depth test against terrain"
             },
             "thumbnailError": {
                 "error403": "You are not allowed to update the thumbnail",
@@ -1134,7 +1111,7 @@
             "title": "Advanced search",
             "query": "Search",
             "apply": "Apply",
-            "reset": "Reset: reset all filters including any other external filter",
+            "reset": "Reset",
             "save": "Save",
             "discard": "Undo",
             "query_request_exception": "Request error",
@@ -1620,18 +1597,6 @@
             "servicePlaceholder": "type a service",
             "url": "URL",
             "urlPlaceholder": "type a URL",
-            "urlPlaceHolders": {
-                "wfs": "e.g. https://mydomain.com/geoserver/wfs",
-                "wmts": "e.g. https://mydomain.com/geoserver/gwc/service/wmts",
-                "wms": "e.g. https://mydomain.com/geoserver/wms",
-                "csw": "e.g. https://mydomain.com/geoserver/csw",
-                "tms": "e.g. https://mydomain.com/geoserver/gwc/service/tms/1.0.0",
-                "custom": "e.g. https://{s}.myUrl.com/{variant}/{z}/{x}/{y}",
-                "3dtiles": "e.g. https://mydomain.com/tileset.json",
-                "cog": "e.g. https://mydomain.com/cog.tif",
-                "model": "e.g. https://mydomain.com/filename.ifc",
-                "arcgis": "e.g. https://mydomain.com/arcgis/rest/services"
-            },
             "type": "Type",
             "serviceTitle": "Title",
             "serviceTitlePlaceholder": "type a title",
@@ -1660,7 +1625,6 @@
             "advancedSettings": "Advanced settings",
             "templateMetadataAvailable": "Metadata available from Dublin Core format: abstract, boundingBox, contributor, creator, description, format, identifier, references, rights, source, subject, temporal, title, type, uri",
             "invalidUrlHttpProtocol": "This catalog cannot be added to the available ones because it uses an http protocol. Please provide a catalog url that uses https protocol",
-            "invalidArrayUsageForUrl": "The catalog URL could not be parsed correctly",
             "notification": {
                 "errorTitle": "Error",
                 "errorSearchingRecords": "Some records have not been found: {records} Please check the query URL and its parameters.",
@@ -2101,7 +2065,6 @@
                     "useTheSelectedLayer": "Use the selected layer",
                     "connectToAMap": "Connect to another widget",
                     "connectToTheMap": "Connect to the map",
-                    "connectToTheTable": "Connect to the table",
                     "selectMapToConnect": "Select the widget to connect",
                     "clearConnection": "Clear connection",
                     "disableConnectToMap": "Operation unavailable",
@@ -4029,9 +3992,7 @@
           "emptyDescription": "Click on the map to start browsing the images of street view",
           "messages": {
             "noDataForPosition": "no street-view data for this position",
-            "unknownError": "unknown error, see console",
-            "errorServiceUrl": "Service not available. Please, check the provided URL",
-            "errorRetriveingLayerData": "There was an error loading the layer data"
+            "unknownError": "unknown error, see console"
           },
           "loadingAPI": "Loading API...",
           "cyclomedia": {

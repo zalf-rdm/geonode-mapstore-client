@@ -203,15 +203,6 @@
               "legendHeight": "Hauteur",
               "legendPreview": "Aperçu"
             },
-            "enableInteractiveLegendInfo": {
-                "label": "Activer la légende interactive",
-                "info": "Si cette option est activée, le filtre par légende peut être appliqué en cliquant sur les éléments de légende de cette couche depuis la table des matières. De plus, cela active également la légende dynamique. Remarque : Ce paramètre nécessite des configurations spécifiques sur GeoServer",
-                "fetchError": "Impossible d'obtenir les informations de légende du service"
-            },
-            "enableDynamicLegend": {
-                "label": "Activer la légende dynamique",
-                "info": "Si cette option est activée, la légende sera mise à jour en fonction de la fenêtre de la carte et des filtres de couche"
-            },
             "enableLocalizedLayerStyles": {
                 "label": "Activer le style localisé",
                 "tooltip": "Remarque: ce paramètre nécessite des configurations spécifiques sur GeoServer"
@@ -244,12 +235,7 @@
               "clearCustomizationConfirm": "Voulez-vous vraiment supprimer les personnalisations ?",
               "error":  "Échec de la récupération des champs"
             },
-            "disableFeaturesEditing": "Désactiver la modification sur la table attributaire",
-            "interactiveLegend": {
-                "incompatibleFilterWarning": "Les filtres de légende sont incompatibles avec le filtre de couche actif, ou aucune fonctionnalité visible n'est dans la vue de la carte. Cliquez sur réinitialiser pour effacer les filtres de légende",
-                "resetLegendFilter": "Réinitialiser",
-                "noLegendData": "Aucun élément de légende à afficher"
-            }
+            "disableFeaturesEditing": "Désactiver la modification sur la table attributaire"
         },
          "localizedInput": {
           "localize": "Localiser ce texte...",
@@ -388,8 +374,7 @@
             "Examples": "Exemples",
             "LinkedinGroup": "Groupe Linkedin Mapstore",
             "scrollTop": "Retour en haut de la page",
-            "footerDescription": "<strong>GeoSolutions</strong> <a href=\"mailto:sales@geosolutionsgroup.com\">sales@geosolutionsgroup.com</a>",
-            "footerCustomHTML": "<div><p>Veuillez insérer du HTML personnalisé dans les traductions pour afficher un pied de page personnalisé</p></div>"
+            "footerDescription": "<strong>GeoSolutions</strong> <a href=\"mailto:sales@geosolutionsgroup.com\">sales@geosolutionsgroup.com</a>"
         },
         "cookiesPolicyNotification": {
             "title": "Ce site utilise des cookies",
@@ -523,15 +508,7 @@
               "skyAtmosphere": "Afficher l'atmosphère du ciel",
               "groundAtmosphere": "Montrer l'atmosphère du terrain",
               "fog": "Afficher le brouillard",
-              "depthTest": "Activer le depthTest sur le terrain",
-              "lightings": {
-                "title": "Options d'éclairage",
-                "placeholder": "Sélectionnez l'option d'éclairage",
-                "flashlightOption": "Lampe de poche",
-                "sunlightOption": "Lumière du soleil",
-                "dateTimeOption": "Date-heure UTC spécifique",
-                "dateTimePlaceholder": "Sélectionnez la date et l'heure"
-                }
+              "depthTest": "Activer le depthTest sur le terrain"
             },
             "thumbnailError": {
                 "error403": "Une erreur est survenue lors de la suppression de la vignette",
@@ -1134,7 +1111,7 @@
             "title": "Recherche avancée",
             "query": "Recherche",
             "apply": "Appliquer",
-            "reset": "Réinitialiser: réinitialiser tous les filtres, y compris tous les autres filtres externes",
+            "reset": "Recommencer",
             "save": "Enregistrer",
             "discard": "Annuler",
             "query_request_exception": "Erreur de requête",
@@ -1621,18 +1598,6 @@
             "servicePlaceholder": "Tapez un service",
             "url": "URL",
             "urlPlaceholder": "tapez une URL",
-            "urlPlaceHolders": {
-              "wfs": "e.g. https://mydomain.com/geoserver/wfs",
-              "wmts": "e.g. https://mydomain.com/geoserver/gwc/service/wmts",
-              "wms": "e.g. https://mydomain.com/geoserver/wms",
-              "csw": "e.g. https://mydomain.com/geoserver/csw",
-              "tms": "e.g. https://mydomain.com/geoserver/gwc/service/tms/1.0.0",
-              "custom": "e.g. https://{s}.myUrl.com/{variant}/{z}/{x}/{y}",
-              "3dtiles": "e.g. https://mydomain.com/tileset.json",
-              "cog": "e.g. https://mydomain.com/cog.tif",
-              "model": "e.g. https://mydomain.com/filename.ifc",
-              "arcgis": "e.g. https://mydomain.com/arcgis/rest/services"
-            },
             "type": "Type",
             "serviceTitle": "Titre",
             "serviceTitlePlaceholder": "tapez un titre",
@@ -1661,7 +1626,6 @@
             "advancedSettings": "Réglages avancés",
             "templateMetadataAvailable": "Métadonnées disponibles pour le format Dublin Core : abstract, boundingBox, contributor, creator, description, format, identifier, references, rights, source, subject, temporal, title, type, uri",
             "invalidUrlHttpProtocol": "Ce catalogue ne peut pas être ajouté à ceux disponibles car il utilise un protocole http. Veuillez fournir une URL de catalogue qui utilise le protocole https.",
-            "invalidArrayUsageForUrl": "L'URL du catalogue n'a pas pu être lue correctement",
             "notification": {
                 "errorTitle": "Erreur",
                 "errorSearchingRecords": "Certains enregistrements n'ont pas été trouvés: {records} . Veuillez vérifier l'URL de la requête et ses paramètres.",
@@ -2101,7 +2065,6 @@
                     "useTheSelectedLayer": "Utiliser la couche sélectionnée",
                     "connectToAMap": "Se connecter à un autre widget",
                     "connectToTheMap": "Connectez-vous à la carte",
-                    "connectToTheTable": "Connect to the table",
                     "selectMapToConnect": "Sélectionnez le widget pour vous connecter",
                     "clearConnection": "Effacer la connexion",
                     "disableConnectToMap": "Opération indisponible",
@@ -4018,10 +3981,8 @@
           "emptyDescription": "Cliquez sur la carte pour commencer à parcourir les images de Street View",
           "messages": {
             "noDataForPosition": "pas de données Street View pour cette position",
-            "unknownError": "erreur inconnue, voir console",
-            "errorServiceUrl": "Service non disponible. Veuillez vérifier l'URL fournie",
-            "errorRetriveingLayerData": "Une erreur s'est produite lors du chargement des données de la couche"
-        },
+            "unknownError": "erreur inconnue, voir console"
+          },
           "loadingAPI": "Chargement de l'API...",
           "cyclomedia": {
             "initializing": "Initialisation de l'API Street Smart...",

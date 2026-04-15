@@ -1477,18 +1477,6 @@
       "servicePlaceholder": "type a service",
       "url": "URL",
       "urlPlaceholder": "type a URL",
-      "urlPlaceHolders": {
-        "wfs": "f.eks. https://mydomain.com/geoserver/wfs",
-        "wmts": "f.eks. https://mydomain.com/geoserver/gwc/service/wmts",
-        "wms": "f.eks. https://mydomain.com/geoserver/wms",
-        "csw": "f.eks. https://mydomain.com/geoserver/csw",
-        "tms": "f.eks. https://mydomain.com/geoserver/gwc/service/tms/1.0.0",
-        "custom": "f.eks. https://{s}.myUrl.com/{variant}/{z}/{x}/{y}",
-        "3dtiles": "f.eks. https://mydomain.com/tileset.json",
-        "cog": "f.eks. https://mydomain.com/cog.tif",
-        "model": "f.eks. https://mydomain.com/filename.ifc",
-        "arcgis": "f.eks. https://mydomain.com/arcgis/rest/services"
-      },
       "type": "Type",
       "serviceTitle": "Title",
       "serviceTitlePlaceholder": "type a title",
@@ -1512,7 +1500,7 @@
       "showPreview": "Show preview",
       "advancedSettings": "Advanced settings",
       "templateMetadataAvailable": "Metadata available from Dublin Core format: abstract, boundingBox, contributor, creator, description, format, identifier, references, rights, source, subject, temporal, title, type, uri",
-      "invalidUrlHttpProtocol": "The specified URL is not secure as it uses HTTP. An URL using HTTPs protocol should be provided. Using HTTP, requests will be handled automatically to prevent browser security issues by passing through the proxy.",
+      "invalidUrlHttpProtocol": "This catalog cannot be added to the available ones because it uses an http protocol. Please provide a catalog url that uses https protocol",
       "notification": {
         "errorTitle": "Error",
         "errorSearchingRecords": "Some records have not been found: {records} Please check the query URL and its parameters.",

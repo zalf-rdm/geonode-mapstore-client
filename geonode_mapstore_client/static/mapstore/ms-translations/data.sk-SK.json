@@ -1412,17 +1412,6 @@
             "servicePlaceholder": "Zadaj názov služby",
             "url": "URL",
             "urlPlaceholder": "Zadaj adresu URL",
-            "urlPlaceHolders": {
-              "wfs": "e.g. https://mydomain.com/geoserver/wfs",
-              "wmts": "e.g. https://mydomain.com/geoserver/gwc/service/wmts",
-              "wms": "e.g. https://mydomain.com/geoserver/wms",
-              "csw": "e.g. https://mydomain.com/geoserver/csw",
-              "tms": "e.g. https://mydomain.com/geoserver/gwc/service/tms/1.0.0",
-              "3dtiles": "e.g. https://mydomain.com/tileset.json",
-              "cog": "e.g. https://mydomain.com/cog.tif",
-              "model": "e.g. https://mydomain.com/filename.ifc",
-              "arcgis": "e.g. https://mydomain.com/arcgis/rest/services"
-            },
             "type": "Type",
             "serviceTitle": "Nadpis",
             "serviceTitlePlaceholder": "Zadaj nadpis",
@@ -1446,7 +1435,7 @@
             "showPreview": "Zobraziť náhľad",
             "advancedSettings": "Pokročilé nastavenia",
             "templateMetadataAvailable": "Metadata available from Dublin Core format: abstract, boundingBox, contributor, creator, description, format, identifier, references, rights, source, subject, temporal, title, type, uri",
-            "invalidUrlHttpProtocol": "Špecifikovaná URL adresa nie je bezpečná, pretože používa HTTP. Mala by sa poskytnúť URL adresa používajúca HTTPS protokol. Pri použití HTTP sa požiadavky automaticky spracujú, aby sa predišlo problémom so zabezpečením prehliadača prechádzaním cez proxy",
+            "invalidUrlHttpProtocol": "Tento katalóg nie je možné pridať k dostupným, pretože používa protokol HTTP. Zadajte katalógovú adresu URL, ktorá používa protokol https",
             "notification": {
                 "errorTitle": "Chyba",
                 "errorSearchingRecords": "Some records have not been found: {records} Please check the query URL and its parameters.",

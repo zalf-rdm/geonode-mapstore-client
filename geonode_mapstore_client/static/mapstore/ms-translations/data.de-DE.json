@@ -203,15 +203,6 @@
               "legendHeight": "Höhe",
               "legendPreview": "Vorschau"
             },
-            "enableInteractiveLegendInfo": {
-                "label": "Aktivieren Sie die interaktive Legende",
-                "info": "Wenn diese Option aktiviert ist, kann der Filter nach Legende angewendet werden, indem im Inhaltsverzeichnis auf Legendenelemente dieser Ebene geklickt wird. Zusätzlich wird auch die dynamische Legende aktiviert. Hinweis: Dieser Parameter erfordert spezifische Konfigurationen im GeoServer",
-                "fetchError": "Die Legenden Informationen konnten nicht vom Dienst abgerufen werden"
-            },
-            "enableDynamicLegend": {
-                "label": "Dynamische Legende aktivieren",
-                "info": "Wenn diese Option aktiviert ist, wird die Legende basierend auf dem Kartenansichtsfenster und den Ebenenfiltern aktualisiert"
-            },
             "enableLocalizedLayerStyles": {
                 "label": "Lokalisierten Stil aktivieren",
                 "tooltip": "Hinweis: Diese Einstellung benötigt spezifische Konfigurationen im GeoServer"
@@ -244,12 +235,7 @@
               "clearCustomizationConfirm": "Möchten Sie wirklich alle Anpassungen entfernen?",
               "error": "Die Felder konnten nicht automatisch geladen werden"
             },
-            "disableFeaturesEditing": "Deaktivieren Sie die Bearbeitung der Attributtabelle",
-            "interactiveLegend": {
-                "incompatibleFilterWarning": "Legendenfilter sind mit dem aktiven Ebenenfilter nicht kompatibel oder es sind keine sichtbaren Features im Kartenansichtsfenster vorhanden. Klicken Sie auf Zurücksetzen, um die Legendenfilter zu löschen",
-                "resetLegendFilter": "Zurücksetzen",
-                "noLegendData": "Keine Legenden Elemente zum Anzeigen"
-            }
+            "disableFeaturesEditing": "Deaktivieren Sie die Bearbeitung der Attributtabelle"
         },
         "localizedInput": {
           "localize": "Diesen Text lokalisieren...",
@@ -389,7 +375,6 @@
             "LinkedinGroup": "Mapstore Linkedin Gruppe",
             "scrollTop": "An den Anfang der Seite scrollen",
             "footerDescription": "<strong>GeoSolutions</strong> <a href=\"mailto:sales@geosolutionsgroup.com\">sales@geosolutionsgroup.com</a>",
-            "footerCustomHTML": "<div><p>Bitte fügen Sie benutzerdefiniertes HTML in die Übersetzungen ein, um eine benutzerdefinierte Fußzeile darzustellen</p></div>",
             "examples":{
                 "viewer":{
                     "html":"<h3>Viewer</h3><p>Einfacher Viewer</p>"
@@ -561,15 +546,7 @@
               "skyAtmosphere": "Himmelsatmosphäre zeigen",
               "groundAtmosphere": "Atmosphäre auf dem Gelände anzeigen",
               "fog": "Nebel anzeigen",
-              "depthTest": "Tiefentest gegen Gelände aktivieren",
-              "lightings": {
-                    "title": "Beleuchtungsoptionen",
-                    "placeholder": "Wähle die Beleuchtungsoption aus",
-                    "flashlightOption": "Taschenlampe",
-                    "sunlightOption": "Sonnenlicht",
-                    "dateTimeOption": "Spezifisches UTC-Datum-Uhrzeit",
-                    "dateTimePlaceholder": "Wählen Sie Datum und Uhrzeit"
-                }
+              "depthTest": "Tiefentest gegen Gelände aktivieren"
             },
             "thumbnailError": {
                 "error403": "Sie haben keine Berechtigung um Miniaturansichten hochzuladen",
@@ -629,7 +606,7 @@
         "toc": {
             "toggleLayerVisibility": "Ebenensichtbarkeit umschalten",
             "toggleGroupVisibility": "Gruppensichtbarkeit umschalten",
-            "displayLegendAndTools": "Legende und Werkzeuge einblenden",
+            "displayLegendAndTools": "Legende einblenden",
             "zoomToLayerExtent": "Zoome auf Ausdehung der Ebene",
             "addAnnotations": "Anmerkungen hinzufügen",
             "editAnnotations": "Anmerkungen bearbeiten",
@@ -1173,7 +1150,7 @@
             "title": "Erweiterte Suche",
             "query": "Suche",
             "apply": "Anwenden",
-            "reset": "Zurücksetzen: Alle Filter zurücksetzen, einschließlich aller anderen externen Filter",
+            "reset": "Zurücksetzen",
             "save": "Speichern",
             "discard": "Rückgängig machen",
             "query_request_exception": "Abfrage Fehler",
@@ -1659,18 +1636,6 @@
             "servicePlaceholder": "Geben Sie einen Service ein",
             "url": "Url",
             "urlPlaceholder": "Geben Sie eine URL ein",
-            "urlPlaceHolders": {
-                "wfs": "z.B. https://mydomain.com/geoserver/wfs",
-                "wmts": "z.B. https://mydomain.com/geoserver/gwc/service/wmts",
-                "wms": "z.B. https://mydomain.com/geoserver/wms",
-                "csw": "z.B. https://mydomain.com/geoserver/csw",
-                "tms": "z.B. https://mydomain.com/geoserver/gwc/service/tms/1.0.0",
-                "custom": "z.B. https://{s}.myUrl.com/{variant}/{z}/{x}/{y}",
-                "3dtiles": "z.B. https://mydomain.com/tileset.json",
-                "cog": "z.B. https://mydomain.com/cog.tif",
-                "model": "z.B. https://mydomain.com/filename.ifc",
-                "arcgis": "z.B. https://mydomain.com/arcgis/rest/services"
-            },
             "type": "Typ",
             "serviceTitle": "Titel",
             "serviceTitlePlaceholder": "Geben Sie einen Titel ein",
@@ -1699,7 +1664,6 @@
             "advancedSettings": "Erweiterte Einstellungen",
             "templateMetadataAvailable": "Metadaten im Dublin Core-Format verfügbar: abstract, boundingBox, contributor, creator, description, format, identifier, references, rights, source, subject, temporal, title, type, uri",
             "invalidUrlHttpProtocol": "Dieser Katalog kann nicht zu den verfügbaren hinzugefügt werden, da er ein http-Protokoll verwendet. Bitte geben Sie eine Katalog-URL an, die das https-Protokoll verwendet.",
-            "invalidArrayUsageForUrl": "Die Katalog-URL konnte nicht korrekt gelesen werden",
             "notification": {
                 "errorTitle": "Error",
                 "errorSearchingRecords": "Einige Datensätze wurden nicht gefunden: {records} . Bitte überprüfen Sie die URL des Abfrageparameters",
@@ -2139,7 +2103,6 @@
                     "useTheSelectedLayer": "Verwende die ausgewählte Ebene",
                     "connectToAMap": "Stellen Sie eine Verbindung zu einem anderen Widget her",
                     "connectToTheMap": "Verbinden Sie sich mit der Karte",
-                    "connectToTheTable": "Verbinden Sie sich mit der Tabelle",
                     "selectMapToConnect": "Wählen Sie das zu verbindende Widget aus",
                     "clearConnection": "Verbindung löschen",
                     "disableConnectToMap": "Vorgang nicht verfügbar",
@@ -2762,13 +2725,13 @@
             "msExtrudedHeight": "Extrudierte Höhe",
             "msExtrusionColor": "Extrusionsfarbe",
             "msExtrusionType": "Extrusionstyp",
-            "wall": "Wand",
+            "wall": "Wand",  
             "enableBanding": "Band styling",
             "selectChannel": "Wählen Sie eine Band aus",
             "minLabel": "Min",
             "maxLabel": "Max",
             "minSourceValue": "Mindestwert der Quelldaten",
-            "maxSourceValue": "Maximaler Quelldatenwert",
+            "maxSourceValue": "Maximaler Quelldatenwert",          
             "customParams": "Benutzerdefinierte Parameter",
             "wrongFormatMsg": "Die eingegebene Konfiguration ist in falschem Format !!"
         },
@@ -4056,10 +4019,8 @@
           "emptyDescription": "Klicken Sie auf die Karte, um die Bilder von Street-View zu durchsuchen",
           "messages": {
             "noDataForPosition": "keine Street-View-Daten für diese Position",
-            "unknownError": "Unbekannter Fehler, siehe Konsole",
-            "errorServiceUrl": "Service nicht verfügbar. Bitte überprüfen Sie die angegebene URL",
-            "errorRetriveingLayerData": "Es gab einen Fehler beim Laden der Layer-Daten"
-        },
+            "unknownError": "Unbekannter Fehler, siehe Konsole"
+          },
           "loadingAPI": "API wird geladen...",
           "cyclomedia": {
             "initializing": "Initialisiere Street Smart API...",
