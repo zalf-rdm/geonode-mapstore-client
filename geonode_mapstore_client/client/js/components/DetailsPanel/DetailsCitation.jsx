@@ -82,6 +82,14 @@ function formatAuthorList(authors, style, maxBeforeEtAl) {
     return names.slice(0, -1).join(', ') + ', & ' + names[names.length - 1];
 }
 
+function sanitizeRisField(value) {
+    return (value || '').replace(/[\r\n]+/g, ' ').trim();
+}
+
+function sanitizeBibTeXField(value) {
+    return (value || '').replace(/[{}\\]/g, '').trim();
+}
+
 function getRawDoi(resource) {
     if (!resource?.doi) return null;
     return resource.doi.replace(/^https?:\/\/(dx\.)?doi\.org\//, '');
@@ -97,11 +105,11 @@ function generateBibTeX(resource) {
         : (resource?.uuid || String(resource?.pk || 'unknown')).replace(/-/g, '').slice(0, 12);
 
     const entries = [];
-    entries.push(`  title     = {${resource?.title || ''}}`);
+    entries.push(`  title     = {${sanitizeBibTeXField(resource?.title)}}`);
     if (authors.length > 0) {
-        entries.push(`  author    = {${authors.map(a => formatAuthorName(a, 'firstFull')).join(' and ')}}`);
+        entries.push(`  author    = {${authors.map(a => sanitizeBibTeXField(formatAuthorName(a, 'firstFull'))).join(' and ')}}`);
     }
-    if (publisher) entries.push(`  publisher = {${publisher}}`);
+    if (publisher) entries.push(`  publisher = {${sanitizeBibTeXField(publisher)}}`);
     if (year) entries.push(`  year      = {${year}}`);
     const doi = getRawDoi(resource);
     if (doi) entries.push(`  doi       = {${doi}}`);
@@ -116,9 +124,9 @@ function generateRIS(resource) {
     const publisher = getPublisher(resource);
 
     const lines = [resource?.resource_type === 'map' ? 'TY  - MAP' : 'TY  - DATA'];
-    lines.push(`TI  - ${resource?.title || ''}`);
-    authors.forEach(a => lines.push(`AU  - ${formatAuthorName(a, 'firstFull')}`));
-    if (publisher) lines.push(`PB  - ${publisher}`);
+    lines.push(`TI  - ${sanitizeRisField(resource?.title)}`);
+    authors.forEach(a => lines.push(`AU  - ${sanitizeRisField(formatAuthorName(a, 'firstFull'))}`));
+    if (publisher) lines.push(`PB  - ${sanitizeRisField(publisher)}`);
     if (year) lines.push(`PY  - ${year}`);
     const doi = getRawDoi(resource);
     if (doi) lines.push(`DO  - ${doi}`);
