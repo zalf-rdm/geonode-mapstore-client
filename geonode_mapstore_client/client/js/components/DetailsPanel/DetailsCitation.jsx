@@ -114,7 +114,7 @@ function generateRIS(resource) {
     const year = getYear(resource);
     const publisher = getPublisher(resource);
 
-    const lines = ['TY  - DATA'];
+    const lines = [resource?.resource_type === 'map' ? 'TY  - MAP' : 'TY  - DATA'];
     lines.push(`TI  - ${resource?.title || ''}`);
     authors.forEach(a => lines.push(`AU  - ${formatAuthorName(a, 'firstFull')}`));
     if (publisher) lines.push(`PB  - ${publisher}`);
