@@ -177,7 +177,7 @@
             "editData": "Daten bearbeiten",
             "view": "Anzeigen",
             "viewMetadata": "Metadaten anzeigen",
-            "viewData":  "Daten anzeigen",
+            "viewData": "Daten anzeigen",
             "viewInfo": "Informationen anzeigen",
             "backToDataset": "< Zurück zum Datensatz",
             "goBackTo": "< Geh zurück zu { resourceName }",
@@ -254,12 +254,10 @@
             "legend": "Legende",
             "nodeTooltipContent": "Tooltip-Inhalt",
             "nodeTooltipPlacement": "Tooltip-Platzierung",
-
             "zoomToLayer": "Auf Layerausmaß zoomen",
             "applyCurrentStyleToLayer": "Aktuellen Stil auf Ebene anwenden",
             "deleteCurrentStyle": "Aktuellen Stil löschen",
             "createNewStyle": "Neuen Stil erstellen",
-
             "createStyleTitle": "Neuen Stil hinzufügen",
             "createStyleTitleInput": "Titel:",
             "createStyleClose": "Schließen",
@@ -288,7 +286,6 @@
             "styleEditorCloseConfirm": "Ja, schließen",
             "metadataUpload": "Metadaten Hochladen",
             "styleUpload": "Stil Hochladen",
-
             "missingFiles": "Fehlende Dateien",
             "invalidUploadMessageError": "Fehler",
             "invalidUploadMessageErrorTooltip": "Der Upload-Vorgang ist fehlgeschlagen. Bitte überprüfen Sie die Gültigkeit der Datei und versuchen Sie erneut, sie hochzuladen",
@@ -305,12 +302,10 @@
             "unsupportedUrlServiceType": "Wählen Sie einen Diensttyp aus",
             "remoteResourceURLPlaceholder": "Ressourcen-URL...",
             "invalidRemoteUploadMessageErrorTooltip": "Der Upload-Vorgang ist fehlgeschlagen. Bitte überprüfen Sie die Gültigkeit der URL und versuchen Sie, sie erneut hochzuladen",
-
             "uploadDataset": "Einen Datensatz hochladen",
             "dragAndDropFile": "Ziehen und Ablegen einer Datei zum Hochladen",
             "filterPendingUploadDataset": "Ausstehende Uploads nach Name filtern...",
             "filterNoMatchUploadDataset": "Filter stimmt nicht mit einem ausstehenden Upload überein",
-
             "filterPendingUploadDocument": "Uploads nach Name filtern...",
             "filterNoMatchUploadDocument": "Filter stimmt mit keinem Upload überein",
             "uploadDocument": "Ein Dokument hochladen",
@@ -423,7 +418,11 @@
             },
             "allResources": "All resources",
             "assets": "Assets",
-            "includeFullscreen": "Vollbild einschließen"
+            "includeFullscreen": "Vollbild einschließen",
+            "citation": "Zitierung",
+            "citationFormat": "Zitierformat",
+            "copyCitation": "Zitierung kopieren",
+            "citationCopied": "Kopiert!"
         }
     }
 }
