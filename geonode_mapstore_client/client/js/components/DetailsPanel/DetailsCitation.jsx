@@ -290,7 +290,9 @@ function DetailsCitation({ resource }) {
                     >
                         <Button
                             variant="default"
-                            bsSize="xs"
+                            size="xs"
+                            onClick={handleCopy}
+                        >
                             onClick={handleCopy}
                         >
                             <FaIcon name={copied ? 'check' : 'copy'} />
