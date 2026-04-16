@@ -685,14 +685,15 @@ function validateGeometry(extent, projection) {
     }
     return extent;
 }
-export const gnZoomToFitBounds = (action$) =>
+export const gnZoomToFitBounds = (action$, store) =>
     action$.ofType(SET_CONTROL_PROPERTY)
         .filter(action => action.control === FIT_BOUNDS_CONTROL && !!action.value)
         .switchMap((action) =>
             action$.ofType(CHANGE_MAP_VIEW)
                 .take(1)
                 .switchMap(() => {
-                    const extent = validateGeometry(action.value);
+                    const projection = store.getState()?.map?.present?.projection;
+                    const extent = validateGeometry(action.value, projection);
                     return Observable.of(
                         zoomToExtent(extent, 'EPSG:4326', undefined, { duration: 0 }),
                         setControlProperty(FIT_BOUNDS_CONTROL, 'geometry', null)

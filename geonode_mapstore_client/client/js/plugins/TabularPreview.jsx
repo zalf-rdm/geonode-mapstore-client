@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 
 import { createPlugin } from '@mapstore/framework/utils/PluginsUtils';
-import { describeFeatureType, getFeatureSimple } from '@mapstore/framework/api/WFS';
+import { getFeatureSimple } from '@mapstore/framework/api/WFS';
 
 import Table from '@js/components/Table';
 import resourceReducer from '@js/reducers/gnresource';
@@ -44,17 +44,18 @@ export function TableComponent({ owsUrl, typeName }) {
                 const data = await getFeatureSimple(owsUrl, { typeName });
                 setHeader(headerFromFeatures(data));
                 setRows(rowsFromFeatures(data));
-            } catch(error) {
-                setError(error)
+            } catch(err) {
+                setError(err);
             }
-        }
+        };
         if (owsUrl) {
-            getFeatures()
+            getFeatures();
         }
-    }, [owsUrl, typeName])
+    }, [owsUrl, typeName]);
 
     if (error) {
         console.error(error);
+        return <div>Error loading data: {error.message || 'An unexpected error occurred.'}</div>;
     }
     if (!rows) {
         return <div>No data available!</div>

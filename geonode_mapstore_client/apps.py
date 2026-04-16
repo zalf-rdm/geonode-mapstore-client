@@ -223,7 +223,11 @@ def run_setup_hooks(*args, **kwargs):
             "temporal_extent_start",
             "thumbnail_url",
             "title",
-            "uuid"
+            "uuid",
+            "author",
+            "publisher",
+            "doi",
+            "date_issued"
         ],
     }
     settings.REST_API_PRESETS["map_viewer"] = {
@@ -274,10 +278,9 @@ def run_setup_hooks(*args, **kwargs):
     MAPSTORE_DASHBOARD_CATALOGUE_SELECTED_SERVICE = ""
 
     if GEONODE_CATALOGUE_SERVICE:
-        MAPSTORE_DASHBOARD_CATALOGUE_SERVICES[list(list(GEONODE_CATALOGUE_SERVICE.keys()))[0]] = GEONODE_CATALOGUE_SERVICE[
-            list(list(GEONODE_CATALOGUE_SERVICE.keys()))[0]
-        ]  # noqa
-        MAPSTORE_DASHBOARD_CATALOGUE_SELECTED_SERVICE = list(list(GEONODE_CATALOGUE_SERVICE.keys()))[0]
+        first_key = list(GEONODE_CATALOGUE_SERVICE.keys())[0]
+        MAPSTORE_DASHBOARD_CATALOGUE_SERVICES[first_key] = GEONODE_CATALOGUE_SERVICE[first_key]
+        MAPSTORE_DASHBOARD_CATALOGUE_SELECTED_SERVICE = first_key
 
     setattr(settings, "MAPSTORE_DASHBOARD_CATALOGUE_SELECTED_SERVICE", MAPSTORE_DASHBOARD_CATALOGUE_SELECTED_SERVICE)
     setattr(settings, "MAPSTORE_DASHBOARD_CATALOGUE_SERVICES", MAPSTORE_DASHBOARD_CATALOGUE_SERVICES)

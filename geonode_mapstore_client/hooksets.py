@@ -85,8 +85,10 @@ class MapStoreHookSet(BaseHookSet):
         return "/catalogue/#/upload/dataset"
 
     def dataset_detail_url(self, resource):
-        dataset_type = resource.resource_type
-        dataset_type = 'tabular' if resource.subtype == 'tabular' else dataset_type
+        if resource.subtype == 'tabular':
+            dataset_type = 'tabular'
+        else:
+            dataset_type = resource.resource_type
         return resource_detail_url(dataset_type, resource.id)
 
     # Maps

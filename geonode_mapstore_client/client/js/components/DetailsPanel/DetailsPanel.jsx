@@ -24,6 +24,7 @@ import { getUserName } from '@js/utils/SearchUtils';
 import { useInView } from 'react-intersection-observer';
 import DetailsResourcePreview from './DetailsResourcePreview';
 import DetailsThumbnail from './DetailsThumbnail';
+import DetailsCitation from './DetailsCitation';
 import Unadvertised from '@js/components/Unadvertised';
 
 const CopyToClipboard = tooltip(CopyToClipboardCmp);
@@ -290,6 +291,9 @@ function DetailsPanel({
                                 <span className="gn-details-text-body" dangerouslySetInnerHTML={{ __html: resource.abstract }} />
                             </div>
                             : null}
+                        {resource?.resource_type === 'map' && (
+                            <DetailsCitation resource={resource} />
+                        )}
                     </div>
                 </div>
                 <DetailsInfo tabs={tabs} formatHref={formatHref} allowEdit={activeEditMode} resourceTypesInfo={types} resource={resource} onSetExtent={onSetExtent}/>
