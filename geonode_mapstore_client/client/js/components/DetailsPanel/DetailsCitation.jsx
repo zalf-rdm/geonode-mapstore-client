@@ -14,7 +14,7 @@ import FaIcon from '@js/components/FaIcon';
 import Message from '@mapstore/framework/components/I18N/Message';
 import tooltip from '@mapstore/framework/components/misc/enhancers/tooltip';
 
-const CopyToClipboard = tooltip(CopyToClipboardCmp);
+const TooltipButton = tooltip(Button);
 
 const FORMATS = [
     { key: 'apa',       label: 'APA' },
@@ -283,21 +283,19 @@ function DetailsCitation({ resource }) {
                             ))}
                         </Dropdown.Menu>
                     </Dropdown>
-                    <CopyToClipboard
-                        tooltipPosition="top"
-                        tooltipId={copied ? 'gnviewer.citationCopied' : 'gnviewer.copyCitation'}
+                    <CopyToClipboardCmp
                         text={citationText}
+                        onCopy={handleCopy}
                     >
-                        <Button
+                        <TooltipButton
+                            tooltipPosition="top"
+                            tooltipId={copied ? 'gnviewer.citationCopied' : 'gnviewer.copyCitation'}
                             variant="default"
                             size="xs"
-                            onClick={handleCopy}
-                        >
-                            onClick={handleCopy}
                         >
                             <FaIcon name={copied ? 'check' : 'copy'} />
-                        </Button>
-                    </CopyToClipboard>
+                        </TooltipButton>
+                    </CopyToClipboardCmp>
                 </div>
             </div>
             <pre className="gn-details-citation-code">{citationText}</pre>
