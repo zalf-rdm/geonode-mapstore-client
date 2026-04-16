@@ -30,7 +30,7 @@ const FORMATS = [
 function formatAuthorName(person, style) {
     const last = (person.last_name || '').trim();
     const first = (person.first_name || '').trim();
-    const initials = first.split(/\s+/).map(n => n[0] + '.').join(' ');
+    const initials = first.split(/\s+/).filter(Boolean).map(n => n[0] + '.').join(' ');
     switch (style) {
     case 'firstInitials': return last && first ? `${last}, ${initials}` : last || first || person.username || '';
     case 'firstFull':     return last && first ? `${last}, ${first}` : last || first || person.username || '';
@@ -78,7 +78,8 @@ function formatAuthorList(authors, style, maxBeforeEtAl) {
     }
     const names = authors.map(a => formatAuthorName(a, style));
     if (names.length === 1) return names[0];
-    return names.slice(0, -1).join(', ') + ' & ' + names[names.length - 1];
+    if (names.length === 2) return names[0] + ' & ' + names[1];
+    return names.slice(0, -1).join(', ') + ', & ' + names[names.length - 1];
 }
 
 function getRawDoi(resource) {
@@ -90,7 +91,7 @@ function generateBibTeX(resource) {
     const authors = getSortedAuthors(resource);
     const year = getYear(resource);
     const publisher = getPublisher(resource);
-    const firstAuthorLast = (authors[0]?.last_name || '').replace(/\s+/g, '');
+    const firstAuthorLast = (authors[0]?.last_name || '').replace(/[^a-zA-Z0-9]/g, '');
     const key = firstAuthorLast && year
         ? `${firstAuthorLast}${year}`
         : (resource?.uuid || String(resource?.pk || 'unknown')).replace(/-/g, '').slice(0, 12);
@@ -204,7 +205,11 @@ function generateChicago(resource) {
     } else if (authors.length > 1) {
         authorStr = formatAuthorName(authors[0], 'firstFull');
         const rest = authors.slice(1).map(a => formatAuthorName(a, 'fullNormal'));
-        authorStr += ', and ' + rest.join(', and ') + '.';
+        if (rest.length === 1) {
+            authorStr += ' and ' + rest[0] + '.';
+        } else {
+            authorStr += ', ' + rest.slice(0, -1).join(', ') + ', and ' + rest[rest.length - 1] + '.';
+        }
     }
     const titleStr = resource?.title ? ` "${resource.title}."` : '';
     const publisherStr = publisher ? ` ${publisher},` : '';
@@ -268,7 +273,7 @@ function DetailsCitation({ resource }) {
                 </div>
                 <div className="gn-details-citation-actions">
                     <Dropdown id="gn-citation-format-dropdown" className="gn-details-citation-dropdown">
-                        <Dropdown.Toggle variant="default" bsSize="xs" noCaret>
+                        <Dropdown.Toggle variant="default" size="xs" noCaret>
                             {activeLabel} <FaIcon name="caret-down" />
                         </Dropdown.Toggle>
                         <Dropdown.Menu>
