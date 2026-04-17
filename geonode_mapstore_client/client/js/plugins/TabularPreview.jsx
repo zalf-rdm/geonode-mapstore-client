@@ -95,7 +95,7 @@ export function TableComponent({ owsUrl, typeName }) {
     }
     return (
         <div id="tabular-preview">
-            <div className="tableFixHead">
+            <div className="tableFixHead" style={{ overflow: 'auto', height: '100%' }}>
                 <Table
                     head={header || []}
                     body={rows}
