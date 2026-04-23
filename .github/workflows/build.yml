@@ -21,6 +21,8 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build_and_commit:
+    permissions:
+      contents: write
     env:
       working-directory: ./geonode_mapstore_client/client
     runs-on: ubuntu-latest
@@ -67,12 +69,10 @@ jobs:
       ###############
       # COMMIT
       #############
-      - name: "Stage files"
-        run: git add --all
-        
-      - name: "Create Pull Request"
-        uses: peter-evans/create-pull-request@v6
-        with:
-          title: "[main] new JS dist build"
-          body: "CI build on branch `main`"
-          delete-branch: true
+      - name: "Commit and push dist"
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add geonode_mapstore_client/static/mapstore/dist/
+          git diff --staged --quiet || git commit -m "chore: rebuild frontend dist [skip ci]"
+          git push origin main
