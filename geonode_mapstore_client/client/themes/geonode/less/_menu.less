@@ -7,35 +7,44 @@
         .background-color-var(@theme-vars[info]);
         .color-var(@theme-vars[info-contrast]);
     }
+
     .gn-menu-divider {
         .background-color-var(@theme-vars[primary-contrast]);
     }
+
     .gn-main-header {
         .background-color-var(@theme-vars[main-bg]);
     }
+
     .gn-menu {
         .color-var(@theme-vars[main-color]);
         .background-color-var(@theme-vars[main-bg]);
+
         &.gn-primary {
             .color-var(@theme-vars[primary-contrast]);
             .background-color-var(@theme-vars[primary]);
         }
+
         &.gn-default {
             .color-var(@theme-vars[main-variant-color]);
             .background-color-var(@theme-vars[main-variant-bg]);
+
             .gn-menu-divider {
                 .background-color-var(@theme-vars[main-border-color]);
             }
         }
+
         &.gn-default,
         .gn-menu-content-right {
             .btn-default {
                 background: transparent;
                 border-color: transparent;
+
                 &:hover {
                     .color-var(@theme-vars[main-hover-color]);
                     .background-color-var(@theme-vars[main-hover-bg]);
                 }
+
                 &.active {
                     .color-var(@theme-vars[primary-contrast]);
                     .background-color-var(@theme-vars[primary]);
@@ -43,6 +52,7 @@
             }
         }
     }
+
     #gn-topbar {
         .highlight-menu {
             .border-bottom-color-var(@theme-vars[main-border-color]);
@@ -83,6 +93,7 @@ nav.hide-navigation#gn-topbar {
     position: sticky;
     top: 0;
     z-index: 100;
+
     .highlight-menu {
         border-width: 2px;
     }
@@ -94,9 +105,11 @@ nav.hide-navigation#gn-topbar {
         max-height: 400px;
         overflow: auto;
     }
+
     &.inline {
         padding: 0.5rem;
     }
+
     .btn.active {
         font-weight: bold;
         text-decoration: underline;
@@ -114,6 +127,7 @@ nav.hide-navigation#gn-topbar {
         padding: 0.25rem 0;
         font-size: @font-size-sm;
         min-height: 2rem;
+
         .nav-link {
             font-size: @font-size-sm;
         }
@@ -131,6 +145,7 @@ nav.hide-navigation#gn-topbar {
     }
 
     &.gn-menu-symmetric {
+
         .gn-menu-content-left,
         .gn-menu-content-right {
             display: flex;
@@ -138,10 +153,12 @@ nav.hide-navigation#gn-topbar {
             flex-direction: row;
             min-width: 0;
         }
+
         .gn-menu-content-right {
             flex-direction: row-reverse;
         }
     }
+
     .gn-menu-container {
         display: flex;
         flex-direction: row;
@@ -149,6 +166,7 @@ nav.hide-navigation#gn-topbar {
         margin: auto;
         width: 100%;
     }
+
     .gn-menu-content {
         display: flex;
         flex-direction: row;
@@ -167,13 +185,16 @@ nav.hide-navigation#gn-topbar {
         flex: 1;
         flex-direction: row;
         min-width: 0;
+
         .gn-menu-list {
-            > li {
+            >li {
                 .dropdown {
                     margin-right: 0.2rem;
+
                     .btn-sm {
                         padding: 0.313rem 0.5rem;
                     }
+
                     .caret {
                         margin-left: 0.125rem;
                     }
@@ -189,9 +210,10 @@ nav.hide-navigation#gn-topbar {
         list-style-type: none;
         padding: 0;
         margin: 0;
+
         // li is still visible for injected plugin that return a null component
         // so we need to target the inner component and apply the margin to that element
-        > li > * {
+        >li>* {
             margin-right: 0.4rem;
         }
 
@@ -200,58 +222,70 @@ nav.hide-navigation#gn-topbar {
             height: 2.5rem;
         }
     }
+
     .gn-menu-content-right {
         .gn-menu-list {
+
             // li is still visible for injected plugin that return a null component
             // so we need to target the inner component and apply the margin to that element
-            > li > * {
+            >li>* {
                 margin-right: 0;
                 margin-left: 0.4rem;
             }
         }
     }
+
     .gn-menu-content-side {
         position: relative;
     }
-    > .dropdown {
+
+    >.dropdown {
         visibility: hidden;
     }
 
     .gn-user-menu-dropdown {
-        > button {
+        >button {
             padding: 0;
             background-color: transparent;
             border-color: transparent;
             border-radius: 50%;
+
             img {
                 border-radius: 50%;
             }
         }
     }
+
     .gn-menu-divider {
         width: 1px;
         height: 1.2rem;
     }
+
     .gn-menu-fill {
         flex: 1;
         display: flex;
         align-items: center;
+
         .clear-pointer {
             cursor: pointer;
         }
+
         .resources-found {
             cursor: pointer;
             text-decoration: underline;
         }
+
         .resources-count {
             padding: 0em 0.2em;
         }
+
         .resources-count-loading {
             padding: 0em 1em;
             position: relative;
             align-items: center;
             display: inline-flex;
         }
+
         .badge {
             font-weight: normal;
             background-color: transparent;
@@ -260,30 +294,31 @@ nav.hide-navigation#gn-topbar {
 }
 
 .gn-filters-menu {
-    margin-bottom: 32px;
+    margin-bottom: 1rem;
     position: sticky;
     top: 0px;
     z-index: 10;
 
     &.gn-menu.gn-default {
-        padding: 0.85rem 1rem;
-        border: 1px solid #dde5ee;
-        border-radius: 1.25rem;
-        background: rgba(255, 255, 255, 0.92);
-        box-shadow: 0 14px 30px rgba(15, 31, 54, 0.06);
-        backdrop-filter: blur(12px);
+        padding: 0.5rem 0;
+        border: none;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+        backdrop-filter: none;
     }
 
     .gn-menu-content {
-        justify-content: space-between;
+        justify-content: flex-end;
         gap: 1rem;
         flex-wrap: wrap;
-        row-gap: 0.75rem;
+        row-gap: 0.5rem;
     }
 
     .gn-menu-fill {
-        flex: 0 1 auto;
+        flex: 0 0 auto;
         gap: 0.75rem;
+        margin-left: auto;
     }
 
     .gn-menu-actions {
@@ -292,7 +327,7 @@ nav.hide-navigation#gn-topbar {
         justify-content: flex-end;
         flex-wrap: wrap;
         gap: 0.75rem;
-        margin-left: auto;
+        margin-left: 0;
     }
 
     .btn,
@@ -314,7 +349,7 @@ nav.hide-navigation#gn-topbar {
         margin-right: 0;
     }
 
-    .dropdown.btn-group > .btn-primary.dropdown-toggle {
+    .dropdown.btn-group>.btn-primary.dropdown-toggle {
         min-width: 11.5rem;
         padding-left: 1rem;
         padding-right: 1rem;
@@ -324,27 +359,28 @@ nav.hide-navigation#gn-topbar {
         flex-wrap: wrap;
     }
 
-    .gn-menu-list > li > * {
+    .gn-menu-list>li>* {
         margin-right: 0;
     }
 
     .btn-default {
-        background: #f8fafc;
+        background: transparent;
         border-color: #dde5ee;
         color: #334155;
     }
 
     .btn-primary {
-        box-shadow: 0 12px 24px rgba(117, 183, 42, 0.2);
+        box-shadow: none;
     }
 
     .gn-resources-count-badge {
-        background: #f2f7ef;
-        border: 1px solid #dcebd0;
-        border-radius: 999px;
+        background: transparent;
+        border: none;
+        border-radius: 0;
         color: #5d6c80;
-        font-size: 1.15rem;
-        padding: 0.35rem 0.8rem;
+        font-size: 0.95rem;
+        padding: 0;
+        font-weight: 400;
     }
 
     .resources-count {
@@ -425,13 +461,14 @@ a.gn-action-navbar-breadcrumb-link {
 }
 
 @media screen and (max-width: 485px) {
-.gn-content-responsive {
-    span:first-of-type {
-        display: none;
-    }
-    span:last-child:not(span:first-of-type) {
+    .gn-content-responsive {
+        span:first-of-type {
+            display: none;
+        }
+
+        span:last-child:not(span:first-of-type) {
             display: unset;
-    }
+        }
     }
 }
 
