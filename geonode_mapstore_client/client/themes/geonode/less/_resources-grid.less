@@ -1,4 +1,3 @@
-
 // **************
 // Theme
 // **************
@@ -21,9 +20,11 @@
     display: flex;
     left: 0;
     pointer-events: none;
+
     * {
         pointer-events: auto;
     }
+
     z-index: 10;
 }
 
@@ -44,6 +45,7 @@
     margin-left: auto;
     z-index: 10;
 }
+
 .gn-resources-pagination {
     display: flex;
     align-items: center;
@@ -52,6 +54,7 @@
     z-index: 50;
     border-top-width: 1px;
     border-top-style: solid;
+
     .pagination {
         margin: 0;
     }
@@ -102,7 +105,7 @@
         padding-top: 0;
     }
 
-    .gn-card-grid-container > ul {
+    .gn-card-grid-container>ul {
         max-width: none;
         width: 100%;
         margin: 0;
@@ -139,6 +142,102 @@
         background: #ffffff;
         box-shadow: 0 18px 40px rgba(15, 31, 54, 0.08);
         padding: 1rem;
+    }
+
+    // Accordion styles for topics
+    .gn-catalogue-topics-accordion {
+        border: 1px solid #dde5ee;
+        border-radius: 1.5rem;
+        background: #ffffff;
+        box-shadow: 0 18px 40px rgba(15, 31, 54, 0.08);
+        padding: 0;
+
+        .accordion-title {
+            padding: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: none;
+            background: #ffffff;
+            border-radius: 1.5rem;
+            transition: all 0.2s ease;
+
+            &:hover {
+                background: #f5f7fa;
+            }
+
+            .accordion-title-label {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: 100%;
+                gap: 0.5rem;
+            }
+
+            .gn-catalogue-topics-head-compact {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                flex: 1;
+
+                .fa {
+                    width: 2rem;
+                    height: 2rem;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 0.75rem;
+                    background: #eef8e5;
+                    color: #75b72a;
+                }
+
+                h3 {
+                    margin: 0;
+                    font-size: 1rem;
+                    font-weight: 800;
+                    color: #1f2b3d;
+                }
+
+                p {
+                    margin: 0.15rem 0 0;
+                    font-size: 0.82rem;
+                    color: #7b8aa0;
+                }
+            }
+
+            .gn-accordion-arrow {
+                color: #7b8aa0;
+                transition: transform 0.3s ease;
+                font-size: 0.875rem;
+                flex-shrink: 0;
+            }
+        }
+
+        .accordion-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0;
+        }
+
+        &.expanded {
+            .accordion-title {
+                border-bottom: 1px solid #edf2f7;
+                border-radius: 1.5rem 1.5rem 0 0;
+                background: #ffffff;
+            }
+
+            .accordion-title .gn-accordion-arrow {
+                transform: rotate(180deg);
+            }
+
+            .accordion-body {
+                max-height: 1000px;
+                padding: 0.5rem 1rem 1rem;
+                border-radius: 0 0 1.5rem 1.5rem;
+            }
+        }
     }
 
     .gn-catalogue-topics-head {
@@ -261,10 +360,12 @@
         .gn-details-info-label {
             width: 200px;
         }
+
         .gn-details-info-value {
             max-width: calc(100% - 200px);
         }
     }
+
     .gn-details-info-label-link {
         padding: 0.25rem;
         font-weight: bold;
@@ -282,6 +383,7 @@
 }
 
 @media (max-width: 968px) {
+
     .gn-resources-filter,
     .gn-resource-detail {
         max-width: 100%;
@@ -298,8 +400,8 @@
 
         .gn-grid-container,
         .gn-card-grid,
-        .gn-card-grid > div,
-        .gn-card-grid > div > div,
+        .gn-card-grid>div,
+        .gn-card-grid>div>div,
         .gn-card-grid-container {
             min-height: auto;
             height: 100%;
@@ -330,6 +432,7 @@
             max-width: 100%;
         }
     }
+
     .gn-card-grid-container {
         .gn-menu {
             .gn-menu-container {
@@ -368,4 +471,3 @@
         }
     }
 }
-    

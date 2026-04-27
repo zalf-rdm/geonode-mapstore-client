@@ -45,10 +45,12 @@ function FiltersForm({
     const [fields, setFields] = useState([]);
     const [prevFieldsProp, setPrevFieldsProp] = useState();
     const [prevFacets, setPrevFacets] = useState();
+    const [isExpanded, setIsExpanded] = useState(false);
+
     if (!isEqual(fieldsProp, prevFieldsProp) || !isEqual(facets, prevFacets)) {
         setPrevFieldsProp(fieldsProp);
         setPrevFacets(facets);
-        setFields(updateFilterFormItemsWithFacet({formItems: fieldsProp, facetItems: facets}));
+        setFields(updateFilterFormItemsWithFacet({ formItems: fieldsProp, facetItems: facets }));
     }
 
     useEffect(() => {
@@ -61,31 +63,40 @@ function FiltersForm({
         onChange(newParam);
     };
 
+    const toggleExpanded = () => {
+        setIsExpanded(!isExpanded);
+    };
+
     return (
-        <div className="gn-filter-form" style={styleContainerForm} >
-            <div className="gn-filter-form-header">
+        <div className={`gn-filter-form gn-filter-form-accordion ${isExpanded ? 'expanded' : 'collapsed'}`} style={styleContainerForm} >
+            <div className="gn-filter-form-header" onClick={toggleExpanded}>
                 <div className="gn-filter-form-title">
-                    <div><FaIcon name="filter" /> <strong><Message msgId="gnhome.filters" /></strong></div>
+                    <div className="gn-filter-form-title-content">
+                        <FaIcon name="filter" /> <strong><Message msgId="gnhome.filters" /></strong>
+                    </div>
+                    <FaIcon name="caret-down" className="gn-filter-form-accordion-arrow" />
+                </div>
+            </div>
+            <div
+                className="gn-filter-form-body"
+            >
+                <div className="gn-filter-form-body-header">
                     <Button
                         size="sm"
                         variant="default"
                         onClick={onClear}
                         disabled={isEmpty(omit(query, ['d', 'page', 'sort']))}
                     >
-                        <Message msgId="gnhome.clearFilters"/>
+                        <Message msgId="gnhome.clearFilters" />
+                    </Button>
+                    <Button
+                        variant="default"
+                        onClick={() => onClose()}
+                        className="square-button-md"
+                    >
+                        <Glyphicon glyph="1-close" />
                     </Button>
                 </div>
-                <Button
-                    variant="default"
-                    onClick={() => onClose()}
-                    className="square-button-md"
-                >
-                    <Glyphicon glyph="1-close"/>
-                </Button>
-            </div>
-            <div
-                className="gn-filter-form-body"
-            >
                 <div className="gn-filter-form-content">
                     <form
                         style={style}
@@ -125,9 +136,9 @@ FiltersForm.defaultProps = {
 FiltersForm.defaultProps = {
     query: {},
     fields: [],
-    onChange: () => {},
-    onClose: () => {},
-    onClear: () => {},
+    onChange: () => { },
+    onClose: () => { },
+    onClear: () => { },
     submitOnChangeField: true,
     timeDebounce: 500,
     formParams: {}

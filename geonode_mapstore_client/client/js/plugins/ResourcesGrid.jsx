@@ -733,38 +733,48 @@ function ResourcesGrid({
 
     const inlineFilterForm = showInlineSidebar && (
         <aside className="gn-catalogue-sidebar">
-            <div className="gn-catalogue-topics-card">
-                <div className="gn-catalogue-topics-head">
-                    <FaIcon name="th-large" />
-                    <div>
-                        <h3>Topics</h3>
-                        <p>Browse by theme</p>
+            <div className="gn-accordion gn-catalogue-topics-accordion">
+                <div className="accordion-title" onClick={(e) => {
+                    const accordion = e.currentTarget.closest('.gn-accordion');
+                    accordion.classList.toggle('expanded');
+                }}>
+                    <div className="accordion-title-label">
+                        <div className="gn-catalogue-topics-head-compact">
+                            <FaIcon name="th-large" />
+                            <div>
+                                <h3>Topics</h3>
+                                <p>Browse by theme</p>
+                            </div>
+                        </div>
+                        <FaIcon name="caret-down" className="gn-accordion-arrow" />
                     </div>
                 </div>
-                <nav className="gn-catalogue-topics-list">
-                    {CATALOGUE_TOPICS.map(({ label, icon, query: topicQuery }) => {
-                        const isAllData = topicQuery === '';
-                        const isActive = isAllData
-                            ? !query?.q
-                            : `${query?.q || ''}` === label;
-                        return (
-                            <a
-                                key={label}
-                                href={handleFormatHref({
-                                    query: {
-                                        q: topicQuery !== undefined ? topicQuery : label,
-                                        page: ''
-                                    },
-                                    replaceQuery: true
-                                })}
-                                className={`gn-catalogue-topic-link${isActive ? ' active' : ''}`}
-                            >
-                                <FaIcon name={icon} />
-                                <span>{label}</span>
-                            </a>
-                        );
-                    })}
-                </nav>
+                <div className="accordion-body">
+                    <nav className="gn-catalogue-topics-list">
+                        {CATALOGUE_TOPICS.map(({ label, icon, query: topicQuery }) => {
+                            const isAllData = topicQuery === '';
+                            const isActive = isAllData
+                                ? !query?.q
+                                : `${query?.q || ''}` === label;
+                            return (
+                                <a
+                                    key={label}
+                                    href={handleFormatHref({
+                                        query: {
+                                            q: topicQuery !== undefined ? topicQuery : label,
+                                            page: ''
+                                        },
+                                        replaceQuery: true
+                                    })}
+                                    className={`gn-catalogue-topic-link${isActive ? ' active' : ''}`}
+                                >
+                                    <FaIcon name={icon} />
+                                    <span>{label}</span>
+                                </a>
+                            );
+                        })}
+                    </nav>
+                </div>
             </div>
             {filtersFormContent}
         </aside>
