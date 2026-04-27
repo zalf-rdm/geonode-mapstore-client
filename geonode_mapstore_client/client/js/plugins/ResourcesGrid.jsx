@@ -51,6 +51,8 @@ import { ProcessTypes } from '@js/utils/ResourceServiceUtils';
 import { replace } from 'connected-react-router';
 import FaIcon from '@js/components/FaIcon';
 import Button from '@js/components/Button';
+import Dropdown from '@js/components/Dropdown';
+import Menu from '@js/components/Menu';
 import useLocalStorage from '@js/hooks/useLocalStorage';
 import MainLoader from '@js/components/MainLoader';
 
@@ -876,28 +878,84 @@ function ResourcesGrid({
                                                         <h1>Zalf Data Catalog</h1>
                                                         <p>Access spatial data for agricultural landscape research.</p>
                                                     </div>
+                                                    {(parsedConfig.menuItems || []).length > 0 && (
+                                                        <div className="gn-catalogue-add-resource">
+                                                            <Menu
+                                                                items={parsedConfig.menuItems}
+                                                                containerClass="gn-menu-list"
+                                                                size="md"
+                                                                alignRight
+                                                            />
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
-                                            <FiltersMenu
-                                                formatHref={handleFormatHref}
-                                                cardsMenu={parsedConfig.menuItems || []}
-                                                order={query?.sort}
-                                                onClear={handleClear}
-                                                onClick={handleShowFilterForm.bind(null, true)}
-                                                orderConfig={parsedConfig.order}
-                                                totalResources={totalResources}
-                                                totalFilters={queryFilters.length}
-                                                filtersActive={!!(queryFilters.length > 0)}
-                                                loading={loading}
-                                                cardLayoutStyle={cardLayoutStyleState}
-                                                setCardLayoutStyle={setCardLayoutStyle}
-                                                showFilterButton={!showInlineSidebar}
-                                                style={{
-                                                    position: 'sticky',
-                                                    top
-                                                }}
-                                                hideCardLayoutButton
-                                            />
+                                            <div className="gn-catalogue-search-bar">
+                                                <div className="gn-catalogue-search-input-wrapper">
+                                                    <FaIcon name="search" className="gn-catalogue-search-icon" />
+                                                    <input
+                                                        type="text"
+                                                        className="gn-catalogue-search-input"
+                                                        placeholder="Search resources..."
+                                                        value={query?.q || ''}
+                                                        onChange={(e) => {
+                                                            handleUpdate({ q: e.target.value, page: '' });
+                                                        }}
+                                                    />
+                                                    {query?.q && (
+                                                        <button
+                                                            className="gn-catalogue-search-clear"
+                                                            onClick={() => handleUpdate({ q: '', page: '' })}
+                                                        >
+                                                            <FaIcon name="times" />
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <div className="gn-catalogue-filters-row">
+                                                <div className="gn-catalogue-filters-row-left">
+                                                    {queryFilters.length > 0 && (
+                                                        <div className="gn-catalogue-active-filters">
+                                                            {queryFilters.map(({ key, value }) => (
+                                                                <span key={`${key}-${value}`} className="gn-catalogue-filter-badge">
+                                                                    <span className="gn-filter-badge-text">{value}</span>
+                                                                    <button
+                                                                        className="gn-filter-badge-remove"
+                                                                        onClick={() => {
+                                                                            handleUpdate({ [key]: '', page: '' });
+                                                                        }}
+                                                                    >
+                                                                        <FaIcon name="times" />
+                                                                    </button>
+                                                                </span>
+                                                            ))}
+                                                            <button
+                                                                className="gn-catalogue-clear-all"
+                                                                onClick={handleClear}
+                                                            >
+                                                                Clear all
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <FiltersMenu
+                                                    formatHref={handleFormatHref}
+                                                    cardsMenu={[]}
+                                                    order={query?.sort}
+                                                    onClear={handleClear}
+                                                    onClick={handleShowFilterForm.bind(null, true)}
+                                                    orderConfig={parsedConfig.order}
+                                                    totalResources={totalResources}
+                                                    totalFilters={queryFilters.length}
+                                                    filtersActive={!!(queryFilters.length > 0)}
+                                                    loading={loading}
+                                                    cardLayoutStyle={cardLayoutStyleState}
+                                                    setCardLayoutStyle={setCardLayoutStyle}
+                                                    showFilterButton={!showInlineSidebar}
+                                                    style={{}}
+                                                    hideCardLayoutButton
+                                                />
+                                            </div>
                                         </>
                                     }
                                     footer={

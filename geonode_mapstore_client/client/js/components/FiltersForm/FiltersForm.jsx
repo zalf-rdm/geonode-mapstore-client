@@ -114,19 +114,6 @@ function FiltersForm({
                     <div className="gn-filter-form-drawer-content">
                         {/* Main Filters List */}
                         <div className={`gn-filter-drawer-page gn-filter-drawer-main ${currentFilterLevel !== null ? 'hidden' : 'active'}`}>
-                            <div className="gn-filter-drawer-search">
-                                <form style={style}>
-                                    <FilterItems
-                                        id={id}
-                                        items={fields.filter(f => f.type === 'search')}
-                                        values={query}
-                                        extentProps={{ ...extentProps, timeDebounce }}
-                                        onChange={handleFieldChange}
-                                        filters={filters}
-                                        setFilters={setFilters}
-                                    />
-                                </form>
-                            </div>
                             <div className="gn-filter-drawer-sections">
                                 {filterGroupSections.map((field, index) => (
                                     <div
