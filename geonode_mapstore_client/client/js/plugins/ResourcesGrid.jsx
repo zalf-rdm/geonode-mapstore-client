@@ -335,7 +335,7 @@ function ResourcesGrid({
         },
         {
             type: 'group',
-            labelId: 'gnhome.customFiltersTitle',
+            label: 'Resource Type',
             items: [
                 {
                     id: 'my-resources',
@@ -457,10 +457,10 @@ function ResourcesGrid({
         {
             type: 'date-range',
             filterKey: 'date',
-            labelId: 'gnviewer.dateFilter'
+            label: 'Data Extent'
         },
         {
-            labelId: 'gnviewer.extent',
+            label: 'Spatial Extent',
             type: 'extent'
         }
     ],
