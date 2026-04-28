@@ -205,6 +205,35 @@
         }
     }
 
+    .gn-tabular-preview-data-wrap {
+        min-height: 0;
+        flex: 1;
+        padding: 0;
+        gap: 1rem;
+    }
+
+    .gn-tabular-preview-data-wrap .gn-attr-table-toolbar {
+        padding: 0.875rem 1rem;
+        background: rgba(255, 255, 255, 0.92);
+        border: 1px solid #dbe4ee;
+        border-radius: 1rem;
+        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+    }
+
+    .gn-tabular-preview-data-wrap .gn-attr-table-search-wrap {
+        max-width: 28rem;
+    }
+
+    .gn-tabular-preview-table-container {
+        min-height: 0;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        border-color: #dbe4ee;
+        border-radius: 1rem;
+        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+    }
+
     .gn-tabular-preview-table-wrap {
         min-height: 0;
         flex: 1;
@@ -215,7 +244,8 @@
     }
 
     .gn-tabular-preview-table-scroll {
-        height: 100%;
+        flex: 1;
+        min-height: 0;
         overflow: auto;
     }
 
@@ -234,7 +264,7 @@
             border-bottom: 1px solid #dbe4ee;
         }
 
-        thead th button {
+        thead th .gn-tabular-preview-column-btn {
             width: 100%;
             display: flex;
             align-items: center;
@@ -251,7 +281,7 @@
             transition: color 0.2s ease;
         }
 
-        thead th button:hover {
+        thead th .gn-tabular-preview-column-btn:hover {
             color: #008542;
         }
 
@@ -277,6 +307,18 @@
         }
     }
 
+    .gn-tabular-preview-table .gn-attr-table-field-text {
+        max-width: 18rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .gn-tabular-preview-table-container .gn-attr-table-pagination {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
     .gn-tabular-preview-state {
         padding: 2rem 1rem;
         text-align: center;
@@ -291,6 +333,11 @@
 
     .gn-tabular-preview-state-error {
         color: #b91c1c;
+    }
+
+    .gn-tabular-preview-hint {
+        padding: 1.25rem;
+        background: rgba(255, 255, 255, 0.55);
     }
 
     .gn-tabular-preview-footer-summary {

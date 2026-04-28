@@ -203,11 +203,14 @@ function UploadList({
                     const errorUploads = responses.filter(({ status }) => status === 'error');
                     if (errorUploads.length > 0) {
                         updateWaitingUploads(Object.keys(waitingUploads).reduce((acc, baseName) => {
-                            const error = !!errorUploads.find(errorUpload => errorUpload.baseName === baseName);
+                            const errorUpload = errorUploads.find(({ baseName: errorBaseName }) => errorBaseName === baseName);
                             const waitingUpload = waitingUploads[baseName];
                             return {
                                 ...acc,
-                                [baseName]: error ? { ...waitingUpload, error: true } : waitingUpload
+                                [baseName]: errorUpload ? {
+                                    ...waitingUpload,
+                                    error: errorUpload.error || true
+                                } : waitingUpload
                             };
                         }, {}));
                     }

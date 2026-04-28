@@ -10,7 +10,6 @@ import React from 'react';
 import FaIcon from '@js/components/FaIcon';
 import Button from '@js/components/Button';
 import Spinner from '@js/components/Spinner';
-import tooltip from '@mapstore/framework/components/misc/enhancers/tooltip';
 import Message from '@mapstore/framework/components/I18N/Message';
 import moment from 'moment';
 import { getConfigProp } from '@mapstore/framework/utils/ConfigUtils';
@@ -24,9 +23,6 @@ function ErrorMessage(props) {
         </div>
     );
 }
-
-const ErrorMessageWithTooltip = tooltip(ErrorMessage);
-
 
 function UploadCard({
     name,
@@ -46,11 +42,14 @@ function UploadCard({
     const { datasetMaxUploadSize, documentMaxUploadSize, maxParallelUploads } = getConfigProp('geoNodeSettings') || {};
     const maxAllowedBytes = type !== 'document' ? datasetMaxUploadSize : documentMaxUploadSize;
     const maxAllowedSize = Math.floor(maxAllowedBytes / (1024 * 1024));
+    const hasError = state === 'INVALID' || status === 'failed';
+    const errorMessageId = getUploadErrorMessageFromCode(error?.code);
+    const errorText = errorLog ? getUploadErrorMessageFromCode(null, errorLog) : null;
 
     return (
         <div className="gn-upload-card">
             <div className="gn-upload-card-header">
-                {(state === 'INVALID' || status === 'failed') ? <div className="gn-upload-card-error"><FaIcon name="exclamation" /></div> : null}
+                {hasError ? <div className="gn-upload-card-error"><FaIcon name="exclamation" /></div> : null}
                 <div className="gn-upload-card-title">
                     {(detailUrl || importUrl.length === 1)
                         ? <a
@@ -95,15 +94,21 @@ function UploadCard({
                             <Message msgId={`${(detailUrl || importUrl.length === 1) ? 'gnviewer.view' : 'gnhome.viewDatasets'}`} />
                         </Button>
                         : null}
-                    {(state === 'INVALID' || status === 'failed')
-                        ? <>
-                            {!errorLog ? <ErrorMessageWithTooltip tooltipPosition="left" tooltipId={<Message msgId={`gnviewer.${getUploadErrorMessageFromCode(error?.code)}`} msgParams={{ limit: getUploadErrorMessageFromCode(error?.code) === 'fileExceeds' ? maxAllowedSize : maxParallelUploads }} />} />
-                                : <ErrorMessageWithTooltip tooltipPosition="left" tooltip={getUploadErrorMessageFromCode(null, errorLog)} />
-                            }
-                        </>
+                    {hasError
+                        ? <ErrorMessage />
                         : null}
                 </div>
             </div>
+            {hasError && (
+                <div className="gn-upload-card-error-detail">
+                    {errorText
+                        ? errorText
+                        : <Message
+                            msgId={`gnviewer.${errorMessageId}`}
+                            msgParams={{ limit: errorMessageId === 'fileExceeds' ? maxAllowedSize : maxParallelUploads }}
+                        />}
+                </div>
+            )}
             <div
                 className={`gn-upload-card-progress ${state && state.toLowerCase() || ''}`}
                 style={{

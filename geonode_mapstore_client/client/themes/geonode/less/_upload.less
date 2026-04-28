@@ -155,6 +155,12 @@
             text-overflow: ellipsis;
             overflow: hidden;
         }
+        > div:last-child {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            flex-shrink: 0;
+        }
         .gn-upload-card-error {
             padding-right: 0.5rem;
         }    
@@ -216,6 +222,8 @@
     .gn-upload-card-body {
         padding: 0 0.5rem;
         font-size: @font-size-sm;
+        white-space: normal;
+        overflow-wrap: anywhere;
     }
     .gn-upload-card-date {
         font-size: @font-size-sm;
@@ -234,6 +242,18 @@
     .gn-upload-card-error-message {
         padding: 0.25rem 0.5rem;
         cursor: pointer;
+    }
+
+    .gn-upload-card-error-detail {
+        margin: 0 0.5rem 0.5rem;
+        padding: 0.625rem 0.75rem;
+        border-radius: 0.5rem;
+        background: #fef2f2;
+        color: #991b1b;
+        font-size: @font-size-sm;
+        line-height: 1.35;
+        white-space: normal;
+        overflow-wrap: anywhere;
     }
 
     ul {

@@ -15,6 +15,26 @@ import Message from '@mapstore/framework/components/I18N/Message';
 import Spinner from '@js/components/Spinner';
 import ErrorMessageWithTooltip from './ErrorMessageWithTooltip';
 
+function getUploadErrorText(error) {
+    if (!error || error === true) {
+        return null;
+    }
+    if (typeof error === 'string') {
+        return error;
+    }
+    if (Array.isArray(error)) {
+        return error.map(getUploadErrorText).filter(Boolean).join(' ');
+    }
+    if (typeof error === 'object') {
+        return error.detail
+            || error.message
+            || error.error
+            || error.non_field_errors?.join?.(' ')
+            || Object.values(error).map(getUploadErrorText).filter(Boolean).join(' ');
+    }
+    return null;
+}
+
 function PendingUploadFile({
     missingExt,
     baseName,
@@ -27,13 +47,17 @@ function PendingUploadFile({
     error,
     addMissingFiles
 }) {
+    const uploadErrorText = getUploadErrorText(error);
     return (
         <div className="gn-upload-card">
             <div className="gn-upload-card-header">
                 {(missingExt.length > 0 || addMissingFiles) ? <div className="gn-upload-card-error"><FaIcon name="exclamation" /></div> : null}
                 <div className="gn-upload-card-title">{baseName}</div>
                 <div>
-                    {error ? <ErrorMessageWithTooltip tooltipId={<Message msgId="gnviewer.invalidUploadMessageErrorTooltip" />} /> : null}
+                    {error ? <ErrorMessageWithTooltip tooltipPosition="left" {...(uploadErrorText
+                        ? { tooltip: uploadErrorText }
+                        : { tooltipId: <Message msgId="gnviewer.invalidUploadMessageErrorTooltip" /> }
+                    )} /> : null}
                     {onRemove
                         ? (!loading || !(progress?.[baseName])) ? <Button size="xs" onClick={onRemove}>
                             <FaIcon name="trash" />
@@ -51,6 +75,11 @@ function PendingUploadFile({
             {addMissingFiles && <div className="gn-upload-card-body">
                 <div className="text-danger">
                     <Message msgId="gnviewer.addMainFiles" />
+                </div>
+            </div>}
+            {uploadErrorText && <div className="gn-upload-card-body">
+                <div className="text-danger">
+                    {uploadErrorText}
                 </div>
             </div>}
             <div className="gn-upload-card-bottom">

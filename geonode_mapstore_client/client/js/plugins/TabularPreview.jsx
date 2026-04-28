@@ -48,13 +48,16 @@ function rowsFromFeatures(data) {
     });
 }
 
-function buildOwsUrlCandidates(geoserverUrl) {
+export function buildOwsUrlCandidates(geoserverUrl) {
     const urls = [];
     const addUrl = (url) => {
         if (url && !urls.includes(url)) {
             urls.push(url);
         }
     };
+
+    addUrl('/gs/ows');
+    addUrl('/geoserver/ows');
 
     if (geoserverUrl) {
         const baseUrl = `${geoserverUrl}`.replace(/\/+$/, '');
@@ -66,17 +69,20 @@ function buildOwsUrlCandidates(geoserverUrl) {
             addUrl(`${baseUrl}/ows`);
         }
 
-        if (/\/geoserver(\/ows)?$/i.test(baseUrl)) {
+        if (/\/geoserver(\/ows)?$/i.test(baseUrl) && !/^https?:\/\//i.test(baseUrl)) {
             addUrl(baseUrl.replace(/\/geoserver(\/ows)?$/i, '/gs/ows'));
         }
     }
 
-    addUrl('/gs/ows');
     return urls;
 }
 
 function getErrorMessage(error) {
-    return error?.message || 'Could not load tabular data.';
+    const message = error?.message || '';
+    if (message.includes('Unexpected token') || message.includes('<?xml')) {
+        return 'GeoServer returned an XML error instead of JSON. Check the WFS layer name and permissions.';
+    }
+    return message || 'Could not load tabular data.';
 }
 
 function parseTotalFeatures(data, rowCount, pageIndex, pageSize) {
@@ -119,26 +125,12 @@ function getRangeLabel(page, pageSize, total, currentCount) {
     return `Showing ${start} - ${end} of ${total} entries`;
 }
 
-function getPageButtons(currentPage, totalPages) {
-    if (!totalPages || totalPages <= 1) {
-        return [1];
+function rowMatchesFilter(row, columns, filterText) {
+    const query = `${filterText || ''}`.trim().toLowerCase();
+    if (!query) {
+        return true;
     }
-    const pages = new Set([1, totalPages, currentPage + 1]);
-    if (currentPage > 0) {
-        pages.add(currentPage);
-    }
-    if (currentPage + 2 <= totalPages) {
-        pages.add(currentPage + 2);
-    }
-    const orderedPages = Array.from(pages).filter((page) => page >= 1 && page <= totalPages).sort((a, b) => a - b);
-    const items = [];
-    orderedPages.forEach((page, index) => {
-        if (index > 0 && page - orderedPages[index - 1] > 1) {
-            items.push('ellipsis');
-        }
-        items.push(page);
-    });
-    return items;
+    return columns.some((column) => formatCellValue(row[column.key]).toLowerCase().includes(query));
 }
 
 export function TableComponent({ owsUrls, typeName, resource }) {
@@ -151,6 +143,7 @@ export function TableComponent({ owsUrls, typeName, resource }) {
     const [totalRows, setTotalRows] = useState(null);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
     const [refreshToken, setRefreshToken] = useState(0);
+    const [filterText, setFilterText] = useState('');
 
     const loadHeaders = useCallback(async() => {
         for (let index = 0; index < (owsUrls || []).length; index++) {
@@ -225,8 +218,8 @@ export function TableComponent({ owsUrls, typeName, resource }) {
         return Math.max(1, Math.ceil(totalRows / pageSize));
     }, [totalRows, rows.length, pageSize, page]);
 
-    const pageButtons = useMemo(() => getPageButtons(page, totalPages), [page, totalPages]);
     const rangeLabel = useMemo(() => getRangeLabel(page, pageSize, totalRows, rows.length), [page, pageSize, totalRows, rows.length]);
+    const visibleRows = useMemo(() => rows.filter((row) => rowMatchesFilter(row, header, filterText)), [rows, header, filterText]);
     const datasetTitle = resource?.title || typeName;
     const datasetDescription = resource?.abstract || 'Tabular dataset preview';
     const datasetCategory = resource?.category?.gn_description || resource?.category?.name || resource?.subtype || 'Tabular';
@@ -237,6 +230,13 @@ export function TableComponent({ owsUrls, typeName, resource }) {
             key: columnKey,
             direction: prev.key === columnKey && prev.direction === 'asc' ? 'desc' : 'asc'
         }));
+    };
+
+    const onToggleSort = () => {
+        const nextKey = sortConfig.key || header[0]?.key;
+        if (nextKey) {
+            onSort(nextKey);
+        }
     };
 
     return (
@@ -262,130 +262,149 @@ export function TableComponent({ owsUrls, typeName, resource }) {
                     </div>
                 </div>
 
-                <div className="gn-tabular-preview-toolbar">
-                    <div className="gn-tabular-preview-toolbar-left">
-                        <span className="gn-tabular-preview-chip gn-tabular-preview-chip-primary">
-                            {resource?.subtype || 'tabular'}
-                        </span>
-                        {totalRows !== null && (
-                            <span className="gn-tabular-preview-chip">
-                                {totalRows} rows
-                            </span>
-                        )}
-                        <span className="gn-tabular-preview-chip">
-                            {header.length} columns
-                        </span>
-                    </div>
-                    <div className="gn-tabular-preview-toolbar-right">
-                        <div className="gn-tabular-preview-rows-control">
-                            <label htmlFor={`rows-per-page-${typeName}`}>Rows per page:</label>
-                            <select
-                                id={`rows-per-page-${typeName}`}
-                                value={pageSize}
-                                onChange={(event) => {
-                                    setPageSize(Number(event.target.value));
-                                    setPage(0);
-                                }}
+                <div className="gn-attr-table-wrap gn-tabular-preview-data-wrap">
+                    <div className="gn-attr-table-toolbar">
+                        <div className="gn-attr-table-search-wrap">
+                            <FaIcon name="filter" className="gn-attr-table-search-icon" />
+                            <input
+                                className="gn-attr-table-search-input"
+                                type="text"
+                                placeholder="Filter visible rows..."
+                                value={filterText}
+                                onChange={(event) => setFilterText(event.target.value)}
+                            />
+                        </div>
+                        <div className="gn-attr-table-toolbar-right">
+                            <span>Showing <b>{visibleRows.length}</b> row{visibleRows.length !== 1 ? 's' : ''}</span>
+                            <span className="gn-attr-table-divider">|</span>
+                            <span><b>{header.length}</b> column{header.length !== 1 ? 's' : ''}</span>
+                            <span className="gn-attr-table-divider">|</span>
+                            <span>{rangeLabel}</span>
+                            <span className="gn-attr-table-divider">|</span>
+                            <button
+                                className="gn-attr-table-sort-btn"
+                                type="button"
+                                disabled={!header.length}
+                                onClick={onToggleSort}
                             >
-                                {PAGE_SIZE_OPTIONS.map((option) => (
-                                    <option key={option} value={option}>{option}</option>
-                                ))}
-                            </select>
+                                <FaIcon name={sortConfig.direction === 'desc' ? 'sort-alpha-desc' : 'sort-alpha-asc'} />
+                                Sort
+                            </button>
                         </div>
                     </div>
-                </div>
 
-                <div className="gn-tabular-preview-table-wrap">
-                    <div className="gn-tabular-preview-table-scroll">
-                        <table className="gn-tabular-preview-table">
-                            <thead>
-                                <tr>
-                                    {header.map((column) => {
-                                        const isSorted = sortConfig.key === column.key;
-                                        const sortIcon = isSorted && sortConfig.direction === 'desc'
-                                            ? 'sort-desc'
-                                            : 'sort-asc';
-                                        return (
-                                            <th key={column.key}>
-                                                <button type="button" onClick={() => onSort(column.key)}>
-                                                    <span>{column.value}</span>
-                                                    <FaIcon name={sortIcon} />
-                                                </button>
-                                            </th>
-                                        );
-                                    })}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {loading && (
+                    <div className="gn-attr-table-container gn-tabular-preview-table-container">
+                        <div className="gn-tabular-preview-table-scroll">
+                            <table className="gn-attr-table gn-tabular-preview-table">
+                                <thead>
                                     <tr>
-                                        <td className="gn-tabular-preview-state" colSpan={Math.max(header.length, 1)}>
-                                            <FaIcon name="spinner" />
-                                            Loading rows...
-                                        </td>
+                                        {header.map((column) => {
+                                            const isSorted = sortConfig.key === column.key;
+                                            const sortIcon = isSorted && sortConfig.direction === 'desc'
+                                                ? 'sort-desc'
+                                                : 'sort-asc';
+                                            return (
+                                                <th key={column.key}>
+                                                    <button
+                                                        className="gn-tabular-preview-column-btn"
+                                                        type="button"
+                                                        onClick={() => onSort(column.key)}
+                                                    >
+                                                        <span>{column.value}</span>
+                                                        <FaIcon name={sortIcon} />
+                                                    </button>
+                                                </th>
+                                            );
+                                        })}
                                     </tr>
-                                )}
-                                {!loading && error && (
-                                    <tr>
-                                        <td className="gn-tabular-preview-state gn-tabular-preview-state-error" colSpan={Math.max(header.length, 1)}>
-                                            {error}
-                                        </td>
-                                    </tr>
-                                )}
-                                {!loading && !error && rows.length === 0 && (
-                                    <tr>
-                                        <td className="gn-tabular-preview-state" colSpan={Math.max(header.length, 1)}>
-                                            No data available for this dataset.
-                                        </td>
-                                    </tr>
-                                )}
-                                {!loading && !error && rows.map((row, rowIndex) => (
-                                    <tr key={`${typeName}-row-${page}-${rowIndex}`}>
-                                        {header.map((column) => (
-                                            <td key={`${typeName}-${column.key}-${rowIndex}`}>
-                                                {formatCellValue(row[column.key])}
+                                </thead>
+                                <tbody>
+                                    {loading && (
+                                        <tr>
+                                            <td className="gn-attr-table-empty gn-tabular-preview-state" colSpan={Math.max(header.length, 1)}>
+                                                <FaIcon name="spinner" />
+                                                Loading rows...
                                             </td>
-                                        ))}
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                                        </tr>
+                                    )}
+                                    {!loading && error && (
+                                        <tr>
+                                            <td className="gn-attr-table-empty gn-tabular-preview-state gn-tabular-preview-state-error" colSpan={Math.max(header.length, 1)}>
+                                                {error}
+                                            </td>
+                                        </tr>
+                                    )}
+                                    {!loading && !error && visibleRows.length === 0 && (
+                                        <tr>
+                                            <td className="gn-attr-table-empty gn-tabular-preview-state" colSpan={Math.max(header.length, 1)}>
+                                                {filterText ? 'No visible rows match the filter.' : 'No data available for this dataset.'}
+                                            </td>
+                                        </tr>
+                                    )}
+                                    {!loading && !error && visibleRows.map((row, rowIndex) => (
+                                        <tr className="gn-attr-table-row" key={`${typeName}-row-${page}-${rowIndex}`}>
+                                            {header.map((column, columnIndex) => (
+                                                <td key={`${typeName}-${column.key}-${rowIndex}`}>
+                                                    {columnIndex === 0
+                                                        ? (
+                                                            <div className="gn-attr-table-field-name">
+                                                                <FaIcon name="columns" className="gn-attr-table-field-icon" />
+                                                                <span className="gn-attr-table-field-text">{formatCellValue(row[column.key])}</span>
+                                                            </div>
+                                                        )
+                                                        : formatCellValue(row[column.key])
+                                                    }
+                                                </td>
+                                            ))}
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
 
-                <div className="gn-tabular-preview-footer">
-                    <div className="gn-tabular-preview-footer-summary">
-                        {rangeLabel}
-                    </div>
-                    <div className="gn-tabular-preview-pagination">
-                        <button
-                            type="button"
-                            disabled={page === 0 || loading}
-                            onClick={() => setPage((currentPage) => Math.max(0, currentPage - 1))}
-                        >
-                            <FaIcon name="chevron-left" />
-                        </button>
-                        {pageButtons.map((button, index) => button === 'ellipsis'
-                            ? <span key={`ellipsis-${index}`} className="gn-tabular-preview-ellipsis">...</span>
-                            : (
-                                <button
-                                    key={`page-${button}`}
-                                    type="button"
-                                    className={button - 1 === page ? 'active' : ''}
+                        <div className="gn-attr-table-pagination">
+                            <div className="gn-tabular-preview-rows-control">
+                                <label htmlFor={`rows-per-page-${typeName}`}>Rows per page:</label>
+                                <select
+                                    id={`rows-per-page-${typeName}`}
+                                    value={pageSize}
                                     disabled={loading}
-                                    onClick={() => setPage(button - 1)}
+                                    onChange={(event) => {
+                                        setPageSize(Number(event.target.value));
+                                        setPage(0);
+                                    }}
                                 >
-                                    {button}
+                                    {PAGE_SIZE_OPTIONS.map((option) => (
+                                        <option key={option} value={option}>{option}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <span className="gn-attr-table-page-label">Page {page + 1} of {totalPages}</span>
+                            <div className="gn-attr-table-page-btns">
+                                <button
+                                    className="gn-attr-table-page-btn"
+                                    type="button"
+                                    disabled={page === 0 || loading}
+                                    onClick={() => setPage((currentPage) => Math.max(0, currentPage - 1))}
+                                >
+                                    <FaIcon name="chevron-left" />
                                 </button>
-                            )
-                        )}
-                        <button
-                            type="button"
-                            disabled={loading || rows.length < pageSize || (totalRows !== null && page >= totalPages - 1)}
-                            onClick={() => setPage((currentPage) => currentPage + 1)}
-                        >
-                            <FaIcon name="chevron-right" />
-                        </button>
+                                <button
+                                    className="gn-attr-table-page-btn"
+                                    type="button"
+                                    disabled={loading || rows.length < pageSize || (totalRows !== null && page >= totalPages - 1)}
+                                    onClick={() => setPage((currentPage) => currentPage + 1)}
+                                >
+                                    <FaIcon name="chevron-right" />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="gn-attr-table-hint gn-tabular-preview-hint">
+                        <FaIcon name="info-circle" className="gn-attr-table-hint-icon" />
+                        <h4>Tabular Data Preview</h4>
+                        <p>Use the column headers for server-side sorting and the filter field to search the rows currently loaded on this page.</p>
                     </div>
                 </div>
             </div>

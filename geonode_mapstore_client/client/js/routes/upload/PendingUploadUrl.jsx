@@ -87,7 +87,7 @@ const PendingUploadUrl = ({
                             value
                         })}/>
                     {edited && <>
-                        {!isNotSupported(data) && error ? <ErrorMessageWithTooltip tooltipId={<Message msgId="gnviewer.invalidRemoteUploadMessageErrorTooltip" />} /> : null}
+                        {!isNotSupported(data) && error ? <ErrorMessageWithTooltip tooltipPosition="left" tooltipId={<Message msgId="gnviewer.invalidRemoteUploadMessageErrorTooltip" />} /> : null}
                         {isNotSupported(data) && <div className="gn-upload-error-inline"><FaIcon name="exclamation" /></div>}
                     </>}
                     {onRemove
