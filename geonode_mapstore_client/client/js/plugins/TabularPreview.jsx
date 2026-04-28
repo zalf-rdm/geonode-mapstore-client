@@ -41,6 +41,7 @@ export function TableComponent({ owsUrl, typeName }) {
     const [hasMore, setHasMore] = useState(true);
     const offsetRef = useRef(0);
     const fetchingRef = useRef(false);
+    const scrollRef = useRef(null);
 
     const fetchPage = useCallback(async (startIndex) => {
         if (!owsUrl || fetchingRef.current) return;
@@ -95,14 +96,15 @@ export function TableComponent({ owsUrl, typeName }) {
         return <div>No data available!</div>;
     }
     return (
-        <div id="tabular-preview">
-            <div className="tableFixHead" style={{ overflow: 'auto', height: '100%' }}>
+        <div id="tabular-preview" className="tabular-preview-outer">
+            <div className="tableFixHead" ref={scrollRef}>
                 <Table
                     head={header || []}
                     body={rows}
                     loading={loading}
                     hasMore={hasMore}
                     onLoadMore={handleLoadMore}
+                    scrollContainerRef={scrollRef}
                 />
             </div>
         </div>

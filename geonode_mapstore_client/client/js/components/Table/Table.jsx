@@ -1,7 +1,8 @@
 import React, { useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-const Table = ({ head, body, loading, hasMore, onLoadMore }) => {
+
+const Table = ({ head, body, loading, hasMore, onLoadMore, scrollContainerRef }) => {
     const sentinelRef = useRef(null);
 
     useEffect(() => {
@@ -12,11 +13,11 @@ const Table = ({ head, body, loading, hasMore, onLoadMore }) => {
                     onLoadMore?.();
                 }
             },
-            { threshold: 0.1 }
+            { threshold: 0.1, root: scrollContainerRef?.current || null }
         );
         observer.observe(sentinelRef.current);
         return () => observer.disconnect();
-    }, [hasMore, loading, onLoadMore]);
+    }, [hasMore, loading, onLoadMore, scrollContainerRef]);
 
     return (
         <table className="table">
@@ -59,7 +60,8 @@ Table.propTypes = {
     body: PropTypes.array,
     loading: PropTypes.bool,
     hasMore: PropTypes.bool,
-    onLoadMore: PropTypes.func
+    onLoadMore: PropTypes.func,
+    scrollContainerRef: PropTypes.object
 };
 
 Table.defaultProps = {
