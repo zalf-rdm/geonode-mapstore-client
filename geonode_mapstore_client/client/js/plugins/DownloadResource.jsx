@@ -17,9 +17,7 @@ import Button from '@js/components/Button';
 import tooltip from '@mapstore/framework/components/misc/enhancers/tooltip';
 import Dropdown from '@js/components/Dropdown';
 import FaIcon from '@js/components/FaIcon';
-import {
-    getResourceData
-} from '@js/selectors/resource';
+import { getResourceData } from '@js/selectors/resource';
 import { downloadResource } from '@js/actions/gnresource';
 import { processingDownload } from '@js/selectors/resourceservice';
 
