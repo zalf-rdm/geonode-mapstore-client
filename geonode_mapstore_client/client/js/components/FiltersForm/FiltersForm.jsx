@@ -45,7 +45,7 @@ function FiltersForm({
     const [fields, setFields] = useState([]);
     const [prevFieldsProp, setPrevFieldsProp] = useState();
     const [prevFacets, setPrevFacets] = useState();
-    const [isExpanded, setIsExpanded] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(true);
     const [currentFilterLevel, setCurrentFilterLevel] = useState(null);
     const [levelHistory, setLevelHistory] = useState([]);
 
