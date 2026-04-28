@@ -1,0 +1,10 @@
+.tableFixHead {
+  overflow: auto;
+  max-height: 400px;
+}
+.tableFixHead thead th {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 1;
+}

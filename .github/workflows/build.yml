@@ -2,24 +2,11 @@
 
 name: "ZALF build dist"
 
-<<<<<<< HEAD
-concurrency: 
-  group: ${{ github.ref }}
-=======
 concurrency:
   group: build-${{ github.head_ref || github.ref }}
->>>>>>> 3404fbbb6106f900b110940bc991a6de3b0f2b24
   cancel-in-progress: true
 
 on:
-<<<<<<< HEAD
-  # Triggers the workflow on push events for main and feature branches
-  push:
-    branches:
-      - main
-      - 'issue_**'
-    paths: 
-=======
   # Trigger on every push to an open PR
   pull_request:
     types: [opened, synchronize, reopened]
@@ -33,7 +20,6 @@ on:
     branches:
       - main
     paths:
->>>>>>> 3404fbbb6106f900b110940bc991a6de3b0f2b24
       - "VERSION"
       - "geonode_mapstore_client/client/**"
       - "!geonode_mapstore_client/client/version.txt"
