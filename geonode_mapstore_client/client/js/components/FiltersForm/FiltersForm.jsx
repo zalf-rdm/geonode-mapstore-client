@@ -107,7 +107,7 @@ function FiltersForm({
                         </div>
                     </div>
                 </div>
-                <FaIcon name="caret-down" className="gn-filter-form-accordion-arrow" />
+                <FaIcon name="caret-down" className="px-3 gn-filter-form-accordion-arrow" />
             </div>
             {isExpanded && (
                 <div className="gn-filter-form-body">
