@@ -397,16 +397,6 @@ function DetailsPanel({
                     <div className="gn-details-panel-shell">
                         <div className="gn-details-panel-main">
                             <div className="gn-details-panel-hero">
-                                <nav className="gn-details-panel-breadcrumbs">
-                                    {breadcrumbs.map((item, idx) => (
-                                        <React.Fragment key={`${item.label}-${idx}`}>
-                                            {idx > 0 && <span className="gn-details-panel-breadcrumb-sep"><FaIcon name="angle-right" /></span>}
-                                            {item.href
-                                                ? <a href={item.href}>{item.label}</a>
-                                                : <span className="current">{item.label}</span>}
-                                        </React.Fragment>
-                                    ))}
-                                </nav>
                                 <div className="gn-details-panel-preview-card">
                                     <DetailsResourcePreview
                                         resource={resource}
@@ -425,22 +415,6 @@ function DetailsPanel({
                                             {getPreviewActionLabel(resource)}
                                         </a>
                                     )}
-                                    <DetailsThumbnail
-                                        enabled={!!editThumbnail}
-                                        resource={resource}
-                                        activeEditMode={activeEditMode}
-                                        enableMapViewer={enableMapViewer && !resource.subtype?.includes("tabular")}
-                                        onResourceThumbnail={onResourceThumbnail}
-                                        editThumbnail={editThumbnail}
-                                        resourceThumbnailUpdating={resourceThumbnailUpdating}
-                                        isThumbnailChanged={isThumbnailChanged}
-                                        layers={layers}
-                                        onMapThumbnail={onMapThumbnail}
-                                        onClose={onClose}
-                                        savingThumbnailMap={savingThumbnailMap}
-                                        initialBbox={initialBbox}
-                                        icon={icon}
-                                    />
                                 </div>
                                 <div className="gn-details-panel-map-actions">
                                     {canDownload && (
@@ -599,45 +573,6 @@ function DetailsPanel({
                 )}
                 <div className="gn-details-panel-shell">
                     <div className="gn-details-panel-main">
-                        <div className="gn-details-panel-hero">
-                            <div className="gn-details-panel-preview-card">
-                                <DetailsResourcePreview
-                                    resource={resource}
-                                    getTypesInfo={getTypesInfo}
-                                    loading={loading}
-                                    enabled={!!(resourceCanPreviewed && !activeEditMode && !editThumbnail)}
-                                />
-                                <DetailsThumbnail
-                                    enabled={!!editThumbnail}
-                                    resource={resource}
-                                    activeEditMode={activeEditMode}
-                                    enableMapViewer={enableMapViewer && !resource.subtype?.includes("tabular")}
-                                    onResourceThumbnail={onResourceThumbnail}
-                                    editThumbnail={editThumbnail}
-                                    resourceThumbnailUpdating={resourceThumbnailUpdating}
-                                    isThumbnailChanged={isThumbnailChanged}
-                                    layers={layers}
-                                    onMapThumbnail={onMapThumbnail}
-                                    onClose={onClose}
-                                    savingThumbnailMap={savingThumbnailMap}
-                                    initialBbox={initialBbox}
-                                    icon={icon}
-                                />
-                            </div>
-                            <div className="gn-details-panel-primary-actions">
-                                {!resourceCanPreviewed && metadataDetailUrl && !editThumbnail && (
-                                    <Button
-                                        variant="primary"
-                                        href={metadataDetailUrl}
-                                        rel="noopener noreferrer"
-                                    >
-                                        <FaIcon name="file-text-o" />
-                                        {' '}
-                                        <Message msgId="gnviewer.viewMetadata" />
-                                    </Button>
-                                )}
-                            </div>
-                        </div>
 
                         <aside className="gn-details-panel-summary">
                             <div className="gn-details-panel-summary-head">

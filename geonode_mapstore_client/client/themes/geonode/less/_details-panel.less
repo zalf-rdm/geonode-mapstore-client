@@ -1504,6 +1504,22 @@
     img {
         border: 0;
     }
+
+    &.gn-details-panel-preview-placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .fa {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            color: #a0aec0;
+            opacity: 0.6;
+        }
+    }
 }
 
 .gn-details-panel-primary-actions {
@@ -1610,13 +1626,13 @@
 .gn-details-panel-summary-title {
     margin: 0;
     color: #0f172a;
-    font-size: 1.875rem;
-    line-height: 1.1;
-    font-weight: 900;
+    font-size: 1.25rem;
+    line-height: 1.25;
+    font-weight: 700;
     white-space: normal;
     overflow-wrap: anywhere;
     word-break: break-word;
-    hyphens: auto;
+    hyphens: none;
 }
 
 .gn-details-panel-summary-owner {

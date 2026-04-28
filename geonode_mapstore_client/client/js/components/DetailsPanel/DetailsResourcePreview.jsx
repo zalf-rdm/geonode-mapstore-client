@@ -18,14 +18,42 @@ function DetailsResourcePreview({
     enabled
 }) {
 
-    if (!enabled) {
-        return null;
-    }
     const types = getTypesInfo();
     const {
         formatEmbedUrl = res => res?.embed_url,
         icon
     } = resource && (types[resource.subtype] || types[resource.resource_type]) || {};
+
+    if (!enabled) {
+        // Show thumbnail or fallback icon for non-previewable resources (e.g. documents)
+        if (resource?.thumbnail_url) {
+            return (
+                <div className="gn-details-panel-preview">
+                    <ThumbnailPreview
+                        src={resource.thumbnail_url}
+                        icon={icon}
+                        style={{
+                            position: 'absolute',
+                            width: '100%',
+                            height: '100%',
+                            top: 0,
+                            left: 0,
+                            backgroundColor: 'inherit'
+                        }}
+                    />
+                </div>
+            );
+        }
+        if (icon) {
+            return (
+                <div className="gn-details-panel-preview gn-details-panel-preview-placeholder">
+                    <FaIcon name={icon} />
+                </div>
+            );
+        }
+        return null;
+    }
+
     const embedUrl = resource?.embed_url && formatEmbedUrl(resource);
     return (
         <div className="gn-details-panel-preview">
