@@ -12,13 +12,10 @@ import isEmpty from 'lodash/isEmpty';
 import omit from 'lodash/omit';
 import { Pagination } from 'react-bootstrap';
 import { matchPath } from 'react-router-dom';
-import {
-    createPlugin,
-    getMonitoredState
-} from '@mapstore/framework/utils/PluginsUtils';
+import { createPlugin, getMonitoredState } from '@mapstore/framework/utils/PluginsUtils';
 import { getConfigProp } from '@mapstore/framework/utils/ConfigUtils';
-import { connect } from 'react-redux';
 import url from 'url';
+import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import FiltersMenu from '@js/components/FiltersMenu';
 import { buildHrefByTemplate, parsePluginConfigExpressions } from '@js/utils/MenuUtils';

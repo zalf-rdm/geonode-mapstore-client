@@ -1,4 +1,5 @@
-# geonode_mapstore_client/static/mapstore/dist/js/*
+# dist files are built by CI only — do not commit manually
+geonode_mapstore_client/static/mapstore/dist/
 
 # build artifacts
 *.pyc
