@@ -61,7 +61,7 @@ function FilterByExtent({
         <FormGroup
             key={id + '-extent'}
             controlId={id + '-extent'}
-            className="gn-filter-by-extent"
+            className="py-2 gn-filter-by-extent"
         >
             <Checkbox
                 checked={enabled}
@@ -69,8 +69,13 @@ function FilterByExtent({
                 id="gn-filter-by-extent-switch"
                 onChange={handleOnSwitch}
             >
-                <Message msgId={labelId}/>
+                <Message msgId={labelId} />
             </Checkbox>
+            {enabled && (
+                <p className="px-3 gn-filter-by-extent-hint">
+                    Zoom into the region where you want to filter the data
+                </p>
+            )}
             <div
                 className="gn-filter-by-extent-map"
                 style={{
@@ -82,7 +87,7 @@ function FilterByExtent({
             >
 
                 <Map
-                    id="gn-filter-by-extent-map"
+                    id="py-3 gn-filter-by-extent-map"
                     mapType="openlayers"
                     map={{
                         registerHooks: false,
@@ -104,7 +109,7 @@ function FilterByExtent({
                                 type: 'vector',
                                 features: [getFeatureFromExtent(extent)],
                                 style: vectorLayerStyle
-                                    ? { ...vectorLayerStyle,  weight: 0.001 }
+                                    ? { ...vectorLayerStyle, weight: 0.001 }
                                     : {
                                         color: '#397AAB',
                                         opacity: 0.8,
