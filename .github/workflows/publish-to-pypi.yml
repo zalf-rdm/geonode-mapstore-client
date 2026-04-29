@@ -38,6 +38,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install build twine
 
+      - name: Add build metadata to version
+        run: |
+          BASE_VERSION=$(cat VERSION)
+          POST_VERSION="${BASE_VERSION}.post${{ github.run_number }}"
+          echo "$POST_VERSION" > VERSION
+
       - name: Build package
         run: |
           python -m build
