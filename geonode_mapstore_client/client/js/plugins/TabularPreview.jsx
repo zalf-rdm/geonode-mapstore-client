@@ -42,9 +42,11 @@ export function TableComponent({ owsUrl, typeName }) {
     const offsetRef = useRef(0);
     const fetchingRef = useRef(false);
     const scrollRef = useRef(null);
+    const activeRequestRef = useRef(0);
 
     const fetchPage = useCallback(async (startIndex) => {
         if (!owsUrl || fetchingRef.current) return;
+        const requestId = ++activeRequestRef.current;
         fetchingRef.current = true;
         setLoading(true);
         try {
@@ -53,6 +55,7 @@ export function TableComponent({ owsUrl, typeName }) {
                 maxFeatures: PAGE_SIZE,
                 startIndex
             });
+            if (requestId !== activeRequestRef.current) return;
             if (data.features?.length > 0) {
                 setHeader(prev => prev || headerFromFeatures(data));
             }
@@ -63,16 +66,19 @@ export function TableComponent({ owsUrl, typeName }) {
                 setHasMore(false);
             }
         } catch (e) {
-            setError(e);
+            if (requestId === activeRequestRef.current) setError(e);
         } finally {
-            fetchingRef.current = false;
-            setLoading(false);
+            if (requestId === activeRequestRef.current) {
+                fetchingRef.current = false;
+                setLoading(false);
+            }
         }
     }, [owsUrl, typeName]);
 
     // Reset and fetch first page when owsUrl/typeName change
     useEffect(() => {
         if (owsUrl && typeName) {
+            activeRequestRef.current++;
             setRows([]);
             setHeader(null);
             setHasMore(true);
@@ -81,7 +87,7 @@ export function TableComponent({ owsUrl, typeName }) {
             fetchingRef.current = false;
             fetchPage(0);
         }
-    }, [owsUrl, typeName]);
+    }, [owsUrl, typeName, fetchPage]);
 
     const handleLoadMore = useCallback(() => {
         if (hasMore && !fetchingRef.current) {
