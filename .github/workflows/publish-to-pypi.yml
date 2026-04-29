@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  pull_request:
   workflow_dispatch:
 
 jobs:
@@ -39,7 +40,7 @@ jobs:
       - name: Add build metadata to version
         run: |
           BASE_VERSION=$(cat VERSION)
-          POST_VERSION="${BASE_VERSION}.post${{ github.run_number }}+${{ github.ref_name }}"
+          POST_VERSION="${BASE_VERSION}.post${{ github.run_number }}.${{ github.ref_name }}"
           echo "$POST_VERSION" > VERSION
 
       - name: Build package
