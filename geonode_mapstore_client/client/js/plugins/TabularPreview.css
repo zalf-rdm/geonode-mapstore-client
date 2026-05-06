@@ -1,0 +1,19 @@
+.tabular-preview-outer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  min-height: 0;
+}
+
+.tableFixHead {
+  flex: 1 1 auto;
+  overflow: auto;
+  min-height: 0;
+  height: 100%;
+}
+.tableFixHead thead th {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 1;
+}

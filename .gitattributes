@@ -1,0 +1,3 @@
+# Mark built frontend assets as generated — suppresses noise in diffs and GitHub PR review
+geonode_mapstore_client/static/mapstore/dist/** linguist-generated=true
+geonode_mapstore_client/static/mapstore/dist/** -diff

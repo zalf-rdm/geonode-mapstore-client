@@ -241,6 +241,10 @@ def run_setup_hooks(*args, **kwargs):
             "uuid",
             "metadata_uploaded_preserve",
             "featured"
+            "author",
+            "publisher",
+            "doi",
+            "date_issued"
         ],
     }
     settings.REST_API_PRESETS["map_details"] = {
