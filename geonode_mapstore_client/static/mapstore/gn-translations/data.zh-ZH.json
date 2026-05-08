@@ -131,7 +131,7 @@
             "share": "Share",
             "update": "Update",
             "delete": "Delete",
-            "customFiltersTitle": "Resources",
+            "customFiltersTitle": "筛选",
             "myResources": "My resources",
             "pendingApproval": "Pending approval",
             "unpublished": "Unpublished",
@@ -334,10 +334,10 @@
                 "uses": "Uses",
                 "usedBy": "Used By"
             },
-            "extent": "Extent",
+            "extent": "空间范围",
             "dateFilter": {
-                "from": "Date from",
-                "to": "Date to"
+                "from": "开始日期",
+                "to": "结束日期"
             },
             "sourceType": "Source",
             "locations": "Location",

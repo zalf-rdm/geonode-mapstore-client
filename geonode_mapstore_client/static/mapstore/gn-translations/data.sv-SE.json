@@ -132,7 +132,7 @@
             "share": "Share",
             "update": "Update",
             "delete": "Delete",
-            "customFiltersTitle": "Resources",
+            "customFiltersTitle": "Filter",
             "myResources": "My resources",
             "pendingApproval": "Pending approval",
             "unpublished": "Unpublished",
@@ -335,10 +335,10 @@
                 "uses": "Uses",
                 "usedBy": "Used By"
             },
-            "extent": "Extent",
+            "extent": "Rumslig utbredning",
             "dateFilter": {
-                "from": "Date from",
-                "to": "Date to"
+                "from": "Startdatum",
+                "to": "Slutdatum"
             },
             "sourceType": "Source",
             "locations": "Location",

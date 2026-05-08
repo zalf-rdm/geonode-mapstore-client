@@ -131,7 +131,7 @@
             "share": "Share",
             "update": "Update",
             "delete": "Delete",
-            "customFiltersTitle": "Resources",
+            "customFiltersTitle": "Filter",
             "myResources": "My resources",
             "pendingApproval": "Pending approval",
             "unpublished": "Unpublished",
@@ -334,10 +334,10 @@
                 "uses": "Uses",
                 "usedBy": "Used By"
             },
-            "extent": "Extent",
+            "extent": "Ruimtelijke omvang",
             "dateFilter": {
-                "from": "Date from",
-                "to": "Date to"
+                "from": "Startdatum",
+                "to": "Einddatum"
             },
             "sourceType": "Source",
             "locations": "Location",

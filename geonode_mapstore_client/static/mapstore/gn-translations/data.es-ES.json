@@ -132,7 +132,7 @@
             "share": "Cuota",
             "update": "Actualizar",
             "delete": "Borrar",
-            "customFiltersTitle": "Recursos",
+            "customFiltersTitle": "Filtro",
             "myResources": "Mis recursos",
             "pendingApproval": "Este recurso no está aprobado",
             "unpublished": "Este recurso no está publicado.",
@@ -364,10 +364,10 @@
                 "uses": "Usos",
                 "usedBy": "Usado por"
             },
-            "extent": "Extensión",
+            "extent": "Extensión espacial",
             "dateFilter": {
-                "from": "Fecha desde",
-                "to": "Fecha hasta"
+                "from": "Fecha inicio",
+                "to": "Fecha fin"
             },
             "sourceType": "Fuente",
             "locations": "Ubicacion",

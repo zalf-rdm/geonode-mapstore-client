@@ -134,7 +134,7 @@
             "share": "Condividi",
             "update": "Aggiorna",
             "delete": "Elimina",
-            "customFiltersTitle": "Risorse",
+            "customFiltersTitle": "Filtro",
             "myResources": "Le mie risorse",
             "pendingApproval": "Questa risorsa non è approvata",
             "unpublished": "Questa risorsa non è pubblicata",
@@ -367,10 +367,10 @@
                 "uses": "Usi",
                 "usedBy": "Usato da"
             },
-            "extent": "Estensione",
+            "extent": "Estensione spaziale",
             "dateFilter": {
-                "from": "Data da",
-                "to": "Data a"
+                "from": "Data inizio",
+                "to": "Data fine"
             },
             "sourceType": "Fonte",
             "locations": "Posizione geografica",

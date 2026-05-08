@@ -153,7 +153,7 @@
             "share": "Teilen",
             "update": "Aktualisieren",
             "delete": "Löschen",
-            "customFiltersTitle": "Ressourcen",
+            "customFiltersTitle": "Filter",
             "myResources": "Meine Ressourcen",
             "pendingApproval": "Genehmigung ausstehend",
             "unpublished": "Unveröffentlicht",
@@ -387,10 +387,10 @@
                 "uses": "Verwendet",
                 "usedBy": "Benutzt von"
             },
-            "extent": "Ausmaß",
+            "extent": "Räumliche Ausdehnung",
             "dateFilter": {
-                "from": "Datum von",
-                "to": "Datum bis"
+                "from": "Startdatum",
+                "to": "Enddatum"
             },
             "sourceType": "Quelle",
             "locations": "Ort",

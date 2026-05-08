@@ -131,7 +131,7 @@
             "share": "Share",
             "update": "Update",
             "delete": "Delete",
-            "customFiltersTitle": "Resources",
+            "customFiltersTitle": "Suodatin",
             "myResources": "My resources",
             "pendingApproval": "Pending approval",
             "unpublished": "Unpublished",
@@ -334,10 +334,10 @@
                 "uses": "Uses",
                 "usedBy": "Used By"
             },
-            "extent": "Extent",
+            "extent": "Alueellinen laajuus",
             "dateFilter": {
-                "from": "Date from",
-                "to": "Date to"
+                "from": "Alkamispäivä",
+                "to": "Päättymispäivä"
             },
             "sourceType": "Source",
             "locations": "Location",
