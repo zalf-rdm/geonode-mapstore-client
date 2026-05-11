@@ -234,6 +234,7 @@ const resourceTypes = {
                     return Observable.of(
                         configureMap(mapConfig),
                         setControlProperty('toolbar', 'expanded', false),
+                        setControlProperty('rightOverlay', 'enabled', 'DetailViewer'),
                         setContext(mapViewerResource ? mapViewerResource.data : null),
                         setResource(mapResource),
                         setResourceId(pk),
