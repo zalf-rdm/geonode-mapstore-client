@@ -37,7 +37,6 @@ import {
     getViewedResourceType
 } from '@js/selectors/resource';
 import Button from '@js/components/Button';
-import useDetectClickOut from '@js/hooks/useDetectClickOut';
 import OverlayContainer from '@js/components/OverlayContainer';
 import { withRouter } from 'react-router';
 import { hashLocationToHref } from '@js/utils/SearchUtils';
@@ -100,18 +99,25 @@ const ButtonViewer = ({ onClick, hide, variant, size, showMessage, resourceType 
 };
 
 const ConnectedButton = connect(
-    createSelector([isNewResource, getResourceId, getViewedResourceType], (isNew, resourcePk, resourceType) => ({
+    createSelector([isNewResource, getResourceId, getViewedResourceType,
+        (state) => state?.controls?.rightOverlay?.enabled === 'DetailViewer'
+    ], (isNew, resourcePk, resourceType, panelOpen) => ({
         hide: isNew || !resourcePk,
-        resourceType
+        resourceType,
+        panelOpen
     })),
-    {
-        onClick: setControlProperty.bind(
-            null,
-            'rightOverlay',
-            'enabled',
-            'DetailViewer'
+    (dispatch) => ({
+        onClick: (panelOpen) => dispatch(
+            panelOpen
+                ? setControlProperty('rightOverlay', 'enabled', false)
+                : setControlProperty('rightOverlay', 'enabled', 'DetailViewer')
         )
-    }
+    }),
+    (stateProps, dispatchProps, ownProps) => ({
+        ...ownProps,
+        ...stateProps,
+        onClick: () => dispatchProps.onClick(stateProps.panelOpen)
+    })
 )((ButtonViewer));
 
 /**
@@ -198,13 +204,6 @@ function DetailViewerPanel({
         onEditThumbnail(val, true);
     };
 
-    const node = useDetectClickOut({
-        disabled: !enabled,
-        onClickOut: () => {
-            onClose();
-        }
-    });
-
     const handleFormatHref = (options) => {
         return hashLocationToHref({
             location,
@@ -219,7 +218,6 @@ function DetailViewerPanel({
     return (
         <OverlayContainer
             enabled={enabled}
-            ref={node}
             className="gn-overlay-wrapper"
         >
             <ConnectedDetailsPanel

@@ -92,7 +92,7 @@ import { updateAdditionalLayer } from '@mapstore/framework/actions/additionallay
 import { STYLE_OWNER_NAME } from '@mapstore/framework/utils/StyleEditorUtils';
 import { styleServiceSelector } from '@mapstore/framework/selectors/styleeditor';
 import { updateStyleService } from '@mapstore/framework/api/StyleEditor';
-import { CLICK_ON_MAP, resizeMap, CHANGE_MAP_VIEW, zoomToExtent } from '@mapstore/framework/actions/map';
+import { CLICK_ON_MAP, resizeMap, CHANGE_MAP_VIEW, zoomToExtent, INIT_MAP } from '@mapstore/framework/actions/map';
 import { purgeMapInfoResults, closeIdentify, NEW_MAPINFO_REQUEST } from '@mapstore/framework/actions/mapInfo';
 import { saveError } from '@js/actions/gnsave';
 import {
@@ -234,7 +234,6 @@ const resourceTypes = {
                     return Observable.of(
                         configureMap(mapConfig),
                         setControlProperty('toolbar', 'expanded', false),
-                        setControlProperty('rightOverlay', 'enabled', 'DetailViewer'),
                         setContext(mapViewerResource ? mapViewerResource.data : null),
                         setResource(mapResource),
                         setResourceId(pk),
@@ -243,7 +242,8 @@ const resourceTypes = {
                             ...options?.params,
                             appPk: mapViewerResource?.pk,
                             hasViewer: !!mapViewerResource?.pk
-                        })
+                        }),
+                        setControlProperty('rightOverlay', 'enabled', 'DetailViewer')
                     );
                 }),
         newResourceObservable: (options) => {
@@ -701,6 +701,24 @@ export const gnZoomToFitBounds = (action$) =>
                 })
         );
 
+/**
+ * Open the detail side panel after the map initialises.
+ * INIT_MAP triggers MapStore2's resetMapOnInit which calls resetControls(),
+ * wiping rightOverlay. We react to the same action with a small delay so
+ * our setControlProperty fires after resetControls has settled.
+ */
+export const gnOpenDetailPanelOnMapLoad = (action$, store) =>
+    action$.ofType(INIT_MAP)
+        .filter(() => {
+            const state = store.getState();
+            return state?.gnresource?.type === ResourceTypes.MAP
+                && !!state?.gnresource?.id;
+        })
+        .delay(50)
+        .switchMap(() => Observable.of(
+            setControlProperty('rightOverlay', 'enabled', 'DetailViewer')
+        ));
+
 export default {
     gnViewerRequestNewResourceConfig,
     gnViewerRequestResourceConfig,
@@ -709,5 +727,6 @@ export default {
     closeOpenPanels,
     closeDatasetCatalogPanel,
     gnManageLinkedResource,
-    gnZoomToFitBounds
+    gnZoomToFitBounds,
+    gnOpenDetailPanelOnMapLoad
 };
