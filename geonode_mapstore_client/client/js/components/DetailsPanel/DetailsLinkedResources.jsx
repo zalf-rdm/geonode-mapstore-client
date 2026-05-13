@@ -8,6 +8,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import isEmpty from 'lodash/isEmpty';
+import { Tooltip } from 'react-bootstrap';
+import OverlayTrigger from '@mapstore/framework/components/misc/OverlayTrigger';
 
 import FaIcon from '@js/components/FaIcon';
 import Message from '@mapstore/framework/components/I18N/Message';
@@ -81,12 +83,21 @@ const DetailsLinkedResources = ({ fields, resourceTypesInfo }) => {
         <div className="linked-resources">
             {allDownloadUrls.length > 0 && (
                 <div className="gn-linked-resources-download-all">
-                    <button
-                        className="btn btn-primary btn-sm"
-                        onClick={() => downloadAll(allDownloadUrls)}
+                    <OverlayTrigger
+                        placement="top"
+                        overlay={
+                            <Tooltip id="download-all-tooltip">
+                                <Message msgId="gnviewer.downloadAllHint" />
+                            </Tooltip>
+                        }
                     >
-                        <Message msgId="gnviewer.downloadAll" />
-                    </button>
+                        <button
+                            className="btn btn-primary btn-sm"
+                            onClick={() => downloadAll(allDownloadUrls)}
+                        >
+                            <Message msgId="gnviewer.downloadAll" />
+                        </button>
+                    </OverlayTrigger>
                 </div>
             )}
             {
