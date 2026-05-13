@@ -359,6 +359,7 @@
             "readLess": "Leer menos",
             "linkedResources": {
                 "label": "Recursos vinculados",
+                "downloadLabel": "Download",
                 "linkedBy": "Vinculado por",
                 "linkedTo": "Vinculado a",
                 "uses": "Usos",

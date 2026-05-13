@@ -360,6 +360,7 @@
             "readLess": "Lire moins",
             "linkedResources": {
                 "label": "Ressources liées",
+                "downloadLabel": "Download",
                 "linkedBy": "Lié par",
                 "linkedTo": "Lié à",
                 "uses": "Les usages",
