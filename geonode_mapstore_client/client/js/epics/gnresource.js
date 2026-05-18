@@ -27,7 +27,7 @@ import {
     setLinkedResourcesByPk,
     removeLinkedResourcesByPk
 } from '@js/api/geonode/v2';
-import { configureMap } from '@mapstore/framework/actions/config';
+import { configureMap, MAP_CONFIG_LOADED } from '@mapstore/framework/actions/config';
 import { mapSelector } from '@mapstore/framework/selectors/map';
 import { isMapInfoOpen } from '@mapstore/framework/selectors/mapInfo';
 import { getSelectedLayer } from '@mapstore/framework/selectors/layers';
@@ -576,7 +576,14 @@ export const gnViewerSetNewResourceThumbnail = (action$, store) =>
         });
 
 export const closeInfoPanelOnMapClick = (action$, store) => action$.ofType(CLICK_ON_MAP)
-    .filter(() => store.getState().controls?.rightOverlay?.enabled === 'DetailViewer' || store.getState().controls?.rightOverlay?.enabled === 'Share')
+    .filter(() => {
+        const state = store.getState();
+        const isMapResource = state?.gnresource?.data?.resource_type === ResourceTypes.MAP;
+        if (isMapResource && state?.controls?.rightOverlay?.enabled === 'DetailViewer') {
+            return false;
+        }
+        return state?.controls?.rightOverlay?.enabled === 'DetailViewer' || state?.controls?.rightOverlay?.enabled === 'Share';
+    })
     .switchMap(() => Observable.of(setControlProperty('rightOverlay', 'enabled', false)));
 
 
@@ -612,7 +619,9 @@ export const closeOpenPanels = (action$, store) => action$.ofType(SET_CONTROL_PR
             }
             const control = oneOfTheOther(action.control);
             if (control?.control) {
-                if (state.controls?.rightOverlay?.enabled === 'DetailViewer' || state.controls?.rightOverlay?.enabled === 'Share') {
+                const keepMapDetailViewerOpen = state?.gnresource?.data?.resource_type === ResourceTypes.MAP
+                    && state?.controls?.rightOverlay?.enabled === 'DetailViewer';
+                if (!keepMapDetailViewerOpen && (state.controls?.rightOverlay?.enabled === 'DetailViewer' || state.controls?.rightOverlay?.enabled === 'Share')) {
                     setActions.push(setControlProperty('rightOverlay', 'enabled', false));
                 } else if (!!state.controls?.[`${control.alternate}`]?.enabled) {
                     setActions.push(setControlProperty(`${control.alternate}`, 'enabled', false));
@@ -632,6 +641,20 @@ export const closeDatasetCatalogPanel = (action$, store) => action$.ofType(NEW_M
     .switchMap(() => {
         return Observable.of(setControlProperty('datasetsCatalog', 'enabled', false));
     });
+
+export const openMapDetailViewerOnLoad = (action$, store) => action$.ofType(MAP_CONFIG_LOADED)
+    .filter(() => {
+        const state = store.getState();
+        return state?.gnresource?.data?.resource_type === ResourceTypes.MAP
+            && state?.controls?.rightOverlay?.enabled !== 'DetailViewer';
+    })
+    .switchMap(() =>
+        Observable.timer(300)
+            .switchMap(() => Observable.of(
+                setControlProperty('rightOverlay', 'enabled', 'DetailViewer'),
+                forceUpdateMapLayout()
+            ))
+    );
 
 export const gnManageLinkedResource = (action$, store) =>
     action$.ofType(MANAGE_LINKED_RESOURCE)
@@ -707,6 +730,7 @@ export default {
     closeInfoPanelOnMapClick,
     closeOpenPanels,
     closeDatasetCatalogPanel,
+    openMapDetailViewerOnLoad,
     gnManageLinkedResource,
     gnZoomToFitBounds
 };

@@ -47,6 +47,7 @@ import { mapSelector } from '@mapstore/framework/selectors/map';
 import { parsePluginConfigExpressions } from '@js/utils/MenuUtils';
 import usePluginItems from '@mapstore/framework/hooks/usePluginItems';
 import { getResourceTypesInfo } from '@js/utils/ResourceUtils';
+import { forceUpdateMapLayout } from '@mapstore/framework/actions/maplayout';
 
 const ConnectedDetailsPanel = connect(
     createSelector([
@@ -237,7 +238,25 @@ function DetailViewerPanel({
     );
 }
 
-const DetailViewer = ({hide, ...props}) => hide ? null : <DetailViewerPanel {...props}/>;
+const DetailViewer = ({hide, resourceId, resourceType, location, enabled, onAutoOpen, onUpdateLayout, ...props}) => {
+    const autoOpenedResource = React.useRef(null);
+
+    React.useEffect(() => {
+        if (!hide && !enabled && resourceType === 'map' && resourceId && autoOpenedResource.current !== resourceId) {
+            autoOpenedResource.current = resourceId;
+            onAutoOpen();
+            onUpdateLayout();
+            const reopenTimeout = setTimeout(() => {
+                onAutoOpen();
+                onUpdateLayout();
+            }, 350);
+            return () => clearTimeout(reopenTimeout);
+        }
+        return undefined;
+    }, [hide, enabled, resourceId, resourceType, onAutoOpen, onUpdateLayout]);
+
+    return hide ? null : <DetailViewerPanel location={location} enabled={enabled} resourceId={resourceId} resourceType={resourceType} {...props}/>;
+};
 
 const DetailViewerPlugin = connect(
     createSelector(
@@ -257,14 +276,17 @@ const DetailViewerPlugin = connect(
             hide: isNew || !resourcePk,
             user,
             monitoredState,
-            resourceId: resource?.pk
+            resourceId: resource?.pk,
+            resourceType: resource?.resource_type
         })
     ),
     {
         onEditResource: editTitleResource,
         onEditAbstractResource: editAbstractResource,
         onEditThumbnail: editThumbnailResource,
-        onClose: setControlProperty.bind(null, 'rightOverlay', 'enabled', false)
+        onClose: setControlProperty.bind(null, 'rightOverlay', 'enabled', false),
+        onAutoOpen: setControlProperty.bind(null, 'rightOverlay', 'enabled', 'DetailViewer'),
+        onUpdateLayout: forceUpdateMapLayout
     }
 )(withRouter(DetailViewer));
 

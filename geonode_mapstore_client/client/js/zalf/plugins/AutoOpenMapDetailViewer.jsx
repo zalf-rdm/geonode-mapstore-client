@@ -1,26 +1,24 @@
-/*
- * ZALF custom plugin to auto-open resource details for maps
- * without forking the core DetailViewer implementation.
- */
-
 import { Observable } from 'rxjs';
 import { createPlugin } from '@mapstore/framework/utils/PluginsUtils';
 import { setControlProperty } from '@mapstore/framework/actions/controls';
 import { forceUpdateMapLayout } from '@mapstore/framework/actions/maplayout';
-import { SET_RESOURCE } from '@js/actions/gnresource';
+import { MAP_CONFIG_LOADED } from '@mapstore/framework/actions/config';
+
+const openDetailViewer = () => Observable.of(
+    setControlProperty('rightOverlay', 'enabled', 'DetailViewer'),
+    forceUpdateMapLayout()
+);
 
 const openMapDetailViewerEpic = (action$, store) =>
-    action$.ofType(SET_RESOURCE)
-        .filter(({ data }) => {
+    action$.ofType(MAP_CONFIG_LOADED)
+        .filter(() => {
             const state = store.getState();
-            return data?.resource_type === 'map'
+            return state?.gnresource?.data?.resource_type === 'map'
                 && state?.controls?.rightOverlay?.enabled !== 'DetailViewer';
         })
         .switchMap(() =>
-            Observable.of(
-                setControlProperty('rightOverlay', 'enabled', 'DetailViewer'),
-                forceUpdateMapLayout()
-            )
+            Observable.timer(300)
+                .switchMap(() => openDetailViewer())
         );
 
 const EmptyComponent = () => null;

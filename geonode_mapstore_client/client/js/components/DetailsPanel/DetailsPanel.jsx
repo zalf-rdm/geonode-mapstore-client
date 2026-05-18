@@ -23,6 +23,7 @@ import { useInView } from 'react-intersection-observer';
 import DetailsResourcePreview from './DetailsResourcePreview';
 import DetailsThumbnail from './DetailsThumbnail';
 import Unadvertised from '@js/components/Unadvertised';
+import ResourceCitationSection from '../../zalf/components/DetailsPanel/ResourceCitationSection';
 
 const CopyToClipboard = tooltip(CopyToClipboardCmp);
 
@@ -627,6 +628,7 @@ function DetailsPanel({
                                         ? <DetailsPanelAbstract abstract={resource.abstract} />
                                         : <div className="gn-details-text gn-details-panel-description-modern"><span className="gn-details-text-body">-</span></div>}
                                 </div>
+                                <ResourceCitationSection resource={resource} doiInfo={doiInfo} />
                                 <div className="gn-details-panel-summary-grid">
                                     <div className="gn-details-panel-summary-item">
                                         <span className="gn-details-panel-summary-label">Created</span>
