@@ -603,39 +603,20 @@ function DetailsPanel({
                                     )}
                                 </div>
                                 <div className="gn-details-panel-map-actions">
-                                    {canDownloadCurrentResource && (
-                                        <Button
-                                            variant="primary"
-                                            disabled={!!downloading}
-                                            onClick={() => downloading ? null : onAction(currentResource)}
-                                        >
-                                            <FaIcon name="download" />
-                                            {' '}
-                                            <Message msgId="gnviewer.download" />
-                                        </Button>
-                                    )}
+                                    <button type="button" className="btn btn-primary" disabled={!!downloading} onClick={() => downloading ? null : onAction(currentResource)}>
+                                        <i className="fa fa-download"></i> <span>Download</span>
+                                    </button>
+                                    <button type="button" className="btn btn-default">
+                                        <i className="fa fa-share-alt"></i> <span>Share</span>
+                                    </button>
+                                    <button type="button" className="btn btn-default">
+                                        <i className="fa fa-quote-right"></i> <span>Cite</span>
+                                    </button>
                                     {canEditMetadata && (
-                                        <Button
-                                            variant="default"
-                                            href={metadataEditUrl}
-                                            rel="noopener noreferrer"
-                                        >
-                                            <FaIcon name="pencil-square-o" />
-                                            {' '}
-                                            <Message msgId="gnviewer.editMetadata" />
-                                        </Button>
+                                        <a href={metadataEditUrl} rel="noopener noreferrer" className="btn btn-default">
+                                            <i className="fa fa-pencil-square-o"></i> <span>Edit Metadata</span>
+                                        </a>
                                     )}
-                                    <CopyToClipboard
-                                        tooltipPosition="top"
-                                        tooltipId="gnviewer.shareThisResource"
-                                        text={formatResourceLinkUrl(resource)}
-                                    >
-                                        <Button variant="default">
-                                            <FaIcon name="share-alt" />
-                                            {' '}
-                                            <Message msgId="gnviewer.share" />
-                                        </Button>
-                                    </CopyToClipboard>
                                 </div>
                             </div>
                             <aside className="gn-details-panel-summary">
@@ -651,42 +632,7 @@ function DetailsPanel({
                                                 : <h2 className="gn-details-panel-summary-title">{currentResource?.title}</h2>}
                                         </div>
                                         <DetailsPanelAuthors authors={authors} />
-                                        <div className="gn-details-panel-header-actions">
-                                            <Button
-                                                type="button"
-                                                className="gn-details-panel-header-action btn btn-success"
-                                                style={{ color: '#fff', background: '#28a745', border: 'none' }}
-                                                disabled={!!downloading}
-                                                onClick={() => downloading ? null : onAction(currentResource)}
-                                            >
-                                                <FaIcon name="download" />
-                                                <span>Download</span>
-                                            </Button>
-                                            <Button
-                                                type="button"
-                                                className="gn-details-panel-header-action btn btn-default"
-                                            >
-                                                <FaIcon name="share-alt" />
-                                                <span>Share</span>
-                                            </Button>
-                                            <Button
-                                                type="button"
-                                                className="gn-details-panel-header-action btn btn-default"
-                                            >
-                                                <FaIcon name="quote-right" />
-                                                <span>Cite</span>
-                                            </Button>
-                                            {canEditMetadata && (
-                                                <a
-                                                    href={metadataEditUrl}
-                                                    rel="noopener noreferrer"
-                                                    className="gn-details-panel-header-action btn btn-default"
-                                                >
-                                                    <FaIcon name="pencil-square-o" />
-                                                    <span>Edit</span>
-                                                </a>
-                                            )}
-                                        </div>
+                                        {/* Removido bloco duplicado de header-actions. Apenas .gn-details-panel-map-actions será renderizado acima. */}
                                     </div>
                                     {showOwner && (
                                         <div className="gn-details-panel-summary-owner">
@@ -726,7 +672,7 @@ function DetailsPanel({
                                             ? <DetailsPanelAbstract abstract={currentResource.abstract} />
                                             : <div className="gn-details-text gn-details-panel-description-modern"><span className="gn-details-text-body">-</span></div>}
                                     </div>
-                                    <ResourceCitationSection resource={currentResource} doiInfo={doiInfo} />
+                                    {/* <ResourceCitationSection resource={currentResource} doiInfo={doiInfo} /> */}
                                     <div className="gn-details-panel-summary-grid stitch">
                                         <div className="gn-details-panel-summary-item">
                                             <span className="gn-details-panel-summary-label">Created</span>

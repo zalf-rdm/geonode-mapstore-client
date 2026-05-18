@@ -1,3 +1,130 @@
+.gn-details-panel-map-actions {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.msgapi .gn-details-panel-map-actions {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.msgapi .gn-details-panel-map-actions {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  align-items: center;
+}
+
+/* === Details Panel Map Actions (main-ui style) === */
+.gn-details-panel-map-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin: 1.2rem 0 0.5rem 0;
+  align-items: center;
+}
+
+.gn-details-panel-map-actions .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.45rem 1.15rem;
+  border-radius: 4px;
+  box-shadow: none;
+  transition: background 0.18s, color 0.18s;
+}
+
+.gn-details-panel-map-actions .btn-primary {
+  background: #337ab7;
+  border-color: #2e6da4;
+  color: #fff;
+}
+
+.gn-details-panel-map-actions .btn-primary:hover,
+.gn-details-panel-map-actions .btn-primary:focus {
+  background: #286090;
+  border-color: #204d74;
+  color: #fff;
+}
+
+.gn-details-panel-map-actions .btn-default {
+  background: #fff;
+  border: 1px solid #ccc;
+  color: #333;
+}
+
+.gn-details-panel-map-actions .btn-default:hover,
+.gn-details-panel-map-actions .btn-default:focus {
+  background: #f5f5f5;
+  border-color: #adadad;
+  color: #222;
+}
+
+.gn-details-panel-map-actions .btn i {
+  font-size: 1.1em;
+
+  /* === Details Panel Map Actions (main-ui style) === */
+  .gn-details-panel-map-actions {
+    display: flex;
+
+    .page-map-viewer .gn-viewer-layout-body:has(.gn-details-panel-resource-map) .gn-details-panel-resource-map .gn-details-panel-map-actions,
+    .gn-resource-detail-page .gn-details-panel-resource-editorial-page .gn-details-panel-map-actions {
+      // display: none;
+    }
+  }
+
+  .gn-details-panel-map-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    border-radius: 0.75rem;
+    padding: 0.85rem 1.15rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    border-width: 1px;
+    box-shadow: none;
+    transition: background 0.18s, color 0.18s;
+  }
+
+  .gn-details-panel-map-actions .btn-primary {
+    background: #75b72a;
+    border-color: #75b72a;
+    color: #fff;
+    box-shadow: 0 12px 24px rgba(117, 183, 42, 0.2);
+  }
+
+  .gn-details-panel-map-actions .btn-primary:hover,
+  .gn-details-panel-map-actions .btn-primary:focus {
+    background: #5a8e1b;
+    border-color: #5a8e1b;
+    color: #fff;
+  }
+
+  .gn-details-panel-map-actions .btn-default {
+    background: #e5e7eb;
+    border-color: #cbd5e1;
+    color: #111827;
+  }
+
+  .gn-details-panel-map-actions .btn-default:hover,
+  .gn-details-panel-map-actions .btn-default:focus {
+    background: #d1d5db;
+    border-color: #a1a7b3;
+    color: #111827;
+  }
+
+  .gn-details-panel-map-actions .btn i {
+    font-size: 1.1em;
+    margin-right: 0.4em;
+  }
+
+  margin-right: 0.4em;
+}
+
 /* ---------------------------------------------------
   ZALF Theme — Typography, Palette & Branding
   Compatible with Bootstrap 3
@@ -23,6 +150,60 @@
 
 /* === Core overrides === */
 @link-color: @brand-accent;
+
+/* === Details Panel Map Actions (main-ui style, scoped .msgapi) === */
+.msgapi .gn-details-panel-map-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  align-items: center;
+}
+
+.msgapi .gn-details-panel-map-actions .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  border-radius: 0.75rem;
+  padding: 0.85rem 1.15rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  border-width: 1px;
+  box-shadow: none;
+  transition: background 0.18s, color 0.18s;
+}
+
+.msgapi .gn-details-panel-map-actions .btn-primary {
+  background: #75b72a;
+  border-color: #75b72a;
+  color: #fff;
+  box-shadow: 0 12px 24px rgba(117, 183, 42, 0.2);
+}
+
+.msgapi .gn-details-panel-map-actions .btn-primary:hover,
+.msgapi .gn-details-panel-map-actions .btn-primary:focus {
+  background: #5a8e1b;
+  border-color: #5a8e1b;
+  color: #fff;
+}
+
+.msgapi .gn-details-panel-map-actions .btn-default {
+  background: #e5e7eb;
+  border-color: #cbd5e1;
+  color: #111827;
+}
+
+.msgapi .gn-details-panel-map-actions .btn-default:hover,
+.msgapi .gn-details-panel-map-actions .btn-default:focus {
+  background: #d1d5db;
+  border-color: #a1a7b3;
+  color: #111827;
+}
+
+.msgapi .gn-details-panel-map-actions .btn i {
+  font-size: 1.1em;
+  margin-right: 0.4em;
+}
 
 /* === Root Variables (GeoNode / MapStore) === */
 :root {
@@ -512,7 +693,7 @@ footer.footer a:hover {
   background: #fff;
 }
 
-.page-map-viewer .gn-viewer-layout-body:has(.gn-details-panel-resource-map) .gn-viewer-layout-center > * {
+.page-map-viewer .gn-viewer-layout-body:has(.gn-details-panel-resource-map) .gn-viewer-layout-center>* {
   height: 100%;
 }
 
@@ -598,7 +779,7 @@ footer.footer a:hover {
 
 .gn-resource-detail-page .gn-details-panel-resource-editorial-page .gn-details-panel-preview-card .gn-details-panel-preview-wrapper,
 .gn-resource-detail-page .gn-details-panel-resource-editorial-page .gn-details-panel-preview-card .gn-details-panel-preview,
-.gn-resource-detail-page .gn-details-panel-resource-editorial-page .gn-details-panel-preview-card .gn-details-panel-preview > div {
+.gn-resource-detail-page .gn-details-panel-resource-editorial-page .gn-details-panel-preview-card .gn-details-panel-preview>div {
   height: 100%;
 }
 
