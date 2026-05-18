@@ -27,7 +27,7 @@ import {
     setLinkedResourcesByPk,
     removeLinkedResourcesByPk
 } from '@js/api/geonode/v2';
-import { configureMap } from '@mapstore/framework/actions/config';
+import { configureMap, MAP_CONFIG_LOADED } from '@mapstore/framework/actions/config';
 import { mapSelector } from '@mapstore/framework/selectors/map';
 import { isMapInfoOpen } from '@mapstore/framework/selectors/mapInfo';
 import { getSelectedLayer } from '@mapstore/framework/selectors/layers';
@@ -234,6 +234,8 @@ const resourceTypes = {
                     return Observable.of(
                         configureMap(mapConfig),
                         setControlProperty('toolbar', 'expanded', false),
+                        setControlProperty('rightOverlay', 'enabled', 'DetailViewer'),
+                        forceUpdateMapLayout(),
                         setContext(mapViewerResource ? mapViewerResource.data : null),
                         setResource(mapResource),
                         setResourceId(pk),
@@ -633,6 +635,20 @@ export const closeDatasetCatalogPanel = (action$, store) => action$.ofType(NEW_M
         return Observable.of(setControlProperty('datasetsCatalog', 'enabled', false));
     });
 
+export const openMapDetailViewerOnLoad = (action$, store) => action$.ofType(MAP_CONFIG_LOADED)
+    .filter(() => {
+        const state = store.getState();
+        return state?.gnresource?.data?.resource_type === ResourceTypes.MAP
+            && state?.controls?.rightOverlay?.enabled !== 'DetailViewer';
+    })
+    .switchMap(() =>
+        Observable.timer(300)
+            .switchMap(() => Observable.of(
+                setControlProperty('rightOverlay', 'enabled', 'DetailViewer'),
+                forceUpdateMapLayout()
+            ))
+    );
+
 export const gnManageLinkedResource = (action$, store) =>
     action$.ofType(MANAGE_LINKED_RESOURCE)
         .switchMap((action) => {
@@ -707,6 +723,7 @@ export default {
     closeInfoPanelOnMapClick,
     closeOpenPanels,
     closeDatasetCatalogPanel,
+    openMapDetailViewerOnLoad,
     gnManageLinkedResource,
     gnZoomToFitBounds
 };
