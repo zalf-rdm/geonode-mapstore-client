@@ -413,6 +413,138 @@ footer.footer a:hover {
   opacity: 0.8;
 }
 
+.gn-details-panel-authors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.75rem;
+  margin-top: 1rem;
+}
+
+.gn-details-panel-author {
+  color: #1d4f91;
+  font-size: 0.98rem;
+  line-height: 1.5;
+  text-decoration: underline;
+  text-underline-offset: 0.16em;
+}
+
+.page-map-viewer .gn-viewer-layout-body:has(.gn-details-panel-resource-map) {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 34vw);
+  gap: 2.25rem;
+  align-items: start;
+  padding: 2rem;
+  overflow: auto;
+}
+
+.page-map-viewer .gn-viewer-layout-body:has(.gn-details-panel-resource-map) .gn-viewer-left-column,
+.page-map-viewer .gn-viewer-layout-body:has(.gn-details-panel-resource-map) .gn-viewer-right-column {
+  display: none;
+}
+
+.page-map-viewer .gn-viewer-layout-body:has(.gn-details-panel-resource-map) .gn-viewer-right-overlay {
+  grid-column: 1;
+  min-width: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+.page-map-viewer .gn-viewer-layout-body:has(.gn-details-panel-resource-map) .gn-viewer-layout-center {
+  grid-column: 2;
+  position: sticky !important;
+  top: 2rem;
+  align-self: start;
+  aspect-ratio: 1 / 1;
+  height: auto !important;
+  min-height: 320px;
+  border-radius: 1rem;
+  overflow: hidden;
+  border: 1px solid #d8dee8;
+  box-shadow: 0 24px 44px rgba(15, 31, 54, 0.12);
+  background: #fff;
+}
+
+.page-map-viewer .gn-viewer-layout-body:has(.gn-details-panel-resource-map) .gn-viewer-layout-center > * {
+  height: 100%;
+}
+
+.page-map-viewer .gn-viewer-layout-body:has(.gn-details-panel-resource-map) .gn-viewer-layout-center #map {
+  height: 100% !important;
+}
+
+.page-map-viewer .gn-viewer-layout-body:has(.gn-details-panel-resource-map) .gn-details-panel-resource-map {
+  width: 100% !important;
+  max-width: none;
+  background: transparent;
+}
+
+.page-map-viewer .gn-viewer-layout-body:has(.gn-details-panel-resource-map) .gn-details-panel-resource-map .gn-details-panel-header {
+  display: none;
+}
+
+.page-map-viewer .gn-viewer-layout-body:has(.gn-details-panel-resource-map) .gn-details-panel-resource-map .gn-details-panel-shell {
+  display: block;
+}
+
+.page-map-viewer .gn-viewer-layout-body:has(.gn-details-panel-resource-map) .gn-details-panel-resource-map .gn-details-panel-main {
+  display: block;
+}
+
+.page-map-viewer .gn-viewer-layout-body:has(.gn-details-panel-resource-map) .gn-details-panel-resource-map .gn-details-panel-summary {
+  position: static;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+.page-map-viewer .gn-viewer-layout-body:has(.gn-details-panel-resource-map) .gn-details-panel-resource-map .gn-details-panel-summary-head {
+  padding: 0 0 1.5rem;
+  border-bottom: 1px solid #d8dee8;
+}
+
+.page-map-viewer .gn-viewer-layout-body:has(.gn-details-panel-resource-map) .gn-details-panel-resource-map .gn-details-panel-title .gn-details-text-input {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.2rem, 3.6vw, 3.8rem);
+  line-height: 1.08;
+  font-weight: 400;
+  color: #142033;
+  padding: 0;
+}
+
+.page-map-viewer .gn-viewer-layout-body:has(.gn-details-panel-resource-map) .gn-details-panel-resource-map .gn-details-panel-summary-body {
+  padding: 1.5rem 0;
+}
+
+.page-map-viewer .gn-viewer-layout-body:has(.gn-details-panel-resource-map) .gn-details-panel-resource-map .gn-details-panel-summary-owner {
+  margin-top: 1.25rem;
+}
+
+.page-map-viewer .gn-viewer-layout-body:has(.gn-details-panel-resource-map) .gn-details-panel-resource-map .gn-details-panel-info-section {
+  padding-top: 1rem;
+  border-top: 1px solid #d8dee8;
+}
+
+@media (max-width: 1200px) {
+  .page-map-viewer .gn-viewer-layout-body:has(.gn-details-panel-resource-map) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .page-map-viewer .gn-viewer-layout-body:has(.gn-details-panel-resource-map) .gn-viewer-right-overlay,
+  .page-map-viewer .gn-viewer-layout-body:has(.gn-details-panel-resource-map) .gn-viewer-layout-center {
+    grid-column: 1;
+  }
+
+  .page-map-viewer .gn-viewer-layout-body:has(.gn-details-panel-resource-map) .gn-viewer-layout-center {
+    position: relative !important;
+    top: auto;
+    max-width: 640px;
+    width: 100%;
+    margin: 0 auto 2rem;
+  }
+}
+
 /* === Navbar layout === */
 .topnavbar .topnavbar-inner {
   display: flex;

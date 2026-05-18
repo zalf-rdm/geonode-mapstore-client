@@ -36,6 +36,18 @@ const getTagValue = (item) => {
     }
     return item?.label || item?.name || item?.identifier || item?.title || item?.value;
 };
+const getContactDisplayName = (contact) => {
+    if (!contact) {
+        return '';
+    }
+    if (typeof contact === 'string') {
+        return contact;
+    }
+    return getUserName(contact)
+        || [contact.first_name, contact.last_name].filter(Boolean).join(' ')
+        || contact.username
+        || '';
+};
 
 const DOI_REGEX = /10\.\d{4,9}\/[-._;()/:A-Z0-9]+/i;
 const DOI_URL_REGEX = /https?:\/\/(?:dx\.)?doi\.org\/([^\s]+)/i;
@@ -174,6 +186,21 @@ const DetailsPanelAbstract = ({ abstract = '' }) => {
                     {expanded ? 'View Less' : 'View More'}
                 </span>
             )}
+        </div>
+    );
+};
+
+const DetailsPanelAuthors = ({ authors = [] }) => {
+    if (!authors.length) {
+        return null;
+    }
+    return (
+        <div className="gn-details-panel-authors">
+            {authors.map((author, index) => (
+                <span key={`${getContactDisplayName(author)}-${index}`} className="gn-details-panel-author">
+                    {getContactDisplayName(author)}
+                </span>
+            ))}
         </div>
     );
 };
@@ -364,6 +391,7 @@ function DetailsPanel({
         .filter(Boolean)
         .filter((tag, index, array) => array.indexOf(tag) === index)
         .slice(0, 8);
+    const authors = toArray(resource?.author).filter(Boolean);
     const stats = [
         { icon: 'eye', label: `${resource?.popular_count ?? 0} Views` },
         { icon: 'download', label: `${resource?.download_count ?? resource?.downloads_count ?? toArray(resource?.download_urls).length ?? 0} Downloads` }
@@ -552,7 +580,7 @@ function DetailsPanel({
     return (
         <div
             ref={detailsContainerNode}
-            className={`gn-details-panel${loading ? ' loading' : ''}${pageLayout ? ' page-layout' : ''}`}
+            className={`gn-details-panel${loading ? ' loading' : ''}${pageLayout ? ' page-layout' : ''}${resource?.resource_type === 'map' ? ' gn-details-panel-resource-map' : ''}`}
             style={{ width: sectionStyle?.width }}
         >
             <section style={sectionStyle}>
@@ -584,6 +612,7 @@ function DetailsPanel({
                                 <div ref={titleNodeRef} className="gn-details-panel-title">
                                     <EditTitle disabled={!activeEditMode} title={resource?.title} onEdit={editTitle} />
                                 </div>
+                                <DetailsPanelAuthors authors={authors} />
                                 <div className="gn-details-panel-summary-owner">
                                     {resource?.owner?.avatar &&
                                         <img src={resource?.owner.avatar} alt={getUserName(resource?.owner)} className="gn-card-author-image" />
