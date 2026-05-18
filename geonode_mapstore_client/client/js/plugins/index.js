@@ -312,6 +312,10 @@ export const plugins = {
         'DetailViewer',
         () => import(/* webpackChunkName: 'plugins/detail-viewer-plugin' */ '@js/plugins/DetailViewer')
     ),
+    ZALFAutoOpenMapDetailViewerPlugin: toModulePlugin(
+        'ZALFAutoOpenMapDetailViewer',
+        () => import(/* webpackChunkName: 'plugins/zalf-auto-open-map-detail-viewer' */ '../../themes/zalf/plugins/AutoOpenMapDetailViewer')
+    ),
     MediaViewerPlugin: toModulePlugin(
         'MediaViewer',
         () => import(/* webpackChunkName: 'plugins/media-viewer-plugin' */ '@js/plugins/MediaViewer')
