@@ -40,13 +40,21 @@ export const hashLocationToHref = ({
         query: omit(Object.keys(newQuery).reduce((acc, newQueryKey) =>
             !newQuery[newQueryKey] || newQuery[newQueryKey].length === 0
                 ? acc
-                : { ...acc,  [newQueryKey]: newQuery[newQueryKey]}, {}), excludeQueryKeys)
+                : { ...acc, [newQueryKey]: newQuery[newQueryKey] }, {}), excludeQueryKeys)
     })}`;
 };
 
 export function getUserName(user) {
-    if (user.first_name && user.last_name) {
-        return `${user.first_name} ${user.last_name}`;
+    const first = user.first_name ? user.first_name.trim() : '';
+    const last = user.last_name ? user.last_name.trim() : '';
+    if (first && last) {
+        return `${first} ${last}`;
+    }
+    if (first) {
+        return first;
+    }
+    if (last) {
+        return last;
     }
     return user.username;
 }
@@ -56,8 +64,8 @@ export function clearQueryParams(location) {
     const newParams = Object.keys(query)
         .reduce((acc, key) =>
             key.indexOf('filter') === 0
-            || key === 'f'
-            || key === 'q'
+                || key === 'f'
+                || key === 'q'
                 ? {
                     ...acc,
                     [key]: []
@@ -77,7 +85,7 @@ export const filterFormItemsContainFacet = (formItems) => {
     return formItems.some(formItem => formItem.items ? filterFormItemsContainFacet(formItem.items) : !!formItem.facet);
 };
 
-export const updateFilterFormItemsWithFacet = ({formItems, facetItems}) => {
+export const updateFilterFormItemsWithFacet = ({ formItems, facetItems }) => {
     return formItems.reduce((acc, formItem) => {
         if (!!formItem.facet) {
             const filteredFacetItems = (facetItems || [])
@@ -109,7 +117,7 @@ export const updateFilterFormItemsWithFacet = ({formItems, facetItems}) => {
                 {
                     ...formItem,
                     uuid: formItem.uuid || uuid(),
-                    items: updateFilterFormItemsWithFacet({formItems: formItem.items, facetItems})
+                    items: updateFilterFormItemsWithFacet({ formItems: formItem.items, facetItems })
                 }
             ];
         }

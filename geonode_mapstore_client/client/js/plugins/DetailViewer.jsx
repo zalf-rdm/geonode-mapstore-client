@@ -17,6 +17,7 @@ import {
     editTitleResource,
     editAbstractResource,
     editThumbnailResource,
+    downloadResource,
     setFavoriteResource,
     setMapThumbnail,
     setResourceThumbnail,
@@ -76,6 +77,7 @@ const ConnectedDetailsPanel = connect(
     })),
     {
         closePanel: setControlProperty.bind(null, 'rightOverlay', 'enabled', false),
+        onAction: downloadResource,
         onFavorite: setFavoriteResource,
         onMapThumbnail: setMapThumbnail,
         onResourceThumbnail: setResourceThumbnail,

@@ -43,7 +43,7 @@ import resourceServiceEpics from '@js/epics/resourceservice';
 import favoriteEpics from '@js/epics/favorite';
 import DetailsPanel from '@js/components/DetailsPanel';
 import { processingDownload } from '@js/selectors/resourceservice';
-import { resourceHasPermission, getCataloguePath } from '@js/utils/ResourceUtils';
+import { canDownloadResource, getCataloguePath } from '@js/utils/ResourceUtils';
 import { downloadResource, setFavoriteResource, setResource } from '@js/actions/gnresource';
 import FiltersForm from '@js/components/FiltersForm';
 import usePluginItems from '@mapstore/framework/hooks/usePluginItems';
@@ -71,6 +71,8 @@ const CATALOGUE_TOPICS = [
     { label: 'Water', icon: 'life-ring' }
 ];
 
+const hasValue = (value) => Array.isArray(value) ? value.length > 0 : !!value;
+
 const ConnectedDetailsPanel = connect(
     createSelector([
         state => state?.gnresource?.loading || false,
@@ -81,7 +83,7 @@ const ConnectedDetailsPanel = connect(
         loading,
         favorite: favorite,
         downloading,
-        canDownload: resourceHasPermission(resource, 'download_resourcebase'),
+        canDownload: canDownloadResource(resource),
         resourceId: resource?.pk
     })),
     {
@@ -722,7 +724,10 @@ function ResourcesGrid({
         if (disableDetailPanel || isEmpty(resource) || !resource?.pk || !resource?.resource_type) {
             return undefined;
         }
-        const needsEnrichment = !resource?.doi || !resource?.author || !resource?.poc || !resource?.abstract;
+        const needsEnrichment = !resource?.doi
+            || !hasValue(resource?.author)
+            || !hasValue(resource?.poc)
+            || !resource?.abstract;
         if (!needsEnrichment) {
             return undefined;
         }

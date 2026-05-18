@@ -285,7 +285,8 @@ export const setFavoriteResource = (pk, favorite) => {
 export const getResourceByPk = (pk) => {
     return axios.get(parseDevHostname(`${endpoints[RESOURCES]}/${pk}`), {
         params: {
-            api_preset: API_PRESET.VIEWER_COMMON
+            api_preset: API_PRESET.VIEWER_COMMON,
+            include: ['doi']
         }
     })
         .then(({ data }) => data.resource);
@@ -658,7 +659,8 @@ export const getMapByPk = (pk) => {
     return axios.get(parseDevHostname(`${endpoints[MAPS]}/${pk}/`),
         {
             params: {
-                api_preset: [API_PRESET.VIEWER_COMMON, API_PRESET.MAP]
+                api_preset: [API_PRESET.VIEWER_COMMON, API_PRESET.MAP],
+                include: ['doi']
             },
             ...paramsSerializer()
         })

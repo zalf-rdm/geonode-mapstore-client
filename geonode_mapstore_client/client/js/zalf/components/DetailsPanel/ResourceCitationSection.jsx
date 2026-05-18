@@ -39,15 +39,17 @@ const getPublicationYear = (resource) => {
 
 const getSuggestedCitation = (resource, doiInfo) => {
     const contributors = [
+        ...toArray(resource?.author),
         ...toArray(resource?.authors),
         ...toArray(resource?.poc)
     ]
         .map(getPersonLabel)
         .filter(Boolean);
     const uniqueContributors = contributors.filter((item, index) => contributors.indexOf(item) === index);
-    const lead = uniqueContributors[0]
-        || getPersonLabel(resource?.owner)
-        || 'Unknown author';
+    const authorLabel = uniqueContributors.length > 3
+        ? `${uniqueContributors.slice(0, 3).join(', ')}, et al.`
+        : uniqueContributors.join(', ');
+    const lead = authorLabel || getPersonLabel(resource?.owner) || 'Unknown author';
     const title = resource?.title || resource?.name || 'Untitled resource';
     const year = getPublicationYear(resource);
     const doiUrl = doiInfo?.url || '';

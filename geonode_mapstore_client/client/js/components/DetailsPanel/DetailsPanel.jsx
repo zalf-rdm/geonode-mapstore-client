@@ -13,7 +13,7 @@ import DetailsInfo from './DetailsInfo';
 import Message from '@mapstore/framework/components/I18N/Message';
 import tooltip from '@mapstore/framework/components/misc/enhancers/tooltip';
 import moment from 'moment';
-import { getResourceTypesInfo, getMetadataDetailUrl, getMetadataUrl, resourceHasPermission } from '@js/utils/ResourceUtils';
+import { canDownloadResource, getResourceTypesInfo, getMetadataDetailUrl, getMetadataUrl, resourceHasPermission } from '@js/utils/ResourceUtils';
 import debounce from 'lodash/debounce';
 import CopyToClipboardCmp from 'react-copy-to-clipboard';
 import ResourceStatus from '@js/components/ResourceStatus';
@@ -24,6 +24,7 @@ import DetailsResourcePreview from './DetailsResourcePreview';
 import DetailsThumbnail from './DetailsThumbnail';
 import Unadvertised from '@js/components/Unadvertised';
 import ResourceCitationSection from '../../zalf/components/DetailsPanel/ResourceCitationSection';
+import { getMapByPk, getDatasetByPk, getDocumentByPk, getGeoAppByPk, getResourceByPk } from '@js/api/geonode/v2';
 
 const CopyToClipboard = tooltip(CopyToClipboardCmp);
 
@@ -48,6 +49,46 @@ const getContactDisplayName = (contact) => {
         || contact.username
         || '';
 };
+
+const getContactRole = (contact) => {
+    if (!contact || typeof contact !== 'object') {
+        return '';
+    }
+    return `${contact.role || contact.role_name || contact.type || ''}`.toLowerCase();
+};
+
+const getResourceAuthors = (resource = {}) => {
+    // Prioriza resource.author se for uma lista de objetos (como na listagem da API)
+    if (Array.isArray(resource?.author) && resource.author.length && typeof resource.author[0] === 'object') {
+        return resource.author;
+    }
+    const contactCandidates = [
+        ...toArray(resource?.author),
+        ...toArray(resource?.authors),
+        ...toArray(resource?.contacts),
+        ...toArray(resource?.poc)
+    ];
+
+    const authorContacts = contactCandidates.filter((contact) => {
+        // Se for string (nome simples), já considera como autor
+        if (typeof contact === 'string') return true;
+        const role = getContactRole(contact);
+        return !role || role.includes('author');
+    });
+
+    const candidates = (authorContacts.length ? authorContacts : contactCandidates)
+        .map((contact) => ({
+            contact,
+            label: typeof contact === 'string' ? contact : getContactDisplayName(contact)
+        }))
+        .filter(({ label }) => !!label);
+
+    return candidates.filter(({ label }, index) =>
+        candidates.findIndex((entry) => entry.label === label) === index
+    ).map(({ contact }) => contact);
+};
+
+const hasValue = (value) => Array.isArray(value) ? value.length > 0 : !!value;
 
 const DOI_REGEX = /10\.\d{4,9}\/[-._;()/:A-Z0-9]+/i;
 const DOI_URL_REGEX = /https?:\/\/(?:dx\.)?doi\.org\/([^\s]+)/i;
@@ -195,15 +236,78 @@ const DetailsPanelAuthors = ({ authors = [] }) => {
         return null;
     }
     return (
-        <div className="gn-details-panel-authors">
-            {authors.map((author, index) => (
-                <span key={`${getContactDisplayName(author)}-${index}`} className="gn-details-panel-author">
-                    {getContactDisplayName(author)}
-                </span>
-            ))}
+        <div className="gn-details-panel-authors" aria-label="Authors">
+            {authors.map((author, index) => {
+                const authorLabel = getContactDisplayName(author);
+                return (
+                    <span
+                        key={`${authorLabel}-${index}`}
+                        className="gn-details-panel-author"
+                    >
+                        {authorLabel}
+                    </span>
+                );
+            })}
         </div>
     );
 };
+
+const DetailsPanelHeaderActions = ({
+    resource,
+    canDownload,
+    downloading,
+    onAction,
+    doiInfo,
+    metadataEditUrl,
+    canEditMetadata
+}) => (
+    <div className="gn-details-panel-header-actions">
+        {canDownload && (
+            <Button
+                variant="default"
+                className="gn-details-panel-header-action"
+                disabled={!!downloading}
+                onClick={() => downloading ? null : onAction(resource)}
+            >
+                <FaIcon name="download" />
+                <span>Download</span>
+            </Button>
+        )}
+        <CopyToClipboard
+            tooltipPosition="top"
+            tooltipId="gnviewer.shareThisResource"
+            text={formatResourceLinkUrl(resource)}
+        >
+            <Button variant="default" className="gn-details-panel-header-action">
+                <FaIcon name="share-alt" />
+                <span>Share</span>
+            </Button>
+        </CopyToClipboard>
+        {doiInfo?.url && (
+            <CopyToClipboard
+                tooltipPosition="top"
+                tooltipId="gnviewer.copyDoi"
+                text={doiInfo.url}
+            >
+                <Button variant="default" className="gn-details-panel-header-action">
+                    <FaIcon name="quote-right" />
+                    <span>Cite</span>
+                </Button>
+            </CopyToClipboard>
+        )}
+        {canEditMetadata && (
+            <Button
+                variant="default"
+                className="gn-details-panel-header-action"
+                href={metadataEditUrl}
+                rel="noopener noreferrer"
+            >
+                <FaIcon name="pencil-square-o" />
+                <span>Edit</span>
+            </Button>
+        )}
+    </div>
+);
 
 const EditTitle = ({ title, onEdit, disabled }) => {
     const [textValue, setTextValue] = React.useState(title);
@@ -350,10 +454,53 @@ function DetailsPanel({
 }) {
     const detailsContainerNode = useRef();
     const [titleNodeRef, titleInView] = useInView();
-    if (!resource && !loading) {
+    const [resolvedResource, setResolvedResource] = useState(resource);
+
+    useEffect(() => {
+        setResolvedResource(resource);
+    }, [resource]);
+
+    useEffect(() => {
+        if (!resource?.pk || !resource?.resource_type) {
+            return undefined;
+        }
+        const needsEnrichment = !resource?.doi
+            || !hasValue(resource?.author)
+            || !hasValue(resource?.poc)
+            || !resource?.abstract;
+        if (!needsEnrichment) {
+            return undefined;
+        }
+        const fetchResourceByType = {
+            map: () => getMapByPk(resource.pk),
+            dataset: () => getDatasetByPk(resource.pk),
+            document: () => getDocumentByPk(resource.pk),
+            geostory: () => getGeoAppByPk(resource.pk),
+            dashboard: () => getGeoAppByPk(resource.pk)
+        }[resource.resource_type] || (() => getResourceByPk(resource.pk));
+
+        let cancelled = false;
+        fetchResourceByType()
+            .then((fullResource) => {
+                if (!cancelled && fullResource?.pk) {
+                    setResolvedResource({
+                        ...resource,
+                        ...fullResource
+                    });
+                }
+            })
+            .catch(() => { });
+
+        return () => {
+            cancelled = true;
+        };
+    }, [resource?.pk, resource?.resource_type, resource?.doi, resource?.author, resource?.poc, resource?.abstract]);
+
+    if (!resolvedResource && !loading) {
         return null;
     }
 
+    const currentResource = resolvedResource || resource;
     const types = getTypesInfo();
     const {
         formatDetailUrl = res => res?.detail_url,
@@ -361,50 +508,51 @@ function DetailsPanel({
         hasPermission,
         icon,
         name
-    } = resource && (types[resource.subtype] || types[resource.resource_type]) || {};
-    const detailUrl = resource?.pk && formatDetailUrl(resource);
-    const resourceCanPreviewed = resource?.pk && canPreviewed && canPreviewed(resource);
-    const canView = resource?.pk && hasPermission && hasPermission(resource);
-    const metadataDetailUrl = resource?.pk && getMetadataDetailUrl(resource);
-    const metadataEditUrl = resource?.pk && getMetadataUrl(resource);
-    const canEditMetadata = resourceHasPermission(resource, 'change_resourcebase') && metadataEditUrl;
+    } = currentResource && (types[currentResource.subtype] || types[currentResource.resource_type]) || {};
+    const detailUrl = currentResource?.pk && formatDetailUrl(currentResource);
+    const resourceCanPreviewed = currentResource?.pk && canPreviewed && canPreviewed(currentResource);
+    const canView = currentResource?.pk && hasPermission && hasPermission(currentResource);
+    const metadataDetailUrl = currentResource?.pk && getMetadataDetailUrl(currentResource);
+    const metadataEditUrl = currentResource?.pk && getMetadataUrl(currentResource);
+    const canEditMetadata = resourceHasPermission(currentResource, 'change_resourcebase') && metadataEditUrl;
+    const canDownloadCurrentResource = !!(canDownload || canDownloadResource(currentResource));
     const previewDetailUrl = (resourceCanPreviewed || canView) ? detailUrl : metadataDetailUrl;
-    const createdDate = getDateValue(resource?.date || resource?.created);
-    const updatedDate = getDateValue(resource?.last_updated || resource?.date);
-    const doiInfo = getDoiInfo(resource);
+    const createdDate = getDateValue(currentResource?.date || currentResource?.created);
+    const updatedDate = getDateValue(currentResource?.last_updated || currentResource?.date);
+    const doiInfo = getDoiInfo(currentResource);
     const hasDoi = !!doiInfo?.doi;
     const doiValue = doiInfo?.doi || '-';
     const createdDateValue = createdDate || '-';
     const updatedDateValue = updatedDate || '-';
     const regionTags = [
-        ...toArray(resource?.regions),
-        ...toArray(resource?.places)
+        ...toArray(currentResource?.regions),
+        ...toArray(currentResource?.places)
     ]
         .map(getTagValue)
         .filter(Boolean)
         .filter((tag, index, array) => array.indexOf(tag) === index)
         .slice(0, 6);
     const keywordTags = [
-        ...toArray(resource?.keywords)
+        ...toArray(currentResource?.keywords)
     ]
         .map(getTagValue)
         .filter(Boolean)
         .filter((tag, index, array) => array.indexOf(tag) === index)
         .slice(0, 8);
-    const authors = toArray(resource?.author).filter(Boolean);
+    const authors = getResourceAuthors(currentResource);
+    const showOwner = authors.length === 0;
     const stats = [
-        { icon: 'eye', label: `${resource?.popular_count ?? 0} Views` },
-        { icon: 'download', label: `${resource?.download_count ?? resource?.downloads_count ?? toArray(resource?.download_urls).length ?? 0} Downloads` }
+        { icon: 'eye', label: `${currentResource?.popular_count ?? 0} Views` },
+        { icon: 'download', label: `${currentResource?.download_count ?? currentResource?.downloads_count ?? toArray(currentResource?.download_urls).length ?? 0} Downloads` }
     ];
     const breadcrumbs = [
         { label: 'Home', href: formatHref({ pathname: '/' }) },
-        { label: name || resource?.resource_type || 'Resource', href: formatHref({ pathname, query: { f: resource?.resource_type } }) },
-        { label: resource?.title || resource?.name }
+        { label: name || currentResource?.resource_type || 'Resource', href: formatHref({ pathname, query: { f: currentResource?.resource_type } }) }
     ];
     const tools = (
         <DetailsPanelTools
             name={name}
-            resource={resource}
+            resource={currentResource}
             enableFavorite={enableFavorite}
             favorite={favorite}
             onFavorite={onFavorite}
@@ -419,16 +567,25 @@ function DetailsPanel({
         return (
             <div
                 ref={detailsContainerNode}
-                className={`gn-details-panel${loading ? ' loading' : ''} page-layout${resource?.resource_type === 'map' ? ' gn-details-panel-resource-map-page' : ''}`}
+                className={`gn-details-panel${loading ? ' loading' : ''} page-layout${['map', 'dataset'].includes(currentResource?.resource_type) ? ' gn-details-panel-resource-editorial-page' : ''}`}
                 style={{ width: sectionStyle?.width }}
             >
                 <section style={sectionStyle}>
                     <div className="gn-details-panel-shell">
                         <div className="gn-details-panel-main">
+                            {/* Breadcrumb acima do summary-head */}
+                            <nav className="gn-details-panel-breadcrumbs">
+                                {breadcrumbs.map((crumb, idx) => (
+                                    <span key={crumb.label}>
+                                        {crumb.href ? <a href={crumb.href}>{crumb.label}</a> : crumb.label}
+                                        {idx < breadcrumbs.length - 1 && ' / '}
+                                    </span>
+                                ))}
+                            </nav>
                             <div className="gn-details-panel-hero">
                                 <div className="gn-details-panel-preview-card">
                                     <DetailsResourcePreview
-                                        resource={resource}
+                                        resource={currentResource}
                                         getTypesInfo={getTypesInfo}
                                         loading={loading}
                                         enabled={!!(resourceCanPreviewed && !activeEditMode && !editThumbnail)}
@@ -441,16 +598,16 @@ function DetailsPanel({
                                         >
                                             <FaIcon name="external-link" />
                                             {' '}
-                                            {getPreviewActionLabel(resource)}
+                                            {getPreviewActionLabel(currentResource)}
                                         </a>
                                     )}
                                 </div>
                                 <div className="gn-details-panel-map-actions">
-                                    {canDownload && (
+                                    {canDownloadCurrentResource && (
                                         <Button
                                             variant="primary"
                                             disabled={!!downloading}
-                                            onClick={() => downloading ? null : onAction(resource)}
+                                            onClick={() => downloading ? null : onAction(currentResource)}
                                         >
                                             <FaIcon name="download" />
                                             {' '}
@@ -487,23 +644,63 @@ function DetailsPanel({
                                         {name ? <span className="gn-details-panel-pill">{name}</span> : null}
                                         {resource?.srid ? <span className="gn-details-panel-pill is-muted">{resource.srid}</span> : null}
                                     </div>
-                                    <div className="gn-details-panel-summary-title-block">
-                                        {activeEditMode
-                                            ? <EditTitle disabled={!activeEditMode} title={resource?.title} onEdit={editTitle} />
-                                            : <h2 className="gn-details-panel-summary-title">{resource?.title}</h2>}
-                                    </div>
-                                    <DetailsPanelAuthors authors={authors} />
-                                    <div className="gn-details-panel-summary-owner">
-                                        {resource?.owner?.avatar &&
-                                            <img src={resource?.owner.avatar} alt={getUserName(resource?.owner)} className="gn-card-author-image" />
-                                        }
-                                        <div>
-                                            <span className="gn-details-panel-summary-label">Owner</span>
-                                            <div className="gn-details-panel-summary-value">
-                                                <AuthorInfo resource={resource} formatHref={formatHref} pathname={pathname} style={{ margin: 0 }} detailsPanel />
-                                            </div>
+                                    <div className="gn-details-panel-summary-banner">
+                                        <div className="gn-details-panel-summary-title-block">
+                                            {activeEditMode
+                                                ? <EditTitle disabled={!activeEditMode} title={currentResource?.title} onEdit={editTitle} />
+                                                : <h2 className="gn-details-panel-summary-title">{currentResource?.title}</h2>}
+                                        </div>
+                                        <DetailsPanelAuthors authors={authors} />
+                                        <div className="gn-details-panel-header-actions">
+                                            <Button
+                                                type="button"
+                                                className="gn-details-panel-header-action btn btn-success"
+                                                style={{ color: '#fff', background: '#28a745', border: 'none' }}
+                                                disabled={!!downloading}
+                                                onClick={() => downloading ? null : onAction(currentResource)}
+                                            >
+                                                <FaIcon name="download" />
+                                                <span>Download</span>
+                                            </Button>
+                                            <Button
+                                                type="button"
+                                                className="gn-details-panel-header-action btn btn-default"
+                                            >
+                                                <FaIcon name="share-alt" />
+                                                <span>Share</span>
+                                            </Button>
+                                            <Button
+                                                type="button"
+                                                className="gn-details-panel-header-action btn btn-default"
+                                            >
+                                                <FaIcon name="quote-right" />
+                                                <span>Cite</span>
+                                            </Button>
+                                            {canEditMetadata && (
+                                                <a
+                                                    href={metadataEditUrl}
+                                                    rel="noopener noreferrer"
+                                                    className="gn-details-panel-header-action btn btn-default"
+                                                >
+                                                    <FaIcon name="pencil-square-o" />
+                                                    <span>Edit</span>
+                                                </a>
+                                            )}
                                         </div>
                                     </div>
+                                    {showOwner && (
+                                        <div className="gn-details-panel-summary-owner">
+                                            {currentResource?.owner?.avatar &&
+                                                <img src={currentResource?.owner.avatar} alt={getUserName(currentResource?.owner)} className="gn-card-author-image" />
+                                            }
+                                            <div>
+                                                <span className="gn-details-panel-summary-label">Owner</span>
+                                                <div className="gn-details-panel-summary-value">
+                                                    <AuthorInfo resource={currentResource} formatHref={formatHref} pathname={pathname} style={{ margin: 0 }} detailsPanel />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="gn-details-panel-summary-body stitch">
                                     <div className="gn-details-panel-summary-section">
@@ -525,11 +722,11 @@ function DetailsPanel({
                                     </div>
                                     <div className="gn-details-panel-summary-section">
                                         <h3>Abstract</h3>
-                                        {resource?.abstract
-                                            ? <DetailsPanelAbstract abstract={resource.abstract} />
+                                        {currentResource?.abstract
+                                            ? <DetailsPanelAbstract abstract={currentResource.abstract} />
                                             : <div className="gn-details-text gn-details-panel-description-modern"><span className="gn-details-text-body">-</span></div>}
                                     </div>
-                                    <ResourceCitationSection resource={resource} doiInfo={doiInfo} />
+                                    <ResourceCitationSection resource={currentResource} doiInfo={doiInfo} />
                                     <div className="gn-details-panel-summary-grid stitch">
                                         <div className="gn-details-panel-summary-item">
                                             <span className="gn-details-panel-summary-label">Created</span>
@@ -572,7 +769,7 @@ function DetailsPanel({
                             </aside>
                         </div>
                         <div className="gn-details-panel-info-section">
-                            <DetailsInfo tabs={tabs} formatHref={formatHref} allowEdit={activeEditMode} resourceTypesInfo={types} resource={resource} onSetExtent={onSetExtent} />
+                            <DetailsInfo tabs={tabs} formatHref={formatHref} allowEdit={activeEditMode} resourceTypesInfo={types} resource={currentResource} onSetExtent={onSetExtent} />
                         </div>
                     </div>
                 </section>
@@ -582,7 +779,7 @@ function DetailsPanel({
     return (
         <div
             ref={detailsContainerNode}
-            className={`gn-details-panel${loading ? ' loading' : ''}${pageLayout ? ' page-layout' : ''}${resource?.resource_type === 'map' ? ' gn-details-panel-resource-map' : ''}`}
+            className={`gn-details-panel${loading ? ' loading' : ''}${pageLayout ? ' page-layout' : ''}${currentResource?.resource_type === 'map' ? ' gn-details-panel-resource-map' : ''}`}
             style={{ width: sectionStyle?.width }}
         >
             <section style={sectionStyle}>
@@ -604,28 +801,40 @@ function DetailsPanel({
                 )}
                 <div className="gn-details-panel-shell">
                     <div className="gn-details-panel-main">
-
+                        {/* Breadcrumb acima do summary-head */}
+                        <nav className="gn-details-panel-breadcrumbs">
+                            {breadcrumbs.map((crumb, idx) => (
+                                <span key={crumb.label}>
+                                    {crumb.href ? <a href={crumb.href}>{crumb.label}</a> : crumb.label}
+                                    {idx < breadcrumbs.length - 1 && ' / '}
+                                </span>
+                            ))}
+                        </nav>
                         <aside className="gn-details-panel-summary">
                             <div className="gn-details-panel-summary-head">
                                 <div className="gn-details-panel-summary-pills">
                                     {name ? <span className="gn-details-panel-pill">{name}</span> : null}
-                                    {resource?.srid ? <span className="gn-details-panel-pill is-muted">{resource.srid}</span> : null}
+                                    {currentResource?.srid ? <span className="gn-details-panel-pill is-muted">{currentResource.srid}</span> : null}
                                 </div>
-                                <div ref={titleNodeRef} className="gn-details-panel-title">
-                                    <EditTitle disabled={!activeEditMode} title={resource?.title} onEdit={editTitle} />
+                                <div className="gn-details-panel-summary-banner">
+                                    <div ref={titleNodeRef} className="gn-details-panel-title">
+                                        <EditTitle disabled={!activeEditMode} title={currentResource?.title} onEdit={editTitle} />
+                                    </div>
+                                    <DetailsPanelAuthors authors={authors} />
                                 </div>
-                                <DetailsPanelAuthors authors={authors} />
-                                <div className="gn-details-panel-summary-owner">
-                                    {resource?.owner?.avatar &&
-                                        <img src={resource?.owner.avatar} alt={getUserName(resource?.owner)} className="gn-card-author-image" />
-                                    }
-                                    <div>
-                                        <span className="gn-details-panel-summary-label">Owner</span>
-                                        <div className="gn-details-panel-summary-value">
-                                            <AuthorInfo resource={resource} formatHref={formatHref} pathname={pathname} style={{ margin: 0 }} detailsPanel />
+                                {showOwner && (
+                                    <div className="gn-details-panel-summary-owner">
+                                        {currentResource?.owner?.avatar &&
+                                            <img src={currentResource?.owner.avatar} alt={getUserName(currentResource?.owner)} className="gn-card-author-image" />
+                                        }
+                                        <div>
+                                            <span className="gn-details-panel-summary-label">Owner</span>
+                                            <div className="gn-details-panel-summary-value">
+                                                <AuthorInfo resource={currentResource} formatHref={formatHref} pathname={pathname} style={{ margin: 0 }} detailsPanel />
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                )}
                             </div>
 
                             <div className="gn-details-panel-summary-body">
@@ -655,11 +864,11 @@ function DetailsPanel({
                                 </div>
                                 <div className="gn-details-panel-summary-section">
                                     <h3>Abstract</h3>
-                                    {resource?.abstract
-                                        ? <DetailsPanelAbstract abstract={resource.abstract} />
+                                    {currentResource?.abstract
+                                        ? <DetailsPanelAbstract abstract={currentResource.abstract} />
                                         : <div className="gn-details-text gn-details-panel-description-modern"><span className="gn-details-text-body">-</span></div>}
                                 </div>
-                                <ResourceCitationSection resource={resource} doiInfo={doiInfo} />
+                                <ResourceCitationSection resource={currentResource} doiInfo={doiInfo} />
                                 <div className="gn-details-panel-summary-grid">
                                     <div className="gn-details-panel-summary-item">
                                         <span className="gn-details-panel-summary-label">Created</span>
@@ -703,7 +912,7 @@ function DetailsPanel({
                     </div>
 
                     <div className="gn-details-panel-info-section">
-                        <DetailsInfo tabs={tabs} formatHref={formatHref} allowEdit={activeEditMode} resourceTypesInfo={types} resource={resource} onSetExtent={onSetExtent} />
+                        <DetailsInfo tabs={tabs} formatHref={formatHref} allowEdit={activeEditMode} resourceTypesInfo={types} resource={currentResource} onSetExtent={onSetExtent} />
                     </div>
                 </div>
             </section>

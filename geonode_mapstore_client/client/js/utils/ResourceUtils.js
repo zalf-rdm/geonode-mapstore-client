@@ -329,7 +329,6 @@ export const resourceHasPermission = (resource, perm) => {
     return resource?.perms?.includes(perm);
 };
 
-
 export const ResourceTypes = {
     DATASET: 'dataset',
     MAP: 'map',
@@ -337,6 +336,16 @@ export const ResourceTypes = {
     GEOSTORY: 'geostory',
     DASHBOARD: 'dashboard',
     VIEWER: 'mapviewer'
+};
+
+export const canDownloadResource = (resource) => {
+    if (!resource) {
+        return false;
+    }
+    if ([ResourceTypes.DATASET, ResourceTypes.DOCUMENT].includes(resource?.resource_type)) {
+        return resourceHasPermission(resource, 'download_resourcebase');
+    }
+    return resourceHasPermission(resource, 'download_resourcebase') || !isEmpty(resource?.download_urls);
 };
 
 export const isDocumentExternalSource = (resource) => {
