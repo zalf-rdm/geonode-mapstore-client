@@ -526,6 +526,71 @@ footer.footer a:hover {
   border-top: 1px solid #d8dee8;
 }
 
+.gn-resource-detail-page .gn-details-panel-resource-map-page .gn-details-panel-main {
+  grid-template-columns: minmax(0, 1.3fr) minmax(320px, 0.95fr);
+  gap: 2rem;
+}
+
+.gn-resource-detail-page .gn-details-panel-resource-map-page .gn-details-panel-summary {
+  grid-column: 1;
+  order: 1;
+}
+
+.gn-resource-detail-page .gn-details-panel-resource-map-page .gn-details-panel-hero {
+  grid-column: 2;
+  order: 2;
+  position: sticky;
+  top: 1.5rem;
+  align-self: start;
+}
+
+.gn-resource-detail-page .gn-details-panel-resource-map-page .gn-details-panel-preview-card {
+  aspect-ratio: 1 / 1;
+}
+
+.gn-resource-detail-page .gn-details-panel-resource-map-page .gn-details-panel-preview-card .gn-details-panel-preview-wrapper,
+.gn-resource-detail-page .gn-details-panel-resource-map-page .gn-details-panel-preview-card .gn-details-panel-preview,
+.gn-resource-detail-page .gn-details-panel-resource-map-page .gn-details-panel-preview-card .gn-details-panel-preview > div {
+  height: 100%;
+}
+
+.gn-resource-detail-page .gn-details-panel-resource-map-page .gn-details-panel-summary {
+  position: static;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  background: transparent;
+}
+
+.gn-resource-detail-page .gn-details-panel-resource-map-page .gn-details-panel-summary-head {
+  padding: 0 0 1.5rem;
+  border-bottom: 1px solid #d8dee8;
+}
+
+.gn-resource-detail-page .gn-details-panel-resource-map-page .gn-details-panel-summary-title {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2rem, 3vw, 3.1rem);
+  line-height: 1.08;
+  font-weight: 400;
+  color: #142033;
+}
+
+.gn-resource-detail-page .gn-details-panel-resource-map-page .gn-details-panel-summary-body {
+  padding: 1.5rem 0;
+}
+
+.gn-resource-detail-page .gn-details-panel-resource-map-page .gn-details-panel-summary-footer {
+  padding: 1.25rem 0 0;
+  border-top: 1px solid #d8dee8;
+  background: transparent;
+}
+
+.gn-resource-detail-page .gn-details-panel-resource-map-page .gn-details-panel-info-section {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #d8dee8;
+}
+
 @media (max-width: 1200px) {
   .page-map-viewer .gn-viewer-layout-body:has(.gn-details-panel-resource-map) {
     grid-template-columns: minmax(0, 1fr);
@@ -542,6 +607,20 @@ footer.footer a:hover {
     max-width: 640px;
     width: 100%;
     margin: 0 auto 2rem;
+  }
+
+  .gn-resource-detail-page .gn-details-panel-resource-map-page .gn-details-panel-main {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .gn-resource-detail-page .gn-details-panel-resource-map-page .gn-details-panel-summary,
+  .gn-resource-detail-page .gn-details-panel-resource-map-page .gn-details-panel-hero {
+    grid-column: 1;
+  }
+
+  .gn-resource-detail-page .gn-details-panel-resource-map-page .gn-details-panel-hero {
+    position: relative;
+    top: auto;
   }
 }
 

@@ -44,7 +44,7 @@ import favoriteEpics from '@js/epics/favorite';
 import DetailsPanel from '@js/components/DetailsPanel';
 import { processingDownload } from '@js/selectors/resourceservice';
 import { resourceHasPermission, getCataloguePath } from '@js/utils/ResourceUtils';
-import { downloadResource, setFavoriteResource } from '@js/actions/gnresource';
+import { downloadResource, setFavoriteResource, setResource } from '@js/actions/gnresource';
 import FiltersForm from '@js/components/FiltersForm';
 import usePluginItems from '@mapstore/framework/hooks/usePluginItems';
 import { ProcessTypes } from '@js/utils/ResourceServiceUtils';
@@ -55,6 +55,7 @@ import Dropdown from '@js/components/Dropdown';
 import Menu from '@js/components/Menu';
 import useLocalStorage from '@js/hooks/useLocalStorage';
 import MainLoader from '@js/components/MainLoader';
+import { getMapByPk, getDatasetByPk, getDocumentByPk, getGeoAppByPk, getResourceByPk } from '@js/api/geonode/v2';
 
 const CATALOGUE_TOPICS = [
     { label: 'All Data', icon: 'th-large', query: '' },
@@ -497,6 +498,7 @@ function ResourcesGrid({
     enableGeoNodeCardsMenuItems,
     detailsTabs = [],
     onGetFacets,
+    onSetResource,
     facets,
     filters,
     setFilters,
@@ -715,6 +717,40 @@ function ResourcesGrid({
             }
         }
     }, [location.pathname, panel]);
+
+    useEffect(() => {
+        if (disableDetailPanel || isEmpty(resource) || !resource?.pk || !resource?.resource_type) {
+            return undefined;
+        }
+        const needsEnrichment = !resource?.doi || !resource?.author || !resource?.poc || !resource?.abstract;
+        if (!needsEnrichment) {
+            return undefined;
+        }
+
+        const fetchResourceByType = {
+            map: () => getMapByPk(resource.pk),
+            dataset: () => getDatasetByPk(resource.pk),
+            document: () => getDocumentByPk(resource.pk),
+            geostory: () => getGeoAppByPk(resource.pk),
+            dashboard: () => getGeoAppByPk(resource.pk)
+        }[resource.resource_type] || (() => getResourceByPk(resource.pk));
+
+        let cancelled = false;
+        fetchResourceByType()
+            .then((fullResource) => {
+                if (!cancelled && fullResource?.pk) {
+                    onSetResource({
+                        ...resource,
+                        ...fullResource
+                    });
+                }
+            })
+            .catch(() => {});
+
+        return () => {
+            cancelled = true;
+        };
+    }, [disableDetailPanel, resource?.pk, resource?.resource_type, resource?.doi, resource?.author, resource?.poc, resource?.abstract, onSetResource]);
 
     const filtersFormContent = !disableFilters && (
         <FiltersForm
@@ -1052,7 +1088,8 @@ const ResourcesGridPlugin = connect(
         onInit: setSearchConfig,
         onReplaceLocation: replace,
         onGetFacets: getFacetItems,
-        setFilters: setFiltersAction
+        setFilters: setFiltersAction,
+        onSetResource: setResource
     }
 )(withResizeDetector(withPageConfig(ResourcesGrid)));
 

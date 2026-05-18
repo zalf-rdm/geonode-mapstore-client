@@ -419,7 +419,7 @@ function DetailsPanel({
         return (
             <div
                 ref={detailsContainerNode}
-                className={`gn-details-panel${loading ? ' loading' : ''} page-layout`}
+                className={`gn-details-panel${loading ? ' loading' : ''} page-layout${resource?.resource_type === 'map' ? ' gn-details-panel-resource-map-page' : ''}`}
                 style={{ width: sectionStyle?.width }}
             >
                 <section style={sectionStyle}>
@@ -492,6 +492,7 @@ function DetailsPanel({
                                             ? <EditTitle disabled={!activeEditMode} title={resource?.title} onEdit={editTitle} />
                                             : <h2 className="gn-details-panel-summary-title">{resource?.title}</h2>}
                                     </div>
+                                    <DetailsPanelAuthors authors={authors} />
                                     <div className="gn-details-panel-summary-owner">
                                         {resource?.owner?.avatar &&
                                             <img src={resource?.owner.avatar} alt={getUserName(resource?.owner)} className="gn-card-author-image" />
@@ -528,6 +529,7 @@ function DetailsPanel({
                                             ? <DetailsPanelAbstract abstract={resource.abstract} />
                                             : <div className="gn-details-text gn-details-panel-description-modern"><span className="gn-details-text-body">-</span></div>}
                                     </div>
+                                    <ResourceCitationSection resource={resource} doiInfo={doiInfo} />
                                     <div className="gn-details-panel-summary-grid stitch">
                                         <div className="gn-details-panel-summary-item">
                                             <span className="gn-details-panel-summary-label">Created</span>
