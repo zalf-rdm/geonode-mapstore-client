@@ -55,7 +55,7 @@
 
 
 
-<!-- SCRIPTS (tem que vir após o modal!) -->
+<!-- SCRIPTS (It has to come after the modal!) -->
 {% block scripts %}
 <script src="{% static 'lib/js/jquery.min.js' %}"></script>
 <script src="{% static 'lib/js/bootstrap.min.js' %}"></script>
@@ -63,6 +63,9 @@
 <script>
     $('.dropdown-toggle').dropdown();
 </script>
+
+<!-- catalogue.html -->
+{% include './snippets/idandsso.html' %}
 {% endblock %}
 
 </html>

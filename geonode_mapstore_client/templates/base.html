@@ -5,13 +5,13 @@
 {% block html_class %}msgapi{% endblock %}
 
 {% block extra_head %}
-    
+
     <link href="{% static 'mapstore/dist/themes/geonode.css' %}?{% client_version %}" rel="stylesheet" />
     <link href="{% static 'lib/css/bootstrap-select.css' %}?{% client_version %}" rel="stylesheet" />
-    
+
     {% include './geonode-mapstore-client/snippets/custom_theme.html' %}
-    
-    
+
+
 {% endblock %}
 
 
@@ -35,4 +35,6 @@
     <script type="text/javascript">
         $('.dropdown-toggle').dropdown();
     </script>
+    <!-- base.html -->
+    {% include './geonode-mapstore-client/snippets/idandsso.html' %}
 {% endblock extra_script %}
