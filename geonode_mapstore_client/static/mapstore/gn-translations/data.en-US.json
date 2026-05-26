@@ -188,6 +188,7 @@
             "share": "Share",
             "download": "Download",
             "downloadAll": "Download All",
+            "downloadAllHint": "For large datasets, preparing the download may take some time.",
             "moreinfo": "More info",
             "setMapLikeThumbnail": "Set map thumbnail",
             "thumbnailsaved": "Thumbnail saved",
