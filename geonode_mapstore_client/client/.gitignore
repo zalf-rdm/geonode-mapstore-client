@@ -11,4 +11,3 @@ yarn.lock
 *.code-workspace
 docs/
 .env
-env.json
