@@ -557,6 +557,56 @@
         "resourcesCatalog": {
             "anonymous": "Chiunque",
             "registered-members": "Membri registrati"
+        },
+        "zalfTheme": {
+            "nav": {
+                "allData": "Tutti i dati",
+                "topics": "Temi",
+                "toolsServices": "Strumenti e servizi",
+                "lteMaps": "Mappe LTE",
+                "soilProfiles": "Profili del suolo",
+                "dqKit": "DQ Kit",
+                "upload": "Carica",
+                "about": "Informazioni",
+                "development": "Sviluppo",
+                "ogcServicesApi": "Servizi OGC e API",
+                "faq": "FAQ",
+                "contactUs": "Contattaci",
+                "version": "Versione {version}",
+                "searchDatasets": "Cerca dataset",
+                "toggleNavigationMenu": "Apri o chiudi il menu di navigazione",
+                "primaryNavigation": "Navigazione principale"
+            },
+            "topic": {
+                "animals": "Animali",
+                "atmosphere": "Atmosfera",
+                "climate": "Clima",
+                "forest": "Foresta",
+                "hydrology": "Idrologia",
+                "landscape": "Paesaggio",
+                "longTermFieldExperiment": "Esperimento sul campo a lungo termine",
+                "plants": "Piante",
+                "soilProfiles": "Profili del suolo",
+                "water": "Acqua"
+            },
+            "footer": {
+                "repositoryTitle": "Repository BonaRes",
+                "repositoryDescription": "Scopri, visualizza e condividi dataset di alta qualità a supporto della scienza aperta, delle politiche e dell'innovazione.",
+                "quickLinks": "Link rapidi",
+                "resources": "Risorse",
+                "certifiedBy": "Certificato da",
+                "poweredBy": "Sviluppato da",
+                "about": "Informazioni",
+                "upload": "Carica",
+                "ogcServicesApi": "Servizi OGC e API",
+                "researchDataManagement": "Gestione dei dati della ricerca",
+                "publications": "Pubblicazioni",
+                "dataPolicy": "Politica dei dati",
+                "howToCiteUs": "Come citarci",
+                "imprint": "Note legali",
+                "privacy": "Privacy",
+                "copyright": "© BonaRes Repository. Tutti i diritti riservati"
+            }
         }
     }
 }

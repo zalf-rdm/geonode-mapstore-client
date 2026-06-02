@@ -554,6 +554,56 @@
         "resourcesCatalog": {
             "anonymous": "Cualquiera",
             "registered-members": "Miembros registrados"
+        },
+        "zalfTheme": {
+            "nav": {
+                "allData": "Todos los datos",
+                "topics": "Temas",
+                "toolsServices": "Herramientas y servicios",
+                "lteMaps": "Mapas LTE",
+                "soilProfiles": "Perfiles de suelo",
+                "dqKit": "DQ Kit",
+                "upload": "Subir",
+                "about": "Acerca de",
+                "development": "Desarrollo",
+                "ogcServicesApi": "Servicios OGC y API",
+                "faq": "Preguntas frecuentes",
+                "contactUs": "Contáctanos",
+                "version": "Versión {version}",
+                "searchDatasets": "Buscar conjuntos de datos",
+                "toggleNavigationMenu": "Mostrar u ocultar el menú de navegación",
+                "primaryNavigation": "Navegación principal"
+            },
+            "topic": {
+                "animals": "Animales",
+                "atmosphere": "Atmósfera",
+                "climate": "Clima",
+                "forest": "Bosque",
+                "hydrology": "Hidrología",
+                "landscape": "Paisaje",
+                "longTermFieldExperiment": "Experimento de campo a largo plazo",
+                "plants": "Plantas",
+                "soilProfiles": "Perfiles de suelo",
+                "water": "Agua"
+            },
+            "footer": {
+                "repositoryTitle": "Repositorio BonaRes",
+                "repositoryDescription": "Descubre, visualiza y comparte conjuntos de datos de alta calidad que impulsan la ciencia abierta, las políticas públicas y la innovación.",
+                "quickLinks": "Enlaces rápidos",
+                "resources": "Recursos",
+                "certifiedBy": "Certificado por",
+                "poweredBy": "Desarrollado por",
+                "about": "Acerca de",
+                "upload": "Subir",
+                "ogcServicesApi": "Servicios OGC y API",
+                "researchDataManagement": "Gestión de datos de investigación",
+                "publications": "Publicaciones",
+                "dataPolicy": "Política de datos",
+                "howToCiteUs": "Cómo citarnos",
+                "imprint": "Aviso legal",
+                "privacy": "Privacidad",
+                "copyright": "© BonaRes Repository. Todos los derechos reservados"
+            }
         }
     }
 }

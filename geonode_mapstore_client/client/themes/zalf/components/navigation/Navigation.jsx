@@ -6,44 +6,50 @@
  */
 
 import React from 'react';
+import { connect } from 'react-redux';
+import Message from '@mapstore/framework/components/I18N/Message';
+import { getMessageById } from '@mapstore/framework/utils/LocaleUtils';
 import logoZalfWhite from '../../../../../static/img/logo_zalf_white_half.png';
 import './navigation.css';
 
 const navigationItems = [
-    { href: '/catalogue', label: 'All Data' },
+    { href: '/catalogue', labelId: 'zalfTheme.nav.allData' },
     {
-        label: 'Topics',
+        key: 'topics',
+        labelId: 'zalfTheme.nav.topics',
         children: [
-            { href: '/catalogue/#/?q=Animals', label: 'Animals' },
-            { href: '/catalogue/#/?q=Atmosphere', label: 'Atmosphere' },
-            { href: '/catalogue/#/?q=Climate', label: 'Climate' },
-            { href: '/catalogue/#/?q=Forest', label: 'Forest' },
-            { href: '/catalogue/#/?q=Hydrology', label: 'Hydrology' },
-            { href: '/catalogue/#/?q=Landscape', label: 'Landscape' },
-            { href: '/catalogue/#/?q=Long%20Term%20Field%20Experiment', label: 'Long Term Field Experiment' },
-            { href: '/catalogue/#/?q=Plants', label: 'Plants' },
-            { href: '/catalogue/#/?q=Soil%20Profiles', label: 'Soil Profiles' },
-            { href: '/catalogue/#/?q=Water', label: 'Water' }
+            { href: '/catalogue/#/?q=Animals', labelId: 'zalfTheme.topic.animals' },
+            { href: '/catalogue/#/?q=Atmosphere', labelId: 'zalfTheme.topic.atmosphere' },
+            { href: '/catalogue/#/?q=Climate', labelId: 'zalfTheme.topic.climate' },
+            { href: '/catalogue/#/?q=Forest', labelId: 'zalfTheme.topic.forest' },
+            { href: '/catalogue/#/?q=Hydrology', labelId: 'zalfTheme.topic.hydrology' },
+            { href: '/catalogue/#/?q=Landscape', labelId: 'zalfTheme.topic.landscape' },
+            { href: '/catalogue/#/?q=Long%20Term%20Field%20Experiment', labelId: 'zalfTheme.topic.longTermFieldExperiment' },
+            { href: '/catalogue/#/?q=Plants', labelId: 'zalfTheme.topic.plants' },
+            { href: '/catalogue/#/?q=Soil%20Profiles', labelId: 'zalfTheme.topic.soilProfiles' },
+            { href: '/catalogue/#/?q=Water', labelId: 'zalfTheme.topic.water' }
         ],
         wide: true
     },
     {
-        label: 'Tools & Services',
+        key: 'tools-services',
+        labelId: 'zalfTheme.nav.toolsServices',
         children: [
-            { href: 'https://tools.bonares.de/ltfe/', label: 'LTE Maps', external: true },
-            { href: 'https://tools.bonares.de/bp_db/', label: 'Soil Profiles', external: true },
-            { href: 'https://dqkit.bonares.de/', label: 'DQ Kit', external: true }
+            { href: 'https://tools.bonares.de/ltfe/', labelId: 'zalfTheme.nav.lteMaps', external: true },
+            { href: 'https://tools.bonares.de/bp_db/', labelId: 'zalfTheme.nav.soilProfiles', external: true },
+            { href: 'https://dqkit.bonares.de/', labelId: 'zalfTheme.nav.dqKit', external: true }
         ]
     },
-    { href: '/upload', label: 'Upload' },
+    { href: '/upload', labelId: 'zalfTheme.nav.upload' },
     {
-        label: 'About',
+        key: 'about',
+        labelId: 'zalfTheme.nav.about',
         children: [
-            { href: '/development', label: 'Development' },
-            { href: '/services', label: 'OGC Services and API' },
-            { href: '/faq', label: 'FAQ' },
-            { href: '#', label: 'Contact Us' },
-            { href: '#', label: 'Version 2.0.1', muted: true }
+            { href: '/development', labelId: 'zalfTheme.nav.development' },
+            { href: '/services', labelId: 'zalfTheme.nav.ogcServicesApi' },
+            { href: '/faq', labelId: 'zalfTheme.nav.faq' },
+            { href: '#', labelId: 'zalfTheme.nav.contactUs' },
+            { href: '#', labelId: 'zalfTheme.nav.version', msgParams: { version: '2.0.1' }, muted: true }
         ]
     }
 ];
@@ -55,7 +61,18 @@ function isActiveLink(href, currentUrl) {
     return currentUrl.pathname + currentUrl.hash === href || currentUrl.pathname === href;
 }
 
-function Navigation() {
+function getItemKey(item) {
+    return item.key || item.labelId || item.label || item.href;
+}
+
+function renderLabel(item) {
+    if (item.labelId) {
+        return React.createElement(Message, { msgId: item.labelId, msgParams: item.msgParams });
+    }
+    return item.label;
+}
+
+function Navigation({ messages }) {
     const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
     const [openDropdown, setOpenDropdown] = React.useState(null);
     const [currentUrl, setCurrentUrl] = React.useState(() => ({
@@ -71,6 +88,11 @@ function Navigation() {
         const bottomNavbar = document.querySelector('#gn-brand-navbar-bottom');
         const searchBar = document.querySelector('#gn-search-bar');
         const utilitiesMenu = document.querySelector('.gn-brand-navbar-right-menu-container');
+        const searchInput = searchBar?.querySelector('input');
+
+        if (searchInput) {
+            searchInput.placeholder = getMessageById(messages, 'zalfTheme.nav.searchDatasets') || 'Search Datasets';
+        }
 
         const movedNodes = [
             {
@@ -133,18 +155,18 @@ function Navigation() {
             window.removeEventListener('hashchange', closeMenu);
             window.removeEventListener('resize', closeMenu);
         };
-    }, []);
+    }, [messages]);
 
     function renderNavLink(link, className) {
         const active = isActiveLink(link.href, currentUrl);
         return React.createElement(
             'a',
             {
-                key: link.label,
+                key: getItemKey(link),
                 href: link.href,
                 className: `${className}${active ? ' is-active' : ''}${link.accent ? ' is-accent' : ''}`
             },
-            link.label
+            renderLabel(link)
         );
     }
 
@@ -152,14 +174,14 @@ function Navigation() {
         return React.createElement(
             'a',
             {
-                key: `${item.label}-${idx}`,
+                key: `${getItemKey(item)}-${idx}`,
                 href: item.href,
                 className: `zalf-navigation__dropdown-link${item.muted ? ' is-muted' : ''}`,
                 target: item.external ? '_blank' : undefined,
                 rel: item.external ? 'noreferrer' : undefined,
                 onClick: () => setOpenDropdown(null)
             },
-            item.label
+            renderLabel(item)
         );
     }
 
@@ -168,15 +190,16 @@ function Navigation() {
             return renderNavLink(item, 'zalf-navigation__link');
         }
 
-        const isOpen = openDropdown === item.label;
+        const itemKey = getItemKey(item);
+        const isOpen = openDropdown === itemKey;
         const columns = item.wide ? [item.children.slice(0, 5), item.children.slice(5)] : [item.children];
 
         return React.createElement(
             'div',
             {
-                key: `${item.label}-${idx}`,
+                key: `${itemKey}-${idx}`,
                 className: `zalf-navigation__dropdown${isOpen ? ' is-open' : ''}`,
-                onMouseEnter: () => window.innerWidth >= 992 && setOpenDropdown(item.label),
+                onMouseEnter: () => window.innerWidth >= 992 && setOpenDropdown(itemKey),
                 onMouseLeave: () => window.innerWidth >= 992 && setOpenDropdown(null)
             },
             React.createElement(
@@ -185,9 +208,9 @@ function Navigation() {
                     type: 'button',
                     className: `zalf-navigation__link zalf-navigation__dropdown-toggle${isOpen ? ' is-active' : ''}`,
                     'aria-expanded': isOpen ? 'true' : 'false',
-                    onClick: () => setOpenDropdown(isOpen ? null : item.label)
+                    onClick: () => setOpenDropdown(isOpen ? null : itemKey)
                 },
-                item.label,
+                renderLabel(item),
                 React.createElement('span', { className: 'zalf-navigation__dropdown-caret' }, '▾')
             ),
             React.createElement(
@@ -198,7 +221,7 @@ function Navigation() {
                 ...columns.map((column, columnIndex) => React.createElement(
                     'div',
                     {
-                        key: `${item.label}-column-${columnIndex}`,
+                        key: `${itemKey}-column-${columnIndex}`,
                         className: 'zalf-navigation__dropdown-column'
                     },
                     ...column.map(renderDropdownItem)
@@ -231,7 +254,7 @@ function Navigation() {
                         type: 'button',
                         className: `zalf-navigation__toggle${mobileMenuOpen ? ' is-open' : ''}`,
                         'aria-expanded': mobileMenuOpen ? 'true' : 'false',
-                        'aria-label': 'Toggle navigation menu',
+                        'aria-label': getMessageById(messages, 'zalfTheme.nav.toggleNavigationMenu') || 'Toggle navigation menu',
                         onClick: () => setMobileMenuOpen(!mobileMenuOpen)
                     },
                     React.createElement('span', null),
@@ -245,7 +268,10 @@ function Navigation() {
                     },
                     React.createElement(
                         'nav',
-                        { className: 'zalf-navigation__primary', 'aria-label': 'Primary navigation' },
+                        {
+                            className: 'zalf-navigation__primary',
+                            'aria-label': getMessageById(messages, 'zalfTheme.nav.primaryNavigation') || 'Primary navigation'
+                        },
                         ...navigationItems.map(renderPrimaryItem)
                     ),
                     React.createElement(
@@ -266,4 +292,6 @@ function Navigation() {
     );
 }
 
-export default Navigation;
+export default connect((state) => ({
+    messages: state?.locale?.messages || {}
+}))(Navigation);

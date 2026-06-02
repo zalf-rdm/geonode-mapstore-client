@@ -251,12 +251,8 @@
             "datasetsCatalogFilterPlaceholder": "Datensätze nach Titel oder Zusammenfassung filtern...",
             "datasetsCatalogEntriesNoResults": "Keine Ergebnisse entsprechen Ihrer Suche",
             "legend": "Legende",
-<<<<<<< HEAD
-
-=======
             "nodeTooltipContent": "Tooltip-Inhalt",
             "nodeTooltipPlacement": "Tooltip-Platzierung",
->>>>>>> 8fdc993dc4567fa86954cb78418afa794cc8b620
             "zoomToLayer": "Auf Layerausmaß zoomen",
             "applyCurrentStyleToLayer": "Aktuellen Stil auf Ebene anwenden",
             "deleteCurrentStyle": "Aktuellen Stil löschen",
@@ -559,6 +555,56 @@
         "resourcesCatalog": {
             "anonymous": "Jeder",
             "registered-members": "Registrierte Mitglieder"
+        },
+        "zalfTheme": {
+            "nav": {
+                "allData": "Alle Daten",
+                "topics": "Themen",
+                "toolsServices": "Werkzeuge und Dienste",
+                "lteMaps": "LTE-Karten",
+                "soilProfiles": "Bodenprofile",
+                "dqKit": "DQ Kit",
+                "upload": "Hochladen",
+                "about": "Über uns",
+                "development": "Entwicklung",
+                "ogcServicesApi": "OGC-Dienste und API",
+                "faq": "FAQ",
+                "contactUs": "Kontakt",
+                "version": "Version {version}",
+                "searchDatasets": "Datensätze suchen",
+                "toggleNavigationMenu": "Navigationsmenü umschalten",
+                "primaryNavigation": "Hauptnavigation"
+            },
+            "topic": {
+                "animals": "Tiere",
+                "atmosphere": "Atmosphäre",
+                "climate": "Klima",
+                "forest": "Wald",
+                "hydrology": "Hydrologie",
+                "landscape": "Landschaft",
+                "longTermFieldExperiment": "Langzeit-Feldexperiment",
+                "plants": "Pflanzen",
+                "soilProfiles": "Bodenprofile",
+                "water": "Wasser"
+            },
+            "footer": {
+                "repositoryTitle": "BonaRes-Repository",
+                "repositoryDescription": "Entdecken, visualisieren und teilen Sie hochwertige Datensätze für Open Science, Politik und Innovation.",
+                "quickLinks": "Schnellzugriffe",
+                "resources": "Ressourcen",
+                "certifiedBy": "Zertifiziert von",
+                "poweredBy": "Bereitgestellt von",
+                "about": "Über uns",
+                "upload": "Hochladen",
+                "ogcServicesApi": "OGC-Dienste und API",
+                "researchDataManagement": "Forschungsdatenmanagement",
+                "publications": "Publikationen",
+                "dataPolicy": "Datenrichtlinie",
+                "howToCiteUs": "So zitieren Sie uns",
+                "imprint": "Impressum",
+                "privacy": "Datenschutz",
+                "copyright": "© BonaRes Repository. Alle Rechte vorbehalten"
+            }
         }
     }
 }
