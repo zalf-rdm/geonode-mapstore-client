@@ -28,6 +28,9 @@ import MetadataEditorPlugin from '@js/plugins/MetadataEditor';
 import MetadataViewerPlugin from '@js/plugins/MetadataEditor/MetadataViewer';
 import FavoritesPlugin from '@js/plugins/Favorites';
 import CreateDatasetPlugin from '@js/plugins/CreateDataset';
+import ZalfNavigationPlugin from '../../themes/zalf/plugins/NavigationPlugin';
+import ZalfHomepagePlugin from '../../themes/zalf/plugins/HomepagePlugin';
+import ZalfFooterPlugin from '../../themes/zalf/plugins/FooterPlugin';
 import {
     ResourcesGridPlugin,
     ResourcesFiltersFormPlugin
@@ -86,6 +89,9 @@ export const plugins = {
     FavoritesPlugin,
     ResourcesFiltersFormPlugin,
     CreateDatasetPlugin,
+    ZalfNavigationPlugin,
+    ZalfHomepagePlugin,
+    ZalfFooterPlugin,
     IsochronePlugin: Isochrone,
     ItineraryPlugin: Itinerary,
     SecurityPopupPlugin: SecurityPopup,

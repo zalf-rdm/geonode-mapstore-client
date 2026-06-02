@@ -4106,6 +4106,17 @@
                 "name": "Favorites"
             }
         ],
+        "zalf_home": [
+            {
+                "name": "ZalfNavigation"
+            },
+            {
+                "name": "ZalfHomepage"
+            },
+            {
+                "name": "ZalfFooter"
+            }
+        ],
         "viewer": [
             {
                 "name": "ActionNavbar",
