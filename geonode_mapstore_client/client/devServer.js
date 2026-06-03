@@ -56,6 +56,7 @@ module.exports = (devServerDefault, projectConfig) => {
                     '!**/static/mapstore/ms-translations/**',
                     '!**/static/mapstore/symbols/**',
                     '!**/static/mapstore/version.txt',
+                    '!**/static/img/**',
                     '!**/MapStore2/**',
                     '!**/node_modules/**',
                     '!**/docs/**'
