@@ -181,6 +181,7 @@
             "close": "Close",
             "share": "Share",
             "download": "Download",
+            "downloadAll": "Download All",
             "moreinfo": "More info",
             "setMapLikeThumbnail": "Set map thumbnail",
             "thumbnailsaved": "Thumbnail saved",
@@ -329,6 +330,7 @@
             "readLess": "Read less",
             "linkedResources": {
                 "label": "Linked Resources",
+                "downloadLabel": "Download",
                 "linkedBy": "Linked By",
                 "linkedTo": "Linked To",
                 "uses": "Uses",

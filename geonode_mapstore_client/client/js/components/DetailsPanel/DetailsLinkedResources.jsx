@@ -8,9 +8,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import isEmpty from 'lodash/isEmpty';
+import { Tooltip } from 'react-bootstrap';
+import OverlayTrigger from '@mapstore/framework/components/misc/OverlayTrigger';
 
 import FaIcon from '@js/components/FaIcon';
 import Message from '@mapstore/framework/components/I18N/Message';
+
+const downloadAll = (urls) => {
+    urls.forEach((url) => {
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = url;
+        document.body.appendChild(iframe);
+        setTimeout(() => {
+            if (document.body.contains(iframe)) {
+                document.body.removeChild(iframe);
+            }
+        }, 10000);
+    });
+};
 
 const DetailLinkedResource = ({resources, type}) => {
     return !isEmpty(resources) && (
@@ -23,6 +39,11 @@ const DetailLinkedResource = ({resources, type}) => {
                         <a key={field.pk} href={field.detail_url}>
                             {field.title}
                         </a>
+                        {field.download_url && (
+                            <a href={field.download_url} download className="btn btn-primary btn-xs gn-linked-resource-download">
+                                <Message msgId="gnviewer.download" />
+                            </a>
+                        )}
                     </div>
                 </div>);
             })}
@@ -53,8 +74,32 @@ const DetailsLinkedResources = ({ fields, resourceTypesInfo }) => {
         }
     ];
 
+    const allDownloadUrls = linkedResources
+        .flatMap(({resources}) => resources)
+        .map(r => r.download_url)
+        .filter(Boolean);
+
     return (
         <div className="linked-resources">
+            {allDownloadUrls.length > 0 && (
+                <div className="gn-linked-resources-download-all">
+                    <OverlayTrigger
+                        placement="top"
+                        overlay={
+                            <Tooltip id="download-all-tooltip">
+                                <Message msgId="gnviewer.downloadAllHint" />
+                            </Tooltip>
+                        }
+                    >
+                        <button
+                            className="btn btn-primary btn-sm"
+                            onClick={() => downloadAll(allDownloadUrls)}
+                        >
+                            <Message msgId="gnviewer.downloadAll" />
+                        </button>
+                    </OverlayTrigger>
+                </div>
+            )}
             {
                 linkedResources.map(({resources, type})=> <DetailLinkedResource resources={resources} type={type}/>)
             }

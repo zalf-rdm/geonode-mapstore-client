@@ -187,6 +187,8 @@
             "close": "Close",
             "share": "Share",
             "download": "Download",
+            "downloadAll": "Download All",
+            "downloadAllHint": "For large datasets, preparing the download may take some time.",
             "moreinfo": "More info",
             "setMapLikeThumbnail": "Set map thumbnail",
             "thumbnailsaved": "Thumbnail saved",
@@ -358,6 +360,7 @@
             "readLess": "Read less",
             "linkedResources": {
                 "label": "Linked Resources",
+                "downloadLabel": "Download",
                 "linkedBy": "Linked By",
                 "linkedTo": "Linked To",
                 "uses": "Uses",

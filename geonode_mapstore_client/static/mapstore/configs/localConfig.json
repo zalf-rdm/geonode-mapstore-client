@@ -2352,7 +2352,7 @@
                         {
                             "type": "linked-resources",
                             "id": "related",
-                            "labelId": "gnviewer.linkedResources.label",
+                            "labelId": "gnviewer.linkedResources.downloadLabel",
                             "items": "{context.get(state('gnResourceData'), 'linkedResources')}"
                         },
                         {
