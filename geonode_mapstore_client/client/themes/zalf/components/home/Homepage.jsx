@@ -6,6 +6,13 @@
 import React from 'react';
 import './homepage.css';
 
+const CMS_ENDPOINTS = {
+    banners: '/api/v2/zalf-cms/banners/',
+    highlightCases: '/api/v2/zalf-cms/highlight-cases/',
+    trainings: '/api/v2/zalf-cms/trainings/',
+    news: '/api/v2/zalf-cms/news/?is_featured=true'
+};
+
 const topicItems = [
     { label: 'Animals', href: '/catalogue/#/?q=Animals' },
     { label: 'Atmosphere', href: '/catalogue/#/?q=Atmosphere' },
@@ -19,16 +26,16 @@ const topicItems = [
 
 const valueItems = [
     {
-        title: 'Section-driven storytelling',
-        description: 'Each section has a clear job: orient the visitor, expose topics, explain value, and promote curated content.'
+        title: 'something to upload',
+        description: 'upload text.'
     },
     {
-        title: 'Frontend-ready for CMS data',
-        description: 'The spotlight section already follows a stable card model that can later be loaded from an API or admin panel.'
+        title: 'something to upload',
+        description: 'upload text.'
     },
     {
-        title: 'Consistent with catalogue growth',
-        description: 'The layout is designed to absorb more content without collapsing into a single static landing page.'
+        title: 'something to upload',
+        description: 'upload text.'
     }
 ];
 
@@ -118,6 +125,15 @@ const spotlightItems = [
 ];
 
 const heroBackground = '/static/img/yulian-alexeyev-xDLEUTWCZdc-unsplash.jpg';
+const staticHero = {
+    eyebrow: 'The global hub for agricultural data',
+    title: 'BonaRes Repository',
+    description:
+        'Search, discover, and reuse agricultural data from long-term experiments, monitoring programs, and curated research collections.',
+    actionLabel: 'About BonaRes',
+    actionHref: '/about',
+    image: heroBackground
+};
 
 const trainingResources = [
     {
@@ -162,29 +178,161 @@ const idasSites = [
     }
 ];
 
+function isNonEmptyString(value) {
+    return typeof value === 'string' && value.trim() !== '';
+}
+
+function firstNonEmptyString(...values) {
+    return values.find(isNonEmptyString) || '';
+}
+
+function normalizeImageUrl(value) {
+    return isNonEmptyString(value) ? value.trim() : '';
+}
+
+function normalizeBanner(item) {
+    return {
+        eyebrow: firstNonEmptyString(item?.eyebrow, staticHero.eyebrow),
+        title: firstNonEmptyString(item?.title, staticHero.title),
+        subtitle: firstNonEmptyString(item?.subtitle, staticHero.description),
+        image: normalizeImageUrl(item?.image),
+        link: normalizeImageUrl(item?.link),
+        buttonLabel: firstNonEmptyString(item?.button_label, staticHero.actionLabel)
+    };
+}
+
+function normalizeHighlightCase(item, index) {
+    const fallback = highlightedCases[index % highlightedCases.length];
+    return {
+        tabLabel: firstNonEmptyString(item?.subtitle, item?.title, fallback.tabLabel),
+        eyebrow: firstNonEmptyString(item?.subtitle, fallback.eyebrow),
+        title: firstNonEmptyString(item?.title, fallback.title),
+        description: firstNonEmptyString(item?.description, fallback.title),
+        button: firstNonEmptyString(item?.button_text, fallback.button),
+        href: firstNonEmptyString(item?.link, fallback.href),
+        image: normalizeImageUrl(item?.image) || fallback.image
+    };
+}
+
+function normalizeTraining(item, index) {
+    const fallback = trainingResources[index % trainingResources.length];
+    return {
+        title: firstNonEmptyString(item?.title, fallback.title),
+        source: firstNonEmptyString(item?.source, fallback.source),
+        description: firstNonEmptyString(item?.summary, item?.subtitle),
+        href: firstNonEmptyString(item?.external_link, item?.url, item?.link),
+        image: normalizeImageUrl(item?.hero_image) || normalizeImageUrl(item?.image)
+    };
+}
+
+function normalizeSpotlightItem(item, index) {
+    const fallback = spotlightItems[index % spotlightItems.length];
+    return {
+        kicker: firstNonEmptyString(item?.subtitle, fallback.kicker),
+        title: firstNonEmptyString(item?.title, fallback.title),
+        description: firstNonEmptyString(item?.summary, fallback.description),
+        button: fallback.button,
+        href: firstNonEmptyString(item?.external_link, item?.url, fallback.href),
+        image: normalizeImageUrl(item?.hero_image) || fallback.image
+    };
+}
+
+function fetchJsonArray(url, signal) {
+    return fetch(url, {
+        signal,
+        credentials: 'same-origin',
+        headers: {
+            Accept: 'application/json'
+        }
+    })
+        .then((response) => {
+            if (!response.ok) {
+                return null;
+            }
+            return response.json();
+        })
+        .then((data) => (Array.isArray(data) ? data : null))
+        .catch((error) => {
+            if (error?.name === 'AbortError') {
+                return null;
+            }
+            return null;
+        });
+}
+
 function renderSectionHead(eyebrow, title, description, light) {
     return React.createElement(
         'div',
         {
             className: `zalf-homepage__section-head${light ? ' zalf-homepage__section-head--light' : ''}`
         },
-        React.createElement('span', { className: 'zalf-homepage__eyebrow' }, eyebrow),
-        React.createElement('h2', { className: 'zalf-homepage__section-title' }, title),
+        eyebrow ? React.createElement('span', { className: 'zalf-homepage__eyebrow' }, eyebrow) : null,
+        title ? React.createElement('h2', { className: 'zalf-homepage__section-title' }, title) : null,
         description ? React.createElement('p', { className: 'zalf-homepage__section-description' }, description) : null
     );
 }
 
 function Homepage() {
+    const [cmsBanners, setCmsBanners] = React.useState([]);
+    const [cmsHighlightCases, setCmsHighlightCases] = React.useState([]);
+    const [cmsTrainings, setCmsTrainings] = React.useState([]);
+    const [cmsNews, setCmsNews] = React.useState([]);
     const [activeSpotlight, setActiveSpotlight] = React.useState(0);
     const [activeCase, setActiveCase] = React.useState(0);
     const [heroQuery, setHeroQuery] = React.useState('');
 
     React.useEffect(() => {
+        const controller = new AbortController();
+
+        Promise.all([
+            fetchJsonArray(CMS_ENDPOINTS.banners, controller.signal),
+            fetchJsonArray(CMS_ENDPOINTS.highlightCases, controller.signal),
+            fetchJsonArray(CMS_ENDPOINTS.trainings, controller.signal),
+            fetchJsonArray(CMS_ENDPOINTS.news, controller.signal)
+        ]).then(([banners, highlightCases, trainings, news]) => {
+            if (controller.signal.aborted) {
+                return;
+            }
+
+            setCmsBanners((banners || []).map(normalizeBanner));
+            setCmsHighlightCases((highlightCases || []).map(normalizeHighlightCase));
+            setCmsTrainings((trainings || []).map(normalizeTraining));
+            setCmsNews((news || []).map(normalizeSpotlightItem));
+        });
+
+        return () => controller.abort();
+    }, []);
+
+    const resolvedHighlightCases = cmsHighlightCases.length > 0 ? cmsHighlightCases : highlightedCases;
+    const resolvedTrainingResources = cmsTrainings.length > 0 ? cmsTrainings : trainingResources;
+    const resolvedSpotlightItems = cmsNews.length > 0 ? cmsNews : spotlightItems;
+    const heroBanner = cmsBanners[0];
+    const activeCaseIndex = Math.min(activeCase, resolvedHighlightCases.length - 1);
+    const currentCase = resolvedHighlightCases[activeCaseIndex];
+    const spotlightCount = resolvedSpotlightItems.length;
+    const previousSpotlight = (activeSpotlight + spotlightCount - 1) % spotlightCount;
+    const nextSpotlight = (activeSpotlight + 1) % spotlightCount;
+    const heroEyebrow = heroBanner?.eyebrow || staticHero.eyebrow;
+    const heroTitle = heroBanner?.title || staticHero.title;
+    const heroDescription = heroBanner?.subtitle || staticHero.description;
+    const heroActionHref = heroBanner?.link || staticHero.actionHref;
+    const heroActionLabel = heroBanner?.buttonLabel || staticHero.actionLabel;
+    const heroBackgroundImage = heroBanner?.image || staticHero.image;
+
+    React.useEffect(() => {
+        setActiveCase((current) => Math.min(current, resolvedHighlightCases.length - 1));
+    }, [resolvedHighlightCases.length]);
+
+    React.useEffect(() => {
         const timer = window.setInterval(() => {
-            setActiveSpotlight((current) => (current + 1) % spotlightItems.length);
+            setActiveSpotlight((current) => (current + 1) % resolvedSpotlightItems.length);
         }, 6000);
         return () => window.clearInterval(timer);
-    }, []);
+    }, [resolvedSpotlightItems.length]);
+
+    React.useEffect(() => {
+        setActiveSpotlight((current) => Math.min(current, resolvedSpotlightItems.length - 1));
+    }, [resolvedSpotlightItems.length]);
 
     const handleHeroSearchSubmit = (event) => {
         event.preventDefault();
@@ -192,11 +340,6 @@ function Homepage() {
         const target = query ? `/catalogue/#/?q=${encodeURIComponent(query)}` : '/catalogue/#/';
         window.location.href = target;
     };
-
-    const currentCase = highlightedCases[activeCase];
-    const spotlightCount = spotlightItems.length;
-    const previousSpotlight = (activeSpotlight + spotlightCount - 1) % spotlightCount;
-    const nextSpotlight = (activeSpotlight + 1) % spotlightCount;
 
     return React.createElement(
         'main',
@@ -207,7 +350,7 @@ function Homepage() {
             {
                 className: 'zalf-homepage__section zalf-homepage__hero',
                 style: {
-                    backgroundImage: `linear-gradient(90deg, rgba(16, 31, 12, 0.32) 0%, rgba(16, 31, 12, 0.24) 28%, rgba(16, 31, 12, 0.15) 80%), url(${heroBackground})`
+                    backgroundImage: `linear-gradient(90deg, rgba(16, 31, 12, 0.32) 0%, rgba(16, 31, 12, 0.24) 28%, rgba(16, 31, 12, 0.15) 80%), url(${heroBackgroundImage})`
                 }
             },
             React.createElement(
@@ -216,8 +359,9 @@ function Homepage() {
                 React.createElement(
                     'div',
                     { className: 'zalf-homepage__hero-copy' },
-                    React.createElement('span', { className: 'zalf-homepage__eyebrow' }, 'The global hub for agricultural data'),
-                    React.createElement('h1', { className: 'zalf-homepage__title' }, 'BonaRes Repository'),
+                    React.createElement('span', { className: 'zalf-homepage__eyebrow' }, heroEyebrow),
+                    React.createElement('h1', { className: 'zalf-homepage__title' }, heroTitle),
+                    React.createElement('p', { className: 'zalf-homepage__description' }, heroDescription),
                     React.createElement(
                         'form',
                         { className: 'zalf-homepage__hero-search', onSubmit: handleHeroSearchSubmit, role: 'search' },
@@ -256,7 +400,7 @@ function Homepage() {
                         'div',
                         { className: 'zalf-homepage__actions' },
                         React.createElement('a', { className: 'zalf-homepage__button zalf-homepage__button--primary', href: '/catalogue/#/' }, 'Explore Datasets'),
-                        React.createElement('a', { className: 'zalf-homepage__button zalf-homepage__button--secondary', href: '/about' }, 'About BonaRes')
+                        React.createElement('a', { className: 'zalf-homepage__button zalf-homepage__button--secondary', href: heroActionHref }, heroActionLabel)
                     )
                 )
             )
@@ -305,14 +449,14 @@ function Homepage() {
                         React.createElement(
                             'div',
                             { className: 'zalf-homepage__cases-tabs', role: 'tablist', 'aria-label': 'Highlighted cases' },
-                            ...highlightedCases.map(({ tabLabel }, index) => React.createElement(
+                            ...resolvedHighlightCases.map(({ tabLabel }, index) => React.createElement(
                                 'button',
                                 {
-                                    key: tabLabel,
+                                    key: `${tabLabel}-${index}`,
                                     type: 'button',
                                     role: 'tab',
-                                    'aria-selected': index === activeCase ? 'true' : 'false',
-                                    className: `zalf-homepage__cases-tab${index === activeCase ? ' is-active' : ''}`,
+                                    'aria-selected': index === activeCaseIndex ? 'true' : 'false',
+                                    className: `zalf-homepage__cases-tab${index === activeCaseIndex ? ' is-active' : ''}`,
                                     onClick: () => setActiveCase(index)
                                 },
                                 tabLabel
@@ -385,10 +529,7 @@ function Homepage() {
             React.createElement(
                 'div',
                 { className: 'zalf-homepage__gallery-shell' },
-                renderSectionHead(
-                    '',
-                    false
-                ),
+                renderSectionHead(null, null),
                 React.createElement(
                     'div',
                     { className: 'zalf-homepage__spotlight-shell zalf-homepage__spotlight-shell--panels' },
@@ -400,10 +541,10 @@ function Homepage() {
                             {
                                 type: 'button',
                                 className: 'zalf-homepage__spotlight-card zalf-homepage__spotlight-card--preview zalf-homepage__spotlight-card--left',
-                                'aria-label': `Previous slide: ${spotlightItems[previousSpotlight].title}`,
-                                onClick: () => setActiveSpotlight((activeSpotlight + spotlightItems.length - 1) % spotlightItems.length),
+                                'aria-label': `Previous slide: ${resolvedSpotlightItems[previousSpotlight].title}`,
+                                onClick: () => setActiveSpotlight((activeSpotlight + resolvedSpotlightItems.length - 1) % resolvedSpotlightItems.length),
                                 style: {
-                                    backgroundImage: `linear-gradient(180deg, rgba(247, 250, 246, 0.18), rgba(247, 250, 246, 0.4)), url(${spotlightItems[previousSpotlight].image})`
+                                    backgroundImage: `linear-gradient(180deg, rgba(247, 250, 246, 0.18), rgba(247, 250, 246, 0.4)), url(${resolvedSpotlightItems[previousSpotlight].image})`
                                 }
                             }
                         ),
@@ -414,9 +555,9 @@ function Homepage() {
                                 'a',
                                 {
                                     className: 'zalf-homepage__spotlight-card zalf-homepage__spotlight-card--active',
-                                    href: spotlightItems[activeSpotlight].href,
+                                    href: resolvedSpotlightItems[activeSpotlight].href,
                                     style: {
-                                        backgroundImage: `linear-gradient(135deg, rgba(5, 19, 35, 0.12), rgba(5, 19, 35, 0.58)), url(${spotlightItems[activeSpotlight].image})`
+                                        backgroundImage: `linear-gradient(135deg, rgba(5, 19, 35, 0.12), rgba(5, 19, 35, 0.58)), url(${resolvedSpotlightItems[activeSpotlight].image})`
                                     }
                                 },
                                 React.createElement(
@@ -425,13 +566,13 @@ function Homepage() {
                                     React.createElement(
                                         'div',
                                         { className: 'zalf-homepage__spotlight-footer' },
-                                        React.createElement('span', { className: 'zalf-homepage__button zalf-homepage__button--light' }, spotlightItems[activeSpotlight].button),
+                                        React.createElement('span', { className: 'zalf-homepage__button zalf-homepage__button--light' }, resolvedSpotlightItems[activeSpotlight].button),
                                         React.createElement(
                                             'div',
                                             { className: 'zalf-homepage__spotlight-copy' },
-                                            React.createElement('span', { className: 'zalf-homepage__spotlight-kicker' }, spotlightItems[activeSpotlight].kicker),
-                                            React.createElement('h3', null, spotlightItems[activeSpotlight].title),
-                                            React.createElement('p', null, spotlightItems[activeSpotlight].description)
+                                            React.createElement('span', { className: 'zalf-homepage__spotlight-kicker' }, resolvedSpotlightItems[activeSpotlight].kicker),
+                                            React.createElement('h3', null, resolvedSpotlightItems[activeSpotlight].title),
+                                            React.createElement('p', null, resolvedSpotlightItems[activeSpotlight].description)
                                         )
                                     )
                                 )
@@ -442,10 +583,10 @@ function Homepage() {
                             {
                                 type: 'button',
                                 className: 'zalf-homepage__spotlight-card zalf-homepage__spotlight-card--preview zalf-homepage__spotlight-card--right',
-                                'aria-label': `Next slide: ${spotlightItems[nextSpotlight].title}`,
-                                onClick: () => setActiveSpotlight((activeSpotlight + 1) % spotlightItems.length),
+                                'aria-label': `Next slide: ${resolvedSpotlightItems[nextSpotlight].title}`,
+                                onClick: () => setActiveSpotlight((activeSpotlight + 1) % resolvedSpotlightItems.length),
                                 style: {
-                                    backgroundImage: `linear-gradient(180deg, rgba(247, 250, 246, 0.18), rgba(247, 250, 246, 0.4)), url(${spotlightItems[nextSpotlight].image})`
+                                    backgroundImage: `linear-gradient(180deg, rgba(247, 250, 246, 0.18), rgba(247, 250, 246, 0.4)), url(${resolvedSpotlightItems[nextSpotlight].image})`
                                 }
                             }
                         )
@@ -454,7 +595,7 @@ function Homepage() {
                 React.createElement(
                     'div',
                     { className: 'zalf-homepage__spotlight-dots', role: 'tablist', 'aria-label': 'Spotlight pagination' },
-                    ...spotlightItems.map(({ title }, index) => React.createElement(
+                    ...resolvedSpotlightItems.map(({ title }, index) => React.createElement(
                         'button',
                         {
                             key: title,
@@ -466,12 +607,6 @@ function Homepage() {
                         }
                     ))
                 ),
-                React.createElement(
-                    'div',
-                    { className: 'zalf-homepage__spotlight-note' },
-                    React.createElement('strong', null, 'Next phase:'),
-                    ' replace the local spotlight array with an admin-managed source and keep the same card schema.'
-                )
             )
         ),
 
@@ -488,15 +623,27 @@ function Homepage() {
                     React.createElement(
                         'div',
                         { className: 'zalf-homepage__training-grid' },
-                        ...trainingResources.map(({ title, source }) => React.createElement(
-                            'article',
-                            { key: title, className: 'zalf-homepage__training-card' },
-                            React.createElement('div', { className: 'zalf-homepage__training-thumb' }),
+                        ...resolvedTrainingResources.map(({ title, source, description, href, image }, index) => React.createElement(
+                            href ? 'a' : 'article',
+                            {
+                                key: `${title}-${index}`,
+                                className: 'zalf-homepage__training-card',
+                                href: href || undefined,
+                                target: href && /^https?:/i.test(href) ? '_blank' : undefined,
+                                rel: href && /^https?:/i.test(href) ? 'noreferrer' : undefined
+                            },
+                            React.createElement('div', {
+                                className: 'zalf-homepage__training-thumb',
+                                style: image
+                                    ? { backgroundImage: `linear-gradient(135deg, rgba(22, 66, 38, 0.18), rgba(125, 183, 63, 0.28)), url(${image})` }
+                                    : undefined
+                            }),
                             React.createElement(
                                 'div',
                                 { className: 'zalf-homepage__training-copy' },
                                 React.createElement('h3', null, title),
-                                React.createElement('span', { className: 'zalf-homepage__training-source' }, source)
+                                React.createElement('span', { className: 'zalf-homepage__training-source' }, source),
+                                description ? React.createElement('p', { className: 'zalf-homepage__training-description' }, description) : null
                             )
                         ))
                     ),
@@ -521,11 +668,20 @@ function Homepage() {
                 React.createElement(
                     'div',
                     { className: 'zalf-homepage__idas-list' },
-                    ...idasSites.map(({ name, accent, description }) => React.createElement(
+                    ...idasSites.map(({ name, accent, description, href }) => React.createElement(
                         'article',
                         { key: name, className: 'zalf-homepage__idas-row' },
                         React.createElement('span', { className: 'zalf-homepage__idas-badge', style: { backgroundColor: accent } }),
-                        React.createElement('h3', { className: 'zalf-homepage__idas-name' }, name),
+                        React.createElement(
+                            'a',
+                            {
+                                className: 'zalf-homepage__idas-name',
+                                href,
+                                target: '_blank',
+                                rel: 'noreferrer'
+                            },
+                            name
+                        ),
                         React.createElement('p', { className: 'zalf-homepage__idas-description' }, description)
                     ))
                 )

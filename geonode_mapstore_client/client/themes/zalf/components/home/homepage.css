@@ -33,7 +33,7 @@
 }
 
 .zalf-homepage__section--gallery .zalf-homepage__eyebrow {
-    color: #6d8f2c;
+    color: #ffffff;
 }
 
 .zalf-homepage__section--gallery .zalf-homepage__section-title {
@@ -112,7 +112,7 @@
     font-weight: 500;
     letter-spacing: 0;
     text-transform: none;
-    color: rgba(255, 255, 255, 0.92);
+    color: #ffffffeb;
 }
 
 .zalf-homepage__title,
@@ -644,6 +644,17 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+    color: inherit;
+    text-decoration: none;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.zalf-homepage__training-card:hover,
+.zalf-homepage__training-card:focus-visible {
+    color: inherit;
+    text-decoration: none;
+    transform: translateY(-2px);
+    opacity: 0.98;
 }
 
 .zalf-homepage__training-thumb {
@@ -652,6 +663,9 @@
     background: rgba(231, 231, 231, 0.86);
     border-radius: 2px;
     box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 
 .zalf-homepage__training-copy h3 {
@@ -668,6 +682,13 @@
     font-weight: 700;
     letter-spacing: 0.02em;
     color: #f3de1d;
+}
+
+.zalf-homepage__training-description {
+    margin: 8px 0 0;
+    font-size: 0.92rem;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .zalf-homepage__training-footer {
