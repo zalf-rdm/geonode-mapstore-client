@@ -62,25 +62,17 @@
         flex: 1 1 auto;
     }
 
-    // Upload/create-dataset pages: gn-upload-container and gn-create-dataset-container
-    // use position:absolute by default (full-viewport overlay). Override so they
-    // participate in the flex column and the ZALF nav + footer stay visible.
+    // Upload pages: gn-upload-container uses position:absolute by default.
+    // gn-create-dataset gets position:absolute from the ._absolute utility class.
+    // Override both so they participate in the flex column instead of covering
+    // the full viewport, keeping the ZALF footer visible below.
     .gn-upload-container,
-    .gn-create-dataset-container {
+    .gn-create-dataset {
         position: relative !important;
         top: auto !important;
         left: auto !important;
         flex: 1 1 auto;
         min-height: 0;
-        // Explicit height so children using height:100% resolve correctly
-        height: calc(100vh - 78px);
-    }
-
-    @media (max-width: 991px) {
-
-        .gn-upload-container,
-        .gn-create-dataset-container {
-            height: calc(100vh - 72px);
-        }
+        overflow: auto;
     }
 }
