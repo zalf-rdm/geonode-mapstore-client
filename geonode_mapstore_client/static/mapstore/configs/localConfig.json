@@ -2094,6 +2094,12 @@
                 "mandatory": true
             },
             {
+                "name": "ZalfNavigation",
+                "cfg": {
+                    "containerPosition": "header"
+                }
+            },
+            {
                 "mandatory": true,
                 "name": "ActionNavbar",
                 "cfg": {
@@ -2838,6 +2844,12 @@
         ],
         "geostory_viewer": [
             {
+                "name": "ZalfNavigation",
+                "cfg": {
+                    "containerPosition": "header"
+                }
+            },
+            {
                 "name": "ActionNavbar",
                 "cfg": {
                     "containerPosition": "header",
@@ -3147,6 +3159,12 @@
             }
         ],
         "dashboard_viewer": [
+            {
+                "name": "ZalfNavigation",
+                "cfg": {
+                    "containerPosition": "header"
+                }
+            },
             {
                 "name": "ActionNavbar",
                 "cfg": {
