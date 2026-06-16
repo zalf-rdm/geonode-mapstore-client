@@ -354,30 +354,7 @@ function Homepage() {
             )
         ),
 
-        React.createElement(
-            'section',
-            { className: 'zalf-homepage__section' },
-            React.createElement(
-                'div',
-                { className: 'zalf-homepage__container' },
-                renderSectionHead(
-                    'Section 05',
-                    'A clear path from discovery to reuse',
-                    'This section can later connect to real catalogue flows, editorial pages, and submission guidance.'
-                ),
-                React.createElement(
-                    'div',
-                    { className: 'zalf-homepage__workflow-grid' },
-                    ...workflowItems.map(({ title, description }, index) => React.createElement(
-                        'article',
-                        { key: title, className: 'zalf-homepage__workflow-card' },
-                        React.createElement('span', { className: 'zalf-homepage__workflow-index' }, `0${index + 1}`),
-                        React.createElement('h3', null, title),
-                        React.createElement('p', null, description)
-                    ))
-                )
-            )
-        ),
+
 
         React.createElement(
             'section',
