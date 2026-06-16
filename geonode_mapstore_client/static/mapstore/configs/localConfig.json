@@ -3812,7 +3812,7 @@
                     "id": "catalog",
                     "titleId": "gnviewer.allResources",
                     "headerNodeSelector": ".zalf-navigation-shell",
-                    "footerNodeSelector": ".zalf-footer-shell",
+                    "footerNodeSelector": "",
                     "queryPage": true,
                     "order": {
                         "defaultLabelId": "resourcesCatalog.orderBy",
@@ -3954,7 +3954,7 @@
                 "cfg": {
                     "resourcesGridId": "catalog",
                     "headerNodeSelector": ".zalf-navigation-shell",
-                    "footerNodeSelector": ".zalf-footer-shell",
+                    "footerNodeSelector": "",
                     "fields": [
                         {
                             "type": "search"
