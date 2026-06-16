@@ -4310,26 +4310,44 @@
         ],
         "upload_dataset": [
             {
+                "name": "ZalfNavigation"
+            },
+            {
                 "name": "UploadResource",
                 "cfg": {
                     "resourceType": "dataset"
                 }
+            },
+            {
+                "name": "ZalfFooter"
             }
         ],
         "upload_document": [
+            {
+                "name": "ZalfNavigation"
+            },
             {
                 "name": "UploadResource",
                 "cfg": {
                     "resourceType": "document"
                 }
+            },
+            {
+                "name": "ZalfFooter"
             }
         ],
         "create_dataset": [
+            {
+                "name": "ZalfNavigation"
+            },
             {
                 "name": "CreateDataset"
             },
             {
                 "name": "Notifications"
+            },
+            {
+                "name": "ZalfFooter"
             }
         ]
     }

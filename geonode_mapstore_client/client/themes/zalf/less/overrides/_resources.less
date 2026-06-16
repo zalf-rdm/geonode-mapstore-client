@@ -1,6 +1,6 @@
 // Ensure the ZALF navigation/footer behave like global layout elements
 // on catalogue pages that still use the default GeoNode resource wrapper.
-.gn-catalogue:has(.ms-resources-grid) {
+.gn-catalogue {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -20,6 +20,13 @@
         flex-direction: column;
         min-height: 0;
         width: 100%;
+    }
+
+    .gn-components {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        min-height: 100vh;
     }
 
     .gn-resource-page-catalog {

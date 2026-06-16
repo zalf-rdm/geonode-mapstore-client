@@ -5,10 +5,6 @@
     color: var(--zalf-footer-text, #f4f4f4) !important;
 }
 
-.gn-catalogue .zalf-footer-shell {
-    flex: 0 0 auto;
-}
-
 .zalf-footer-shell footer.footer {
     font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     background-color: var(--zalf-footer-bg, #0b0b0b) !important;
