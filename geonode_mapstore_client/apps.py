@@ -86,6 +86,16 @@ def run_setup_hooks(*args, **kwargs):
                 template_name="geonode-mapstore-client/catalogue.html"
             ),
         ),
+        re_path(
+            r"^trainings/(?P<slug>[^/]*)/?$",
+            TemplateView.as_view(template_name="page.html"),
+            name="training-detail",
+        ),
+        re_path(
+            r"^highlight-cases/(?P<slug>[^/]*)/?$",
+            TemplateView.as_view(template_name="page.html"),
+            name="highlight-case-detail",
+        ),
         re_path(r"^metadata/(?P<pk>[^/]*)$", views.metadata, name='metadata'),
         re_path(r"^metadata/(?P<pk>[^/]*)/embed$", views.metadata_embed, name='metadata_embed'),
         # required, otherwise will raise no-lookup errors to be analysed

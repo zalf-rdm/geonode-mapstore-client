@@ -39,64 +39,6 @@ const valueItems = [
     }
 ];
 
-const highlightedCases = [
-    {
-        tabLabel: 'Soil Health',
-        eyebrow: 'HIGHLIGHTED CASE',
-        title: 'Track soil health patterns across curated agricultural datasets.',
-        button: 'View case',
-        href: '/catalogue/#/?q=Soil%20Profiles',
-        image: '/static/img/photo-1715766911065-83723bc00d2f-unsplash.avif'
-    },
-    {
-        tabLabel: 'Climate Signals',
-        eyebrow: 'HIGHLIGHTED CASE',
-        title: 'Connect climate indicators with discoverable long-term observation records.',
-        button: 'View case',
-        href: '/catalogue/#/?q=Climate',
-        image: '/static/img/photo-1582033665011-60ccbb964168-unsplash.avif'
-    },
-    {
-        tabLabel: 'Hydrology',
-        eyebrow: 'HIGHLIGHTED CASE',
-        title: 'Surface water, field monitoring, and hydrology collections in one focused entry point.',
-        button: 'View case',
-        href: '/catalogue/#/?q=Hydrology',
-        image: '/static/img/photo-1437482078695-73f5ca6c96e2-unsplash.avif'
-    },
-    {
-        tabLabel: 'Land Use',
-        eyebrow: 'HIGHLIGHTED CASE',
-        title: 'Highlight land use transitions and landscape data with an editorial presentation.',
-        button: 'View case',
-        href: '/catalogue/#/?q=Landscape',
-        image: '/static/img/photo-1471289660181-7feae98d61ae-unsplash.avif'
-    },
-    {
-        tabLabel: 'Biodiversity',
-        eyebrow: 'HIGHLIGHTED CASE',
-        title: 'Feature biodiversity-related records through a guided, visual discovery experience.',
-        button: 'View case',
-        href: '/catalogue/#/?q=Animals',
-        image: '/static/img/photo-1691183213834-3b182d3f01ff-unsplash.avif'
-    }
-];
-
-const workflowItems = [
-    {
-        title: 'Discover',
-        description: 'Guide users into the catalogue with strong entry points and topic-led navigation.'
-    },
-    {
-        title: 'Understand',
-        description: 'Add contextual blocks that explain collections, quality, provenance, and expected usage.'
-    },
-    {
-        title: 'Promote',
-        description: 'Feature campaigns, announcements, and editorial stories in reusable spotlight cards.'
-    }
-];
-
 const spotlightItems = [
     {
         kicker: 'Editorial card',
@@ -134,25 +76,6 @@ const staticHero = {
     actionHref: '/about',
     image: heroBackground
 };
-
-const trainingResources = [
-    {
-        title: 'How to make your Data FAIR 101',
-        source: 'ZALF RDM'
-    },
-    {
-        title: 'Data Quality Dimensions',
-        source: 'Leibniz Hannover University'
-    },
-    {
-        title: 'Creating a KA6 Soil Dataset',
-        source: 'Leibniz Hannover University'
-    },
-    {
-        title: 'Connecting WFS/WMS Services in QGIS',
-        source: 'Geosolutions'
-    }
-];
 
 const idasSites = [
     {
@@ -201,26 +124,31 @@ function normalizeBanner(item) {
     };
 }
 
-function normalizeHighlightCase(item, index) {
-    const fallback = highlightedCases[index % highlightedCases.length];
+function normalizeHighlightCase(item) {
     return {
-        tabLabel: firstNonEmptyString(item?.subtitle, item?.title, fallback.tabLabel),
-        eyebrow: firstNonEmptyString(item?.subtitle, fallback.eyebrow),
-        title: firstNonEmptyString(item?.title, fallback.title),
-        description: firstNonEmptyString(item?.description, fallback.title),
-        button: firstNonEmptyString(item?.button_text, fallback.button),
-        href: firstNonEmptyString(item?.link, fallback.href),
-        image: normalizeImageUrl(item?.image) || fallback.image
+        slug: firstNonEmptyString(item?.slug),
+        tabLabel: firstNonEmptyString(item?.subtitle, item?.title),
+        eyebrow: firstNonEmptyString(item?.subtitle, 'HIGHLIGHTED CASE'),
+        title: firstNonEmptyString(item?.title),
+        description: firstNonEmptyString(item?.description),
+        button: firstNonEmptyString(item?.button_text, 'View case'),
+        href: firstNonEmptyString(item?.slug ? `/highlight-cases/${item.slug}` : '', item?.link),
+        image: normalizeImageUrl(item?.image)
     };
 }
 
-function normalizeTraining(item, index) {
-    const fallback = trainingResources[index % trainingResources.length];
+function normalizeTraining(item) {
     return {
-        title: firstNonEmptyString(item?.title, fallback.title),
-        source: firstNonEmptyString(item?.source, fallback.source),
+        slug: firstNonEmptyString(item?.slug),
+        title: firstNonEmptyString(item?.title),
+        source: firstNonEmptyString(item?.source, item?.owner, item?.partner),
         description: firstNonEmptyString(item?.summary, item?.subtitle),
-        href: firstNonEmptyString(item?.external_link, item?.url, item?.link),
+        href: firstNonEmptyString(
+            item?.slug ? `/trainings/${item.slug}` : '',
+            item?.url,
+            item?.external_link,
+            item?.link
+        ),
         image: normalizeImageUrl(item?.hero_image) || normalizeImageUrl(item?.image)
     };
 }
@@ -303,12 +231,13 @@ function Homepage() {
         return () => controller.abort();
     }, []);
 
-    const resolvedHighlightCases = cmsHighlightCases.length > 0 ? cmsHighlightCases : highlightedCases;
-    const resolvedTrainingResources = cmsTrainings.length > 0 ? cmsTrainings : trainingResources;
+    const resolvedHighlightCases = cmsHighlightCases;
     const resolvedSpotlightItems = cmsNews.length > 0 ? cmsNews : spotlightItems;
+    const showHighlightCases = resolvedHighlightCases.length > 0;
+    const showTrainingSection = cmsTrainings.length > 0;
     const heroBanner = cmsBanners[0];
-    const activeCaseIndex = Math.min(activeCase, resolvedHighlightCases.length - 1);
-    const currentCase = resolvedHighlightCases[activeCaseIndex];
+    const activeHighlightCaseIndex = Math.min(activeCase, Math.max(resolvedHighlightCases.length - 1, 0));
+    const currentCase = showHighlightCases ? resolvedHighlightCases[activeHighlightCaseIndex] : null;
     const spotlightCount = resolvedSpotlightItems.length;
     const previousSpotlight = (activeSpotlight + spotlightCount - 1) % spotlightCount;
     const nextSpotlight = (activeSpotlight + 1) % spotlightCount;
@@ -320,7 +249,9 @@ function Homepage() {
     const heroBackgroundImage = heroBanner?.image || staticHero.image;
 
     React.useEffect(() => {
-        setActiveCase((current) => Math.min(current, resolvedHighlightCases.length - 1));
+        if (resolvedHighlightCases.length > 0) {
+            setActiveCase((current) => Math.min(current, resolvedHighlightCases.length - 1));
+        }
     }, [resolvedHighlightCases.length]);
 
     React.useEffect(() => {
@@ -429,7 +360,7 @@ function Homepage() {
             )
         ),
 
-        React.createElement(
+        showHighlightCases ? React.createElement(
             'section',
             { className: 'zalf-homepage__section zalf-homepage__section--cases' },
             React.createElement(
@@ -440,7 +371,9 @@ function Homepage() {
                     {
                         className: 'zalf-homepage__cases-panel',
                         style: {
-                            backgroundImage: `linear-gradient(135deg, rgba(8, 49, 39, 0.10), rgba(8, 49, 39, 0.38)), url(${currentCase.image})`
+                            backgroundImage: currentCase.image
+                                ? `linear-gradient(135deg, rgba(8, 49, 39, 0.10), rgba(8, 49, 39, 0.38)), url(${currentCase.image})`
+                                : 'linear-gradient(135deg, rgba(8, 49, 39, 0.10), rgba(8, 49, 39, 0.38))'
                         }
                     },
                     React.createElement(
@@ -455,8 +388,8 @@ function Homepage() {
                                     key: `${tabLabel}-${index}`,
                                     type: 'button',
                                     role: 'tab',
-                                    'aria-selected': index === activeCaseIndex ? 'true' : 'false',
-                                    className: `zalf-homepage__cases-tab${index === activeCaseIndex ? ' is-active' : ''}`,
+                                    'aria-selected': index === activeHighlightCaseIndex ? 'true' : 'false',
+                                    className: `zalf-homepage__cases-tab${index === activeHighlightCaseIndex ? ' is-active' : ''}`,
                                     onClick: () => setActiveCase(index)
                                 },
                                 tabLabel
@@ -476,7 +409,7 @@ function Homepage() {
                     )
                 )
             )
-        ),
+        ) : null,
 
         React.createElement(
             'section',
@@ -497,9 +430,6 @@ function Homepage() {
                 )
             )
         ),
-
-
-
         React.createElement(
             'section',
             { className: 'zalf-homepage__section zalf-homepage__section--gallery' },
@@ -583,11 +513,10 @@ function Homepage() {
                             onClick: () => setActiveSpotlight(index)
                         }
                     ))
-                ),
+                )
             )
         ),
-
-        React.createElement(
+        showTrainingSection ? React.createElement(
             'section',
             { className: 'zalf-homepage__section zalf-homepage__section--training' },
             React.createElement(
@@ -600,7 +529,7 @@ function Homepage() {
                     React.createElement(
                         'div',
                         { className: 'zalf-homepage__training-grid' },
-                        ...resolvedTrainingResources.map(({ title, source, description, href, image }, index) => React.createElement(
+                        ...cmsTrainings.map(({ title, source, description, href, image }, index) => React.createElement(
                             href ? 'a' : 'article',
                             {
                                 key: `${title}-${index}`,
@@ -623,17 +552,10 @@ function Homepage() {
                                 description ? React.createElement('p', { className: 'zalf-homepage__training-description' }, description) : null
                             )
                         ))
-                    ),
-                    React.createElement(
-                        'div',
-                        { className: 'zalf-homepage__training-footer' },
-                        React.createElement('span', { className: 'zalf-homepage__training-rule' }),
-                        React.createElement('a', { className: 'zalf-homepage__training-link', href: '/about' }, 'Click here for more trainings'),
-                        React.createElement('span', { className: 'zalf-homepage__training-rule' })
                     )
                 )
             )
-        ),
+        ) : null,
 
         React.createElement(
             'section',

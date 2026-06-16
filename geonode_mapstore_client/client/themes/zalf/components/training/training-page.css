@@ -1,0 +1,216 @@
+.zalf-training-page {
+    background:
+        radial-gradient(circle at 18% 12%, rgba(164, 182, 41, 0.14), transparent 24%),
+        linear-gradient(180deg, #f5f7fa 0%, #edf5f0 100%);
+    color: #132238;
+    min-height: 100vh;
+}
+
+.zalf-training-page__hero {
+    min-height: 420px;
+    display: flex;
+    align-items: flex-end;
+    background-color: #163028;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    padding: 88px 0 64px;
+    color: #ffffff;
+}
+
+.zalf-training-page__hero-inner,
+.zalf-training-page__content-inner {
+    width: min(1120px, calc(100% - 48px));
+    margin: 0 auto;
+}
+
+.zalf-training-page__hero-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 880px;
+}
+
+.zalf-training-page__eyebrow {
+    display: inline-block;
+    margin-bottom: 12px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.zalf-training-page__title {
+    margin: 0;
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    line-height: 1.05;
+    letter-spacing: -0.05em;
+    text-wrap: balance;
+}
+
+.zalf-training-page__subtitle {
+    margin: 16px 0 0;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    max-width: 62ch;
+    color: rgba(255, 255, 255, 0.88);
+}
+
+.zalf-training-page__summary {
+    margin: 18px 0 0;
+    font-size: 1.02rem;
+    line-height: 1.7;
+    max-width: 72ch;
+    color: rgba(255, 255, 255, 0.84);
+}
+
+.zalf-training-page__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+.zalf-training-page__chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 0 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.14);
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.zalf-training-page__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    margin-top: 26px;
+    padding: 0 18px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #b8cf1f 0%, #7bb23e 100%);
+    color: #07131f;
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 16px 28px rgba(7, 19, 31, 0.18);
+}
+
+.zalf-training-page__cta:hover,
+.zalf-training-page__cta:focus-visible {
+    color: #07131f;
+    text-decoration: none;
+    transform: translateY(-1px);
+}
+
+.zalf-training-page__content {
+    padding: 44px 0 88px;
+}
+
+.zalf-training-page__content-inner {
+    display: grid;
+    gap: 24px;
+}
+
+.zalf-training-page__state {
+    padding: 18px 20px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 16px 32px rgba(7, 19, 31, 0.08);
+}
+
+.zalf-training-page__state--error {
+    color: #b63e3e;
+}
+
+.zalf-training-page__article {
+    display: grid;
+    gap: 18px;
+    padding: 32px;
+    border-radius: 28px;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 20px 48px rgba(7, 19, 31, 0.08);
+}
+
+.zalf-training-page__body-heading {
+    margin: 10px 0 0;
+    font-size: clamp(1.4rem, 2vw, 2rem);
+    line-height: 1.2;
+    color: #132238;
+}
+
+.zalf-training-page__body-paragraph {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.8;
+    color: #334155;
+}
+
+.zalf-training-page__body-quote {
+    margin: 8px 0;
+    padding: 18px 20px;
+    border-left: 4px solid #7bb23e;
+    background: #f4f8ef;
+    border-radius: 0 16px 16px 0;
+    color: #2d3b2a;
+    font-size: 1.02rem;
+    line-height: 1.7;
+}
+
+.zalf-training-page__body-figure {
+    margin: 12px 0;
+}
+
+.zalf-training-page__body-figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 20px;
+}
+
+.zalf-training-page__body-figure figcaption {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: #5c6d58;
+}
+
+.zalf-training-page__body-raw {
+    margin: 0;
+    padding: 16px;
+    border-radius: 16px;
+    background: #0b1520;
+    color: #e5f2ff;
+    overflow: auto;
+}
+
+.zalf-training-page__footer-link a {
+    color: #2d6f35;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.zalf-training-page__footer-link a:hover,
+.zalf-training-page__footer-link a:focus-visible {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .zalf-training-page__hero {
+        min-height: 360px;
+        padding: 72px 0 52px;
+    }
+
+    .zalf-training-page__hero-inner,
+    .zalf-training-page__content-inner {
+        width: min(100% - 32px, 1120px);
+    }
+
+    .zalf-training-page__article {
+        padding: 22px;
+        border-radius: 22px;
+    }
+}

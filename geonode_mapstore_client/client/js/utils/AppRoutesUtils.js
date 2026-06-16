@@ -12,7 +12,9 @@ export const appRouteComponentTypes = {
     VIEWER: 'ViewerRoute',
     CATALOGUE: 'CatalogueRoute',
     COMPONENTS: 'ComponentsRoute',
-    MAP_VIEWER: 'MapViewerRoute'
+    MAP_VIEWER: 'MapViewerRoute',
+    TRAINING: 'TrainingRoute',
+    HIGHLIGHT_CASE: 'HighlightCaseRoute'
 };
 
 export const COMPONENTS_ROUTES = [
@@ -20,6 +22,16 @@ export const COMPONENTS_ROUTES = [
         name: 'components',
         path: ['/'],
         component: appRouteComponentTypes.COMPONENTS
+    },
+    {
+        name: 'training_detail',
+        path: ['/trainings/:slug', '/trainings/:slug/'],
+        component: appRouteComponentTypes.TRAINING
+    },
+    {
+        name: 'highlight_case_detail',
+        path: ['/highlight-cases/:slug', '/highlight-cases/:slug/'],
+        component: appRouteComponentTypes.HIGHLIGHT_CASE
     }
 ];
 
@@ -46,7 +58,7 @@ export const TABULAR_ROUTES = [
         component: appRouteComponentTypes.VIEWER,
         shouldNotRequestResources: true
     }
-]
+];
 
 export const TABULARCOLLECTION_ROUTES = [
     {
@@ -60,7 +72,7 @@ export const TABULARCOLLECTION_ROUTES = [
         component: appRouteComponentTypes.VIEWER,
         shouldNotRequestResources: true
     }
-]
+];
 
 export const DASHBOARD_ROUTES = [{
     name: 'dashboard_embed',

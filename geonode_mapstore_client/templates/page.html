@@ -24,6 +24,15 @@
                 {% block container %}
                 {% endblock %}
 
+                <script>
+                    window.addEventListener('mapstore:ready', function(event) {
+                        const msAPI = event.detail;
+                        msAPI.setPluginsConfig((localConfig) => {
+                            return localConfig?.plugins?.zalf_home || [];
+                        });
+                    });
+                </script>
+
                 {% block ms_scripts %}
                     <div id="ms-container"></div>
                     <script id="gn-script" src="{% static 'mapstore/dist/js/gn-components.js' %}?{% client_version %}"></script>

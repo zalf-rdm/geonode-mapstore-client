@@ -10,6 +10,8 @@ import main from '@mapstore/framework/components/app/main';
 import ComponentsRoute from '@js/routes/Components';
 import MainLoader from '@js/components/MainLoader';
 import Router, { withRoutes } from '@js/components/Router';
+import TrainingPage from '../../themes/zalf/components/training/TrainingPage';
+import HighlightCasePage from '../../themes/zalf/components/highlightCase/HighlightCasePage';
 import security from '@mapstore/framework/reducers/security';
 import {
     getEndpoints,
@@ -48,7 +50,9 @@ const ConnectedRouter = connect((state) => ({
 }))(Router);
 
 const viewer = {
-    [appRouteComponentTypes.COMPONENTS]: ComponentsRoute
+    [appRouteComponentTypes.COMPONENTS]: ComponentsRoute,
+    [appRouteComponentTypes.TRAINING]: TrainingPage,
+    [appRouteComponentTypes.HIGHLIGHT_CASE]: HighlightCasePage
 };
 
 const routes = COMPONENTS_ROUTES.map(({ component, ...config }) => ({ ...config, component: viewer[component] }));

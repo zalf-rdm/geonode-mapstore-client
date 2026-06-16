@@ -1,0 +1,9 @@
+.zalf-editorial-page-shell {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.zalf-editorial-page-shell__content {
+    flex: 1 0 auto;
+}
