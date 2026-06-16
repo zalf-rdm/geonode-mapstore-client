@@ -757,13 +757,19 @@
     font-size: clamp(1.4rem, 2vw, 2rem);
     line-height: 1.1;
     letter-spacing: -0.03em;
+    color: var(--idas-accent, #2d6f35);
     text-decoration: none;
     box-shadow: none;
     transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
+.zalf-homepage__idas-name:visited {
+    color: var(--idas-accent, #2d6f35);
+}
+
 .zalf-homepage__idas-name:hover,
 .zalf-homepage__idas-name:focus-visible {
+    color: var(--idas-accent, #2d6f35);
     text-decoration: none;
     transform: translateY(-1px);
     opacity: 0.92;
