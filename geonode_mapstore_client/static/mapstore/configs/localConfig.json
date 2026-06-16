@@ -3786,12 +3786,15 @@
         ],
         "catalogue": [
             {
+                "name": "ZalfNavigation"
+            },
+            {
                 "name": "ResourcesGrid",
                 "cfg": {
                     "id": "catalog",
                     "titleId": "gnviewer.allResources",
-                    "headerNodeSelector": "#gn-brand-navbar",
-                    "footerNodeSelector": ".gn-footer",
+                    "headerNodeSelector": ".zalf-navigation-shell",
+                    "footerNodeSelector": ".zalf-footer-shell",
                     "queryPage": true,
                     "order": {
                         "defaultLabelId": "resourcesCatalog.orderBy",
@@ -3932,8 +3935,8 @@
                 "name": "ResourcesFiltersForm",
                 "cfg": {
                     "resourcesGridId": "catalog",
-                    "headerNodeSelector": ".gn-main-header",
-                    "footerNodeSelector": ".gn-footer",
+                    "headerNodeSelector": ".zalf-navigation-shell",
+                    "footerNodeSelector": ".zalf-footer-shell",
                     "fields": [
                         {
                             "type": "search"
@@ -4104,6 +4107,9 @@
             },
             {
                 "name": "Favorites"
+            },
+            {
+                "name": "ZalfFooter"
             }
         ],
         "zalf_home": [

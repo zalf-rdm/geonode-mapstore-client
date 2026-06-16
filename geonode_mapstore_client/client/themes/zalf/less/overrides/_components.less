@@ -1,1 +1,59 @@
-// General component overrides (placeholder)
+// Align primary actions with the ZALF theme palette.
+.btn.btn-primary,
+.btn-group > .btn.btn-primary,
+.open > .dropdown-toggle.btn.btn-primary,
+.dropdown-toggle.btn.btn-primary {
+    color: var(--zalf-brand-primary-contrast);
+    background-color: var(--zalf-brand-primary);
+    border-color: var(--zalf-brand-primary-border);
+}
+
+.btn.btn-primary:hover,
+.btn.btn-primary:focus,
+.btn.btn-primary.focus,
+.btn-group > .btn.btn-primary:hover,
+.btn-group > .btn.btn-primary:focus,
+.btn-group > .btn.btn-primary.focus,
+.open > .dropdown-toggle.btn.btn-primary:hover,
+.open > .dropdown-toggle.btn.btn-primary:focus,
+.open > .dropdown-toggle.btn.btn-primary.focus,
+.dropdown-toggle.btn.btn-primary:hover,
+.dropdown-toggle.btn.btn-primary:focus,
+.dropdown-toggle.btn.btn-primary.focus {
+    color: var(--zalf-brand-primary-contrast);
+    background-color: var(--zalf-brand-primary-hover);
+    border-color: var(--zalf-brand-primary-border);
+}
+
+.btn.btn-primary:active,
+.btn.btn-primary.active,
+.btn-group > .btn.btn-primary:active,
+.btn-group > .btn.btn-primary.active,
+.open > .dropdown-toggle.btn.btn-primary,
+.dropdown-toggle.btn.btn-primary:active,
+.dropdown-toggle.btn.btn-primary.active {
+    color: var(--zalf-brand-primary-contrast);
+    background-color: var(--zalf-brand-primary-active);
+    border-color: var(--zalf-brand-primary-border);
+}
+
+.btn.btn-primary:active:hover,
+.btn.btn-primary.active:hover,
+.btn.btn-primary:active:focus,
+.btn.btn-primary.active:focus,
+.open > .dropdown-toggle.btn.btn-primary:hover,
+.open > .dropdown-toggle.btn.btn-primary:focus,
+.dropdown-toggle.btn.btn-primary:active:hover,
+.dropdown-toggle.btn.btn-primary.active:hover {
+    color: var(--zalf-brand-primary-contrast);
+    background-color: var(--zalf-brand-primary-active);
+    border-color: var(--zalf-brand-primary-border);
+}
+
+.btn.btn-primary:focus,
+.btn.btn-primary.focus,
+.dropdown-toggle.btn.btn-primary:focus,
+.dropdown-toggle.btn.btn-primary.focus {
+    box-shadow: 0 0 0 3px fade(@zalf-brand-primary, 20%);
+    outline: none;
+}

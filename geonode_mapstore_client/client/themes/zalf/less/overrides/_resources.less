@@ -1,1 +1,56 @@
-// Resource/catalogue page overrides (placeholder)
+// Ensure the ZALF navigation/footer behave like global layout elements
+// on catalogue pages that still use the default GeoNode resource wrapper.
+.gn-catalogue:has(.ms-resources-grid) {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+
+    .app-router {
+        position: relative !important;
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        min-height: 100vh;
+        width: 100%;
+    }
+
+    #ms-container {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        min-height: 0;
+        width: 100%;
+    }
+
+    .gn-resource-page-catalog {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        min-height: 0;
+    }
+
+    .gn-resource-page-catalog-content {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+    }
+
+    .ms-plugin.ZalfNavigation,
+    .ms-plugin.ZalfFooter,
+    .zalf-navigation-shell,
+    .zalf-footer-shell {
+        width: 100%;
+        flex: 0 0 auto;
+    }
+
+    .ms-plugin.ResourcesGrid {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        min-height: 0;
+    }
+
+    .ms-resources-grid {
+        flex: 1 1 auto;
+    }
+}
