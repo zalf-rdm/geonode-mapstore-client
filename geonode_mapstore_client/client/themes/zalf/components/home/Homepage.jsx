@@ -286,48 +286,44 @@ function Homepage() {
         ),
 
         React.createElement(
-            'section',
-            { className: 'zalf-homepage__section zalf-homepage__section--cases' },
+            React.Fragment,
+            null,
             React.createElement(
-                React.Fragment,
-                null,
+                'div',
+                {
+                    className: 'zalf-homepage__cases-panel',
+                    style: {
+                        backgroundImage: `linear-gradient(135deg, rgba(8, 49, 39, 0.10), rgba(8, 49, 39, 0.38)), url(${currentCase.image})`
+                    }
+                },
                 React.createElement(
                     'div',
-                    {
-                        className: 'zalf-homepage__cases-panel',
-                        style: {
-                            backgroundImage: `linear-gradient(135deg, rgba(8, 49, 39, 0.10), rgba(8, 49, 39, 0.38)), url(${currentCase.image})`
-                        }
-                    },
+                    { className: 'zalf-homepage__cases-inner' },
                     React.createElement(
                         'div',
-                        { className: 'zalf-homepage__cases-inner' },
+                        { className: 'zalf-homepage__cases-tabs', role: 'tablist', 'aria-label': 'Highlighted cases' },
+                        ...highlightedCases.map(({ tabLabel }, index) => React.createElement(
+                            'button',
+                            {
+                                key: tabLabel,
+                                type: 'button',
+                                role: 'tab',
+                                'aria-selected': index === activeCase ? 'true' : 'false',
+                                className: `zalf-homepage__cases-tab${index === activeCase ? ' is-active' : ''}`,
+                                onClick: () => setActiveCase(index)
+                            },
+                            tabLabel
+                        ))
+                    ),
+                    React.createElement(
+                        'div',
+                        { className: 'zalf-homepage__cases-content' },
+                        React.createElement('span', { className: 'zalf-homepage__cases-eyebrow' }, currentCase.eyebrow),
+                        React.createElement('h3', { className: 'zalf-homepage__cases-title' }, currentCase.title),
                         React.createElement(
-                            'div',
-                            { className: 'zalf-homepage__cases-tabs', role: 'tablist', 'aria-label': 'Highlighted cases' },
-                            ...highlightedCases.map(({ tabLabel }, index) => React.createElement(
-                                'button',
-                                {
-                                    key: tabLabel,
-                                    type: 'button',
-                                    role: 'tab',
-                                    'aria-selected': index === activeCase ? 'true' : 'false',
-                                    className: `zalf-homepage__cases-tab${index === activeCase ? ' is-active' : ''}`,
-                                    onClick: () => setActiveCase(index)
-                                },
-                                tabLabel
-                            ))
-                        ),
-                        React.createElement(
-                            'div',
-                            { className: 'zalf-homepage__cases-content' },
-                            React.createElement('span', { className: 'zalf-homepage__cases-eyebrow' }, currentCase.eyebrow),
-                            React.createElement('h3', { className: 'zalf-homepage__cases-title' }, currentCase.title),
-                            React.createElement(
-                                'a',
-                                { className: 'zalf-homepage__button zalf-homepage__button--light', href: currentCase.href },
-                                currentCase.button
-                            )
+                            'a',
+                            { className: 'zalf-homepage__button zalf-homepage__button--light', href: currentCase.href },
+                            currentCase.button
                         )
                     )
                 )

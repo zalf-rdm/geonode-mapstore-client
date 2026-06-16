@@ -60,4 +60,25 @@
     .ms-resources-grid {
         flex: 1 1 auto;
     }
+
+    // Upload/create-dataset pages: gn-upload-container and gn-create-dataset-container
+    // use position:absolute by default (full-viewport overlay). Override so they
+    // participate in the flex column and the ZALF nav + footer stay visible.
+    .gn-upload-container,
+    .gn-create-dataset-container {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        flex: 1 1 auto;
+        min-height: 0;
+        // Explicit height so children using height:100% resolve correctly
+        height: calc(100vh - 78px);
+    }
+
+    @media (max-width: 991px) {
+        .gn-upload-container,
+        .gn-create-dataset-container {
+            height: calc(100vh - 72px);
+        }
+    }
 }
