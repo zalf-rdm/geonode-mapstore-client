@@ -538,6 +538,12 @@
         ],
         "tabular_viewer": [
           {
+            "name": "ZalfNavigation",
+            "cfg": {
+              "containerPosition": "header"
+            }
+          },
+          {
             "name": "ActionNavbar",
             "cfg": {
               "containerPosition": "header",
@@ -838,6 +844,12 @@
         ],
         "tabular-collection_viewer": [
             {
+              "name": "ZalfNavigation",
+              "cfg": {
+                "containerPosition": "header"
+              }
+            },
+            {
               "name": "ActionNavbar",
               "cfg": {
                 "containerPosition": "header",
@@ -1123,6 +1135,12 @@
             }
         ],
         "dataset_viewer": [
+            {
+                "name": "ZalfNavigation",
+                "cfg": {
+                    "containerPosition": "header"
+                }
+            },
             {
                 "name": "ActionNavbar",
                 "cfg": {
@@ -1847,6 +1865,12 @@
         ],
         "dataset_edit_data_viewer": [
             {
+                "name": "ZalfNavigation",
+                "cfg": {
+                    "containerPosition": "header"
+                }
+            },
+            {
                 "name": "ActionNavbar",
                 "cfg": {
                     "containerPosition": "header",
@@ -1976,6 +2000,12 @@
             }
         ],
         "dataset_edit_layer_settings": [
+            {
+                "name": "ZalfNavigation",
+                "cfg": {
+                    "containerPosition": "header"
+                }
+            },
             {
                 "name": "ActionNavbar",
                 "cfg": {
@@ -3036,6 +3066,12 @@
             }
         ],
         "document_viewer": [
+            {
+                "name": "ZalfNavigation",
+                "cfg": {
+                    "containerPosition": "header"
+                }
+            },
             {
                 "name": "ActionNavbar",
                 "cfg": {
@@ -4154,6 +4190,12 @@
         ],
         "viewer": [
             {
+                "name": "ZalfNavigation",
+                "cfg": {
+                    "containerPosition": "header"
+                }
+            },
+            {
                 "name": "ActionNavbar",
                 "cfg": {
                     "containerPosition": "header",
@@ -4292,6 +4334,12 @@
             }
         ],
         "metadata": [
+            {
+                "name": "ZalfNavigation",
+                "cfg": {
+                    "containerPosition": "header"
+                }
+            },
             {
                 "name": "ActionNavbar",
                 "cfg": {

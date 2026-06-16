@@ -62,13 +62,6 @@
         flex: 1 1 auto;
     }
 
-    gn-upload-container {
-        display: flex;
-        flex: 1 1 auto;
-        flex-direction: column;
-        height: 100%;
-    }
-
     // Upload pages: gn-upload-container uses position:absolute by default.
     // gn-create-dataset gets position:absolute from the ._absolute utility class.
     // Override both so they participate in the flex column instead of covering
@@ -79,17 +72,6 @@
         top: auto !important;
         left: auto !important;
         flex: 1 1 auto;
-        min-height: 600px;
-        overflow: visible;
-    }
-
-    .gn-upload-container,
-    .gn-create-dataset-container {
-        position: relative !important;
-        top: auto !important;
-        left: auto !important;
-        flex: 1 1 auto;
-        min-height: 600px;
-        overflow: visible;
+        min-height: 0;
     }
 }
