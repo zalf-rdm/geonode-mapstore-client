@@ -97,7 +97,7 @@ const spotlightItems = [
         description: 'Use this format for a large visual card with one message, one destination, and strong editorial emphasis.',
         button: 'Open story',
         href: '/catalogue/#/?q=soil',
-        image: '/static/mapstore/img/s2cloudless.png'
+        image: '/static/img/photo-1715766911065-83723bc00d2f-unsplash.avif'
     },
     {
         kicker: 'Campaign card',
@@ -105,7 +105,7 @@ const spotlightItems = [
         description: 'This can point to a custom page, a filtered catalogue view, or a fully editorial landing page.',
         button: 'View collection',
         href: '/catalogue/#/?q=climate',
-        image: '/static/mapstore/img/s2cloudless.png'
+        image: '/static/img/photo-1582033665011-60ccbb964168-unsplash.avif'
     },
     {
         kicker: 'Announcement card',
@@ -113,7 +113,7 @@ const spotlightItems = [
         description: 'The design supports any number of cards, with automatic sliding and manual navigation.',
         button: 'Learn more',
         href: '/catalogue/#/?q=water',
-        image: '/static/mapstore/img/s2cloudless.png'
+        image: '/static/img/photo-1471289660181-7feae98d61ae-unsplash.avif'
     }
 ];
 
