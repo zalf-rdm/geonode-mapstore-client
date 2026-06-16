@@ -19,7 +19,7 @@
     <body class="msgapi ms2" data-ms2-container="ms2">
         <div class="gn-page-wrapper {% if request.user_agent.is_mobile %}gn-mobile{% else %}gn-desktop{% endif %}">
             <div class="gn-theme gn-homepage">
-                {% include './geonode-mapstore-client/_geonode_config.html' %}
+                {% include './geonode-mapstore-client/_geonode_config.html' with plugins_config_key='zalf_home' %}
                 {% block header %}
                     {% include './geonode-mapstore-client/snippets/header.html' with show_hero=True %}
                 {% endblock %}
@@ -52,27 +52,9 @@
 
                 <script>
                     window.addEventListener('mapstore:ready', function(event) {
-                        const catalogPagePath = window.__GEONODE_CONFIG__.localConfig.geoNodeSettings.catalogPagePath;
-                        const pagePath = catalogPagePath ? catalogPagePath : '/catalogue/';
                         const msAPI = event.detail;
                         msAPI.setPluginsConfig((localConfig) => {
-                            return [
-                                {
-                                    "name": "ResourcesGrid",
-                                    "cfg": {
-                                        "id": "featured",
-                                        "titleId": "manager.featuredMaps",
-                                        "pageSize": 4,
-                                        "cardLayoutStyle": "grid",
-                                        "order": null,
-                                        "hideWithNoResults": true,
-                                        "defaultQuery": {
-                                            "f": "featured"
-                                        }
-                                    }
-                                },
-                                ...(localConfig?.plugins?.catalogue || [])
-                            ];
+                            return localConfig?.plugins?.zalf_home || [];
                         });
                     });
                 </script>

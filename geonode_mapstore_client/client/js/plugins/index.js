@@ -30,6 +30,7 @@ import FavoritesPlugin from '@js/plugins/Favorites';
 import CreateDatasetPlugin from '@js/plugins/CreateDataset';
 import ZalfNavigationPlugin from '../../themes/zalf/plugins/NavigationPlugin';
 import ZalfHomepagePlugin from '../../themes/zalf/plugins/HomepagePlugin';
+import ZalfFaqPlugin from '../../themes/zalf/plugins/FaqPlugin';
 import ZalfFooterPlugin from '../../themes/zalf/plugins/FooterPlugin';
 import {
     ResourcesGridPlugin,
@@ -91,6 +92,7 @@ export const plugins = {
     CreateDatasetPlugin,
     ZalfNavigationPlugin,
     ZalfHomepagePlugin,
+    ZalfFaqPlugin,
     ZalfFooterPlugin,
     IsochronePlugin: Isochrone,
     ItineraryPlugin: Itinerary,

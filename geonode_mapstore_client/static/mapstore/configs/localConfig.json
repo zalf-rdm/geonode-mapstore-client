@@ -4117,6 +4117,17 @@
                 "name": "ZalfFooter"
             }
         ],
+        "zalf_faq": [
+            {
+                "name": "ZalfNavigation"
+            },
+            {
+                "name": "ZalfFaq"
+            },
+            {
+                "name": "ZalfFooter"
+            }
+        ],
         "viewer": [
             {
                 "name": "ActionNavbar",
