@@ -368,7 +368,7 @@
     flex-direction: column;
     justify-content: flex-start;
     gap: 36px;
-    min-height: 496px;
+    min-height: 450px;
     width: min(100%, 760px);
     padding: 28px;
     border-radius: 24px;

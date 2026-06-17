@@ -301,12 +301,102 @@ function RelatedIdentifierList({ items }) {
     );
 }
 
+// ─── Map layers & linked resources ───────────────────────────────────────────
+
+function subtypeLabel(st) {
+    if (!st) return null;
+    const map = { vector: 'Vector', raster: 'Raster', tabular: 'Table', table: 'Table', remote: 'Remote' };
+    return map[st] || (st.charAt(0).toUpperCase() + st.slice(1));
+}
+
+function MapStatsBar({ layers }) {
+    const total = layers.length;
+    const vectorCount = layers.filter(l => l.datasetDetail && l.datasetDetail.subtype === 'vector').length;
+    const rasterCount = layers.filter(l => l.datasetDetail && l.datasetDetail.subtype === 'raster').length;
+    const totalAttrs = layers.reduce((acc, l) => acc + ((l.datasetDetail && l.datasetDetail.attribute_set) ? l.datasetDetail.attribute_set.length : 0), 0);
+
+    return ce('div', { className: 'zalf-lp-stats-bar' },
+        ce('div', { className: 'zalf-lp-stat-item' },
+            ce('span', { className: 'zalf-lp-stat-value' }, total),
+            ce('span', { className: 'zalf-lp-stat-label' }, 'Layers')
+        ),
+        vectorCount > 0 && ce('div', { className: 'zalf-lp-stat-item' },
+            ce('span', { className: 'zalf-lp-stat-value' }, vectorCount),
+            ce('span', { className: 'zalf-lp-stat-label' }, 'Vector')
+        ),
+        rasterCount > 0 && ce('div', { className: 'zalf-lp-stat-item' },
+            ce('span', { className: 'zalf-lp-stat-value' }, rasterCount),
+            ce('span', { className: 'zalf-lp-stat-label' }, 'Raster')
+        ),
+        totalAttrs > 0 && ce('div', { className: 'zalf-lp-stat-item' },
+            ce('span', { className: 'zalf-lp-stat-value' }, totalAttrs),
+            ce('span', { className: 'zalf-lp-stat-label' }, 'Attributes')
+        )
+    );
+}
+
+function LayerCard({ layer }) {
+    const ds = layer.datasetDetail || layer.dataset || {};
+    const title = ds.title || layer.dataset?.title || 'Untitled Layer';
+    const dspk = ds.pk || layer.dataset?.pk;
+    const thumb = ds.thumbnail_url || null;
+    const subtype = ds.subtype || null;
+    const attrs = ds.attribute_set ? ds.attribute_set.length : null;
+    const layerHref = dspk ? '/catalogue/#/landing/dataset/' + dspk : null;
+
+    return ce('div', { className: 'zalf-lp-layer-card' },
+        thumb
+            ? ce('img', { className: 'zalf-lp-layer-thumb', src: thumb, alt: title })
+            : ce('div', { className: 'zalf-lp-layer-thumb zalf-lp-layer-thumb--icon' },
+                ce('span', { className: 'zalf-lp-layer-icon' }, '◻')
+              ),
+        ce('div', { className: 'zalf-lp-layer-info' },
+            layerHref
+                ? ce('a', { className: 'zalf-lp-layer-title', href: layerHref }, title)
+                : ce('span', { className: 'zalf-lp-layer-title' }, title),
+            ce('div', { className: 'zalf-lp-layer-meta' },
+                subtype && ce(Badge, { label: subtypeLabel(subtype), variant: 'type' }),
+                attrs !== null && ce('span', { className: 'zalf-lp-layer-attrs' }, attrs + ' attributes')
+            )
+        )
+    );
+}
+
+function LinkedResourceCard({ res }) {
+    const title = res.title || 'Untitled';
+    const typeLabel = res.resource_type
+        ? res.resource_type.charAt(0).toUpperCase() + res.resource_type.slice(1)
+        : 'Resource';
+    const href = res.detail_url
+        ? res.detail_url.replace('/catalogue/#/', '/catalogue/#/landing/')
+        : null;
+    const thumb = res.thumbnail_url || null;
+
+    return ce('div', { className: 'zalf-lp-linked-card' },
+        thumb
+            ? ce('img', { className: 'zalf-lp-linked-thumb', src: thumb, alt: title })
+            : ce('div', { className: 'zalf-lp-linked-thumb zalf-lp-linked-thumb--icon' },
+                ce('span', { className: 'zalf-lp-layer-icon' }, '◻')
+              ),
+        ce('div', { className: 'zalf-lp-linked-info' },
+            href
+                ? ce('a', { className: 'zalf-lp-linked-title', href }, title)
+                : ce('span', { className: 'zalf-lp-linked-title' }, title),
+            ce('div', { className: 'zalf-lp-layer-meta' },
+                ce(Badge, { label: typeLabel, variant: 'type' })
+            )
+        )
+    );
+}
+
 // ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function DatasetLandingPage() {
     const [resource, setResource] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [mapLayers, setMapLayers] = useState(null);
+    const [linkedResources, setLinkedResources] = useState(null);
     const pk = extractPkFromHash();
 
     useEffect(() => {
@@ -315,6 +405,30 @@ export default function DatasetLandingPage() {
             .then((res) => { setResource(res); setLoading(false); })
             .catch(() => { setError('Could not load resource information.'); setLoading(false); });
     }, [pk]);
+
+    useEffect(() => {
+        if (!resource || !pk) return;
+
+        axios.get('/api/v2/resources/' + pk + '/linked_resources/')
+            .then(({ data }) => setLinkedResources(data))
+            .catch(() => setLinkedResources({ linked_to: [], linked_by: [] }));
+
+        if (resource.resource_type === 'map') {
+            axios.get('/api/v2/maps/' + pk + '/maplayers/')
+                .then(({ data }) => {
+                    const promises = data.map((layer) => {
+                        const dsPk = layer.dataset && layer.dataset.pk;
+                        if (!dsPk) return Promise.resolve(layer);
+                        return axios.get('/api/v2/datasets/' + dsPk + '/')
+                            .then(({ data: dsData }) => ({ ...layer, datasetDetail: dsData.dataset }))
+                            .catch(() => layer);
+                    });
+                    return Promise.all(promises);
+                })
+                .then((layers) => setMapLayers(layers))
+                .catch(() => setMapLayers([]));
+        }
+    }, [resource]);
 
     if (loading) {
         return ce('div', { className: 'zalf-lp-shell' },
@@ -517,7 +631,31 @@ export default function DatasetLandingPage() {
                 // Related Identifiers
                 relatedIdentifiers.length > 0 ? ce(Section, { title: 'Related Identifiers' },
                     ce(RelatedIdentifierList, { items: relatedIdentifiers })
-                ) : null
+                ) : null,
+
+                // Map Layers (only for maps)
+                r.resource_type === 'map' && mapLayers && mapLayers.length > 0
+                    ? ce(Section, { title: 'Layers in this Map' },
+                        ce(MapStatsBar, { layers: mapLayers }),
+                        ce('div', { className: 'zalf-lp-layers-grid' },
+                            ...mapLayers.map((layer, i) => ce(LayerCard, { key: i, layer }))
+                        )
+                    ) : null,
+
+                // Linked Resources
+                (linkedResources && linkedResources.linked_to && linkedResources.linked_to.length > 0)
+                    ? ce(Section, { title: 'Linked Resources' },
+                        ce('div', { className: 'zalf-lp-linked-grid' },
+                            ...linkedResources.linked_to.map((res, i) => ce(LinkedResourceCard, { key: i, res }))
+                        )
+                    ) : null,
+
+                (linkedResources && linkedResources.linked_by && linkedResources.linked_by.length > 0)
+                    ? ce(Section, { title: 'Used by' },
+                        ce('div', { className: 'zalf-lp-linked-grid' },
+                            ...linkedResources.linked_by.map((res, i) => ce(LinkedResourceCard, { key: i, res }))
+                        )
+                    ) : null
             ),
 
             // ── Sidebar ──────────────────────────────────────────────────────

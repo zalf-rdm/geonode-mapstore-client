@@ -862,6 +862,184 @@ a.zalf-lp-funder-name:hover {
   margin-top: 0;
 }
 
+/* ── Map Stats Bar ────────────────────────────────────────── */
+.zalf-lp-stats-bar {
+  display: flex;
+  gap: 0;
+  background: var(--zalf-green-light, #e8f5ee);
+  border: 1px solid var(--zalf-green-mid, #a5d4b8);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+}
+
+.zalf-lp-stat-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-right: 1px solid var(--zalf-green-mid, #a5d4b8);
+}
+
+.zalf-lp-stat-item:last-child {
+  border-right: none;
+}
+
+.zalf-lp-stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--zalf-green, #1a6b3c);
+  line-height: 1.1;
+}
+
+.zalf-lp-stat-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--zalf-text-muted, #6b7280);
+  margin-top: 0.2rem;
+}
+
+/* ── Layer Cards ──────────────────────────────────────────── */
+.zalf-lp-layers-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.zalf-lp-layer-card {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  background: var(--zalf-white, #fff);
+  border: 1px solid var(--zalf-border, #e5e7eb);
+  border-radius: 8px;
+  padding: 0.75rem;
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+
+.zalf-lp-layer-card:hover {
+  border-color: var(--zalf-green-mid, #a5d4b8);
+  box-shadow: 0 2px 8px rgba(26, 107, 60, 0.08);
+}
+
+.zalf-lp-layer-thumb {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 5px;
+  flex-shrink: 0;
+  background: var(--zalf-bg, #f3f4f6);
+}
+
+.zalf-lp-layer-thumb--icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--zalf-green-light, #e8f5ee);
+}
+
+.zalf-lp-layer-icon {
+  font-size: 1.6rem;
+  color: var(--zalf-green, #1a6b3c);
+  opacity: 0.5;
+}
+
+.zalf-lp-layer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.zalf-lp-layer-title {
+  font-size: 0.925rem;
+  font-weight: 600;
+  color: var(--zalf-text, #111827);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.zalf-lp-layer-title:hover {
+  color: var(--zalf-green, #1a6b3c);
+  text-decoration: underline;
+}
+
+.zalf-lp-layer-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.zalf-lp-layer-attrs {
+  font-size: 0.78rem;
+  color: var(--zalf-text-muted, #6b7280);
+}
+
+/* ── Linked Resources Grid ────────────────────────────────── */
+.zalf-lp-linked-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.875rem;
+}
+
+.zalf-lp-linked-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--zalf-white, #fff);
+  border: 1px solid var(--zalf-border, #e5e7eb);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+
+.zalf-lp-linked-card:hover {
+  border-color: var(--zalf-green-mid, #a5d4b8);
+  box-shadow: 0 2px 8px rgba(26, 107, 60, 0.08);
+}
+
+.zalf-lp-linked-thumb {
+  width: 100%;
+  height: 110px;
+  object-fit: cover;
+  background: var(--zalf-bg, #f3f4f6);
+}
+
+.zalf-lp-linked-thumb--icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--zalf-green-light, #e8f5ee);
+}
+
+.zalf-lp-linked-info {
+  padding: 0.65rem 0.75rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.zalf-lp-linked-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--zalf-text, #111827);
+  text-decoration: none;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.35;
+}
+
+.zalf-lp-linked-title:hover {
+  color: var(--zalf-green, #1a6b3c);
+  text-decoration: underline;
+}
+
 /* ── Responsive ───────────────────────────────────────────── */
 @media (max-width: 900px) {
   .zalf-lp-body {
