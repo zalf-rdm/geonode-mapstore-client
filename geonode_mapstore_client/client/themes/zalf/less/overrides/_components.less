@@ -1,59 +1,134 @@
-// Align primary actions with the ZALF theme palette.
+// Align global interactive states with the ZALF palette so catalogue pages
+// keep the green theme even when they use core GeoNode / MapStore components.
+.btn-primary,
 .btn.btn-primary,
 .btn-group > .btn.btn-primary,
+.open > .dropdown-toggle.btn-primary,
 .open > .dropdown-toggle.btn.btn-primary,
+.dropdown-toggle.btn-primary,
 .dropdown-toggle.btn.btn-primary {
-    color: var(--zalf-brand-primary-contrast);
-    background-color: var(--zalf-brand-primary);
-    border-color: var(--zalf-brand-primary-border);
+    color: var(--ms-button-primary-color);
+    background-color: var(--ms-button-primary-bg);
+    border-color: var(--ms-button-primary-border-color);
 }
 
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary.focus,
 .btn.btn-primary:hover,
 .btn.btn-primary:focus,
 .btn.btn-primary.focus,
 .btn-group > .btn.btn-primary:hover,
 .btn-group > .btn.btn-primary:focus,
 .btn-group > .btn.btn-primary.focus,
+.open > .dropdown-toggle.btn-primary:hover,
+.open > .dropdown-toggle.btn-primary:focus,
 .open > .dropdown-toggle.btn.btn-primary:hover,
 .open > .dropdown-toggle.btn.btn-primary:focus,
-.open > .dropdown-toggle.btn.btn-primary.focus,
+.dropdown-toggle.btn-primary:hover,
+.dropdown-toggle.btn-primary:focus,
 .dropdown-toggle.btn.btn-primary:hover,
-.dropdown-toggle.btn.btn-primary:focus,
-.dropdown-toggle.btn.btn-primary.focus {
-    color: var(--zalf-brand-primary-contrast);
-    background-color: var(--zalf-brand-primary-hover);
-    border-color: var(--zalf-brand-primary-border);
+.dropdown-toggle.btn.btn-primary:focus {
+    color: var(--ms-button-primary-focus-color);
+    background-color: var(--ms-button-primary-focus-bg);
+    border-color: var(--ms-button-primary-focus-border-color);
 }
 
+.btn-primary:active,
+.btn-primary.active,
 .btn.btn-primary:active,
 .btn.btn-primary.active,
 .btn-group > .btn.btn-primary:active,
 .btn-group > .btn.btn-primary.active,
+.open > .dropdown-toggle.btn-primary,
 .open > .dropdown-toggle.btn.btn-primary,
+.dropdown-toggle.btn-primary:active,
+.dropdown-toggle.btn-primary.active,
 .dropdown-toggle.btn.btn-primary:active,
 .dropdown-toggle.btn.btn-primary.active {
-    color: var(--zalf-brand-primary-contrast);
-    background-color: var(--zalf-brand-primary-active);
-    border-color: var(--zalf-brand-primary-border);
+    color: var(--ms-button-primary-active-color);
+    background-color: var(--ms-button-primary-active-bg);
+    border-color: var(--ms-button-primary-active-border-color);
 }
 
+.btn-primary:active:hover,
+.btn-primary.active:hover,
+.btn-primary:active:focus,
+.btn-primary.active:focus,
 .btn.btn-primary:active:hover,
 .btn.btn-primary.active:hover,
 .btn.btn-primary:active:focus,
 .btn.btn-primary.active:focus,
+.open > .dropdown-toggle.btn-primary:hover,
+.open > .dropdown-toggle.btn-primary:focus,
 .open > .dropdown-toggle.btn.btn-primary:hover,
 .open > .dropdown-toggle.btn.btn-primary:focus,
+.dropdown-toggle.btn-primary:active:hover,
+.dropdown-toggle.btn-primary.active:hover,
 .dropdown-toggle.btn.btn-primary:active:hover,
 .dropdown-toggle.btn.btn-primary.active:hover {
-    color: var(--zalf-brand-primary-contrast);
-    background-color: var(--zalf-brand-primary-active);
-    border-color: var(--zalf-brand-primary-border);
+    color: var(--ms-button-primary-active-hover-color);
+    background-color: var(--ms-button-primary-active-hover-bg);
+    border-color: var(--ms-button-primary-active-hover-border-color);
 }
 
+.btn-primary:focus,
+.btn-primary.focus,
 .btn.btn-primary:focus,
 .btn.btn-primary.focus,
+.dropdown-toggle.btn-primary:focus,
+.dropdown-toggle.btn-primary.focus,
 .dropdown-toggle.btn.btn-primary:focus,
 .dropdown-toggle.btn.btn-primary.focus {
     box-shadow: 0 0 0 3px fade(@zalf-brand-primary, 20%);
     outline: none;
+}
+
+.btn-primary .badge,
+.btn.btn-primary .badge {
+    color: var(--ms-button-primary-badge-color);
+}
+
+.pagination > .active > a,
+.pagination > .active > span,
+.pagination > .active > a:hover,
+.pagination > .active > span:hover,
+.pagination > .active > a:focus,
+.pagination > .active > span:focus,
+.pagination.custom > .active > a,
+.pagination.custom > .active > span,
+.pagination.custom > .active > a:hover,
+.pagination.custom > .active > span:hover,
+.pagination.custom > .active > a:focus,
+.pagination.custom > .active > span:focus,
+.page-item.active .page-link,
+.page-item.active .page-link:hover,
+.page-item.active .page-link:focus {
+    color: var(--zalf-brand-primary-contrast);
+    background-color: var(--ms-primary);
+    border-color: var(--zalf-brand-primary-border);
+}
+
+.nav-pills > li.active > a,
+.nav-pills > li.active > a:hover,
+.nav-pills > li.active > a:focus {
+    color: var(--zalf-brand-primary-contrast);
+    background-color: var(--ms-primary);
+}
+
+.nav .open > a,
+.nav .open > a:hover,
+.nav .open > a:focus {
+    color: var(--ms-link-color);
+    background-color: var(--zalf-brand-surface-light);
+}
+
+.label-primary,
+.badge-primary,
+.list-group-item.active,
+.list-group-item.active:hover,
+.list-group-item.active:focus {
+    color: var(--zalf-brand-primary-contrast);
+    background-color: var(--ms-primary);
+    border-color: var(--zalf-brand-primary-border);
 }

@@ -33,7 +33,7 @@
 }
 
 .zalf-homepage__section--gallery .zalf-homepage__eyebrow {
-    color: #6d8f2c;
+    color: var(--zalf-home-olive);
 }
 
 .zalf-homepage__section--gallery .zalf-homepage__section-title {
@@ -112,7 +112,7 @@
     font-weight: 900;
     letter-spacing: 0;
     text-transform: none;
-    color: #6d8f2ceb;
+    color: var(--zalf-home-olive-soft);
 }
 
 .zalf-homepage__title,
@@ -250,13 +250,13 @@
 
 .zalf-homepage__button--primary {
     color: #ffffff;
-    background: linear-gradient(135deg, #5d9d46 0%, #7bb23e 100%);
+    background: linear-gradient(135deg, var(--zalf-home-primary-gradient-start) 0%, var(--zalf-home-primary-gradient-end) 100%);
     box-shadow: 0 12px 24px rgba(93, 157, 70, 0.34);
 }
 
 .zalf-homepage__button--secondary {
     color: #132238;
-    background: linear-gradient(135deg, #d8db3a 0%, #b8cf1f 100%);
+    background: linear-gradient(135deg, var(--zalf-home-secondary-gradient-start) 0%, var(--zalf-home-secondary-gradient-end) 100%);
     box-shadow: 0 12px 24px rgba(184, 207, 31, 0.24);
 }
 
@@ -395,8 +395,8 @@
 }
 
 .zalf-homepage__cases-tab.is-active {
-    background: #8cc670;
-    border-color: #8cc670;
+    background: var(--zalf-home-case-active);
+    border-color: var(--zalf-home-case-active);
     color: #0d2a21;
 }
 
@@ -427,7 +427,7 @@
 
 .zalf-homepage__cases-content .zalf-homepage__button--light {
     color: #0d2a21;
-    background: #8cc670;
+    background: var(--zalf-home-case-active);
     margin-top: 6px;
 }
 
@@ -587,7 +587,7 @@
 
 .zalf-homepage__spotlight-card--active .zalf-homepage__button--light {
     color: #ffffff;
-    background: #6d8f2c;
+    background: var(--zalf-home-olive);
 }
 
 .zalf-homepage__spotlight-dots {
@@ -608,7 +608,7 @@
 
 .zalf-homepage__spotlight-dot.is-active {
     width: 36px;
-    background: #6d8f2c;
+    background: var(--zalf-home-olive);
 }
 
 .zalf-homepage__spotlight-note {
@@ -618,7 +618,7 @@
 }
 
 .zalf-homepage__section--training {
-    background: #7fb73f;
+    background: var(--zalf-home-training-bg);
     color: #ffffff;
 }
 
@@ -670,7 +670,7 @@
     font-size: 0.8rem;
     font-weight: 700;
     letter-spacing: 0.02em;
-    color: #f3de1d;
+    color: var(--zalf-home-highlight);
 }
 
 .zalf-homepage__training-footer {

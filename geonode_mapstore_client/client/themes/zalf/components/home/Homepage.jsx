@@ -142,21 +142,21 @@ const idasSites = [
     {
         name: 'ZALF.DE',
         href: 'https://www.zalf.de/',
-        accent: '#a5b600',
+        accent: 'var(--zalf-home-idas-zalf)',
         description:
             'ZALF is the Leibniz Centre for Agricultural Landscape Research. It develops solutions for economically, environmentally, and socially sustainable agriculture together with society, with a strong focus on agricultural landscapes and long-term research.'
     },
     {
         name: 'BONARES.DE',
         href: 'https://www.bonares.de/',
-        accent: '#5db600',
+        accent: 'var(--zalf-home-idas-bonares)',
         description:
             'BonaRes is a free repository for soil, agricultural, and ecology-related research data. It helps researchers publish, find, preserve, and reuse data, including long-term field experiments and their metadata.'
     },
     {
         name: 'FAIRAGRO.NET',
         href: 'https://fairagro.net/en/',
-        accent: '#78c13b',
+        accent: 'var(--zalf-home-idas-fairagro)',
         description:
             'FAIRagro builds FAIR research data infrastructure for agricultural systems research. It focuses on interoperable tools, workflows, and services that support open, collaborative data management across the community.'
     }
