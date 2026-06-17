@@ -1,0 +1,553 @@
+/* ════════════════════════════════════════════════════════════
+   ZALF Dataset Landing Page
+   Inspired by NASA EarthData + ZALF brand (#1a6b3c green)
+   ════════════════════════════════════════════════════════════ */
+
+:root {
+  --zalf-green: #1a6b3c;
+  --zalf-green-dark: #145530;
+  --zalf-green-light: #e8f5ec;
+  --zalf-green-mid: #c5e8d0;
+  --zalf-text: #1a1a1a;
+  --zalf-text-muted: #5a6672;
+  --zalf-border: #dde3e9;
+  --zalf-bg: #f4f6f8;
+  --zalf-white: #ffffff;
+  --zalf-shadow: 0 1px 4px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
+  --zalf-radius: 8px;
+}
+
+/* ── Shell ────────────────────────────────────────────────── */
+.zalf-lp-shell {
+  min-height: 100vh;
+  background: var(--zalf-bg);
+  color: var(--zalf-text);
+  font-family: var(--font-family-base, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+
+/* ── Loading / Error state ────────────────────────────────── */
+.zalf-lp-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  gap: 1rem;
+  color: var(--zalf-text-muted);
+}
+
+.zalf-lp-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--zalf-green-mid);
+  border-top-color: var(--zalf-green);
+  border-radius: 50%;
+  animation: zalf-spin 0.8s linear infinite;
+}
+
+@keyframes zalf-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Breadcrumb ───────────────────────────────────────────── */
+.zalf-lp-breadcrumb {
+  background: var(--zalf-white);
+  border-bottom: 1px solid var(--zalf-border);
+  padding: 0.6rem 2rem;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.zalf-lp-breadcrumb-link {
+  color: var(--zalf-green);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.zalf-lp-breadcrumb-link:hover { text-decoration: underline; }
+
+.zalf-lp-breadcrumb-sep {
+  color: var(--zalf-text-muted);
+}
+
+.zalf-lp-breadcrumb-current {
+  color: var(--zalf-text-muted);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 60vw;
+}
+
+/* ── Hero ─────────────────────────────────────────────────── */
+.zalf-lp-hero {
+  background: var(--zalf-white);
+  border-bottom: 3px solid var(--zalf-green);
+  padding: 2rem;
+}
+
+.zalf-lp-hero-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.zalf-lp-hero-thumb {
+  flex-shrink: 0;
+  width: 200px;
+  height: 150px;
+  border-radius: var(--zalf-radius);
+  overflow: hidden;
+  border: 1px solid var(--zalf-border);
+  background: var(--zalf-bg);
+  box-shadow: var(--zalf-shadow);
+}
+
+.zalf-lp-hero-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.zalf-lp-hero-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+/* Tags row */
+.zalf-lp-hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+/* Title */
+.zalf-lp-title {
+  font-size: 1.65rem;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0;
+  color: var(--zalf-text);
+}
+
+.zalf-lp-title-alt {
+  font-size: 0.95rem;
+  color: var(--zalf-text-muted);
+  font-style: italic;
+  margin: 0;
+}
+
+/* DOI row */
+.zalf-lp-doi-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.1rem;
+}
+
+.zalf-lp-doi-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--zalf-green);
+  color: #fff;
+  padding: 0.15rem 0.45rem;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.zalf-lp-doi-value {
+  font-size: 0.85rem;
+  color: var(--zalf-green);
+  text-decoration: none;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  word-break: break-all;
+}
+
+.zalf-lp-doi-value:hover { text-decoration: underline; }
+
+/* Hero meta line (attribution / date) */
+.zalf-lp-hero-meta {
+  font-size: 0.85rem;
+  color: var(--zalf-text-muted);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.zalf-lp-hero-meta a {
+  color: var(--zalf-green);
+  text-decoration: none;
+}
+
+.zalf-lp-hero-meta a:hover { text-decoration: underline; }
+
+.zalf-lp-hero-sep {
+  margin: 0 0.25rem;
+  color: var(--zalf-border);
+}
+
+/* Action buttons */
+.zalf-lp-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+/* ── Buttons ──────────────────────────────────────────────── */
+.zalf-lp-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.25rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+
+.zalf-lp-btn--primary {
+  background: var(--zalf-green);
+  color: #fff !important;
+  border: 2px solid var(--zalf-green);
+}
+
+.zalf-lp-btn--primary:hover {
+  background: var(--zalf-green-dark);
+  border-color: var(--zalf-green-dark);
+  text-decoration: none;
+}
+
+.zalf-lp-btn--outline {
+  background: transparent;
+  color: var(--zalf-green) !important;
+  border: 2px solid var(--zalf-green);
+}
+
+.zalf-lp-btn--outline:hover {
+  background: var(--zalf-green-light);
+  text-decoration: none;
+}
+
+.zalf-lp-btn--ghost {
+  background: transparent;
+  color: var(--zalf-text-muted) !important;
+  border: 2px solid var(--zalf-border);
+}
+
+.zalf-lp-btn--ghost:hover {
+  background: var(--zalf-bg);
+  text-decoration: none;
+}
+
+.zalf-lp-btn--full {
+  width: 100%;
+  justify-content: center;
+}
+
+.zalf-lp-btn-icon {
+  font-size: 0.75rem;
+}
+
+/* ── Body layout ──────────────────────────────────────────── */
+.zalf-lp-body {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 2rem;
+  align-items: start;
+}
+
+/* ── Main column ──────────────────────────────────────────── */
+.zalf-lp-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.zalf-lp-section {
+  background: var(--zalf-white);
+  border: 1px solid var(--zalf-border);
+  border-radius: var(--zalf-radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--zalf-shadow);
+}
+
+.zalf-lp-section-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--zalf-green);
+  margin: 0 0 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--zalf-green-light);
+}
+
+.zalf-lp-text {
+  margin: 0;
+  color: var(--zalf-text);
+  white-space: pre-line;
+}
+
+/* Temporal Coverage bar */
+.zalf-lp-temporal-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--zalf-green-light);
+  padding: 1rem 1.25rem;
+  border-radius: 6px;
+}
+
+.zalf-lp-temporal-start,
+.zalf-lp-temporal-end {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.zalf-lp-temporal-lbl {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--zalf-green);
+  font-weight: 600;
+}
+
+.zalf-lp-temporal-start strong,
+.zalf-lp-temporal-end strong {
+  font-size: 1.05rem;
+  color: var(--zalf-text);
+}
+
+.zalf-lp-temporal-arrow {
+  flex: 1;
+  text-align: center;
+  font-size: 1.5rem;
+  color: var(--zalf-green);
+}
+
+/* Related identifiers */
+.zalf-lp-related-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.zalf-lp-related-item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid var(--zalf-border);
+}
+
+.zalf-lp-related-item:last-child { border-bottom: none; }
+
+.zalf-lp-related-rel {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--zalf-text-muted);
+  min-width: 110px;
+  flex-shrink: 0;
+}
+
+.zalf-lp-related-item a {
+  color: var(--zalf-green);
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 0.8rem;
+  word-break: break-all;
+}
+
+.zalf-lp-related-type {
+  margin-left: auto;
+  font-size: 0.7rem;
+  background: var(--zalf-bg);
+  border: 1px solid var(--zalf-border);
+  border-radius: 3px;
+  padding: 0.1rem 0.35rem;
+  color: var(--zalf-text-muted);
+  flex-shrink: 0;
+}
+
+/* ── Sidebar ──────────────────────────────────────────────── */
+.zalf-lp-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: sticky;
+  top: 1rem;
+}
+
+.zalf-lp-card {
+  background: var(--zalf-white);
+  border: 1px solid var(--zalf-border);
+  border-radius: var(--zalf-radius);
+  padding: 1.1rem 1.25rem;
+  box-shadow: var(--zalf-shadow);
+}
+
+.zalf-lp-card-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--zalf-green);
+  margin: 0 0 0.85rem;
+  padding-bottom: 0.45rem;
+  border-bottom: 2px solid var(--zalf-green-light);
+}
+
+/* Access card highlight */
+.zalf-lp-card--access {
+  border-top: 3px solid var(--zalf-green);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.zalf-lp-access-desc {
+  font-size: 0.825rem;
+  color: var(--zalf-text-muted);
+  margin: 0;
+}
+
+/* Meta list in sidebar */
+.zalf-lp-meta-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.zalf-lp-meta-item {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.825rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid #f0f2f4;
+  align-items: baseline;
+}
+
+.zalf-lp-meta-item:last-child { border-bottom: none; }
+
+.zalf-lp-meta-label {
+  min-width: 100px;
+  flex-shrink: 0;
+  color: var(--zalf-text-muted);
+  font-size: 0.775rem;
+}
+
+.zalf-lp-meta-value {
+  color: var(--zalf-text);
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.zalf-lp-meta-value a {
+  color: var(--zalf-green);
+  text-decoration: none;
+}
+
+.zalf-lp-meta-value a:hover { text-decoration: underline; }
+
+/* Badge cloud */
+.zalf-lp-badge-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+/* ── Badges ───────────────────────────────────────────────── */
+.zalf-lp-badge {
+  display: inline-block;
+  padding: 0.22rem 0.65rem;
+  border-radius: 20px;
+  font-size: 0.775rem;
+  font-weight: 500;
+  background: var(--zalf-green-light);
+  color: var(--zalf-green);
+  text-decoration: none;
+  transition: background 0.15s;
+  border: 1px solid transparent;
+}
+
+a.zalf-lp-badge:hover {
+  background: var(--zalf-green-mid);
+  text-decoration: none;
+}
+
+.zalf-lp-badge--type {
+  background: var(--zalf-green);
+  color: #fff;
+  border-color: var(--zalf-green);
+}
+
+.zalf-lp-badge--category {
+  background: #2d5f8a;
+  color: #fff;
+  border-color: #2d5f8a;
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .zalf-lp-body {
+    grid-template-columns: 1fr;
+    padding: 1.25rem;
+  }
+
+  .zalf-lp-sidebar {
+    position: static;
+  }
+
+  .zalf-lp-hero-inner {
+    flex-direction: column;
+  }
+
+  .zalf-lp-hero-thumb {
+    width: 100%;
+    height: 200px;
+  }
+
+  .zalf-lp-title {
+    font-size: 1.35rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .zalf-lp-hero {
+    padding: 1.25rem;
+  }
+
+  .zalf-lp-breadcrumb {
+    padding: 0.6rem 1rem;
+  }
+
+  .zalf-lp-body {
+    padding: 1rem;
+  }
+}

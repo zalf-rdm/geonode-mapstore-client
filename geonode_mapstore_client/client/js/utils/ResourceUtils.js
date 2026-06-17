@@ -391,7 +391,12 @@ export const getResourceTypesInfo = () => ({
         formatEmbedUrl: (resource) => resource?.subtype !== "tabular" && resource.embed_url && parseDevHostname(updateUrlQueryParameter(resource.embed_url, {
             config: 'dataset_preview'
         })),
-        formatDetailUrl: (resource) => resource?.detail_url && parseDevHostname(resource.detail_url),
+        formatDetailUrl: (resource) => {
+            const url = resource?.detail_url && parseDevHostname(resource.detail_url);
+            if (!url) return url;
+            // Redirect catalogue card clicks to the ZALF dataset landing page
+            return url.replace(/#\/dataset\/([^/]+)$/, '#/landing/dataset/$1');
+        },
         name: 'Dataset',
         formatMetadataUrl: (resource) => `#/metadata/${resource.pk}`,
         formatMetadataDetailUrl: (resource) => `/metadata/${resource.pk}`

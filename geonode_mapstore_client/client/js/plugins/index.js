@@ -32,6 +32,7 @@ import ZalfNavigationPlugin from '../../themes/zalf/plugins/NavigationPlugin';
 import ZalfHomepagePlugin from '../../themes/zalf/plugins/HomepagePlugin';
 import ZalfFaqPlugin from '../../themes/zalf/plugins/FaqPlugin';
 import ZalfFooterPlugin from '../../themes/zalf/plugins/FooterPlugin';
+import ZalfDatasetLandingPlugin from '../../themes/zalf/plugins/DatasetLandingPlugin';
 import {
     ResourcesGridPlugin,
     ResourcesFiltersFormPlugin
@@ -94,6 +95,7 @@ export const plugins = {
     ZalfHomepagePlugin,
     ZalfFaqPlugin,
     ZalfFooterPlugin,
+    ZalfDatasetLandingPlugin,
     IsochronePlugin: Isochrone,
     ItineraryPlugin: Itinerary,
     SecurityPopupPlugin: SecurityPopup,

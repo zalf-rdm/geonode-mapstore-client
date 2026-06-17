@@ -29,3 +29,27 @@ Record here any change made to files outside `themes/zalf`.
 - CHANGE: Added navbar brand logo copied from `main-ui`.
 - REASON: Support ZALF custom navigation branding from the theme.
 - UPGRADE RISK: Low (static asset only).
+
+- DATE: 2026-06-17
+- BASE FILE: js/utils/AppRoutesUtils.js
+- CHANGE: Added `DATASET_LANDING` to `appRouteComponentTypes` and route `/landing/dataset/:pk` to `CATALOGUE_ROUTES`.
+- REASON: ZALF intermediate dataset landing page before entering the full viewer. URL uses `/landing/dataset/:pk` (not `/dataset/:pk/landing`) to avoid collision with the wildcard route `/dataset/:subtype/:pk` — the Router has no Switch so overlapping 3-segment paths render simultaneously.
+- UPGRADE RISK: Medium — check that no upstream route conflicts with `/landing/dataset/:pk` after upgrades.
+
+- DATE: 2026-06-17
+- BASE FILE: js/apps/gn-catalogue.js
+- CHANGE: Added `DATASET_LANDING: ComponentsRoute` mapping in `getViewer`.
+- REASON: Map the new landing route type to the generic ComponentsRoute renderer.
+- UPGRADE RISK: Low — additive change to the viewers map.
+
+- DATE: 2026-06-17
+- BASE FILE: js/utils/ResourceUtils.js
+- CHANGE: Overrode `formatDetailUrl` for `ResourceTypes.DATASET` to rewrite `#/dataset/:pk` → `#/landing/dataset/:pk`.
+- REASON: Redirect catalogue card clicks to the ZALF landing page instead of directly to the viewer.
+- UPGRADE RISK: Medium — if GeoNode changes the `detail_url` format (e.g. adds a subtype segment), the regex `/#\/dataset\/([^/]+)$/` must be updated.
+
+- DATE: 2026-06-17
+- BASE FILE: js/plugins/index.js
+- CHANGE: Imported and registered `ZalfDatasetLandingPlugin`.
+- REASON: Make the plugin available to the MapStore plugin system.
+- UPGRADE RISK: Low — additive import.
