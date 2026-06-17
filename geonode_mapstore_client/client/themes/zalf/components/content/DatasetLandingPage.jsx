@@ -113,11 +113,36 @@ function CopyMenu({ pk }) {
 
 const CITATION_STYLES = ['Chicago', 'APA', 'DataCite'];
 
+function formatPersonName(person, style) {
+    const last  = (person.last_name  || '').trim();
+    const first = (person.first_name || '').trim();
+    const initials = first.split(/\s+/).filter(Boolean).map(n => n[0] + '.').join(' ');
+    if (last && first) {
+        // Chicago full name: Weber, Marta  — APA/DataCite initials: Weber, M.
+        return style === 'Chicago' ? `${last}, ${first}` : `${last}, ${initials}`;
+    }
+    return last || first || person.username || '';
+}
+
+function buildAuthorList(people, style) {
+    if (!people || people.length === 0) return null;
+    const names = people.map(p => formatPersonName(p, style)).filter(Boolean);
+    if (names.length === 0) return null;
+    if (names.length === 1) return names[0];
+    if (style === 'Chicago') {
+        // Chicago: Weber, Marta and Nowak, Anna
+        return names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1];
+    }
+    // APA / DataCite: Weber, M., & Nowak, A.
+    if (names.length === 2) return names[0] + ' & ' + names[1];
+    return names.slice(0, -1).join(', ') + ', & ' + names[names.length - 1];
+}
+
 function buildCitation(r, style) {
-    const authors = (r.author || []).map((a) => a.full_name || a.username).filter(Boolean);
-    const authorList = authors.length
-        ? authors.join(', ')
-        : (r.owner?.full_name || r.owner?.username || 'ZALF');
+    const people = (r.author || []).length ? r.author : (r.owner ? [r.owner] : []);
+    const authorList = buildAuthorList(people, style)
+        || formatPersonName(r.owner || {}, style)
+        || 'ZALF';
     const year = r.date ? new Date(r.date).getFullYear() : new Date().getFullYear();
     const title = r.title || 'Untitled Resource';
     const institution = r.attribution || 'Leibniz Centre for Agricultural Landscape Research (ZALF)';

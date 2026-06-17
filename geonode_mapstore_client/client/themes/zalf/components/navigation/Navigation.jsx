@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
 import Message from '@mapstore/framework/components/I18N/Message';
 import { getMessageById } from '@mapstore/framework/utils/LocaleUtils';
 import logoZalfWhite from '../../../../../static/img/logo_zalf_white_half.png';
-import './navigation.css';
 
 const navigationItems = [
     { href: '/catalogue', labelId: 'zalfTheme.nav.allData' },
@@ -73,6 +72,12 @@ function renderLabel(item) {
 }
 
 function Navigation({ messages }) {
+    const hasServerNavigation = typeof document !== 'undefined'
+        && document.querySelector('.zalf-navigation-shell[data-zalf-source="server"]');
+    if (hasServerNavigation) {
+        return null;
+    }
+
     const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
     const [openDropdown, setOpenDropdown] = React.useState(null);
     const [currentUrl, setCurrentUrl] = React.useState(() => ({
