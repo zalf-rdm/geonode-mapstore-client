@@ -395,7 +395,9 @@ export const getResourceTypesInfo = () => ({
             const url = resource?.detail_url && parseDevHostname(resource.detail_url);
             if (!url) return url;
             // Redirect catalogue card clicks to the ZALF dataset landing page
-            return url.replace(/#\/dataset\/([^/]+)$/, '#/landing/dataset/$1');
+            return url
+                .replace(/#\/dataset\/([^/]+)$/, '#/landing/dataset/$1')
+                .replace(/#\/tabular\/([^/]+)$/, '#/landing/dataset/$1');
         },
         name: 'Dataset',
         formatMetadataUrl: (resource) => `#/metadata/${resource.pk}`,
@@ -408,7 +410,11 @@ export const getResourceTypesInfo = () => ({
         formatEmbedUrl: (resource) => parseDevHostname(updateUrlQueryParameter(resource.embed_url, {
             config: 'map_preview'
         })),
-        formatDetailUrl: (resource) => resource?.detail_url && parseDevHostname(resource.detail_url),
+        formatDetailUrl: (resource) => {
+            const url = resource?.detail_url && parseDevHostname(resource.detail_url);
+            if (!url) return url;
+            return url.replace(/#\/map\/([^/]+)$/, '#/landing/map/$1');
+        },
         formatMetadataUrl: (resource) => `#/metadata/${resource.pk}`,
         formatMetadataDetailUrl: (resource) => `/metadata/${resource.pk}`
     },
@@ -418,7 +424,11 @@ export const getResourceTypesInfo = () => ({
         canPreviewed: (resource) => resourceHasPermission(resource, 'download_resourcebase') && !!(determineResourceType(resource.extension) !== 'unsupported'),
         hasPermission: (resource) => resourceHasPermission(resource, 'download_resourcebase'),
         formatEmbedUrl: (resource) => isDocumentExternalSource(resource) ? undefined : resource?.embed_url && parseDevHostname(resource.embed_url),
-        formatDetailUrl: (resource) => resource?.detail_url && parseDevHostname(resource.detail_url),
+        formatDetailUrl: (resource) => {
+            const url = resource?.detail_url && parseDevHostname(resource.detail_url);
+            if (!url) return url;
+            return url.replace(/#\/document\/([^/]+)$/, '#/landing/document/$1');
+        },
         formatMetadataUrl: (resource) => `#/metadata/${resource.pk}`,
         formatMetadataDetailUrl: (resource) => `/metadata/${resource.pk}`,
         metadataPreviewUrl: (resource) => `/metadata/${resource.pk}/embed`

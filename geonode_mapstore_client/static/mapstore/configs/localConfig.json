@@ -4450,6 +4450,28 @@
       {
         "name": "ZalfFooter"
       }
+    ],
+    "map_landing": [
+      {
+        "name": "ZalfNavigation"
+      },
+      {
+        "name": "ZalfDatasetLanding"
+      },
+      {
+        "name": "ZalfFooter"
+      }
+    ],
+    "document_landing": [
+      {
+        "name": "ZalfNavigation"
+      },
+      {
+        "name": "ZalfDatasetLanding"
+      },
+      {
+        "name": "ZalfFooter"
+      }
     ]
   }
 }

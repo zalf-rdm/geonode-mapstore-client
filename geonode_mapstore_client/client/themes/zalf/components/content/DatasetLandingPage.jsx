@@ -7,136 +7,60 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { getResourceByPk } from '@js/api/geonode/v2';
+import axios from '@mapstore/framework/libs/ajax';
 import './datasetlanding.css';
 
 const ce = React.createElement;
 
 function extractPkFromHash() {
-    const match = window.location.hash.match(/#\/landing\/dataset\/([^/]+)/);
+    // Matches #/landing/<resource_type>/<pk>
+    const match = window.location.hash.match(/#\/landing\/[^/]+\/([^/]+)/);
     return match ? match[1] : null;
 }
 
-// ─── Demo filler ──────────────────────────────────────────────────────────────
-// Merged UNDER real API data — real fields always win.
-// Remove once datasets are fully populated.
-const DEMO_FILL = {
-    title: 'Southern Colonies Map — Agricultural Soil Carbon Inventory',
-    title_translated: 'Agrarlandschaft Südliche Kolonien — Bodeninventar Organischer Kohlenstoff',
-    abstract: `This dataset contains a comprehensive inventory of soil organic carbon (SOC) stocks and bulk density measured at 247 georeferenced sampling sites across the Southern Colonies agricultural landscape (Brandenburg, Germany). Measurements were conducted between 2019 and 2023 at depths of 0–10 cm, 10–30 cm and 30–60 cm using standardised soil-coring protocols.
+function fetchResource(pk) {
+    return axios.get('/api/v2/resources/' + pk + '/')
+        .then(({ data }) => data.resource);
+}
 
-The dataset includes SOC content (%), bulk density (g cm⁻³), pH, texture class, land-use category and GNSS-referenced coordinates. All analyses were performed at the ZALF soil laboratory following DIN ISO 10694 (organic carbon via dry combustion) and DIN ISO 11272 (bulk density).`,
-    abstract_de: `Dieses Datensatz enthält ein umfassendes Inventar der organischen Kohlenstoffvorräte im Boden (SOC) und der Rohdichte an 247 georeferenzierten Probenahmestandorten in der Agrarlandschaft „Südliche Kolonien" (Brandenburg, Deutschland). Die Messungen wurden zwischen 2019 und 2023 in Tiefen von 0–10 cm, 10–30 cm und 30–60 cm nach standardisierten Protokollen durchgeführt.
+// ─── Resource-type helpers ────────────────────────────────────────────────────
 
-Der Datensatz umfasst SOC-Gehalt (%), Rohdichte (g cm⁻³), pH-Wert, Texturklasse, Landnutzungskategorie sowie GNSS-referenzierte Koordinaten.`,
-    doi: '10.20387/bonares-zalf-soc-scm-2024',
-    edition: '2.1',
-    language: 'eng',
-    attribution: 'Leibniz Centre for Agricultural Landscape Research (ZALF) e.V., Müncheberg, Germany',
-    purpose: 'To quantify long-term dynamics of soil organic carbon across a gradient of agricultural management intensities and land-use histories in north-eastern Germany, supporting regional SOC modelling, climate-smart land-management decisions and national greenhouse-gas inventory reporting.',
-    data_quality_statement: 'Quality assured according to ISO 19157 and internal ZALF QA protocol v3.2. All gravimetric measurements were cross-validated with VNIR spectroscopy (R² = 0.93). Spatial positional accuracy ±1.8 m (GNSS RTK Trimble R10). Outliers removed using a 3σ threshold; flagged values retained in auxiliary file.',
-    data_lineage: 'Soil cores (0–60 cm) collected at 247 georeferenced sites during spring and autumn field campaigns 2019–2023. Organic carbon determined by dry combustion (DIN ISO 10694) at ZALF soil laboratory. Raw spectral data acquired with ASD FieldSpec 4. Data harmonised and archived in BIS-OK v4.1 and exported as GeoPackage (EPSG:25833).',
-    supplemental_information: 'Accompanying data descriptor: Silva et al. (2024) "Long-term SOC dynamics in Brandenburg agroecosystems", Scientific Data 11:312. See also DFG project 423521038 (CarboSense). Uncertainty estimates provided in companion file uncertainty_report_v2.pdf.',
-    spatial_representation_type: 'vector',
-    maintenance_frequency: 'annually',
-    srid: 'EPSG:25833',
-    temporal_extent_start: '2019-03-15',
-    temporal_extent_end: '2023-11-30',
-    date: '2024-06-01T00:00:00Z',
-    date_type: 'publication',
-    subtype: 'vector',
-    owner: {
-        username: 'igor.silva',
-        full_name: 'Igor Silva de Almeida',
-        avatar: null
-    },
-    // Contact roles — arrays of user objects
-    author: [
-        { username: 'igor.silva', full_name: 'Igor Silva de Almeida', order: 0 },
-        { username: 'maria.schmidt', full_name: 'Maria Schmidt', order: 1 },
-        { username: 'thomas.weber', full_name: 'Thomas Weber', order: 2 }
-    ],
-    poc: [
-        { username: 'katrin.mueller', full_name: 'Katrin Müller', order: 0 },
-        { username: 'jan.hoffmann', full_name: 'Jan Hoffmann', order: 1 }
-    ],
-    publisher: [
-        { username: 'zalf.rdm', full_name: 'ZALF Research Data Management Office', order: 0 }
-    ],
-    originator: [
-        { username: 'igor.silva', full_name: 'Igor Silva de Almeida', order: 0 },
-        { username: 'petra.braun', full_name: 'Petra Braun', order: 1 }
-    ],
-    principal_investigator: [
-        { username: 'prof.bauer', full_name: 'Prof. Dr. Axel Bauer', order: 0 }
-    ],
-    data_curator: [
-        { username: 'lena.frank', full_name: 'Lena Frank', order: 0 }
-    ],
-    // Fundings
-    fundings: [
-        {
-            organization: { organization: 'Deutsche Forschungsgemeinschaft (DFG)', ror: 'https://ror.org/018mejw64', abbreviation: 'DFG' },
-            award_title: 'CarboSense: Carbon Sensing in Agricultural Landscapes',
-            award_number: '423521038',
-            award_uri: 'https://gepris.dfg.de/gepris/projekt/423521038'
-        },
-        {
-            organization: { organization: 'European Commission — Horizon Europe', ror: 'https://ror.org/00k4n6c32', abbreviation: 'EC' },
-            award_title: 'SoilMission — European Soil Observatory Research Initiative',
-            award_number: '101059249',
-            award_uri: 'https://cordis.europa.eu/project/id/101059249'
-        },
-        {
-            organization: { organization: 'Bundesministerium für Bildung und Forschung (BMBF)', ror: 'https://ror.org/04pz7b180', abbreviation: 'BMBF' },
-            award_title: 'BonaRes — Soil as a Sustainable Resource for the Bioeconomy',
-            award_number: '031B0511A',
-            award_uri: 'https://bonares.de'
-        }
-    ],
-    // Keywords
-    keywords: [
-        { name: 'Soil Organic Carbon' }, { name: 'SOC' }, { name: 'Bulk Density' },
-        { name: 'Agricultural Landscape' }, { name: 'Brandenburg' }, { name: 'Germany' },
-        { name: 'Land Use' }, { name: 'Field Campaign' }, { name: 'VNIR Spectroscopy' },
-        { name: 'Climate Change Mitigation' }
-    ],
-    // Category
-    category: { gn_description: 'Farming', identifier: 'farming' },
-    // Regions
-    regions: [
-        { name: 'Europe' }, { name: 'Germany' }, { name: 'Brandenburg' }
-    ],
-    // License
-    license: {
-        name: 'CC BY 4.0',
-        name_long: 'Creative Commons Attribution 4.0 International',
-        url: 'https://creativecommons.org/licenses/by/4.0/'
-    },
-    // Related identifiers
-    related_identifier: [
-        {
-            identifier: '10.1038/s41597-024-03001-0',
-            relation_type: { label: 'IsDescribedBy' },
-            related_identifier_type: { label: 'DOI' }
-        },
-        {
-            identifier: '10.20387/bonares-zalf-water-cx3r-2022',
-            relation_type: { label: 'References' },
-            related_identifier_type: { label: 'DOI' }
-        },
-        {
-            identifier: '10.20387/bonares-abc-predecessor-2018',
-            relation_type: { label: 'IsContinuedBy' },
-            related_identifier_type: { label: 'DOI' }
-        },
-        {
-            identifier: 'https://github.com/zalf-rdm/soc-inventory-scripts',
-            relation_type: { label: 'IsSupplementedBy' },
-            related_identifier_type: { label: 'URL' }
-        }
-    ]
-};
+function getResourceTypeLabel(r) {
+    const rt = r.resource_type || 'dataset';
+    const st = r.subtype || '';
+    if (rt === 'dataset') {
+        if (st === 'raster') return 'Raster Dataset';
+        if (st === 'vector') return 'Vector Dataset';
+        if (st === 'tabular' || st === 'table') return 'Table';
+        if (st === 'remote') return 'Remote Service';
+        return 'Dataset';
+    }
+    if (rt === 'map') return 'Map';
+    if (rt === 'document') return 'Document';
+    return rt.charAt(0).toUpperCase() + rt.slice(1);
+}
+
+function getViewerHref(pk, r) {
+    const rt = r.resource_type || 'dataset';
+    if (rt === 'map') return '#/map/' + pk;
+    if (rt === 'document') return '#/document/' + pk;
+    return '#/dataset/' + pk;
+}
+
+function getViewerButtonLabel(r) {
+    const rt = r.resource_type || 'dataset';
+    if (rt === 'map') return 'Open Map';
+    if (rt === 'document') return 'View Document';
+    return 'Data Access';
+}
+
+function formatFileSize(bytes) {
+    if (!bytes) return null;
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+    if (bytes < 1073741824) return (bytes / 1048576).toFixed(1) + ' MB';
+    return (bytes / 1073741824).toFixed(2) + ' GB';
+}
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
@@ -161,7 +85,7 @@ function CopyMenu({ pk }) {
         });
     }
 
-    const landingUrl = window.location.origin + '/catalogue/#/landing/dataset/' + pk;
+    const landingUrl = window.location.origin + window.location.pathname + window.location.hash;
     const apiUrl = window.location.origin + '/api/v2/resources/' + pk + '/';
     const apiCmd = 'curl "' + apiUrl + '"';
 
@@ -195,15 +119,16 @@ function buildCitation(r, style) {
         ? authors.join(', ')
         : (r.owner?.full_name || r.owner?.username || 'ZALF');
     const year = r.date ? new Date(r.date).getFullYear() : new Date().getFullYear();
-    const title = r.title || 'Untitled Dataset';
+    const title = r.title || 'Untitled Resource';
     const institution = r.attribution || 'Leibniz Centre for Agricultural Landscape Research (ZALF)';
     const doi = r.doi ? 'https://doi.org/' + r.doi : null;
     const version = r.edition ? ' Version ' + r.edition + '.' : '';
     const today = new Date().toISOString().split('T')[0];
+    const typeLabel = getResourceTypeLabel(r);
 
     if (style === 'APA') {
         const apaDoi = doi ? ' ' + doi : '';
-        return authorList + ' (' + year + '). ' + title + ' [Dataset].' + version + ' ' + institution + '.' + apaDoi;
+        return authorList + ' (' + year + '). ' + title + ' [' + typeLabel + '].' + version + ' ' + institution + '.' + apaDoi;
     }
     if (style === 'DataCite') {
         const dcDoi = doi ? ' ' + doi : '';
@@ -211,7 +136,7 @@ function buildCitation(r, style) {
     }
     // Chicago (default)
     const chiDoi = doi ? ' ' + doi : '';
-    return authorList + '. (' + year + '). “' + title + '” [Dataset].' + version
+    return authorList + '. (' + year + '). "' + title + '" [' + typeLabel + '].' + version
         + ' ' + institution + '.' + chiDoi
         + (doi ? ' Date Accessed: ' + today : '');
 }
@@ -231,7 +156,7 @@ function CitationCard({ r }) {
     return ce('div', { className: 'zalf-lp-card zalf-lp-card--citation' },
         ce('h3', { className: 'zalf-lp-card-title' }, 'Citation'),
         ce('p', { className: 'zalf-lp-citation-note' },
-            'This dataset is openly shared. Please cite it when used in publications.'
+            'This resource is openly shared. Please cite it when used in publications.'
         ),
         ce('div', { className: 'zalf-lp-citation-style-row' },
             ce('span', { className: 'zalf-lp-citation-style-lbl' }, 'Style'),
@@ -285,7 +210,7 @@ function TextBlock({ text }) {
 }
 
 function PersonChip({ person }) {
-    const name = person.full_name || person.username || '—';
+    const name = person.full_name || [person.first_name, person.last_name].filter(Boolean).join(' ') || person.username || '—';
     const href = person.username ? `/people/profile/${person.username}` : null;
     return ce('div', { className: 'zalf-lp-person' },
         ce('div', { className: 'zalf-lp-person-avatar' }, name.charAt(0).toUpperCase()),
@@ -307,7 +232,7 @@ function ContactRoleBlock({ label, people }) {
 
 function FunderCard({ funder }) {
     const org = funder.organization;
-    const orgName = org?.organization || '—';
+    const orgName = org?.organization || org?.name || '—';
     const abbr = org?.abbreviation || null;
     const ror = org?.ror || null;
     return ce('div', { className: 'zalf-lp-funder-card' },
@@ -334,14 +259,14 @@ function RelatedIdentifierList({ items }) {
     if (!items || !items.length) return null;
     return ce('ul', { className: 'zalf-lp-related-list' },
         ...items.map((ri, i) => {
-            const id = ri.identifier || '';
-            const type = ri.related_identifier_type?.label || 'ID';
-            const rel = ri.relation_type?.label || '';
+            const id = ri.identifier || ri.related_identifier || '';
+            const type = ri.related_identifier_type?.label || ri.related_identifier_type || 'ID';
+            const rel = ri.relation_type?.label || ri.relation_type || '';
             const isDoi = type === 'DOI';
             const isUrl = type === 'URL' || id.startsWith('http');
             const href = isDoi ? 'https://doi.org/' + id : (isUrl ? id : null);
             return ce('li', { key: i, className: 'zalf-lp-related-item' },
-                ce('span', { className: 'zalf-lp-related-rel' }, rel),
+                rel && ce('span', { className: 'zalf-lp-related-rel' }, rel),
                 href
                     ? ce('a', { href, target: '_blank', rel: 'noopener noreferrer' }, id)
                     : ce('span', null, id),
@@ -360,17 +285,17 @@ export default function DatasetLandingPage() {
     const pk = extractPkFromHash();
 
     useEffect(() => {
-        if (!pk) { setError('No dataset identifier found in URL.'); setLoading(false); return; }
-        getResourceByPk(pk)
+        if (!pk) { setError('No resource identifier found in URL.'); setLoading(false); return; }
+        fetchResource(pk)
             .then((res) => { setResource(res); setLoading(false); })
-            .catch(() => { setError('Could not load dataset information.'); setLoading(false); });
+            .catch(() => { setError('Could not load resource information.'); setLoading(false); });
     }, [pk]);
 
     if (loading) {
         return ce('div', { className: 'zalf-lp-shell' },
             ce('div', { className: 'zalf-lp-state zalf-lp-state--loading' },
                 ce('div', { className: 'zalf-lp-spinner' }),
-                ce('p', null, 'Loading dataset…')
+                ce('p', null, 'Loading…')
             )
         );
     }
@@ -378,22 +303,17 @@ export default function DatasetLandingPage() {
     if (error || !resource) {
         return ce('div', { className: 'zalf-lp-shell' },
             ce('div', { className: 'zalf-lp-state zalf-lp-state--error' },
-                ce('p', null, error || 'Dataset not found.')
+                ce('p', null, error || 'Resource not found.')
             )
         );
     }
 
-    // Merge: DEMO_FILL provides defaults; real API values always override
-    const r = Object.assign({}, DEMO_FILL, Object.fromEntries(
-        Object.entries(resource).filter(([, v]) => {
-            if (v === null || v === undefined || v === '') return false;
-            if (Array.isArray(v) && v.length === 0) return false;
-            return true;
-        })
-    ));
+    const r = resource;
 
     // ── Derived values ──────────────────────────────────────────────────────
-    const viewerHref = '#/dataset/' + pk;
+    const typeLabel = getResourceTypeLabel(r);
+    const viewerHref = getViewerHref(pk, r);
+    const viewerBtnLabel = getViewerButtonLabel(r);
     const metadataHref = '#/metadata/' + pk;
     const backHref = '#/';
 
@@ -407,9 +327,11 @@ export default function DatasetLandingPage() {
         ? [r.category.gn_description || r.category.identifier].filter(Boolean)
         : [];
     const regions = (r.regions || []).map((rg) => rg.name).filter(Boolean);
-    const ownerName = r.owner?.full_name || r.owner?.username || '—';
+    const ownerName = r.owner
+        ? (r.owner.full_name || [r.owner.first_name, r.owner.last_name].filter(Boolean).join(' ') || r.owner.username || '—')
+        : '—';
     const ownerHref = r.owner?.username ? '/people/profile/' + r.owner.username : null;
-    const license = r.license?.name_long || r.license?.name || null;
+    const license = r.license?.name_long || r.license?.name || r.license?.identifier || null;
     const licenseUrl = r.license?.url || null;
     const doiUrl = r.doi ? 'https://doi.org/' + r.doi : null;
     const pubDate = r.date
@@ -424,10 +346,27 @@ export default function DatasetLandingPage() {
     const dateTypeLabel = r.date_type
         ? r.date_type.charAt(0).toUpperCase() + r.date_type.slice(1)
         : 'Date';
+    const fileSizeLabel = formatFileSize(r.file_size);
 
-    const hasContactRoles = r.author?.length || r.poc?.length || r.publisher?.length
-        || r.originator?.length || r.principal_investigator?.length
-        || r.data_curator?.length;
+    const isDataset = !r.resource_type || r.resource_type === 'dataset';
+
+    // abstract_translated is the API field name for the German translation
+    const abstractDe = r.abstract_translated || null;
+    const titleTranslated = r.title_translated || null;
+
+    // Normalise: raw_* fields strip placeholder text GeoNode inserts
+    const abstract = (r.raw_abstract && r.raw_abstract !== 'No abstract provided') ? r.raw_abstract : null;
+    const supplemental = (r.raw_supplemental_information && r.raw_supplemental_information !== 'No information provided') ? r.raw_supplemental_information : null;
+    const purpose = (r.raw_purpose && r.raw_purpose !== 'None') ? r.raw_purpose : r.purpose || null;
+    const dataQuality = (r.raw_data_quality_statement && r.raw_data_quality_statement !== 'None') ? r.raw_data_quality_statement : r.data_quality_statement || null;
+    const dataLineage = r.data_lineage || null;
+
+    const hasContactRoles = (r.author || []).length || (r.poc || []).length || (r.publisher || []).length
+        || (r.originator || []).length || (r.principal_investigator || []).length
+        || (r.data_curator || []).length;
+
+    const fundings = r.fundings || [];
+    const relatedIdentifiers = r.related_identifier || [];
 
     return ce('div', { className: 'zalf-lp-shell' },
 
@@ -446,13 +385,13 @@ export default function DatasetLandingPage() {
                 ),
                 ce('div', { className: 'zalf-lp-hero-body' },
                     ce('div', { className: 'zalf-lp-hero-tags' },
-                        ce(Badge, { label: 'Dataset', variant: 'type' }),
-                        r.subtype && ce(Badge, { label: r.subtype }),
+                        ce(Badge, { label: typeLabel, variant: 'type' }),
                         r.edition && ce(Badge, { label: 'v' + r.edition }),
-                        r.language && ce(Badge, { label: r.language.toUpperCase() })
+                        r.language && ce(Badge, { label: r.language.toUpperCase() }),
+                        r.extension && ce(Badge, { label: r.extension.toUpperCase() })
                     ),
                     ce('h1', { className: 'zalf-lp-title' }, r.title),
-                    r.title_translated && ce('p', { className: 'zalf-lp-title-alt' }, r.title_translated),
+                    titleTranslated && ce('p', { className: 'zalf-lp-title-alt' }, titleTranslated),
                     r.doi && ce('div', { className: 'zalf-lp-doi-row' },
                         ce('span', { className: 'zalf-lp-doi-label' }, 'DOI'),
                         ce('a', { className: 'zalf-lp-doi-value', href: doiUrl, target: '_blank', rel: 'noopener noreferrer' }, r.doi)
@@ -471,7 +410,7 @@ export default function DatasetLandingPage() {
                     ),
                     ce('div', { className: 'zalf-lp-hero-actions' },
                         ce('a', { className: 'zalf-lp-btn zalf-lp-btn--primary', href: viewerHref },
-                            ce('span', { className: 'zalf-lp-btn-icon' }, '▶'), 'Data Access'
+                            ce('span', { className: 'zalf-lp-btn-icon' }, '▶'), viewerBtnLabel
                         ),
                         ce('a', { className: 'zalf-lp-btn zalf-lp-btn--outline', href: metadataHref },
                             'View Full Metadata'
@@ -489,20 +428,20 @@ export default function DatasetLandingPage() {
 
                 // Description
                 ce(Section, { title: 'Description' },
-                    ce(TextBlock, { text: r.abstract || 'No description available.' }),
-                    r.abstract_de && ce('details', { className: 'zalf-lp-details' },
+                    ce(TextBlock, { text: abstract || 'No description available.' }),
+                    abstractDe && ce('details', { className: 'zalf-lp-details' },
                         ce('summary', null, 'Beschreibung (Deutsch)'),
-                        ce(TextBlock, { text: r.abstract_de })
+                        ce(TextBlock, { text: abstractDe })
                     )
                 ),
 
                 // Purpose
-                r.purpose && ce(Section, { title: 'Purpose' },
-                    ce(TextBlock, { text: r.purpose })
+                purpose && ce(Section, { title: 'Purpose' },
+                    ce(TextBlock, { text: purpose })
                 ),
 
                 // People / Contact Roles
-                hasContactRoles && ce(Section, { title: 'People' },
+                hasContactRoles ? ce(Section, { title: 'People' },
                     ce('div', { className: 'zalf-lp-roles' },
                         ce(ContactRoleBlock, { label: 'Authors', people: r.author }),
                         ce(ContactRoleBlock, { label: 'Point of Contact', people: r.poc }),
@@ -511,17 +450,17 @@ export default function DatasetLandingPage() {
                         ce(ContactRoleBlock, { label: 'Principal Investigator', people: r.principal_investigator }),
                         ce(ContactRoleBlock, { label: 'Data Curator', people: r.data_curator })
                     )
-                ),
+                ) : null,
 
                 // Funders
-                r.fundings && r.fundings.length > 0 && ce(Section, { title: 'Funding' },
+                fundings.length > 0 ? ce(Section, { title: 'Funding' },
                     ce('div', { className: 'zalf-lp-funders' },
-                        ...r.fundings.map((f, i) => ce(FunderCard, { key: i, funder: f }))
+                        ...fundings.map((f, i) => ce(FunderCard, { key: i, funder: f }))
                     )
-                ),
+                ) : null,
 
                 // Temporal Coverage
-                (tempStart || tempEnd) && ce(Section, { title: 'Temporal Coverage' },
+                (tempStart || tempEnd) ? ce(Section, { title: 'Temporal Coverage' },
                     ce('div', { className: 'zalf-lp-temporal-bar' },
                         ce('div', { className: 'zalf-lp-temporal-start' },
                             ce('span', { className: 'zalf-lp-temporal-lbl' }, 'Start'),
@@ -533,60 +472,63 @@ export default function DatasetLandingPage() {
                             ce('strong', null, tempEnd || 'Ongoing')
                         )
                     )
-                ),
+                ) : null,
 
                 // Data Quality
-                r.data_quality_statement && ce(Section, { title: 'Data Quality Statement' },
-                    ce(TextBlock, { text: r.data_quality_statement })
-                ),
+                dataQuality ? ce(Section, { title: 'Data Quality Statement' },
+                    ce(TextBlock, { text: dataQuality })
+                ) : null,
 
                 // Data Lineage
-                r.data_lineage && ce(Section, { title: 'Data Lineage' },
-                    ce(TextBlock, { text: r.data_lineage })
-                ),
+                dataLineage ? ce(Section, { title: 'Data Lineage' },
+                    ce(TextBlock, { text: dataLineage })
+                ) : null,
 
                 // Supplemental
-                r.supplemental_information && ce(Section, { title: 'Supplemental Information' },
-                    ce(TextBlock, { text: r.supplemental_information })
-                ),
+                supplemental ? ce(Section, { title: 'Supplemental Information' },
+                    ce(TextBlock, { text: supplemental })
+                ) : null,
 
                 // Related Identifiers
-                r.related_identifier && r.related_identifier.length > 0 && ce(Section, { title: 'Related Identifiers' },
-                    ce(RelatedIdentifierList, { items: r.related_identifier })
-                )
+                relatedIdentifiers.length > 0 ? ce(Section, { title: 'Related Identifiers' },
+                    ce(RelatedIdentifierList, { items: relatedIdentifiers })
+                ) : null
             ),
 
             // ── Sidebar ──────────────────────────────────────────────────────
             ce('aside', { className: 'zalf-lp-sidebar' },
 
-                // Dataset Details
+                // Resource Details card
                 ce('div', { className: 'zalf-lp-card' },
                     ce('div', { className: 'zalf-lp-card-header' },
-                        ce('h3', { className: 'zalf-lp-card-title' }, 'Dataset Details'),
+                        ce('h3', { className: 'zalf-lp-card-title' }, 'Resource Details'),
                         ce(CopyMenu, { pk })
                     ),
                     ce('div', { className: 'zalf-lp-meta-list' },
+                        ce(MetaItem, { label: 'Type', value: typeLabel }),
                         ce(MetaItem, { label: 'Owner', value: ownerName, link: ownerHref }),
                         ce(MetaItem, { label: 'Attribution', value: r.attribution }),
                         ce(MetaItem, { label: dateTypeLabel, value: pubDate }),
                         ce(MetaItem, { label: 'Version', value: r.edition }),
                         ce(MetaItem, { label: 'Language', value: r.language }),
-                        ce(MetaItem, { label: 'Subtype', value: r.subtype }),
-                        ce(MetaItem, { label: 'Spatial Type', value: r.spatial_representation_type }),
-                        ce(MetaItem, { label: 'SRID', value: r.srid }),
-                        ce(MetaItem, { label: 'Update Freq.', value: r.maintenance_frequency }),
+                        isDataset && ce(MetaItem, { label: 'Spatial Type', value: r.spatial_representation_type }),
+                        isDataset && ce(MetaItem, { label: 'SRID', value: r.srid }),
+                        isDataset && ce(MetaItem, { label: 'Update Freq.', value: r.maintenance_frequency }),
+                        r.subtype === 'remote' && r.ows_url && ce(MetaItem, { label: 'Service URL', value: r.ows_url, link: r.ows_url }),
+                        r.resource_type === 'document' && r.extension && ce(MetaItem, { label: 'Format', value: r.extension.toUpperCase() }),
+                        r.resource_type === 'document' && fileSizeLabel && ce(MetaItem, { label: 'File Size', value: fileSizeLabel }),
                         license && ce(MetaItem, { label: 'License', value: license, link: licenseUrl })
                     )
                 ),
 
                 // Access card
                 ce('div', { className: 'zalf-lp-card zalf-lp-card--access' },
-                    ce('h3', { className: 'zalf-lp-card-title' }, 'Data Access'),
+                    ce('h3', { className: 'zalf-lp-card-title' }, 'Access'),
                     ce('p', { className: 'zalf-lp-access-desc' },
-                        'Explore, visualise, and download this dataset in the interactive viewer.'
+                        'Explore and interact with this resource in the viewer.'
                     ),
                     ce('a', { className: 'zalf-lp-btn zalf-lp-btn--primary zalf-lp-btn--full', href: viewerHref },
-                        ce('span', { className: 'zalf-lp-btn-icon' }, '▶'), 'Open in Viewer'
+                        ce('span', { className: 'zalf-lp-btn-icon' }, '▶'), viewerBtnLabel
                     ),
                     downloadHref
                         ? ce('a', {
@@ -605,7 +547,7 @@ export default function DatasetLandingPage() {
                 ce(CitationCard, { r }),
 
                 // Keywords & Categories
-                (keywords.length > 0 || categories.length > 0) && ce('div', { className: 'zalf-lp-card' },
+                (keywords.length > 0 || categories.length > 0) ? ce('div', { className: 'zalf-lp-card' },
                     ce('h3', { className: 'zalf-lp-card-title' }, 'Keywords & Categories'),
                     ce('div', { className: 'zalf-lp-badge-cloud' },
                         ...categories.map((c) => ce(Badge, { key: 'cat-' + c, label: c, variant: 'category' })),
@@ -614,15 +556,15 @@ export default function DatasetLandingPage() {
                             href: '/catalogue/#/?q=' + encodeURIComponent(kw)
                         }))
                     )
-                ),
+                ) : null,
 
                 // Regions
-                regions.length > 0 && ce('div', { className: 'zalf-lp-card' },
+                regions.length > 0 ? ce('div', { className: 'zalf-lp-card' },
                     ce('h3', { className: 'zalf-lp-card-title' }, 'Regions'),
                     ce('div', { className: 'zalf-lp-badge-cloud' },
                         ...regions.map((rg) => ce(Badge, { key: rg, label: rg }))
                     )
-                )
+                ) : null
             )
         )
     );

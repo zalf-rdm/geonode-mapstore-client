@@ -106,6 +106,16 @@ export const CATALOGUE_ROUTES = [
         component: appRouteComponentTypes.DATASET_LANDING
     },
     {
+        name: 'map_landing',
+        path: ['/landing/map/:pk'],
+        component: appRouteComponentTypes.DATASET_LANDING
+    },
+    {
+        name: 'document_landing',
+        path: ['/landing/document/:pk'],
+        component: appRouteComponentTypes.DATASET_LANDING
+    },
+    {
         name: 'dataset_viewer',
         path: [
             '/dataset/:subtype/:pk'
