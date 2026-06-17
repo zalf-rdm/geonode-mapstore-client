@@ -6,14 +6,16 @@
 :root {
   --zalf-green: #1a6b3c;
   --zalf-green-dark: #145530;
+  --zalf-green-nav: #4E9C18;
   --zalf-green-light: #e8f5ec;
   --zalf-green-mid: #c5e8d0;
+  --zalf-green-nav: #4E9C18;
   --zalf-text: #1a1a1a;
   --zalf-text-muted: #5a6672;
   --zalf-border: #dde3e9;
   --zalf-bg: #f4f6f8;
   --zalf-white: #ffffff;
-  --zalf-shadow: 0 1px 4px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
+  --zalf-shadow: 0 1px 4px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.06);
   --zalf-radius: 8px;
 }
 
@@ -48,7 +50,9 @@
 }
 
 @keyframes zalf-spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ── Breadcrumb ───────────────────────────────────────────── */
@@ -69,7 +73,9 @@
   font-weight: 500;
 }
 
-.zalf-lp-breadcrumb-link:hover { text-decoration: underline; }
+.zalf-lp-breadcrumb-link:hover {
+  text-decoration: underline;
+}
 
 .zalf-lp-breadcrumb-sep {
   color: var(--zalf-text-muted);
@@ -86,7 +92,7 @@
 /* ── Hero ─────────────────────────────────────────────────── */
 .zalf-lp-hero {
   background: var(--zalf-white);
-  border-bottom: 3px solid var(--zalf-green);
+  border-bottom: 3px solid var(--zalf-green-nav);
   padding: 2rem;
 }
 
@@ -159,7 +165,7 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  background: var(--zalf-green);
+  background: var(--zalf-green-nav);
   color: #fff;
   padding: 0.15rem 0.45rem;
   border-radius: 3px;
@@ -168,13 +174,15 @@
 
 .zalf-lp-doi-value {
   font-size: 0.85rem;
-  color: var(--zalf-green);
+  color: var(--zalf-green-nav);
   text-decoration: none;
   font-family: 'SFMono-Regular', Consolas, monospace;
   word-break: break-all;
 }
 
-.zalf-lp-doi-value:hover { text-decoration: underline; }
+.zalf-lp-doi-value:hover {
+  text-decoration: underline;
+}
 
 /* Hero meta line (attribution / date) */
 .zalf-lp-hero-meta {
@@ -191,7 +199,9 @@
   text-decoration: none;
 }
 
-.zalf-lp-hero-meta a:hover { text-decoration: underline; }
+.zalf-lp-hero-meta a:hover {
+  text-decoration: underline;
+}
 
 .zalf-lp-hero-sep {
   margin: 0 0.25rem;
@@ -222,9 +232,9 @@
 }
 
 .zalf-lp-btn--primary {
-  background: var(--zalf-green);
+  background: var(--zalf-green-nav);
   color: #fff !important;
-  border: 2px solid var(--zalf-green);
+  border: 2px solid var(--zalf-green-nav);
 }
 
 .zalf-lp-btn--primary:hover {
@@ -235,8 +245,8 @@
 
 .zalf-lp-btn--outline {
   background: transparent;
-  color: var(--zalf-green) !important;
-  border: 2px solid var(--zalf-green);
+  color: var(--zalf-green-nav) !important;
+  border: 2px solid var(--zalf-green-nav);
 }
 
 .zalf-lp-btn--outline:hover {
@@ -251,6 +261,19 @@
 }
 
 .zalf-lp-btn--ghost:hover {
+  background: var(--zalf-bg);
+  text-decoration: none;
+}
+
+.zalf-lp-btn--disabled {
+  background: var(--zalf-bg);
+  color: var(--zalf-text-muted) !important;
+  border: 2px solid var(--zalf-border);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.zalf-lp-btn--disabled:hover {
   background: var(--zalf-bg);
   text-decoration: none;
 }
@@ -296,7 +319,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.07em;
-  color: var(--zalf-green);
+  color: var(--zalf-green-nav);
   margin: 0 0 0.75rem;
   padding-bottom: 0.5rem;
   border-bottom: 2px solid var(--zalf-green-light);
@@ -329,7 +352,7 @@
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--zalf-green);
+  color: var(--zalf-green-nav);
   font-weight: 600;
 }
 
@@ -343,7 +366,7 @@
   flex: 1;
   text-align: center;
   font-size: 1.5rem;
-  color: var(--zalf-green);
+  color: var(--zalf-green-nav);
 }
 
 /* Related identifiers */
@@ -365,7 +388,9 @@
   border-bottom: 1px solid var(--zalf-border);
 }
 
-.zalf-lp-related-item:last-child { border-bottom: none; }
+.zalf-lp-related-item:last-child {
+  border-bottom: none;
+}
 
 .zalf-lp-related-rel {
   font-size: 0.72rem;
@@ -412,20 +437,91 @@
   box-shadow: var(--zalf-shadow);
 }
 
+.zalf-lp-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.85rem;
+  padding-bottom: 0.45rem;
+  border-bottom: 2px solid var(--zalf-green-light);
+}
+
 .zalf-lp-card-title {
   font-size: 0.78rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.07em;
-  color: var(--zalf-green);
-  margin: 0 0 0.85rem;
-  padding-bottom: 0.45rem;
-  border-bottom: 2px solid var(--zalf-green-light);
+  color: var(--zalf-green-nav);
+  margin: 0;
+}
+
+/* ── Copy menu (three-dots) ───────────────────────────────── */
+.zalf-lp-copy-menu {
+  position: relative;
+}
+
+.zalf-lp-dots-btn {
+  background: none;
+  border: none;
+  padding: 0.1rem 0.35rem;
+  font-size: 1.1rem;
+  line-height: 1;
+  color: var(--zalf-text-muted);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.12s, color 0.12s;
+  display: flex;
+  align-items: center;
+}
+
+.zalf-lp-dots-btn:hover {
+  background: var(--zalf-green-light);
+  color: var(--zalf-green-nav);
+}
+
+.zalf-lp-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  background: var(--zalf-white);
+  border: 1px solid var(--zalf-border);
+  border-radius: var(--zalf-radius);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  min-width: 190px;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.zalf-lp-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.6rem 0.9rem;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 0.825rem;
+  color: var(--zalf-text);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.zalf-lp-dropdown-item:hover {
+  background: var(--zalf-green-light);
+  color: var(--zalf-green-nav);
+}
+
+.zalf-lp-dropdown-icon {
+  font-size: 0.9rem;
+  width: 1.2rem;
+  text-align: center;
+  flex-shrink: 0;
 }
 
 /* Access card highlight */
 .zalf-lp-card--access {
-  border-top: 3px solid var(--zalf-green);
+  border-top: 3px solid var(--zalf-green-nav);
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
@@ -453,7 +549,9 @@
   align-items: baseline;
 }
 
-.zalf-lp-meta-item:last-child { border-bottom: none; }
+.zalf-lp-meta-item:last-child {
+  border-bottom: none;
+}
 
 .zalf-lp-meta-label {
   min-width: 100px;
@@ -469,17 +567,20 @@
 }
 
 .zalf-lp-meta-value a {
-  color: var(--zalf-green);
+  color: var(--zalf-green-nav);
   text-decoration: none;
 }
 
-.zalf-lp-meta-value a:hover { text-decoration: underline; }
+.zalf-lp-meta-value a:hover {
+  text-decoration: underline;
+}
 
 /* Badge cloud */
 .zalf-lp-badge-cloud {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
+  margin-top: 0.6rem;
 }
 
 /* ── Badges ───────────────────────────────────────────────── */
@@ -502,15 +603,274 @@ a.zalf-lp-badge:hover {
 }
 
 .zalf-lp-badge--type {
-  background: var(--zalf-green);
+  background: var(--zalf-green-nav);
   color: #fff;
-  border-color: var(--zalf-green);
+  border-color: var(--zalf-green-nav);
 }
 
 .zalf-lp-badge--category {
-  background: #2d5f8a;
+  background: var(--zalf-green-nav);
   color: #fff;
-  border-color: #2d5f8a;
+  border-color: var(--zalf-green-nav);
+}
+
+/* ── People / Contact roles ───────────────────────────────── */
+.zalf-lp-roles {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.zalf-lp-role-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.zalf-lp-role-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--zalf-text-muted);
+}
+
+.zalf-lp-role-people {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.zalf-lp-person {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--zalf-green-light);
+  border-radius: 20px;
+  padding: 0.25rem 0.75rem 0.25rem 0.3rem;
+}
+
+.zalf-lp-person-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--zalf-green-nav);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.zalf-lp-person-name {
+  font-size: 0.825rem;
+  color: var(--zalf-text);
+  text-decoration: none;
+}
+
+a.zalf-lp-person-name:hover {
+  color: var(--zalf-green-nav);
+  text-decoration: underline;
+}
+
+/* ── Funders ──────────────────────────────────────────────── */
+.zalf-lp-funders {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.zalf-lp-funder-card {
+  border: 1px solid var(--zalf-border);
+  border-left: 3px solid var(--zalf-green-nav);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  background: var(--zalf-bg);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.zalf-lp-funder-org {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.zalf-lp-funder-abbr {
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: var(--zalf-green-nav);
+  color: #fff;
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.zalf-lp-funder-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--zalf-text);
+  text-decoration: none;
+}
+
+a.zalf-lp-funder-name:hover {
+  color: var(--zalf-green-nav);
+  text-decoration: underline;
+}
+
+.zalf-lp-funder-award {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.zalf-lp-funder-award-title {
+  font-size: 0.825rem;
+  color: var(--zalf-text);
+  font-style: italic;
+}
+
+.zalf-lp-funder-award-num {
+  font-size: 0.75rem;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  color: var(--zalf-text-muted);
+  background: var(--zalf-white);
+  border: 1px solid var(--zalf-border);
+  border-radius: 3px;
+  padding: 0.05rem 0.35rem;
+}
+
+.zalf-lp-funder-link {
+  font-size: 0.78rem;
+  color: var(--zalf-green-nav);
+  text-decoration: none;
+  font-weight: 500;
+  align-self: flex-start;
+}
+
+.zalf-lp-funder-link:hover {
+  text-decoration: underline;
+}
+
+/* ── Details <summary> ────────────────────────────────────── */
+.zalf-lp-details {
+  margin-top: 0.75rem;
+  border: 1px solid var(--zalf-border);
+  border-radius: 6px;
+  padding: 0 0.75rem;
+}
+
+.zalf-lp-details summary {
+  cursor: pointer;
+  padding: 0.6rem 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--zalf-green-nav);
+  list-style: none;
+  user-select: none;
+}
+
+.zalf-lp-details summary::-webkit-details-marker {
+  display: none;
+}
+
+.zalf-lp-details[open] summary {
+  border-bottom: 1px solid var(--zalf-border);
+  margin-bottom: 0.75rem;
+}
+
+.zalf-lp-details .zalf-lp-text {
+  padding-bottom: 0.75rem;
+}
+
+/* ── Citation card ────────────────────────────────────────── */
+.zalf-lp-card--citation {
+  border-top: 3px solid var(--zalf-green-nav);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.zalf-lp-citation-note {
+  font-size: 0.78rem;
+  color: var(--zalf-text-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.zalf-lp-citation-style-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.zalf-lp-citation-style-lbl {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--zalf-text-muted);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.zalf-lp-citation-tabs {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--zalf-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.zalf-lp-citation-tab {
+  padding: 0.28rem 0.65rem;
+  font-size: 0.775rem;
+  font-weight: 500;
+  background: var(--zalf-white);
+  color: var(--zalf-text-muted);
+  border: none;
+  cursor: pointer;
+  border-right: 1px solid var(--zalf-border);
+  transition: background 0.12s, color 0.12s;
+}
+
+.zalf-lp-citation-tab:last-child {
+  border-right: none;
+}
+
+.zalf-lp-citation-tab:hover {
+  background: var(--zalf-bg);
+  color: var(--zalf-text);
+}
+
+.zalf-lp-citation-tab--active {
+  background: var(--zalf-green-nav);
+  color: #fff;
+}
+
+.zalf-lp-citation-tab--active:hover {
+  background: var(--zalf-green-dark);
+  color: #fff;
+}
+
+.zalf-lp-citation-text {
+  background: var(--zalf-bg);
+  border: 1px solid var(--zalf-border);
+  border-radius: 5px;
+  padding: 0.5rem 0.5rem;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--zalf-text);
+  word-break: break-word;
+  min-height: 4.5rem;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.zalf-lp-citation-copy {
+  margin-top: 0;
 }
 
 /* ── Responsive ───────────────────────────────────────────── */
