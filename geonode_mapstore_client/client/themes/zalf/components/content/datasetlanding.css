@@ -143,11 +143,13 @@
   line-height: 1.25;
   margin: 0;
   color: var(--zalf-text);
+  font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .zalf-lp-title-alt {
   font-size: 0.95rem;
   color: var(--zalf-text-muted);
+  font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-style: italic;
   margin: 0;
 }
@@ -323,6 +325,7 @@
   margin: 0 0 0.75rem;
   padding-bottom: 0.5rem;
   border-bottom: 2px solid var(--zalf-green-light);
+  font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .zalf-lp-text {
@@ -453,6 +456,7 @@
   letter-spacing: 0.07em;
   color: var(--zalf-green-nav);
   margin: 0;
+  font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 /* ── Copy menu (three-dots) ───────────────────────────────── */
@@ -732,6 +736,7 @@ a.zalf-lp-funder-name:hover {
   font-size: 0.825rem;
   color: var(--zalf-text);
   font-style: italic;
+  font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .zalf-lp-funder-award-num {
@@ -866,7 +871,7 @@ a.zalf-lp-funder-name:hover {
   color: var(--zalf-text);
   word-break: break-word;
   min-height: 4.5rem;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: 'SFMono-Regular', Consolas, monospace;
 }
 
 .zalf-lp-citation-copy {
@@ -895,6 +900,7 @@ a.zalf-lp-funder-name:hover {
 
   .zalf-lp-title {
     font-size: 1.35rem;
+    font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
 }
 
