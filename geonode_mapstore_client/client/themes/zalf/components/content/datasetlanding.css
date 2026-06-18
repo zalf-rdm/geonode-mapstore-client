@@ -862,6 +862,39 @@ a.zalf-lp-funder-name:hover {
   margin-top: 0;
 }
 
+/* ── Hero Stats Row ───────────────────────────────────────── */
+.zalf-lp-hero-stats {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-top: 0.1rem;
+  margin-bottom: 0.75rem;
+}
+
+.zalf-lp-hero-stat {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  color: var(--zalf-text-muted, #6b7280);
+}
+
+.zalf-lp-hero-stat-icon {
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+.zalf-lp-hero-stat-value {
+  font-weight: 600;
+  color: var(--zalf-text, #111827);
+  font-size: 0.85rem;
+}
+
+.zalf-lp-hero-stat-label {
+  font-size: 0.78rem;
+  color: var(--zalf-text-muted, #6b7280);
+}
+
 /* ── Map Stats Bar ────────────────────────────────────────── */
 .zalf-lp-stats-bar {
   display: flex;

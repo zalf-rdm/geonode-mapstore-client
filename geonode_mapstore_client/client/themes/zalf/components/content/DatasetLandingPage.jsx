@@ -547,6 +547,18 @@ export default function DatasetLandingPage() {
                             dateTypeLabel + ': ', pubDate
                         )
                     ),
+                    ce('div', { className: 'zalf-lp-hero-stats' },
+                        ce('span', { className: 'zalf-lp-hero-stat', title: 'Page views' },
+                            ce('span', { className: 'zalf-lp-hero-stat-icon' }, '👁'),
+                            ce('span', { className: 'zalf-lp-hero-stat-value' }, r.popular_count != null ? r.popular_count : '—'),
+                            ce('span', { className: 'zalf-lp-hero-stat-label' }, 'Views')
+                        ),
+                        ce('span', { className: 'zalf-lp-hero-stat', title: 'Shares' },
+                            ce('span', { className: 'zalf-lp-hero-stat-icon' }, '↓'),
+                            ce('span', { className: 'zalf-lp-hero-stat-value' }, r.share_count != null ? r.share_count : '—'),
+                            ce('span', { className: 'zalf-lp-hero-stat-label' }, 'Downloads')
+                        )
+                    ),
                     ce('div', { className: 'zalf-lp-hero-actions' },
                         ce('a', { className: 'zalf-lp-btn zalf-lp-btn--primary', href: viewerHref },
                             ce('span', { className: 'zalf-lp-btn-icon' }, '▶'), viewerBtnLabel
