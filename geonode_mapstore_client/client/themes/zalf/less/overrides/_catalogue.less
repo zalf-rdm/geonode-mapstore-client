@@ -59,18 +59,15 @@
 
     // ── CSS Grid on the actual plugin container ───────────────
     //
-    // 4-column grid layout:
-    //   [gutter-L] [sidebar] [content] [gutter-R]
+    // Scoped with :has(.ms-resources-grid) so the grid ONLY activates on the
+    // catalogue view — never on landing pages, upload, viewer, etc., which
+    // all render into the same .gn-components but without ResourcesGrid.
     //
-    // Gutters = max(0, (viewport - --zc-content-width) / 2).
-    // On wide screens the gutters provide lateral breathing room.
-    // On narrow screens the gutters collapse to 0.
-    //
-    // Because the footer spans ALL 4 columns (1 / -1) it is always
-    // full viewport width — it is NOT constrained by the gutters.
-    // No max-width or negative-margin tricks needed.
+    // 4-column grid: [gutter-L] [sidebar] [content] [gutter-R]
+    // Gutters collapse to 0 on narrow viewports.
+    // Footer spans 1/-1 = always full viewport width.
     // ─────────────────────────────────────────────────────────
-    .gn-components {
+    .gn-components:has(.ms-resources-grid) {
         display: grid !important;
         width: 100%;
         // Default (filter closed): gutter | 0-sidebar | content | gutter
@@ -84,7 +81,7 @@
     }
 
     // When filter open: expand sidebar column to 280px
-    &:has(.ms-resources-filter) .gn-components {
+    &:has(.ms-resources-filter) .gn-components:has(.ms-resources-grid) {
         grid-template-columns:
             minmax(0px, calc((100% - var(--zc-content-width)) / 2))
             var(--zc-filter-width)
@@ -92,8 +89,8 @@
             minmax(0px, calc((100% - var(--zc-content-width)) / 2));
     }
 
-    // ── Col 2: filter panel (sticky sidebar) ─────────────────
-    .gn-components > .ms-resources-panel-wrapper {
+    // ── Col 2: filter panel (sidebar) ────────────────────────
+    .gn-components:has(.ms-resources-grid) > .ms-resources-panel-wrapper {
         grid-column: 2;
         grid-row: 1;
     }
@@ -108,7 +105,7 @@
     }
 
     // ── Footer: cols 1 / -1 = full viewport width ─────────────
-    .gn-components > .ms-footer {
+    .gn-components:has(.ms-resources-grid) > .ms-footer {
         grid-column: 1 / -1;
         grid-row: 2;
     }
@@ -273,20 +270,35 @@
         box-shadow: none !important;
     }
 
-    // ── Filter inner header (title + close button row) ─────────
-    .ms-resources-filter .ms-resources-panel-header,
-    .ms-resources-filter > div > div:first-child {
-        position: sticky;
-        top: 0;
-        z-index: 1;
+    // ── Hide core FiltersForm header — ZalfFiltersForm has its own toggle ──
+    .zalf-filter-panel .ms-filters-form > ._sticky {
+        display: none !important;
+    }
+
+    // ── Collapsible toggle header ──────────────────────────────
+    .zalf-filter-panel-toggle {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        padding: 14px 16px;
         background: var(--zc-surface);
+        border: none;
         border-bottom: 1px solid var(--zc-border);
-        padding: 14px 16px 10px;
+        cursor: pointer;
+        font-family: var(--zalf-font-sans);
         font-size: 0.78rem;
         font-weight: 700;
         color: var(--zc-text-secondary);
         text-transform: uppercase;
         letter-spacing: 0.06em;
+        text-align: left;
+        transition: background 120ms;
+
+        &:hover { background: var(--zc-surface-hover); }
+
+        .fa-sliders { color: var(--zc-accent); font-size: 1rem; }
+        .zalf-filter-panel-caret { margin-left: auto; font-size: 0.7rem; }
     }
 
     // ── Filter accordion groups ────────────────────────────────
@@ -892,8 +904,8 @@
     .gn-catalogue {
 
         // Collapse to single content column on mobile (no gutters, no sidebar)
-        .gn-components,
-        &:has(.ms-resources-filter) .gn-components {
+        .gn-components:has(.ms-resources-grid),
+        &:has(.ms-resources-filter) .gn-components:has(.ms-resources-grid) {
             grid-template-columns: 0 0 1fr 0 !important;
         }
 

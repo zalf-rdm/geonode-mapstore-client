@@ -59,3 +59,9 @@ Record here any change made to files outside `themes/zalf`.
 - CHANGE: Added `resources.sections.catalog.showFiltersForm: true` to `initialState.defaultState`.
 - REASON: Open the filter sidebar by default on the catalogue page (Zenodo-style permanent left column).
 - UPGRADE RISK: Low — only sets an initial Redux state; user can still toggle it off.
+
+- DATE: 2026-06-18
+- BASE FILE: js/plugins/index.js
+- CHANGE: Replaced `ResourcesFiltersFormPlugin` import from `@mapstore/framework/plugins/ResourcesCatalog` with `ZalfResourcesFiltersFormPlugin` from `themes/zalf/plugins/`, exported under the same `ResourcesFiltersFormPlugin` key.
+- REASON: Use the ZALF collapsible filter sidebar (ZalfFiltersForm) instead of the core floating overlay. Filter is static in the CSS Grid layout and collapses/expands via a toggle header.
+- UPGRADE RISK: Medium — if core ResourcesFiltersForm API changes (new required props, hook renames), the ZALF plugin must be updated accordingly.

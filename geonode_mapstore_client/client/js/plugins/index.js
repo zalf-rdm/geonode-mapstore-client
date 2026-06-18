@@ -34,9 +34,9 @@ import ZalfFaqPlugin from '../../themes/zalf/plugins/FaqPlugin';
 import ZalfFooterPlugin from '../../themes/zalf/plugins/FooterPlugin';
 import ZalfDatasetLandingPlugin from '../../themes/zalf/plugins/DatasetLandingPlugin';
 import {
-    ResourcesGridPlugin,
-    ResourcesFiltersFormPlugin
+    ResourcesGridPlugin
 } from '@mapstore/framework/plugins/ResourcesCatalog';
+import ResourcesFiltersFormPlugin from '../../themes/zalf/plugins/ZalfResourcesFiltersFormPlugin';
 
 let epicsNamesToExclude = [
     'loadGeostoryEpic',
