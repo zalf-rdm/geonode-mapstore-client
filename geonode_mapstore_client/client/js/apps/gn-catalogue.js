@@ -162,7 +162,15 @@ getEndpoints()
                         loaderComponent: MainLoader,
                         initialState: {
                             defaultState: {
-                                ...securityState
+                                ...securityState,
+                                // ZALF: open the filter sidebar by default (like Zenodo)
+                                resources: {
+                                    sections: {
+                                        catalog: {
+                                            showFiltersForm: true
+                                        }
+                                    }
+                                }
                             }
                         },
                         themeCfg: null,

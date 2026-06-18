@@ -3903,7 +3903,7 @@
             "list": [
               {
                 "path": "title",
-                "width": 20,
+                "width": 22,
                 "labelId": "gnviewer.columnTitle"
               },
               {
@@ -3913,26 +3913,41 @@
               },
               {
                 "path": "created",
-                "width": 20,
+                "width": 14,
                 "type": "date",
                 "labelId": "resourcesCatalog.columnCreated",
-                "format": "MMM Do YY, h:mm:ss a",
+                "format": "MMM Do YYYY",
                 "icon": {
                   "glyph": "time"
                 },
                 "noDataLabelId": "resourcesCatalog.emptyNA"
               },
               {
-                "path": "owner.username",
+                "path": "poc[0].first_name",
+                "width": 14,
                 "icon": {
                   "glyph": "user"
                 },
-                "image": {
-                  "path": "owner.avatar"
-                },
-                "width": 10,
                 "labelId": "gnviewer.columnOwner",
                 "noDataLabelId": "resourcesCatalog.emptyUnknown"
+              },
+              {
+                "path": "popular_count",
+                "width": 7,
+                "icon": {
+                  "glyph": "eye-open"
+                },
+                "labelId": "gnviewer.views",
+                "noDataLabelId": "resourcesCatalog.emptyNA"
+              },
+              {
+                "path": "download_count",
+                "width": 7,
+                "icon": {
+                  "glyph": "download"
+                },
+                "labelId": "gnviewer.downloads",
+                "noDataLabelId": "resourcesCatalog.emptyNA"
               }
             ],
             "grid": [
@@ -3941,11 +3956,44 @@
                 "target": "header"
               },
               {
-                "path": "owner.username",
-                "target": "footer",
+                "path": "description",
+                "showFullContent": false
+              },
+              {
+                "path": "poc[0].first_name",
                 "icon": {
                   "glyph": "user"
                 },
+                "noDataLabelId": "resourcesCatalog.emptyUnknown"
+              },
+              {
+                "path": "created",
+                "type": "date",
+                "format": "MMM Do YYYY",
+                "icon": {
+                  "glyph": "time"
+                },
+                "noDataLabelId": "resourcesCatalog.emptyNA"
+              },
+              {
+                "path": "popular_count",
+                "icon": {
+                  "glyph": "eye-open"
+                },
+                "noDataLabelId": "resourcesCatalog.emptyNA",
+                "target": "footer"
+              },
+              {
+                "path": "download_count",
+                "icon": {
+                  "glyph": "download"
+                },
+                "noDataLabelId": "resourcesCatalog.emptyNA",
+                "target": "footer"
+              },
+              {
+                "path": "owner.username",
+                "target": "footer",
                 "image": {
                   "path": "owner.avatar"
                 },

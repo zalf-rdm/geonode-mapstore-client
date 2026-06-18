@@ -53,3 +53,9 @@ Record here any change made to files outside `themes/zalf`.
 - CHANGE: Imported and registered `ZalfDatasetLandingPlugin`.
 - REASON: Make the plugin available to the MapStore plugin system.
 - UPGRADE RISK: Low — additive import.
+
+- DATE: 2026-06-18
+- BASE FILE: js/apps/gn-catalogue.js
+- CHANGE: Added `resources.sections.catalog.showFiltersForm: true` to `initialState.defaultState`.
+- REASON: Open the filter sidebar by default on the catalogue page (Zenodo-style permanent left column).
+- UPGRADE RISK: Low — only sets an initial Redux state; user can still toggle it off.
