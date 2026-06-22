@@ -10,24 +10,24 @@
 // ─────────────────────────────────────────────────────────────
 
 .gn-catalogue {
-    --zc-surface:        #ffffff;
-    --zc-surface-alt:    #f7f8fa;
-    --zc-surface-hover:  #f0f4f8;
-    --zc-border:         #e2e6ea;
-    --zc-border-strong:  #c9d1d9;
-    --zc-text:           #1a1e23;
+    --zc-surface: #ffffff;
+    --zc-surface-alt: #f7f8fa;
+    --zc-surface-hover: #f0f4f8;
+    --zc-border: #e2e6ea;
+    --zc-border-strong: #c9d1d9;
+    --zc-text: #1a1e23;
     --zc-text-secondary: #586069;
-    --zc-text-muted:     #8b949e;
-    --zc-accent:         var(--zalf-brand-primary);
-    --zc-accent-hover:   var(--zalf-brand-primary-hover);
-    --zc-accent-light:   var(--zalf-brand-surface-light);
-    --zc-radius-sm:      6px;
-    --zc-radius-md:      10px;
-    --zc-radius-lg:      14px;
-    --zc-shadow-card:    0 1px 3px rgba(0,0,0,.08), 0 4px 12px rgba(0,0,0,.05);
-    --zc-shadow-hover:   0 4px 12px rgba(0,0,0,.12), 0 8px 24px rgba(0,0,0,.08);
-    --zc-filter-width:   280px;
-    --zc-content-width:  1380px;   // max-width of sidebar + content combined
+    --zc-text-muted: #8b949e;
+    --zc-accent: var(--zalf-brand-primary);
+    --zc-accent-hover: var(--zalf-brand-primary-hover);
+    --zc-accent-light: var(--zalf-brand-surface-light);
+    --zc-radius-sm: 6px;
+    --zc-radius-md: 10px;
+    --zc-radius-lg: 14px;
+    --zc-shadow-card: 0 1px 3px rgba(0, 0, 0, .08), 0 4px 12px rgba(0, 0, 0, .05);
+    --zc-shadow-hover: 0 4px 12px rgba(0, 0, 0, .12), 0 8px 24px rgba(0, 0, 0, .08);
+    --zc-filter-width: 280px;
+    --zc-content-width: 1380px; // max-width of sidebar + content combined
 
     // Page background
     background-color: var(--zc-surface-alt);
@@ -70,33 +70,28 @@
     .gn-components:has(.ms-resources-grid) {
         display: grid !important;
         width: 100%;
-        // Default (filter closed): gutter | 0-sidebar | content | gutter
+        // Default: gutter | sidebar | content | gutter
         grid-template-columns:
-            minmax(0px, calc((100% - var(--zc-content-width)) / 2))
-            0px
-            1fr
-            minmax(0px, calc((100% - var(--zc-content-width)) / 2));
+            minmax(0px, calc((100% - var(--zc-content-width)) / 2)) var(--zc-filter-width) 1fr minmax(0px, calc((100% - var(--zc-content-width)) / 2));
         grid-template-rows: auto auto;
         align-items: start;
     }
 
-    // When filter open: expand sidebar column to 280px
-    &:has(.ms-resources-filter) .gn-components:has(.ms-resources-grid) {
+    // When filter open: keep the same sidebar width
+    &:has(.zalf-filter-panel--open) .gn-components:has(.ms-resources-grid) {
         grid-template-columns:
-            minmax(0px, calc((100% - var(--zc-content-width)) / 2))
-            var(--zc-filter-width)
-            1fr
-            minmax(0px, calc((100% - var(--zc-content-width)) / 2));
+            minmax(0px, calc((100% - var(--zc-content-width)) / 2)) var(--zc-filter-width) 1fr minmax(0px, calc((100% - var(--zc-content-width)) / 2));
     }
 
     // ── Col 2: filter panel (sidebar) ────────────────────────
-    .gn-components:has(.ms-resources-grid) > .ms-resources-panel-wrapper {
+    .gn-components:has(.ms-resources-grid)>.ms-resources-panel-wrapper {
         grid-column: 2;
         grid-row: 1;
+        padding-bottom: 24px;
     }
 
     // ── Col 3: resource grid (main content) ──────────────────
-    .gn-components > .ms-resources-grid {
+    .gn-components>.ms-resources-grid {
         grid-column: 3;
         grid-row: 1;
         min-width: 0;
@@ -105,7 +100,7 @@
     }
 
     // ── Footer: cols 1 / -1 = full viewport width ─────────────
-    .gn-components:has(.ms-resources-grid) > .ms-footer {
+    .gn-components:has(.ms-resources-grid)>.ms-footer {
         grid-column: 1 / -1;
         grid-row: 2;
     }
@@ -122,7 +117,7 @@
         padding: 0;
     }
 
-    .ms-resources-container > div {
+    .ms-resources-container>div {
         padding: 0 24px;
     }
 }
@@ -155,8 +150,8 @@
     }
 
     // View-toggle button (grid / list)
-    .ms-resources-menu > div > .btn-default,
-    .ms-resources-menu > div > div > .btn-default {
+    .ms-resources-menu>div>.btn-default,
+    .ms-resources-menu>div>div>.btn-default {
         border: 1px solid var(--zc-border);
         border-radius: var(--zc-radius-sm);
         background: transparent;
@@ -174,7 +169,7 @@
     }
 
     // Sort dropdown toggle
-    .ms-resources-menu .dropdown > .dropdown-toggle {
+    .ms-resources-menu .dropdown>.dropdown-toggle {
         border: 1px solid var(--zc-border);
         border-radius: var(--zc-radius-sm);
         background: transparent;
@@ -201,7 +196,7 @@
         min-width: 180px;
         background: var(--zc-surface);
 
-        > li > a {
+        >li>a {
             color: var(--zc-text);
             font-size: 0.85rem;
             padding: 8px 16px;
@@ -212,7 +207,8 @@
                 color: var(--zc-accent);
             }
         }
-        > li.active > a {
+
+        >li.active>a {
             background: var(--zc-accent-light);
             color: var(--zc-accent);
             font-weight: 600;
@@ -246,16 +242,16 @@
     // ── Panel wrapper: static left column ────────────────────
     // Static positioning: filter occupies its natural height in the layout,
     // pushes the footer down cleanly, and never overlaps anything.
-    .gn-components > .ms-resources-panel-wrapper {
+    .gn-components>.ms-resources-panel-wrapper {
         position: static !important;
         height: auto !important;
         overflow: visible !important;
         visibility: visible !important;
         z-index: auto !important;
 
-        // Visual style: white surface with right border
-        background: var(--zc-surface) !important;
-        border-right: 1px solid var(--zc-border);
+        // Keep wrapper transparent; the filter card provides its own surface.
+        background: transparent !important;
+        border-right: none;
         box-shadow: none !important;
     }
 
@@ -270,8 +266,23 @@
         box-shadow: none !important;
     }
 
+    .zalf-filter-panel {
+        background: var(--zc-surface);
+        min-height: 100%;
+        border: 1px solid var(--zc-border);
+        border-radius: 24px;
+        box-shadow: 0 18px 40px rgba(15, 31, 54, 0.08);
+        overflow: hidden;
+        width: calc(100% - 24px);
+        margin: 12px 12px 12px;
+    }
+
+    .zalf-filter-panel--closed {
+        min-height: auto;
+    }
+
     // ── Hide core FiltersForm header — ZalfFiltersForm has its own toggle ──
-    .zalf-filter-panel .ms-filters-form > ._sticky {
+    .zalf-filter-panel .ms-filters-form>._sticky {
         display: none !important;
     }
 
@@ -279,34 +290,88 @@
     .zalf-filter-panel-toggle {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
         width: 100%;
-        padding: 14px 16px;
-        background: var(--zc-surface);
+        padding: 16px;
+        background: #ffffff;
         border: none;
-        border-bottom: 1px solid var(--zc-border);
         cursor: pointer;
         font-family: var(--zalf-font-sans);
-        font-size: 0.78rem;
-        font-weight: 700;
-        color: var(--zc-text-secondary);
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
         text-align: left;
-        transition: background 120ms;
+        transition: all 0.2s ease;
 
-        &:hover { background: var(--zc-surface-hover); }
+        &:hover {
+            background: #f5f7fa;
+        }
 
-        .fa-sliders { color: var(--zc-accent); font-size: 1rem; }
-        .zalf-filter-panel-caret { margin-left: auto; font-size: 0.7rem; }
+        .zalf-filter-panel-toggle-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            flex: 0 0 32px;
+            border-radius: 12px;
+            background: #eef8e5;
+            color: #75b72a;
+            font-size: 0.95rem;
+        }
+
+        .zalf-filter-panel-toggle-copy {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .zalf-filter-panel-toggle-label {
+            font-size: 1rem;
+            font-weight: 800;
+            line-height: 1.2;
+            color: #1f2b3d;
+            letter-spacing: 0;
+            text-transform: none;
+        }
+
+        .zalf-filter-panel-toggle-description {
+            margin-top: 0.15rem;
+            font-size: 0.82rem;
+            font-weight: 400;
+            line-height: 1.35;
+            color: #7b8aa0;
+        }
+
+        .zalf-filter-panel-caret {
+            margin-left: auto;
+            font-size: 0.875rem;
+            color: #7b8aa0;
+            transition: transform 0.3s ease;
+        }
+    }
+
+    .zalf-filter-panel--open .zalf-filter-panel-caret {
+        transform: rotate(180deg);
+    }
+
+    .zalf-filter-panel--open .zalf-filter-panel-toggle {
+        border-bottom: 1px solid #edf2f7;
+        border-radius: 24px 24px 0 0;
+        background: #ffffff;
+    }
+
+    .zalf-filter-panel--closed .zalf-filter-panel-toggle {
+        border-radius: 24px;
+    }
+
+    .zalf-filter-panel-body {
+        padding: 0 0 12px;
     }
 
     // ── Filter accordion groups ────────────────────────────────
     .ms-filter-accordion {
-        padding: 0 14px 24px;
+        padding: 0 18px 24px;
 
         .ms-filter-header,
-        .form-group > label,
+        .form-group>label,
         .panel-heading {
             font-size: 0.75rem;
             font-weight: 700;
@@ -319,16 +384,38 @@
             display: block;
         }
 
+        .form-group {
+            margin-bottom: 14px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid rgba(226, 230, 234, 0.85);
+        }
+
+        .form-group:last-child {
+            border-bottom: 0;
+            padding-bottom: 0;
+        }
+
         .checkbox label,
         .radio label {
             font-size: 0.86rem;
             color: var(--zc-text);
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
+            padding: 6px 0;
             padding-left: 0;
             cursor: pointer;
-            input { margin: 0; accent-color: var(--zc-accent); }
+            border-radius: 8px;
+            transition: color 120ms ease;
+
+            input {
+                margin: 0;
+                accent-color: var(--zc-accent);
+            }
+
+            &:hover {
+                color: var(--zc-accent);
+            }
         }
 
         .ms-tag {
@@ -340,13 +427,18 @@
             color: var(--zc-text-secondary);
             transition: background 120ms, border-color 120ms, color 120ms;
             cursor: pointer;
+
             &.active {
                 background: var(--zc-accent-light);
                 border-color: var(--zc-accent);
                 color: var(--zc-accent);
                 font-weight: 600;
             }
-            &:hover { border-color: var(--zc-accent); color: var(--zc-accent); }
+
+            &:hover {
+                border-color: var(--zc-accent);
+                color: var(--zc-accent);
+            }
         }
 
         .form-control {
@@ -357,6 +449,7 @@
             color: var(--zc-text);
             padding: 6px 10px;
             height: 34px;
+
             &:focus {
                 border-color: var(--zc-accent);
                 outline: none;
@@ -365,7 +458,53 @@
             }
         }
 
-        .panel + .panel { border-top: 1px solid var(--zc-border); }
+        .Select {
+            .Select-control {
+                border: 1px solid var(--zc-border);
+                border-radius: 8px;
+                min-height: 38px;
+                background: var(--zc-surface-alt);
+                box-shadow: none;
+            }
+
+            &.is-focused .Select-control,
+            .Select-control:hover {
+                border-color: var(--zc-accent);
+                background: var(--zc-surface);
+            }
+
+            .Select-placeholder,
+            .Select-value-label,
+            .Select-input>input {
+                color: var(--zc-text);
+                font-size: 0.84rem;
+            }
+
+            .Select-placeholder {
+                color: var(--zc-text-muted);
+            }
+
+            .Select-menu-outer {
+                border: 1px solid var(--zc-border);
+                border-radius: 10px;
+                box-shadow: var(--zc-shadow-hover);
+                margin-top: 6px;
+            }
+
+            .Select-option {
+                font-size: 0.84rem;
+                padding: 8px 12px;
+            }
+
+            .Select-option.is-focused {
+                background: var(--zc-accent-light);
+                color: var(--zc-accent);
+            }
+        }
+
+        .panel+.panel {
+            border-top: 1px solid var(--zc-border);
+        }
     }
 
     // ── Clear/close buttons ────────────────────────────────────
@@ -376,7 +515,33 @@
         border: 1px solid var(--zc-border);
         border-radius: var(--zc-radius-sm);
         padding: 4px 10px;
-        &:hover { color: var(--zc-accent); border-color: var(--zc-accent); }
+
+        &:hover {
+            color: var(--zc-accent);
+            border-color: var(--zc-accent);
+        }
+    }
+
+    .zalf-filter-panel .ms-filters-form {
+        background: transparent;
+    }
+
+    .zalf-filter-panel .ms-filters-form form {
+        padding-top: 8px;
+    }
+
+    .zalf-filter-panel .ms-filters-form .ms-filter-by {
+        margin: 0;
+        padding: 0 18px 10px;
+        border-bottom: 1px solid rgba(226, 230, 234, 0.85);
+
+        .ms-text {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--zc-text-muted);
+        }
     }
 }
 
@@ -398,7 +563,7 @@
         border: 1px solid var(--zc-border-strong) !important;
         border-radius: var(--zc-radius-md) !important;
         padding: 6px 14px !important;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
         transition: border-color 150ms, box-shadow 150ms;
         border-bottom: 1px solid var(--zc-border-strong) !important;
 
@@ -443,7 +608,7 @@
 
 .gn-catalogue {
 
-    .ms-resources-container-grid > li {
+    .ms-resources-container-grid>li {
         padding: 5px;
     }
 
@@ -478,15 +643,14 @@
     }
 
     // Icon placeholder when no thumbnail
-    .ms-resource-card-type-grid .ms-resource-card-body
-        > .ms-flex-box:not(._fill):first-child {
+    .ms-resource-card-type-grid .ms-resource-card-body>.ms-flex-box:not(._fill):first-child {
         height: 80px;
         background: var(--zc-surface-alt);
         border-bottom: 1px solid var(--zc-border);
     }
 
     // Card body padding
-    .ms-resource-card-type-grid .ms-resource-card-body > ._fill {
+    .ms-resource-card-type-grid .ms-resource-card-body>._fill {
         padding: 10px 12px 8px;
         gap: 4px;
     }
@@ -498,20 +662,42 @@
         color: var(--zc-text);
         line-height: 1.3;
 
-        a { color: var(--zc-text); text-decoration: none;
-            &:hover { color: var(--zc-accent); } }
-        .glyphicon { color: var(--zc-accent); font-size: 0.85rem; margin-right: 4px; }
+        a {
+            color: var(--zc-text);
+            text-decoration: none;
+
+            &:hover {
+                color: var(--zc-accent);
+            }
+        }
+
+        .glyphicon {
+            color: var(--zc-accent);
+            font-size: 0.85rem;
+            margin-right: 4px;
+        }
     }
 
     // Metadata rows
-    .ms-resource-card-type-grid .ms-resource-card-body > ._fill > .ms-text {
+    .ms-resource-card-type-grid .ms-resource-card-body>._fill>.ms-text {
         font-size: 0.78rem;
         color: var(--zc-text-secondary);
         line-height: 1.35;
 
-        a { color: var(--zc-text-secondary); text-decoration: none;
-            &:hover { color: var(--zc-accent); } }
-        .glyphicon { color: var(--zc-text-muted); font-size: 0.72rem; margin-right: 3px; }
+        a {
+            color: var(--zc-text-secondary);
+            text-decoration: none;
+
+            &:hover {
+                color: var(--zc-accent);
+            }
+        }
+
+        .glyphicon {
+            color: var(--zc-text-muted);
+            font-size: 0.72rem;
+            margin-right: 3px;
+        }
     }
 
     // Tags
@@ -527,7 +713,8 @@
         text-decoration: none;
         transition: background 100ms, color 100ms;
 
-        &:hover, &.active {
+        &:hover,
+        &.active {
             background: var(--zc-accent-light);
             border-color: var(--zc-accent);
             color: var(--zc-accent);
@@ -542,20 +729,27 @@
     }
 
     .ms-resource-card-type-grid .ms-resource-icon-logo {
-        width: 18px; height: 18px; border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
     }
 
     // Action overlay
     .ms-resource-card-type-grid .ms-resource-card-action-buttons {
         .dropdown-toggle {
-            background: rgba(255,255,255,0.92);
+            background: rgba(255, 255, 255, 0.92);
             border: 1px solid var(--zc-border);
             border-radius: var(--zc-radius-sm);
             padding: 3px 6px;
             color: var(--zc-text-secondary);
             backdrop-filter: blur(4px);
-            &:hover { border-color: var(--zc-accent); color: var(--zc-accent); }
+
+            &:hover {
+                border-color: var(--zc-accent);
+                color: var(--zc-accent);
+            }
         }
+
         .dropdown-menu {
             border-radius: var(--zc-radius-md);
             border: 1px solid var(--zc-border);
@@ -563,9 +757,17 @@
             padding: 4px 0;
             min-width: 160px;
             background: var(--zc-surface);
-            > li > a, > li > button {
-                font-size: 0.83rem; padding: 8px 14px; color: var(--zc-text);
-                &:hover { background: var(--zc-accent-light); color: var(--zc-accent); }
+
+            >li>a,
+            >li>button {
+                font-size: 0.83rem;
+                padding: 8px 14px;
+                color: var(--zc-text);
+
+                &:hover {
+                    background: var(--zc-accent-light);
+                    color: var(--zc-accent);
+                }
             }
         }
     }
@@ -579,7 +781,11 @@
         padding: 3px 7px;
         font-size: 0.78rem;
         transition: color 120ms, border-color 120ms;
-        &:hover { color: var(--zc-accent); border-color: var(--zc-accent); }
+
+        &:hover {
+            color: var(--zc-accent);
+            border-color: var(--zc-accent);
+        }
     }
 }
 
@@ -597,20 +803,27 @@
     .ms-resources-container-list {
         padding: 0;
 
-        > li {
+        >li {
             width: 100% !important;
             margin: 0 !important;
             padding: 0;
             border-bottom: 1px solid var(--zc-border);
             transition: background 120ms;
 
-            &:first-child { border-top: 1px solid var(--zc-border); }
-            &:hover { background: var(--zc-surface-hover); }
+            &:first-child {
+                border-top: 1px solid var(--zc-border);
+            }
+
+            &:hover {
+                background: var(--zc-surface-hover);
+            }
         }
     }
 
     // Hide the table header (not relevant in stacked layout)
-    .ms-resources-list-header { display: none; }
+    .ms-resources-list-header {
+        display: none;
+    }
 
     .ms-resource-card-type-list {
         border: none;
@@ -647,8 +860,9 @@
         //   📁 Part of [Group]
         //   🕐 Uploaded on June 18, 2025        👁 591  ⬇ 259
         // ─────────────────────────────────────────────────────
-        // FlexBox.Fill renders as <div class="_fill"> — no ms-flex-box class
-        .ms-resource-card-body > ._fill {
+        // In the current catalogue DOM the metadata column renders as:
+        // <div class="ms-flex-fill ms-flex-box _flex _flex-center-v">...</div>
+        .ms-resource-card-body > .ms-flex-fill.ms-flex-box._flex._flex-center-v {
             display: flex !important;
             flex-direction: row !important;
             flex-wrap: wrap !important;
@@ -661,7 +875,7 @@
         }
 
         // Default: full-width row, secondary text
-        ._fill > .ms-text {
+        .ms-resource-card-body > .ms-flex-fill.ms-flex-box._flex._flex-center-v > .ms-text {
             flex: 0 0 100% !important;
             width: 100% !important;
             padding: 0 !important;
@@ -669,58 +883,86 @@
             color: var(--zc-text-secondary);
             line-height: 1.5;
 
-            a { color: var(--zc-text-secondary); text-decoration: none;
-                &:hover { color: var(--zc-accent); } }
-            .glyphicon { font-size: 0.73rem; margin-right: 5px; color: var(--zc-text-muted); }
+            a {
+                color: var(--zc-text-secondary);
+                text-decoration: none;
+
+                &:hover {
+                    color: var(--zc-accent);
+                }
+            }
+
+            .glyphicon {
+                font-size: 0.73rem;
+                margin-right: 5px;
+                color: var(--zc-text-muted);
+            }
         }
 
         // ── Title ─────────────────────────────────────────────
-        ._fill > .ms-text:first-child {
+        .ms-resource-card-body > .ms-flex-fill.ms-flex-box._flex._flex-center-v > .ms-text:first-child {
             font-size: 1.05rem !important;
             font-weight: 600 !important;
             color: var(--zc-accent) !important;
             line-height: 1.35;
             margin-bottom: 1px;
 
-            a { color: var(--zc-accent) !important; text-decoration: none;
-                &:hover { text-decoration: underline; } }
+            a {
+                color: var(--zc-accent) !important;
+                text-decoration: none;
+
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
         }
 
         // ── Authors ───────────────────────────────────────────
-        ._fill > .ms-text:has(.glyphicon-user) {
+        .ms-resource-card-body > .ms-flex-fill.ms-flex-box._flex._flex-center-v > .ms-text:has(.glyphicon-user) {
             color: var(--zc-text);
             font-size: 0.85rem;
-            .glyphicon { display: none; } // hide icon, name alone reads better
+
+            .glyphicon {
+                display: none;
+            }
+
+            // hide icon, name alone reads better
         }
 
         // ── Description: 2-line clamp ─────────────────────────
-        ._fill > .ms-text:not(:first-child):not(:has(.glyphicon)) {
+        .ms-resource-card-body > .ms-flex-fill.ms-flex-box._flex._flex-center-v > .ms-text:not(:first-child):not(:has(.glyphicon)) {
             color: var(--zc-text);
             font-size: 0.84rem;
             display: -webkit-box !important;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
+            white-space: normal !important;
+            line-height: 1.45;
+            max-height: calc(1.45em * 2);
         }
 
         // ── Group (Part of) ───────────────────────────────────
-        ._fill > .ms-text:has(.glyphicon-folder-open) {
-            font-size: 0.8rem;
-            a { color: var(--zc-accent); &:hover { text-decoration: underline; } }
+        // Hidden in list mode to keep the sequence:
+        // title → authors → description → date → stats
+        .ms-resource-card-body > .ms-flex-fill.ms-flex-box._flex._flex-center-v > .ms-text:has(.glyphicon-folder-open) {
+            display: none !important;
         }
 
-        // ── Date: flex:1 → expands on the bottom row ──────────
-        ._fill > .ms-text:has(.glyphicon-time) {
-            flex: 1 1 auto !important;
-            width: auto !important;
+        // ── Date: full-width row ──────────────────────────────
+        .ms-resource-card-body > .ms-flex-fill.ms-flex-box._flex._flex-center-v > .ms-text:has(.glyphicon-time) {
+            flex: 0 0 100% !important;
+            width: 100% !important;
             color: var(--zc-text-muted);
             font-size: 0.78rem;
         }
 
-        // ── Stats: auto-width, share bottom row with date ─────
-        // Result: 🕐 Uploaded on June 18, 2025        👁 591  ⬇ 259
-        ._fill > .ms-text:has(.glyphicon-eye-open),
-        ._fill > .ms-text:has(.glyphicon-download) {
+        // ── Stats: share the last row ─────────────────────────
+        // Result:
+        //   🕐 June 18th, 2026
+        //   👁 N/A   ⬇ N/A
+        .ms-resource-card-body > .ms-flex-fill.ms-flex-box._flex._flex-center-v > .ms-text:has(.glyphicon-eye-open),
+        .ms-resource-card-body > .ms-flex-fill.ms-flex-box._flex._flex-center-v > .ms-text:has(.glyphicon-download) {
             flex: 0 0 auto !important;
             width: auto !important;
             padding-left: 16px !important;
@@ -729,7 +971,14 @@
             color: var(--zc-text-secondary);
             white-space: nowrap;
 
-            .glyphicon { color: var(--zc-text-muted); }
+            .glyphicon {
+                color: var(--zc-text-muted);
+            }
+        }
+
+        .ms-resource-card-body > .ms-flex-fill.ms-flex-box._flex._flex-center-v > .ms-text:has(.glyphicon-eye-open) {
+            padding-left: 0 !important;
+            margin-top: 2px;
         }
 
         // ── Actions column ────────────────────────────────────
@@ -755,8 +1004,13 @@
             border-radius: var(--zc-radius-sm);
             padding: 3px 6px;
             color: var(--zc-text-secondary);
-            &:hover { border-color: var(--zc-accent); color: var(--zc-accent); }
+
+            &:hover {
+                border-color: var(--zc-accent);
+                color: var(--zc-accent);
+            }
         }
+
         .dropdown-menu {
             border-radius: var(--zc-radius-md);
             border: 1px solid var(--zc-border);
@@ -764,9 +1018,17 @@
             padding: 4px 0;
             min-width: 160px;
             background: var(--zc-surface);
-            > li > a, > li > button {
-                font-size: 0.83rem; padding: 8px 14px; color: var(--zc-text);
-                &:hover { background: var(--zc-accent-light); color: var(--zc-accent); }
+
+            >li>a,
+            >li>button {
+                font-size: 0.83rem;
+                padding: 8px 14px;
+                color: var(--zc-text);
+
+                &:hover {
+                    background: var(--zc-accent-light);
+                    color: var(--zc-accent);
+                }
             }
         }
     }
@@ -779,15 +1041,23 @@
 .gn-catalogue {
 
     // Sticky pagination bar
-    .ms-resources-grid > .ms-resources-container > div > .ms-flex-box._sticky {
+    .ms-resources-grid>.ms-resources-container>div>.ms-flex-box._sticky {
         background: transparent !important;
         border-top: 1px solid var(--zc-border);
         padding: 10px 0 !important;
     }
 
     .pagination.custom {
-        > li > a,
-        > li > span {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        >li {
+            margin: 0;
+        }
+
+        >li>a,
+        >li>span {
             border-radius: var(--zc-radius-sm) !important;
             color: var(--zc-text-secondary);
             font-size: 0.85rem;
@@ -804,18 +1074,18 @@
             }
         }
 
-        > .active > a,
-        > .active > span,
-        > .active > a:hover,
-        > .active > span:hover {
+        >.active>a,
+        >.active>span,
+        >.active>a:hover,
+        >.active>span:hover {
             background: var(--zc-accent) !important;
             border-color: var(--zc-accent) !important;
             color: #fff !important;
             font-weight: 600;
         }
 
-        > .disabled > a,
-        > .disabled > span {
+        >.disabled>a,
+        >.disabled>span {
             color: var(--zc-text-muted);
             border-color: var(--zc-border);
             cursor: default;
@@ -871,10 +1141,25 @@
         letter-spacing: 0.03em;
     }
 
-    .gn-resource-status-warning  { background: #fff3cd; color: #856404; }
-    .gn-resource-status-danger   { background: #fde8e8; color: #c62828; }
-    .gn-resource-status-success  { background: #e8f5e9; color: #2e7d32; }
-    .gn-resource-status-primary  { background: var(--zc-accent-light); color: var(--zc-accent); }
+    .gn-resource-status-warning {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .gn-resource-status-danger {
+        background: #fde8e8;
+        color: #c62828;
+    }
+
+    .gn-resource-status-success {
+        background: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    .gn-resource-status-primary {
+        background: var(--zc-accent-light);
+        color: var(--zc-accent);
+    }
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -886,7 +1171,7 @@
     .ms-resource-detail {
         background: var(--zc-surface) !important;
         border-left: 1px solid var(--zc-border);
-        box-shadow: -4px 0 20px rgba(0,0,0,0.06) !important;
+        box-shadow: -4px 0 20px rgba(0, 0, 0, 0.06) !important;
     }
 }
 
@@ -895,12 +1180,13 @@
 // ─────────────────────────────────────────────────────────────
 
 @container resources-container (width < 1100px) {
-    .gn-catalogue .ms-resources-container-grid > li {
+    .gn-catalogue .ms-resources-container-grid>li {
         width: calc(50% - 0.75rem);
     }
 }
+
 @container resources-container (width < 600px) {
-    .gn-catalogue .ms-resources-container-grid > li {
+    .gn-catalogue .ms-resources-container-grid>li {
         width: 100%;
         padding: 4px 0;
     }
@@ -916,17 +1202,17 @@
 
         // Collapse to single content column on mobile (no gutters, no sidebar)
         .gn-components:has(.ms-resources-grid),
-        &:has(.ms-resources-filter) .gn-components:has(.ms-resources-grid) {
+        &:has(.zalf-filter-panel--open) .gn-components:has(.ms-resources-grid) {
             grid-template-columns: 0 0 1fr 0 !important;
         }
 
         // Grid content stays in col 3 (which is now the only visible column)
-        .gn-components > .ms-resources-grid {
+        .gn-components>.ms-resources-grid {
             grid-column: 3 !important;
         }
 
         // Restore filter wrapper to fixed overlay on mobile
-        .gn-components > .ms-resources-panel-wrapper {
+        .gn-components>.ms-resources-panel-wrapper {
             position: fixed !important;
             top: 78px !important;
             left: 0 !important;
@@ -941,24 +1227,64 @@
             overflow-y: auto !important;
         }
 
+        .zalf-filter-panel--closed {
+            min-height: auto;
+        }
+
+        .zalf-filter-panel--closed .zalf-filter-panel-toggle {
+            width: 100%;
+            padding: 16px;
+            border-radius: 0;
+        }
+
+        .zalf-filter-panel--closed .zalf-filter-panel-toggle-copy {
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .zalf-filter-panel--closed .zalf-filter-panel-toggle-label {
+            font-size: 1rem;
+        }
+
+        .zalf-filter-panel--closed .zalf-filter-panel-toggle-description {
+            display: block;
+        }
+
+        .zalf-filter-panel--closed .zalf-filter-panel-caret {
+            display: block;
+        }
+
         // Content layout tweaks
-        .ms-resources-search { padding: 12px 16px 8px; }
-        .ms-resources-menu { padding: 8px 16px !important; }
-        .ms-resources-container > div { padding: 0 12px; }
-        .ms-resources-container-list > li { border-radius: 0; }
+        .ms-resources-search {
+            padding: 12px 16px 8px;
+        }
+
+        .ms-resources-menu {
+            padding: 8px 16px !important;
+        }
+
+        .ms-resources-container>div {
+            padding: 0 12px;
+        }
+
+        .ms-resources-container-list>li {
+            border-radius: 0;
+        }
 
         .ms-resource-card-type-list {
             flex-wrap: wrap;
             padding: 10px 12px;
             gap: 4px;
 
-            ._fill {
+            .ms-flex-fill.ms-flex-box._flex._flex-center-v {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 2px;
             }
 
-            ._fill > .ms-text { width: 100% !important; }
+            .ms-flex-fill.ms-flex-box._flex._flex-center-v > .ms-text {
+                width: 100% !important;
+            }
         }
     }
 }

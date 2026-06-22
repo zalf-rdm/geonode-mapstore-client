@@ -8,7 +8,7 @@
   min-height: 100vh;
   background: var(--zalf-bg);
   color: var(--zalf-text);
-  font-family: var(--ms-font-family-base, var(--zalf-font-sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif));
+  font-family: var(--zalf-font-sans, 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif);
   font-size: 0.9375rem;
   line-height: 1.6;
 }
@@ -127,13 +127,13 @@
   line-height: 1.25;
   margin: 0;
   color: var(--zalf-text);
-  font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: var(--zalf-font-sans, 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif);
 }
 
 .zalf-lp-title-alt {
   font-size: 0.95rem;
   color: var(--zalf-text-muted);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: var(--zalf-font-sans, 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif);
   font-style: italic;
   margin: 0;
 }
@@ -175,9 +175,9 @@
   font-size: 0.85rem;
   color: var(--zalf-text-muted);
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.25rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
 }
 
 .zalf-lp-hero-meta a {
@@ -190,8 +190,11 @@
 }
 
 .zalf-lp-hero-sep {
-  margin: 0 0.25rem;
-  color: var(--zalf-border);
+  display: none;
+}
+
+.zalf-lp-hero-date {
+  display: block;
 }
 
 /* Action buttons */
@@ -309,7 +312,7 @@
   margin: 0 0 0.75rem;
   padding-bottom: 0.5rem;
   border-bottom: 2px solid var(--zalf-green-light);
-  font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: var(--zalf-font-sans, 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif);
 }
 
 .zalf-lp-text {
@@ -440,7 +443,7 @@
   letter-spacing: 0.07em;
   color: var(--zalf-green-nav);
   margin: 0;
-  font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: var(--zalf-font-sans, 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif);
 }
 
 /* ── Copy menu (three-dots) ───────────────────────────────── */
@@ -720,7 +723,7 @@ a.zalf-lp-funder-name:hover {
   font-size: 0.825rem;
   color: var(--zalf-text);
   font-style: italic;
-  font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: var(--zalf-font-sans, 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif);
 }
 
 .zalf-lp-funder-award-num {
@@ -1095,7 +1098,7 @@ a.zalf-lp-funder-name:hover {
 
   .zalf-lp-title {
     font-size: 1.35rem;
-    font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--zalf-font-sans, 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif);
   }
 }
 

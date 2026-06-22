@@ -12,18 +12,23 @@ const ce = React.createElement;
 
 export default function ZalfFiltersForm(props) {
     const [expanded, setExpanded] = useState(true);
+    const panelClassName = 'zalf-filter-panel'
+        + (expanded ? ' zalf-filter-panel--open' : ' zalf-filter-panel--closed');
 
-    return ce('div', { className: 'zalf-filter-panel' + (expanded ? ' zalf-filter-panel--open' : '') },
+    return ce('div', { className: panelClassName },
         ce('button', {
             type: 'button',
             className: 'zalf-filter-panel-toggle',
             onClick: () => setExpanded(v => !v),
             'aria-expanded': expanded
         },
-            ce('span', { className: 'fa fa-sliders', 'aria-hidden': 'true' }),
-            ce('span', { className: 'zalf-filter-panel-toggle-label' }, 'Filters'),
+            ce('span', { className: 'zalf-filter-panel-toggle-icon fa fa-filter', 'aria-hidden': 'true' }),
+            ce('span', { className: 'zalf-filter-panel-toggle-copy' },
+                ce('span', { className: 'zalf-filter-panel-toggle-label' }, 'Filters'),
+                ce('span', { className: 'zalf-filter-panel-toggle-description' }, 'Refine catalogue results')
+            ),
             ce('span', {
-                className: 'fa ' + (expanded ? 'fa-chevron-up' : 'fa-chevron-down') + ' zalf-filter-panel-caret',
+                className: 'fa fa-chevron-down zalf-filter-panel-caret',
                 'aria-hidden': 'true'
             })
         ),

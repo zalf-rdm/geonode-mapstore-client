@@ -11,6 +11,17 @@ import castArray from 'lodash/castArray';
 import omit from 'lodash/omit';
 import uuid from 'uuid/v1';
 
+export function formatUsernameFallback(username) {
+    if (!username) {
+        return '';
+    }
+    return String(username)
+        .split(/[._\-\s]+/)
+        .filter(Boolean)
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(' ') || String(username);
+}
+
 export const hashLocationToHref = ({
     location,
     pathname,
@@ -45,10 +56,13 @@ export const hashLocationToHref = ({
 };
 
 export function getUserName(user) {
-    if (user.first_name && user.last_name) {
+    if (user?.full_name) {
+        return user.full_name;
+    }
+    if (user?.first_name && user?.last_name) {
         return `${user.first_name} ${user.last_name}`;
     }
-    return user.username;
+    return formatUsernameFallback(user?.username);
 }
 
 export function clearQueryParams(location) {
@@ -142,6 +156,7 @@ export const parseIcon = (item) => {
 
 export default {
     hashLocationToHref,
+    formatUsernameFallback,
     getUserName,
     clearQueryParams,
     getQueryFilters,

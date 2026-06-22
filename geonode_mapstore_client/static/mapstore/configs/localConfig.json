@@ -852,6 +852,9 @@
       },
       {
         "name": "TabularPreview"
+      },
+      {
+        "name": "ZalfFooter"
       }
     ],
     "tabular-collection_viewer": [
@@ -1156,6 +1159,9 @@
       },
       {
         "name": "TabularCollectionViewer"
+      },
+      {
+        "name": "ZalfFooter"
       }
     ],
     "dataset_viewer": [
@@ -1885,6 +1891,9 @@
         "cfg": {
           "containerPosition": "header"
         }
+      },
+      {
+        "name": "ZalfFooter"
       }
     ],
     "dataset_edit_data_viewer": [
@@ -2021,6 +2030,9 @@
       },
       {
         "name": "Notifications"
+      },
+      {
+        "name": "ZalfFooter"
       }
     ],
     "dataset_edit_layer_settings": [
@@ -2120,6 +2132,9 @@
       },
       {
         "name": "FullScreen"
+      },
+      {
+        "name": "ZalfFooter"
       }
     ],
     "map_viewer": [
@@ -2894,6 +2909,9 @@
             }
           ]
         }
+      },
+      {
+        "name": "ZalfFooter"
       }
     ],
     "geostory_viewer": [
@@ -3087,6 +3105,9 @@
       },
       {
         "name": "MetadataViewer"
+      },
+      {
+        "name": "ZalfFooter"
       }
     ],
     "document_viewer": [
@@ -3216,6 +3237,9 @@
       },
       {
         "name": "MetadataViewer"
+      },
+      {
+        "name": "ZalfFooter"
       }
     ],
     "dashboard_viewer": [
@@ -3516,6 +3540,9 @@
             }
           ]
         }
+      },
+      {
+        "name": "ZalfFooter"
       }
     ],
     "map_viewer_mobile": [
@@ -3905,14 +3932,15 @@
                 "path": "title"
               },
               {
-                "path": "poc[0].first_name",
+                "path": "author_display",
+                "showFullContent": true,
                 "icon": {
                   "glyph": "user"
                 },
                 "noDataLabelId": "resourcesCatalog.emptyUnknown"
               },
               {
-                "path": "abstract",
+                "path": "catalogue_summary",
                 "showFullContent": false
               },
               {
@@ -3952,11 +3980,12 @@
                 "target": "header"
               },
               {
-                "path": "description",
+                "path": "catalogue_summary",
                 "showFullContent": false
               },
               {
-                "path": "poc[0].first_name",
+                "path": "author_display",
+                "showFullContent": true,
                 "icon": {
                   "glyph": "user"
                 },
@@ -3988,7 +4017,7 @@
                 "target": "footer"
               },
               {
-                "path": "owner.username",
+                "path": "owner.full_name",
                 "target": "footer",
                 "image": {
                   "path": "owner.avatar"
@@ -4062,102 +4091,6 @@
           "fields": [
             {
               "type": "search"
-            },
-            {
-              "type": "group",
-              "labelId": "gnhome.customFiltersTitle",
-              "items": [
-                {
-                  "id": "my-resources",
-                  "labelId": "gnhome.myResources",
-                  "type": "filter",
-                  "disableIf": "{not state('user')}"
-                },
-                {
-                  "id": "favorite",
-                  "labelId": "gnhome.favorites",
-                  "type": "filter",
-                  "disableIf": "{not state('user')}"
-                },
-                {
-                  "id": "featured",
-                  "labelId": "gnhome.featuredList",
-                  "type": "filter"
-                },
-                {
-                  "id": "unpublished",
-                  "labelId": "gnhome.unpublished",
-                  "type": "filter",
-                  "disableIf": "{not state('user')}"
-                },
-                {
-                  "id": "pending-approval",
-                  "labelId": "gnhome.pendingApproval",
-                  "type": "filter",
-                  "disableIf": "{not state('user')}"
-                },
-                {
-                  "id": "remote",
-                  "labelId": "gnhome.remote",
-                  "type": "filter"
-                },
-                {
-                  "id": "dataset",
-                  "labelId": "gnhome.datasets",
-                  "type": "filter",
-                  "items": [
-                    {
-                      "id": "store-vector",
-                      "labelId": "gnhome.vector",
-                      "type": "filter"
-                    },
-                    {
-                      "id": "store-raster",
-                      "labelId": "gnhome.raster",
-                      "type": "filter"
-                    },
-                    {
-                      "id": "store-time-series",
-                      "labelId": "gnhome.timeSeries",
-                      "type": "filter"
-                    },
-                    {
-                      "id": "3dtiles",
-                      "labelId": "gnhome.3dtiles",
-                      "type": "filter"
-                    }
-                  ]
-                },
-                {
-                  "id": "document",
-                  "labelId": "gnhome.documents",
-                  "type": "filter"
-                },
-                {
-                  "id": "map",
-                  "labelId": "gnhome.maps",
-                  "type": "filter"
-                },
-                {
-                  "id": "mapviewer",
-                  "labelId": "gnhome.mapviewers",
-                  "type": "filter"
-                },
-                {
-                  "id": "geostory",
-                  "labelId": "gnhome.geostories",
-                  "type": "filter"
-                },
-                {
-                  "id": "dashboard",
-                  "labelId": "gnhome.dashboards",
-                  "type": "filter"
-                }
-              ]
-            },
-            {
-              "type": "divider",
-              "disableIf": "{not state('user')}"
             },
             {
               "type": "select",
@@ -4399,6 +4332,9 @@
       },
       {
         "name": "MetadataViewer"
+      },
+      {
+        "name": "ZalfFooter"
       }
     ],
     "metadata": [
@@ -4440,6 +4376,9 @@
       },
       {
         "name": "Notifications"
+      },
+      {
+        "name": "ZalfFooter"
       }
     ],
     "upload_dataset": [

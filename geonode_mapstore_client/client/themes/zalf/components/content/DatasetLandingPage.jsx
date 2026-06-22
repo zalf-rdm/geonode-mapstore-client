@@ -12,6 +12,15 @@ import './datasetlanding.css';
 
 const ce = React.createElement;
 
+function formatUsernameFallback(username) {
+    if (!username) return '';
+    return String(username)
+        .split(/[._\-\s]+/)
+        .filter(Boolean)
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(' ') || String(username);
+}
+
 function extractPkFromHash() {
     // Matches #/landing/<resource_type>/<pk>
     const match = window.location.hash.match(/#\/landing\/[^/]+\/([^/]+)/);
@@ -116,12 +125,13 @@ const CITATION_STYLES = ['Chicago', 'APA', 'DataCite'];
 function formatPersonName(person, style) {
     const last  = (person.last_name  || '').trim();
     const first = (person.first_name || '').trim();
+    const fallbackName = formatUsernameFallback(person.username);
     const initials = first.split(/\s+/).filter(Boolean).map(n => n[0] + '.').join(' ');
     if (last && first) {
         // Chicago full name: Weber, Marta  — APA/DataCite initials: Weber, M.
         return style === 'Chicago' ? `${last}, ${first}` : `${last}, ${initials}`;
     }
-    return last || first || person.username || '';
+    return last || first || fallbackName || '';
 }
 
 function buildAuthorList(people, style) {
@@ -235,7 +245,7 @@ function TextBlock({ text }) {
 }
 
 function PersonChip({ person }) {
-    const name = person.full_name || [person.first_name, person.last_name].filter(Boolean).join(' ') || person.username || '—';
+    const name = person.full_name || [person.first_name, person.last_name].filter(Boolean).join(' ') || formatUsernameFallback(person.username) || '—';
     const href = person.username ? `/people/profile/${person.username}` : null;
     return ce('div', { className: 'zalf-lp-person' },
         ce('div', { className: 'zalf-lp-person-avatar' }, name.charAt(0).toUpperCase()),
@@ -467,7 +477,7 @@ export default function DatasetLandingPage() {
         : [];
     const regions = (r.regions || []).map((rg) => rg.name).filter(Boolean);
     const ownerName = r.owner
-        ? (r.owner.full_name || [r.owner.first_name, r.owner.last_name].filter(Boolean).join(' ') || r.owner.username || '—')
+        ? (r.owner.full_name || [r.owner.first_name, r.owner.last_name].filter(Boolean).join(' ') || formatUsernameFallback(r.owner.username) || '—')
         : '—';
     const ownerHref = r.owner?.username ? '/people/profile/' + r.owner.username : null;
     const license = r.license?.name_long || r.license?.name || r.license?.identifier || null;
@@ -550,13 +560,11 @@ export default function DatasetLandingPage() {
                     ce('div', { className: 'zalf-lp-hero-stats' },
                         ce('span', { className: 'zalf-lp-hero-stat', title: 'Page views' },
                             ce('span', { className: 'zalf-lp-hero-stat-icon' }, '👁'),
-                            ce('span', { className: 'zalf-lp-hero-stat-value' }, r.popular_count != null ? r.popular_count : '—'),
-                            ce('span', { className: 'zalf-lp-hero-stat-label' }, 'Views')
+                            ce('span', { className: 'zalf-lp-hero-stat-value' }, r.popular_count != null ? r.popular_count : '—')
                         ),
                         ce('span', { className: 'zalf-lp-hero-stat', title: 'Shares' },
                             ce('span', { className: 'zalf-lp-hero-stat-icon' }, '↓'),
-                            ce('span', { className: 'zalf-lp-hero-stat-value' }, r.share_count != null ? r.share_count : '—'),
-                            ce('span', { className: 'zalf-lp-hero-stat-label' }, 'Downloads')
+                            ce('span', { className: 'zalf-lp-hero-stat-value' }, r.share_count != null ? r.share_count : '—')
                         )
                     ),
                     ce('div', { className: 'zalf-lp-hero-actions' },

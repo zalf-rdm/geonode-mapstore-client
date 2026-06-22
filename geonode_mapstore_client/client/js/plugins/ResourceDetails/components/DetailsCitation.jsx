@@ -11,6 +11,7 @@ import CopyToClipboardCmp from 'react-copy-to-clipboard';
 import Button from '@js/components/Button';
 import Dropdown from '@js/components/Dropdown';
 import FaIcon from '@js/components/FaIcon';
+import { formatUsernameFallback } from '@js/utils/SearchUtils';
 import Message from '@mapstore/framework/components/I18N/Message';
 import tooltip from '@mapstore/framework/components/misc/enhancers/tooltip';
 
@@ -30,12 +31,13 @@ const FORMATS = [
 function formatAuthorName(person, style) {
     const last = (person.last_name || '').trim();
     const first = (person.first_name || '').trim();
+    const fallbackName = formatUsernameFallback(person.username);
     const initials = first.split(/\s+/).filter(Boolean).map(n => n[0] + '.').join(' ');
     switch (style) {
-    case 'firstInitials': return last && first ? `${last}, ${initials}` : last || first || person.username || '';
-    case 'firstFull':     return last && first ? `${last}, ${first}` : last || first || person.username || '';
-    case 'fullNormal':    return last && first ? `${first} ${last}` : last || first || person.username || '';
-    default:              return last && first ? `${last}, ${first}` : last || first || person.username || '';
+    case 'firstInitials': return last && first ? `${last}, ${initials}` : last || first || fallbackName || '';
+    case 'firstFull':     return last && first ? `${last}, ${first}` : last || first || fallbackName || '';
+    case 'fullNormal':    return last && first ? `${first} ${last}` : last || first || fallbackName || '';
+    default:              return last && first ? `${last}, ${first}` : last || first || fallbackName || '';
     }
 }
 
@@ -54,7 +56,7 @@ function getPublisher(resource) {
     const publishers = resource?.publisher;
     if (!publishers || publishers.length === 0) return null;
     const pub = publishers[0];
-    return [pub.first_name, pub.last_name].filter(Boolean).join(' ') || pub.username || null;
+    return [pub.first_name, pub.last_name].filter(Boolean).join(' ') || formatUsernameFallback(pub.username) || null;
 }
 
 function getYear(resource) {
