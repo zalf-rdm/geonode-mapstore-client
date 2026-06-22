@@ -251,12 +251,6 @@
             "datasetsCatalogFilterPlaceholder": "Datensätze nach Titel oder Zusammenfassung filtern...",
             "datasetsCatalogEntriesNoResults": "Keine Ergebnisse entsprechen Ihrer Suche",
             "legend": "Legende",
-<<<<<<< HEAD
-
-=======
-            "nodeTooltipContent": "Tooltip-Inhalt",
-            "nodeTooltipPlacement": "Tooltip-Platzierung",
->>>>>>> 8fdc993dc4567fa86954cb78418afa794cc8b620
             "zoomToLayer": "Auf Layerausmaß zoomen",
             "applyCurrentStyleToLayer": "Aktuellen Stil auf Ebene anwenden",
             "deleteCurrentStyle": "Aktuellen Stil löschen",
