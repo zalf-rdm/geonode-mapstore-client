@@ -8,7 +8,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import isEmpty from 'lodash/isEmpty';
-import { Tooltip } from 'react-bootstrap';
+import { Tooltip, Glyphicon } from 'react-bootstrap';
 import OverlayTrigger from '@mapstore/framework/components/misc/OverlayTrigger';
 
 import Message from '@mapstore/framework/components/I18N/Message';
@@ -49,8 +49,7 @@ const DetailLinkedResource = ({resources, type}) => {
                                 <Message msgId="gnviewer.download" />
                             </a>
                         )}
-                    </div>
-                </div>);
+                    </FlexBox>);
             })}
         </FlexBox>
     );
@@ -71,11 +70,11 @@ const DetailsLinkedResources = ({ fields }) => {
             type: 'linkedBy'
         },
         {
-            resources: linkedToFields.filter(resource => resource.internal) ?? [],
+            resources: linkedToFields?.filter(resource => resource.internal) ?? [],
             type: 'uses'
         },
         {
-            resources: linkedByFields.filter(resource => resource.internal) ?? [],
+            resources: linkedByFields?.filter(resource => resource.internal) ?? [],
             type: 'usedBy'
         }
     ];
@@ -107,7 +106,7 @@ const DetailsLinkedResources = ({ fields }) => {
                 </div>
             )}
             {
-                linkedResources.map(({resources, type})=> <DetailLinkedResource resources={resources} type={type}/>)
+                linkedResources.map(({resources, type})=> <DetailLinkedResource key={type} resources={resources} type={type}/>)
             }
         </div>
     );
