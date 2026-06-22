@@ -68,7 +68,7 @@ export const getResources = ({
         page,
         page_size: pageSize,
         'filter{metadata_only}': false, // exclude resources such as services
-        api_preset: API_PRESET.CATALOGS
+        api_preset: [API_PRESET.CATALOGS, API_PRESET.VIEWER_COMMON]
     };
     return axios.get(getEndpointUrl(RESOURCES), {
         params: _params,

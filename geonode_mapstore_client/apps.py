@@ -119,6 +119,7 @@ def run_setup_hooks(*args, **kwargs):
         "exclude[]": ["*"],
         "include[]": [
             "advertised",
+            "author",
             "detail_url",
             "is_approved",
             "is_copyable",
