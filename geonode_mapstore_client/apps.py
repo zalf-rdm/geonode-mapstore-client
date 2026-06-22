@@ -240,7 +240,7 @@ def run_setup_hooks(*args, **kwargs):
             "title",
             "uuid",
             "metadata_uploaded_preserve",
-            "featured"
+            "featured",
             "author",
             "publisher",
             "doi",

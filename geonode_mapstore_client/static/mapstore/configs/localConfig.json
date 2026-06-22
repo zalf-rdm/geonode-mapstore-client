@@ -3902,51 +3902,47 @@
           "metadata": {
             "list": [
               {
-                "path": "title",
-                "width": 22,
-                "labelId": "gnviewer.columnTitle"
+                "path": "title"
               },
               {
-                "path": "description",
-                "width": 30,
-                "labelId": "resourcesCatalog.columnDescription"
+                "path": "poc[0].first_name",
+                "icon": {
+                  "glyph": "user"
+                },
+                "noDataLabelId": "resourcesCatalog.emptyUnknown"
+              },
+              {
+                "path": "abstract",
+                "showFullContent": false
+              },
+              {
+                "path": "group.title",
+                "icon": {
+                  "glyph": "folder-open"
+                },
+                "noDataLabelId": "resourcesCatalog.emptyNA"
               },
               {
                 "path": "created",
-                "width": 14,
                 "type": "date",
-                "labelId": "resourcesCatalog.columnCreated",
-                "format": "MMM Do YYYY",
+                "format": "MMMM Do, YYYY",
                 "icon": {
                   "glyph": "time"
                 },
                 "noDataLabelId": "resourcesCatalog.emptyNA"
               },
               {
-                "path": "poc[0].first_name",
-                "width": 14,
-                "icon": {
-                  "glyph": "user"
-                },
-                "labelId": "gnviewer.columnOwner",
-                "noDataLabelId": "resourcesCatalog.emptyUnknown"
-              },
-              {
                 "path": "popular_count",
-                "width": 7,
                 "icon": {
                   "glyph": "eye-open"
                 },
-                "labelId": "gnviewer.views",
                 "noDataLabelId": "resourcesCatalog.emptyNA"
               },
               {
                 "path": "download_count",
-                "width": 7,
                 "icon": {
                   "glyph": "download"
                 },
-                "labelId": "gnviewer.downloads",
                 "noDataLabelId": "resourcesCatalog.emptyNA"
               }
             ],

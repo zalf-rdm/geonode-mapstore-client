@@ -617,111 +617,122 @@
         border-radius: 0;
         box-shadow: none;
         background: transparent;
-        padding: 14px 16px;
+        padding: 18px 24px;
 
         // ── Left: resource type icon ──────────────────────────
         .ms-resource-card-limit:first-child {
-            width: 32px;
-            min-width: 32px;
+            width: 28px;
+            min-width: 28px;
             align-items: flex-start;
-            padding-top: 2px;
+            padding-top: 3px;
             color: var(--zc-accent);
-            font-size: 1rem;
+            font-size: 0.9rem;
         }
 
-        // ── Middle: stacked metadata ──────────────────────────
-        // Force column direction so entries stack vertically
-        &.ms-resource-card-body > .ms-flex-box._fill,
-        .ms-resource-card-body > .ms-flex-box._fill {
-            flex-direction: column !important;
-            align-items: flex-start !important;
-            gap: 4px !important;
-            padding-left: 12px !important;
-            padding-right: 12px !important;
+        // ── Middle: Zenodo-style stacked layout ───────────────
+        //
+        // flex-direction: row + flex-wrap: wrap lets us control
+        // which items share a row via flex-basis.
+        //
+        // Most items: flex-basis 100% → each on its own row.
+        // Bottom row exception:
+        //   created  → flex: 1 (expands to fill available space)
+        //   views    → flex: 0 auto (fits content, right side)
+        //   downloads→ flex: 0 auto (fits content, right side)
+        //
+        // Result:
+        //   Title
+        //   Authors
+        //   Description (2-line clamp)
+        //   📁 Part of [Group]
+        //   🕐 Uploaded on June 18, 2025        👁 591  ⬇ 259
+        // ─────────────────────────────────────────────────────
+        // FlexBox.Fill renders as <div class="_fill"> — no ms-flex-box class
+        .ms-resource-card-body > ._fill {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
+            align-items: baseline !important;
+            align-content: flex-start !important;
+            row-gap: 3px !important;
+            column-gap: 0 !important;
+            padding-left: 14px !important;
+            padding-right: 0 !important;
         }
 
-        // All metadata text entries: full width in stacked mode
-        .ms-flex-box._fill > .ms-text {
+        // Default: full-width row, secondary text
+        ._fill > .ms-text {
+            flex: 0 0 100% !important;
             width: 100% !important;
+            padding: 0 !important;
             font-size: 0.83rem;
             color: var(--zc-text-secondary);
-            line-height: 1.45;
-            padding: 0 !important;
+            line-height: 1.5;
 
             a { color: var(--zc-text-secondary); text-decoration: none;
                 &:hover { color: var(--zc-accent); } }
-            .glyphicon { color: var(--zc-text-muted); font-size: 0.75rem; margin-right: 4px; }
+            .glyphicon { font-size: 0.73rem; margin-right: 5px; color: var(--zc-text-muted); }
         }
 
-        // Title row — largest, green link
-        .ms-flex-box._fill > .ms-text:first-child {
-            font-size: 1rem !important;
+        // ── Title ─────────────────────────────────────────────
+        ._fill > .ms-text:first-child {
+            font-size: 1.05rem !important;
             font-weight: 600 !important;
             color: var(--zc-accent) !important;
             line-height: 1.35;
-            white-space: normal;
+            margin-bottom: 1px;
 
-            a {
-                color: var(--zc-accent) !important;
-                text-decoration: none;
-                &:hover { text-decoration: underline; }
-            }
+            a { color: var(--zc-accent) !important; text-decoration: none;
+                &:hover { text-decoration: underline; } }
+        }
+
+        // ── Authors ───────────────────────────────────────────
+        ._fill > .ms-text:has(.glyphicon-user) {
+            color: var(--zc-text);
+            font-size: 0.85rem;
+            .glyphicon { display: none; } // hide icon, name alone reads better
+        }
+
+        // ── Description: 2-line clamp ─────────────────────────
+        ._fill > .ms-text:not(:first-child):not(:has(.glyphicon)) {
+            color: var(--zc-text);
+            font-size: 0.84rem;
+            display: -webkit-box !important;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        // ── Group (Part of) ───────────────────────────────────
+        ._fill > .ms-text:has(.glyphicon-folder-open) {
+            font-size: 0.8rem;
+            a { color: var(--zc-accent); &:hover { text-decoration: underline; } }
+        }
+
+        // ── Date: flex:1 → expands on the bottom row ──────────
+        ._fill > .ms-text:has(.glyphicon-time) {
+            flex: 1 1 auto !important;
+            width: auto !important;
+            color: var(--zc-text-muted);
+            font-size: 0.78rem;
+        }
+
+        // ── Stats: auto-width, share bottom row with date ─────
+        // Result: 🕐 Uploaded on June 18, 2025        👁 591  ⬇ 259
+        ._fill > .ms-text:has(.glyphicon-eye-open),
+        ._fill > .ms-text:has(.glyphicon-download) {
+            flex: 0 0 auto !important;
+            width: auto !important;
+            padding-left: 16px !important;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--zc-text-secondary);
+            white-space: nowrap;
 
             .glyphicon { color: var(--zc-text-muted); }
         }
 
-        // Tags / keywords
-        .ms-tag {
-            display: inline-block;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            padding: 2px 7px;
-            background: var(--zc-surface-alt);
-            border: 1px solid var(--zc-border);
-            color: var(--zc-text-secondary);
-            margin: 1px 3px 1px 0;
-            text-decoration: none;
-            transition: background 100ms, color 100ms;
-
-            &:hover, &.active {
-                background: var(--zc-accent-light);
-                border-color: var(--zc-accent);
-                color: var(--zc-accent);
-            }
-        }
-
-        // ORCID identifier — style as a small badge if present
-        .ms-flex-box._fill > .ms-text:has([href*="orcid"]),
-        .ms-flex-box._fill > .ms-text .ms-string {
-            a[href*="orcid"] {
-                display: inline-flex;
-                align-items: center;
-                gap: 4px;
-                color: #a6ce39;
-                font-size: 0.78rem;
-                text-decoration: none;
-
-                &::before {
-                    content: '';
-                    display: inline-block;
-                    width: 14px;
-                    height: 14px;
-                    border-radius: 50%;
-                    background: #a6ce39;
-                    flex-shrink: 0;
-                }
-
-                &:hover { text-decoration: underline; }
-            }
-        }
-
-        // Popular count (views) — muted small text with icon
-        .ms-flex-box._fill > .ms-text:has(.glyphicon-eye-open) {
-            font-size: 0.78rem;
-            color: var(--zc-text-muted);
-        }
-
-        // ── Right: actions column ─────────────────────────────
+        // ── Actions column ────────────────────────────────────
         .ms-resource-card-limit:last-child {
             width: 36px;
             min-width: 36px;
@@ -730,13 +741,13 @@
         }
     }
 
-    // Card body reset
+    // Card body: top-align all columns
     .ms-resource-card-type-list .ms-resource-card-body {
         padding: 0;
         align-items: flex-start !important;
     }
 
-    // Action buttons in list
+    // Action buttons dropdown
     .ms-resource-card-type-list .ms-resource-card-action-buttons {
         .dropdown-toggle {
             background: transparent;
@@ -941,13 +952,13 @@
             padding: 10px 12px;
             gap: 4px;
 
-            .ms-flex-box._fill {
+            ._fill {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 2px;
             }
 
-            .ms-flex-box._fill > .ms-text { width: 100% !important; }
+            ._fill > .ms-text { width: 100% !important; }
         }
     }
 }
