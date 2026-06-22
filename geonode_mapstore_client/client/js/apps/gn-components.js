@@ -28,6 +28,15 @@ import withExtensions from '@mapstore/framework/components/app/withExtensions';
 import gnsettings from '@js/reducers/gnsettings';
 import { updateGeoNodeSettings } from '@js/actions/gnsettings';
 import { COMPONENTS_ROUTES, appRouteComponentTypes } from '@js/utils/AppRoutesUtils';
+import gnresourceEpics from '@js/epics/gnresource';
+import resourceServiceEpics from '@js/epics/resourceservice';
+
+import gnresource from '@js/reducers/gnresource';
+import resourceservice from '@js/reducers/resourceservice';
+import notifications from '@mapstore/framework/reducers/notifications';
+
+import '@js/observables/persistence';
+import { gnListenToResourcesPendingExecution, gnHandleAsyncProcessErrors } from '@js/epics';
 
 const requires = {};
 
@@ -63,7 +72,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     }) => {
 
                         const appEpics = cleanEpics({
-                            ...configEpics
+                            ...configEpics,
+                            ...gnresourceEpics,
+                            ...resourceServiceEpics,
+                            gnListenToResourcesPendingExecution,
+                            gnHandleAsyncProcessErrors
                         });
 
                         storeEpicsNamesToExclude(appEpics);
@@ -90,7 +103,10 @@ document.addEventListener('DOMContentLoaded', function() {
                             themeCfg: null,
                             appReducers: {
                                 security,
-                                gnsettings
+                                gnsettings,
+                                gnresource,
+                                resourceservice,
+                                notifications
                             },
                             appEpics,
                             onStoreInit,

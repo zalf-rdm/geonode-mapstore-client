@@ -47,6 +47,7 @@ function ViewerLayout({
                     {leftColumn}
                 </div>
                 <div
+                    id="container" // needed for longitudinal profile dropdown
                     className="gn-viewer-layout-center"
                     style={{
                         flex: 1,
@@ -59,7 +60,7 @@ function ViewerLayout({
                     {rightColumn}
                 </div>
                 <div
-                    className="gn-viewer-right-overlay shadow-far">
+                    className="gn-viewer-right-overlay shadow-far ms-main-colors">
                     {rightOverlay}
                 </div>
             </div>

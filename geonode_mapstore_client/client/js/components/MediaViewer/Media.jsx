@@ -9,6 +9,7 @@
 import React, { Suspense, lazy }  from 'react';
 import MediaComponent from '@mapstore/framework/components/geostory/media';
 import PdfViewer from '@js/components/MediaViewer/PdfViewer';
+import SpreadsheetViewer from '@js/components/MediaViewer/SpreadsheetViewer';
 import { determineResourceType } from '@js/utils/FileUtils';
 import Loader from '@mapstore/framework/components/misc/Loader';
 import MainEventView from '@js/components/MainEventView';
@@ -30,6 +31,7 @@ const mediaMap = {
     gltf: Scene3DViewer,
     ifc: Scene3DViewer,
     audio: MediaComponent,
+    excel: SpreadsheetViewer,
     unsupported: UnsupportedViewer
 };
 
@@ -55,9 +57,8 @@ const Media = ({ resource, ...props }) => {
     const mediaTypes = getResourceTypesInfo();
     const {
         hasPermission, metadataPreviewUrl = () => {}
-    } = resource && (mediaTypes[resource.subtype] || mediaTypes[resource.resource_type]) || {};
+    } = resource && (mediaTypes[resource.resource_type]) || {};
     const viewResource = resource?.pk && hasPermission && hasPermission(resource);
-
     if (resource && viewResource) {
         const mediaType = determineResourceType(resource.extension);
         const MediaViewer =  mediaMap[mediaType];
@@ -73,6 +74,8 @@ const Media = ({ resource, ...props }) => {
                 url={resource ? metadataPreviewUrl(resource) : ''}
                 isExternalSource={isDocumentExternalSource(resource)}
                 bboxPolygon={resource?.ll_bbox_polygon}
+                title={resource.title}
+                extension={resource.extension}
             />
         </Suspense>);
     }

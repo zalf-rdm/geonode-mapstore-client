@@ -9,6 +9,10 @@
 import axios from '@mapstore/framework/libs/ajax';
 import { Observable } from 'rxjs';
 import get from 'lodash/get';
+import castArray from 'lodash/castArray';
+import omit from 'lodash/omit';
+import isEmpty from 'lodash/isEmpty';
+
 import { mapInfoSelector } from '@mapstore/framework/selectors/map';
 import { userSelector } from '@mapstore/framework/selectors/security';
 import {
@@ -34,7 +38,9 @@ import {
     loadingResourceConfig,
     enableMapThumbnailViewer,
     updateResource,
-    manageLinkedResource
+    manageLinkedResource,
+    setSelectedLayer,
+    setResourcePathParameters
 } from '@js/actions/gnresource';
 import {
     getResourceByPk,
@@ -46,7 +52,9 @@ import {
     updateDocument,
     setMapThumbnail,
     updateCompactPermissionsByPk,
-    getResourceByUuid
+    getResourceByUuid,
+    updateDatasetTimeSeries,
+    updateResource as updateResourceAPI
 } from '@js/api/geonode/v2';
 import { parseDevHostname } from '@js/utils/APIUtils';
 import uuid from 'uuid';
@@ -58,7 +66,8 @@ import {
     getResourceId,
     getDataPayload,
     getCompactPermissions,
-    getExtentPayload
+    getExtentPayload,
+    getInitialDatasetLayerStyle
 } from '@js/selectors/resource';
 
 import {
@@ -67,17 +76,30 @@ import {
 } from '@js/api/geonode/security';
 import {
     STOP_ASYNC_PROCESS,
-    startAsyncProcess
+    startAsyncProcess,
+    updateAsyncProcess
 } from '@js/actions/resourceservice';
 import {
     ResourceTypes,
     cleanCompactPermissions,
-    toGeoNodeMapConfig
+    toGeoNodeMapConfig,
+    RESOURCE_PUBLISHING_PROPERTIES,
+    RESOURCE_OPTIONS_PROPERTIES,
+    getDimensions,
+    isDefaultDatasetSubtype
 } from '@js/utils/ResourceUtils';
 import {
     ProcessTypes,
     ProcessStatus
 } from '@js/utils/ResourceServiceUtils';
+import { updateNode, updateSettingsParams } from '@mapstore/framework/actions/layers';
+import { setControlProperty } from '@mapstore/framework/actions/controls';
+import { layersSelector, getSelectedLayer as getSelectedNode } from '@mapstore/framework/selectors/layers';
+import { styleServiceSelector, getUpdatedLayer, selectedStyleSelector } from '@mapstore/framework/selectors/styleeditor';
+import LayersAPI from '@mapstore/framework/api/geoserver/Layers';
+import { wrapStartStop } from '@mapstore/framework/observables/epics';
+
+const RESOURCE_MANAGEMENT_PROPERTIES_KEYS = Object.keys({...RESOURCE_PUBLISHING_PROPERTIES, ...RESOURCE_OPTIONS_PROPERTIES});
 
 function parseMapBody(body) {
     const geoNodeMap = toGeoNodeMapConfig(body.data);
@@ -86,6 +108,33 @@ function parseMapBody(body) {
         ...geoNodeMap
     };
 }
+
+const setDefaultStyle = (state, id) => {
+    const layer = getUpdatedLayer(state);
+    const styleName = selectedStyleSelector(state);
+    let availableStyles = [];
+    if (!isEmpty(layer.availableStyles)) {
+        const defaultStyle = layer.availableStyles.filter(({ name }) => styleName === name);
+        const filteredStyles = layer.availableStyles.filter(({ name }) => styleName !== name);
+        availableStyles =  [...defaultStyle, ...filteredStyles];
+    }
+    const {style: currentStyleName} = getSelectedNode(state) ?? {};
+    const initialStyleName = getInitialDatasetLayerStyle(state);
+    const layers = layersSelector(state);
+
+    if (id && !isEmpty(layers) && initialStyleName && currentStyleName !== initialStyleName) {
+        const { baseUrl = '' } = styleServiceSelector(state);
+        return {
+            request: () => LayersAPI.updateDefaultStyle({
+                baseUrl,
+                layerName: layer.name,
+                styleName
+            }),
+            actions: [updateSettingsParams({ availableStyles }, true), setSelectedLayer(layer)]
+        };
+    }
+    return {request: () => Promise.resolve(), actions: []};
+};
 
 const SaveAPI = {
     [ResourceTypes.MAP]: (state, id, body) => {
@@ -119,7 +168,34 @@ const SaveAPI = {
         return id ? updateDocument(id, body) : false;
     },
     [ResourceTypes.DATASET]: (state, id, body) => {
-        return id ? updateDataset(id, body) : false;
+        const currentResource = getResourceData(state);
+        const timeseries = currentResource?.timeseries;
+        const updatedBody = {
+            ...body,
+            data: {
+                ...body?.data,
+                dimensions: timeseries?.has_time ? getDimensions({...body?.data, has_time: true}) : []
+            },
+            ...(timeseries && { has_time: timeseries?.has_time })
+        };
+        const { request, actions } = setDefaultStyle(state, id); // set default style, if modified
+        return request().then(() => {
+            const patchResource = !isDefaultDatasetSubtype(currentResource?.subtype) ? updateResourceAPI : updateDataset;
+            return (id
+            // perform dataset and timeseries updates sequentially to avoid race conditions
+                ? patchResource(id, updatedBody).then((resource) =>
+                    timeseries ? updateDatasetTimeSeries(id, timeseries).then(() => resource) : Promise.resolve(resource)
+                ) : Promise.resolve())
+                .then((_resource) => {
+                    let resource = omit(_resource, 'default_style');
+                    if (timeseries) {
+                        const layerId = layersSelector(state)?.find((l) => l.pk === resource?.pk)?.id;
+                        // actions to be dispacted are added to response array
+                        return [resource, updateNode(layerId, 'layers', { dimensions: get(resource, 'data.dimensions', []) }), ...actions];
+                    }
+                    return [resource, ...actions];
+                });
+        });
     },
     [ResourceTypes.VIEWER]: (state, id, body) => {
         const user = userSelector(state);
@@ -139,42 +215,77 @@ export const gnSaveContent = (action$, store) =>
     action$.ofType(SAVE_CONTENT)
         .switchMap((action) => {
             const state = store.getState();
-            const contentType = state.gnresource?.type || 'map';
-            const data = getDataPayload(state, contentType);
+            const currentResource = getResourceData(state);
+            const contentType = state.gnresource?.type || currentResource?.resource_type;
+            const data = !currentResource?.['@ms-detail'] ? getDataPayload(state, contentType) : null;
             const extent = getExtentPayload(state, contentType);
             const body = {
                 'title': action.metadata.name,
+                ...([...RESOURCE_MANAGEMENT_PROPERTIES_KEYS, 'group'].reduce((acc, key) => {
+                    if (currentResource?.[key] !== undefined) {
+                        const value = typeof currentResource[key] === 'boolean' ? !!currentResource[key] : currentResource[key];
+                        acc[key] = value;
+                    }
+                    return acc;
+                }, {})),
                 ...(action.metadata.description && { 'abstract': action.metadata.description }),
                 ...(data && { 'data': JSON.parse(JSON.stringify(data)) }),
                 ...(extent && { extent })
             };
-            const currentResource = getResourceData(state);
+            const { compactPermissions } = getPermissionsPayload(state);
             return Observable.defer(() => SaveAPI[contentType](state, action.id, body, action.reload))
-                .switchMap((resource) => {
+                .switchMap((response) => {
+                    let [resource, ...actions] = castArray(response);
                     if (action.reload) {
                         if (contentType === ResourceTypes.VIEWER) {
                             const sourcepk = get(state, 'router.location.pathname', '').split('/').pop();
                             return Observable.of(manageLinkedResource({resourceType: contentType, source: sourcepk, target: resource.pk, processType: ProcessTypes.LINK_RESOURCE}));
                         }
-                        window.location.href = parseDevHostname(resource?.detail_url);
-                        window.location.reload();
-                        return Observable.empty();
+                        return Observable.concat(
+                            Observable.of(
+                                setResourcePathParameters({pk: resource?.pk}),
+                                setControlProperty(ProcessTypes.COPY_RESOURCE, 'value', undefined)
+                            ),
+                            Observable.defer(() => {
+                                window.location.href = parseDevHostname(resource?.detail_url);
+                                window.location.reload();
+                                return Observable.empty();
+                            })
+                        );
                     }
-                    return Observable.of(
-                        saveSuccess(resource),
-                        setResource({
-                            ...currentResource,
-                            ...body,
-                            ...resource
-                        }),
-                        updateResource(resource),
-                        ...(action.showNotifications
-                            ? [
-                                action.showNotifications === true
-                                    ? successNotification({title: "saveDialog.saveSuccessTitle", message: "saveDialog.saveSuccessMessage"})
-                                    : warningNotification(action.showNotifications)
-                            ]
-                            : [])
+                    const selectedLayer = getSelectedNode(state);
+                    const currentStyle = selectedLayer?.availableStyles?.find(({ name }) => selectedLayer?.style?.includes(name));
+                    // adding default style upon saving resource for correct style comparison
+                    const defaultStyle =  currentStyle ? { sld_title: currentStyle.title, name: selectedLayer?.style } : null;
+                    resource = {...resource, default_style: defaultStyle};
+                    return Observable.merge(
+                        Observable.of(
+                            saveSuccess(resource),
+                            setResource({
+                                ...currentResource,
+                                ...body,
+                                ...resource
+                            }),
+                            updateResource(resource),
+                            ...(action.showNotifications
+                                ? [
+                                    action.showNotifications === true
+                                        ? successNotification({title: "saveDialog.saveSuccessTitle", message: "saveDialog.saveSuccessMessage"})
+                                        : warningNotification(action.showNotifications)
+                                ]
+                                : []),
+                            ...actions // additional actions to be dispatched
+                        ),
+                        ...(compactPermissions ? [
+                            Observable.defer(() =>
+                                updateCompactPermissionsByPk(action.id, cleanCompactPermissions(compactPermissions))
+                                    .then(output => ({ resource: currentResource, output, processType: ProcessTypes.PERMISSIONS_RESOURCE }))
+                                    .catch((error) => ({ resource: currentResource, error: error?.data?.detail || error?.statusText || error?.message || true, processType: ProcessTypes.PERMISSIONS_RESOURCE }))
+                            )
+                                .switchMap((payload) => {
+                                    return Observable.of(startAsyncProcess(payload));
+                                })
+                        ] : [])
                     );
                 })
                 .catch((error) => {
@@ -193,9 +304,9 @@ export const gnSetMapThumbnail = (action$, store) =>
         .switchMap((action) => {
 
             const state = store.getState();
-            const contentType = state.gnresource?.data?.resource_type || 'map';
-            const resourceIDThumbnail = state?.gnresource?.id;
-            const currentResource = state.gnresource?.data || {};
+            const currentResource = getResourceData(state);
+            const contentType = currentResource?.resource_type || 'map';
+            const resourceIDThumbnail = getResourceId(state);
 
             const body = {
                 srid: action.bbox.crs,
@@ -230,9 +341,10 @@ export const gnSaveDirectContent = (action$, store) =>
             const state = store.getState();
             const mapInfo = mapInfoSelector(state);
             const resourceId = mapInfo?.id || getResourceId(state);
-            const { compactPermissions, geoLimits } = getPermissionsPayload(state);
-            const currentResource = getResourceData(state);
+            const { geoLimits } = getPermissionsPayload(state);
 
+            // resource information should be saved in a synchronous manner
+            // i.e update resource data followed by permissions
             return Observable.defer(() => axios.all([
                 getResourceByPk(resourceId),
                 ...(geoLimits
@@ -255,30 +367,18 @@ export const gnSaveDirectContent = (action$, store) =>
                         extension: resource?.extension,
                         href: resource?.href
                     };
-                    return Observable.concat(
-                        ...(compactPermissions ? [
-                            Observable.defer(() =>
-                                updateCompactPermissionsByPk(resourceId, cleanCompactPermissions(compactPermissions))
-                                    .then(output => ({ resource: currentResource, output, processType: ProcessTypes.PERMISSIONS_RESOURCE }))
-                                    .catch((error) => ({ resource: currentResource, error: error?.data?.detail || error?.statusText || error?.message || true, processType: ProcessTypes.PERMISSIONS_RESOURCE }))
-                            )
-                                .switchMap((payload) => {
-                                    return Observable.of(startAsyncProcess(payload));
-                                })
-                        ] : []),
-                        Observable.of(
-                            saveContent(
-                                resourceId,
-                                metadata,
-                                false,
-                                geoLimitsErrors.length > 0
-                                    ? {
-                                        title: 'gnviewer.warningGeoLimitsSaveTitle',
-                                        message: 'gnviewer.warningGeoLimitsSaveMessage'
-                                    }
-                                    : true /* showNotification */),
-                            resetGeoLimits()
-                        )
+                    return Observable.of(
+                        saveContent(
+                            resourceId,
+                            metadata,
+                            false,
+                            geoLimitsErrors.length > 0
+                                ? {
+                                    title: 'gnviewer.warningGeoLimitsSaveTitle',
+                                    message: 'gnviewer.warningGeoLimitsSaveMessage'
+                                }
+                                : true /* showNotification */),
+                        resetGeoLimits()
                     );
                 })
                 .catch((error) => {
@@ -331,10 +431,19 @@ export const gnWatchStopCopyProcessOnSave = (action$, store) =>
             }
             return Observable.defer(() => getResourceByUuid(newResourceUuid))
                 .switchMap((resource) => {
-                    window.location.href = parseDevHostname(resource?.detail_url);
-                    return Observable.empty();
+                    const updatedPayload = {
+                        ...action.payload,
+                        clonedResourceUrl: parseDevHostname(resource?.detail_url)
+                    };
+                    return Observable.of(updateAsyncProcess(updatedPayload));
                 })
-                .startWith(loadingResourceConfig(true));
+                .catch(() => {
+                    return Observable.of(loadingResourceConfig(false));
+                })
+                .let(wrapStartStop(
+                    loadingResourceConfig(true),
+                    loadingResourceConfig(false)
+                ));
         });
 
 export default {

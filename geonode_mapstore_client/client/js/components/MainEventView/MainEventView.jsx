@@ -7,9 +7,8 @@
 */
 
 import React from 'react';
-import FaIcon from '@js/components/FaIcon';
 import Message from '@mapstore/framework/components/I18N/Message';
-
+import { Glyphicon } from 'react-bootstrap';
 function MainEventView({
     msgId,
     icon
@@ -19,7 +18,7 @@ function MainEventView({
             <div className="gn-main-event-content">
                 <div className="gn-main-event-text">
                     <div className="gn-main-icon">
-                        <FaIcon name={icon} />
+                        <Glyphicon glyph={icon} />
                     </div>
                     {msgId && <Message msgId={msgId} />}
                 </div>
@@ -30,7 +29,7 @@ function MainEventView({
 
 MainEventView.defaultProps = {
     msgId: '',
-    icon: 'exclamation'
+    icon: 'exclamation-sign'
 };
 
 export default MainEventView;

@@ -11,12 +11,27 @@ import {
     LayerDownloadActionButton,
     FilterLayerActionButton,
     FullScreenActionButton,
-    AddWidgetActionButton
-} from '@js/plugins/actionnavbar/buttons';
+    AddWidgetActionButton,
+    LayerDownloadExportDataResultsComponent
+} from '@js/plugins/ActionNavbar/buttons';
 import { getPluginsContext } from '@js/utils/PluginsContextUtils';
 import { toModulePlugin as msToModulePlugin } from '@mapstore/framework/utils/ModulePluginsUtils';
 
 import TOCPlugin from '@mapstore/framework/plugins/TOC';
+import Isochrone from "@mapstore/framework/plugins/Isochrone";
+import Itinerary from "@mapstore/framework/plugins/Itinerary";
+import SecurityPopup from "@mapstore/framework/plugins/SecurityPopup";
+
+import OperationPlugin from '@js/plugins/Operation';
+import ExecutionTrackerPlugin from '@js/plugins/ExecutionTracker';
+import MetadataEditorPlugin from '@js/plugins/MetadataEditor';
+import MetadataViewerPlugin from '@js/plugins/MetadataEditor/MetadataViewer';
+import FavoritesPlugin from '@js/plugins/Favorites';
+import CreateDatasetPlugin from '@js/plugins/CreateDataset';
+import {
+    ResourcesGridPlugin,
+    ResourcesFiltersFormPlugin
+} from '@mapstore/framework/plugins/ResourcesCatalog';
 
 let epicsNamesToExclude = [
     'loadGeostoryEpic',
@@ -63,6 +78,17 @@ const toModulePlugin = (...args) => {
 
 export const plugins = {
     TOCPlugin,
+    OperationPlugin,
+    ExecutionTrackerPlugin,
+    MetadataEditorPlugin,
+    MetadataViewerPlugin,
+    ResourcesGridPlugin,
+    FavoritesPlugin,
+    ResourcesFiltersFormPlugin,
+    CreateDatasetPlugin,
+    IsochronePlugin: Isochrone,
+    ItineraryPlugin: Itinerary,
+    SecurityPopupPlugin: SecurityPopup,
     LayerDownloadPlugin: toModulePlugin(
         'LayerDownload',
         () => import(/* webpackChunkName: 'plugins/layer-download' */ '@mapstore/framework/plugins/LayerDownload'),
@@ -72,11 +98,26 @@ export const plugins = {
                     TOC: {
                         name: 'LayerDownload',
                         target: 'toolbar',
-                        Component: LayerDownloadActionButton
+                        Component: LayerDownloadActionButton,
+                        position: 11
                     },
-                    ActionNavbar: {
+                    ActionNavbar: [
+                        {
+                            name: 'LayerDownload',
+                            Component: LayerDownloadActionButton
+                        },
+                        {
+                            name: 'LayerDownload',
+                            Component: LayerDownloadExportDataResultsComponent,
+                            position: 1,
+                            target: 'right-menu'
+                        }
+                    ],
+                    ResourceDetails: {
                         name: 'LayerDownload',
-                        Component: LayerDownloadActionButton
+                        Component: LayerDownloadActionButton,
+                        target: 'toolbar',
+                        position: 1
                     }
                 }
             }
@@ -153,7 +194,9 @@ export const plugins = {
                     ActionNavbar: {
                         name: 'FullScreen',
                         Component: FullScreenActionButton,
-                        priority: 5
+                        priority: 5,
+                        position: 2,
+                        target: 'right-menu'
                     }
                 }
             }
@@ -206,10 +249,6 @@ export const plugins = {
     SearchPlugin: toModulePlugin(
         'Search',
         () => import(/* webpackChunkName: 'plugins/search-plugin' */ '@mapstore/framework/plugins/Search')
-    ),
-    SharePlugin: toModulePlugin(
-        'Share',
-        () => import(/* webpackChunkName: 'plugins/share-plugin' */ '@js/plugins/Share')
     ),
     IdentifyPlugin: toModulePlugin(
         'Identify',
@@ -308,9 +347,9 @@ export const plugins = {
         'ActionNavbar',
         () => import(/* webpackChunkName: 'plugins/action-navbar-plugin' */ '@js/plugins/ActionNavbar')
     ),
-    DetailViewerPlugin: toModulePlugin(
-        'DetailViewer',
-        () => import(/* webpackChunkName: 'plugins/detail-viewer-plugin' */ '@js/plugins/DetailViewer')
+    ResourceDetailsPlugin: toModulePlugin(
+        'ResourceDetails',
+        () => import(/* webpackChunkName: 'plugins/resource-details-plugin' */ '@js/plugins/ResourceDetails')
     ),
     MediaViewerPlugin: toModulePlugin(
         'MediaViewer',
@@ -388,9 +427,9 @@ export const plugins = {
         'DownloadResource',
         () => import(/* webpackChunkName: 'plugins/download-resource-plugin' */ '@js/plugins/DownloadResource')
     ),
-    VisualStyleEditorPlugin: toModulePlugin(
-        'VisualStyleEditor',
-        () => import(/* webpackChunkName: 'plugins/visual-style-editor-plugin' */ '@js/plugins/VisualStyleEditor')
+    LayerDetailViewerPlugin: toModulePlugin(
+        'LayerDetailViewer',
+        () => import(/* webpackChunkName: 'plugins/detail-viewer-plugin' */ '@js/plugins/LayerDetailViewer')
     ),
     LayerDetailViewerPlugin: toModulePlugin(
         'LayerDetailViewer',
@@ -408,10 +447,6 @@ export const plugins = {
         'DatasetsCatalog',
         () => import(/* webpackChunkName: 'plugins/dataset-catalog' */ '@js/plugins/DatasetsCatalog')
     ),
-    LayerSettingsPlugin: toModulePlugin(
-        'LayerSettings',
-        () => import(/* webpackChunkName: 'plugins/layer-settings' */ '@js/plugins/LayerSettings')
-    ),
     SyncPlugin: toModulePlugin(
         'Sync',
         () => import(/* webpackChunkName: 'plugins/sync-plugin' */ '@js/plugins/Sync')
@@ -419,18 +454,6 @@ export const plugins = {
     IsoDownloadPlugin: toModulePlugin(
         'IsoDownload',
         () => import(/* webpackChunkName: 'plugins/iso-download-plugin' */ '@js/plugins/downloads/IsoDownload')
-    ),
-    DublinCoreDownloadPlugin: toModulePlugin(
-        'DublinCoreDownload',
-        () => import(/* webpackChunkName: 'plugins/iso-download-plugin' */ '@js/plugins/downloads/DublinCoreDownload')
-    ),
-    ResourcesGridPlugin: toModulePlugin(
-        'ResourcesGrid',
-        () => import(/* webpackChunkName: 'plugins/resources-grid' */ '@js/plugins/ResourcesGrid')
-    ),
-    FeaturedResourcesGridPlugin: toModulePlugin(
-        'FeaturedResourcesGrid',
-        () => import(/* webpackChunkName: 'plugins/featured-resources-grid' */ '@js/plugins/FeaturedResourcesGrid')
     ),
     MapViewersCatalogPlugin: toModulePlugin(
         'MapViewersCatalog',
@@ -464,13 +487,9 @@ export const plugins = {
         'PrintCopyright',
         () => import(/* webpackChunkName: 'plugins/print-copyright' */ '@js/plugins/Print/Copyright')
     ),
-    TabularPreviewPlugin: toModulePlugin(
-        'TabularPreview',
-        () => import(/* webpackChunkName: 'plugins/tabular-preview-plugin' */ '@js/plugins/TabularPreview')
-    ),
-    TabularCollectionViewerPlugin: toModulePlugin(
-        'TabularCollectionViewer',
-        () => import(/* webpackChunkName: 'plugins/tabular-collection-plugin' */ '@js/plugins/TabularCollectionViewer')
+    UploadResourcePlugin: toModulePlugin(
+        'UploadResource',
+        () => import(/* webpackChunkName: 'plugins/upload-operation' */ '@js/plugins/UploadResource')
     )
 };
 

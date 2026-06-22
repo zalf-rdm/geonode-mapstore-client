@@ -1,0 +1,141 @@
+{% extends "page.html" %} 
+{% block container %}
+
+    <div class="gn-resource-page-catalog">
+        {% block content %}
+        {% endblock content %}
+    </div>
+
+    <script>
+        (function(){
+            function getPageFilterForm(filterForm) {
+                const filterGroup = [...new Map([
+                        {
+                            "id": "my-resources",
+                            "labelId": "gnhome.myResources",
+                            "type": "filter",
+                            "disableIf": "{not state('user')}"
+                        },
+                        {
+                            "id": "favorite",
+                            "labelId": "gnhome.favorites",
+                            "type": "filter",
+                            "disableIf": "{not state('user')}"
+                        },
+                        {
+                            "id": "featured",
+                            "labelId": "gnhome.featuredList",
+                            "type": "filter"
+                        },
+                        {
+                            "id": "unpublished",
+                            "labelId": "gnhome.unpublished",
+                            "type": "filter",
+                            "disableIf": "{not state('user')}"
+                        },
+                        {
+                            "id": "pending-approval",
+                            "labelId": "gnhome.pendingApproval",
+                            "type": "filter",
+                            "disableIf": "{not state('user')}"
+                        },
+                        ...(filterForm ?? []),
+                    ].map(item => [item.id, item])).values()];
+                return [
+                    {
+                        "type": "search"
+                    },
+                    {
+                        "type": "group",
+                        "labelId": "gnhome.customFiltersTitle",
+                        "items": filterGroup
+                    },
+                    {
+                        "type": "divider",
+                        "disableIf": "{not state('user')}"
+                    },
+                    {
+                        "type": "select",
+                        "facet": "category"
+                    },
+                    {
+                        "type": "select",
+                        "facet": "keyword"
+                    },
+                    {
+                        "type": "select",
+                        "facet": "place"
+                    },
+                    {
+                        "type": "select",
+                        "facet": "user"
+                    },
+                    {
+                        "type": "select",
+                        "facet": "group"
+                    },
+                    {
+                        "type": "accordion",
+                        "style": "facet",
+                        "facet": "thesaurus"
+                    },
+                    {
+                        "type": "date-range",
+                        "filterKey": "date",
+                        "labelId": "gnviewer.dateFilter"
+                    },
+                    {
+                        "labelId": "gnviewer.extent",
+                        "type": "extent"
+                    }
+                ];
+            }
+            function getPageMenuItem(menuItems) {
+                return [{
+                    "labelId": "gnhome.new",
+                    "disableIf": "{not canCreateResourceFromCatalog(state('settings'), state('user'))}",
+                    "type": "button",
+                    "variant": "primary",
+                    ...menuItems
+                }]
+            }
+            let msPluginsBlocks = [];
+
+            {% block ms_plugins %}
+            {% endblock ms_plugins %}
+            if (msPluginsBlocks) {
+                window.addEventListener("mapstore:ready", function (event) {
+                    const msAPI = event.detail;
+                    msAPI.setPluginsConfig((localConfig) => {
+                        const cataloguePlugins = (localConfig?.plugins?.catalogue || []);
+                        const msPluginsBlocksNames = new Set(msPluginsBlocks.map(p => p.name));
+                        const cataloguePluginsMap = new Map(cataloguePlugins.map(p => [p.name, p.cfg]));
+                        const defaultConfig = {};
+                        msPluginsBlocksNames.forEach(name => {
+                            const cfg = cataloguePluginsMap.get(name);
+                            if (cfg) {
+                                const { titleId, ...rest } = cfg;
+                                defaultConfig[name] = rest;
+                            } else {
+                                defaultConfig[name] = {};
+                            }
+                        });
+                        
+                        return [
+                            ...cataloguePlugins.filter(plugin => !msPluginsBlocksNames.has(plugin.name)),
+                            ...msPluginsBlocks.map(msPluginBlock => {
+                                return {
+                                    name: msPluginBlock.name,
+                                    cfg: {
+                                        ...defaultConfig[msPluginBlock.name],
+                                        ...msPluginBlock?.cfg
+                                    }
+                                };
+                            })
+                        ];
+                    });
+                });
+            }
+        })();
+    </script>
+{% endblock %}

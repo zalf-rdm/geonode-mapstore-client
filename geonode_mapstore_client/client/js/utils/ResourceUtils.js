@@ -8,15 +8,15 @@
 
 import uuid from 'uuid';
 import url from 'url';
-import isEmpty from 'lodash/isEmpty';
-import omit from 'lodash/omit';
+import { isEmpty, uniqBy, omit, orderBy, isString, isObject } from 'lodash';
+
+import { isImageServerUrl } from '@mapstore/framework/utils/ArcGISUtils';
 import { getConfigProp, convertFromLegacy, normalizeConfig } from '@mapstore/framework/utils/ConfigUtils';
+import { excludeGoogleBackground, extractTileMatrixFromSources, ServerTypes } from '@mapstore/framework/utils/LayersUtils';
+
 import { getGeoNodeLocalConfig, parseDevHostname } from '@js/utils/APIUtils';
 import { ProcessTypes, ProcessStatus } from '@js/utils/ResourceServiceUtils';
-import { uniqBy, orderBy, isString, isObject, pick, difference } from 'lodash';
-import { excludeGoogleBackground, extractTileMatrixFromSources, ServerTypes } from '@mapstore/framework/utils/LayersUtils';
 import { determineResourceType } from '@js/utils/FileUtils';
-import { isImageServerUrl } from '@mapstore/framework/utils/ArcGISUtils';
 
 /**
 * @module utils/ResourceUtils
@@ -52,7 +52,68 @@ export const GXP_PTYPES = {
     'GN_WMS': 'gxp_geonodecataloguesource'
 };
 
-export const isDefaultDatasetSubtype = (subtype) => !subtype || ['vector', 'raster', 'remote', 'vector_time', 'tabular'].includes(subtype);
+const RESOURCE_PUBLISHING_PROPERTIES_BASE = {
+    'is_published': {
+        labelId: 'gnviewer.publishResource',
+        tooltipId: 'gnviewer.publishResourceTooltip',
+        disabled: (perms = []) => !perms.includes('publish_resourcebase')
+    },
+    'featured': {
+        labelId: 'gnviewer.featureResource',
+        tooltipId: 'gnviewer.featureResourceTooltip',
+        disabled: (perms = []) => !perms.includes('feature_resourcebase')
+    },
+    'advertised': {
+        labelId: 'gnviewer.advertiseResource',
+        tooltipId: 'gnviewer.advertiseResourceTooltip',
+        disabled: (perms = []) => !perms.includes('change_resourcebase')
+    }
+};
+
+const RESOURCE_OPTIONS_PROPERTIES_BASE = {
+    'metadata_uploaded_preserve': {
+        labelId: 'gnviewer.preserveUploadedMetadata',
+        tooltipId: 'gnviewer.preserveUploadedMetadataTooltip',
+        disabled: (perms = []) => !perms.includes('change_resourcebase')
+    },
+    'is_approved': {
+        labelId: 'gnviewer.approveResource',
+        tooltipId: 'gnviewer.approveResourceTooltip',
+        disabled: (perms = []) => !perms.includes('approve_resourcebase')
+    }
+};
+
+export const filterResourcePublishingProperties = () => {
+    const { isPublishedOptionEnabled = false } = getConfigProp('geoNodeSettings') || {};
+
+    // Remove is_published if RESOURCE_PUBLISHING is disabled
+    if (!isPublishedOptionEnabled) {
+        return omit(RESOURCE_PUBLISHING_PROPERTIES_BASE, 'is_published');
+    }
+
+    return RESOURCE_PUBLISHING_PROPERTIES_BASE;
+};
+
+export const filterResourceOptionsProperties = () => {
+    const { isApprovedOptionEnabled = false } = getConfigProp('geoNodeSettings') || {};
+
+    // Remove is_approved if ADMIN_MODERATE_UPLOADS is disabled
+    if (!isApprovedOptionEnabled) {
+        return omit(RESOURCE_OPTIONS_PROPERTIES_BASE, 'is_approved');
+    }
+
+    return RESOURCE_OPTIONS_PROPERTIES_BASE;
+};
+
+export const RESOURCE_PUBLISHING_PROPERTIES = filterResourcePublishingProperties();
+export const RESOURCE_OPTIONS_PROPERTIES = filterResourceOptionsProperties();
+export const TIME_SERIES_PROPERTIES = ['attribute', 'end_attribute', 'presentation', 'precision_value', 'precision_step'];
+
+export const TIME_ATTRIBUTE_TYPES = ['xsd:date', 'xsd:dateTime', 'xsd:date-time', 'xsd:time'];
+
+export const TIME_PRECISION_STEPS = ['years', 'months', 'days', 'hours', 'minutes', 'seconds'];
+
+export const isDefaultDatasetSubtype = (subtype) => !subtype || ['vector', 'raster', 'remote', 'vector_time'].includes(subtype);
 
 export const FEATURE_INFO_FORMAT = 'TEMPLATE';
 
@@ -77,6 +138,21 @@ const datasetAttributeSetToFields = ({ attribute_set: attributeSet = [] }) => {
         });
 };
 
+export const getDimensions = ({links, has_time: hasTime} = {}) => {
+    const { url: wmsUrl } = links?.find(({ link_type: linkType }) => linkType === 'OGC:WMS') || {};
+    const { url: wmtsUrl } = links?.find(({ link_type: linkType }) => linkType === 'OGC:WMTS') || {};
+    const dimensions = [
+        ...(hasTime ? [{
+            name: 'time',
+            source: {
+                type: 'multidim-extension',
+                url: wmtsUrl || (wmsUrl || '').split('/geoserver/')[0] + '/geoserver/gwc/service/wmts'
+            }
+        }] : [])
+    ];
+    return dimensions;
+};
+
 /**
 * convert resource layer configuration to a mapstore layer object
 * @param {object} resource geonode layer resource
@@ -91,11 +167,11 @@ export const resourceToLayerConfig = (resource) => {
         title,
         perms,
         pk,
-        has_time: hasTime,
         default_style: defaultStyle,
         ptype,
         subtype,
-        sourcetype
+        sourcetype,
+        data: layerSettings
     } = resource;
 
     const bbox = getExtentFromResource(resource);
@@ -151,52 +227,8 @@ export const resourceToLayerConfig = (resource) => {
     default:
         const { url: wfsUrl } = links.find(({ link_type: linkType }) => linkType === 'OGC:WFS') || {};
         const { url: wmsUrl } = links.find(({ link_type: linkType }) => linkType === 'OGC:WMS') || {};
-        const { url: wmtsUrl } = links.find(({ link_type: linkType }) => linkType === 'OGC:WMTS') || {};
 
-        if (resource.subtype === "tabular") {
-            return {
-                perms,
-                id: uuid(),
-                pk,
-                type: 'wfs',
-                name: alternate,
-                url: wfsUrl || '',
-                format: defaultLayerFormat,
-                ...(wfsUrl && {
-                    search: {
-                        type: 'wfs',
-                        url: wfsUrl
-                    }
-                }),
-                ...(bbox ? { bbox } : { bboxError: true }),
-                ...(template && {
-                    featureInfo: {
-                        format: FEATURE_INFO_FORMAT,
-                        template
-                    }
-                }),
-                style: defaultStyleParams?.defaultStyle?.name || '',
-                title,
-                tileSize: defaultTileSize,
-                visibility: true,
-                ...(params && { params }),
-                extendedParams,
-                ...(fields && { fields }),
-                ...(sourcetype === SOURCE_TYPES.REMOTE && !wmsUrl.includes('/geoserver/') && {
-                    serverType: ServerTypes.NO_VENDOR
-                })
-            };
-        }
-    
-        const dimensions = [
-            ...(hasTime ? [{
-                name: 'time',
-                source: {
-                    type: 'multidim-extension',
-                    url: wmtsUrl || (wmsUrl || '').split('/geoserver/')[0] + '/geoserver/gwc/service/wmts'
-                }
-            }] : [])
-        ];
+        const dimensions = getDimensions(resource);
 
         const params = wmsUrl && url.parse(wmsUrl, true).query;
         const {
@@ -235,7 +267,8 @@ export const resourceToLayerConfig = (resource) => {
             ...(fields && { fields }),
             ...(sourcetype === SOURCE_TYPES.REMOTE && !wmsUrl.includes('/geoserver/') && {
                 serverType: ServerTypes.NO_VENDOR
-            })
+            }),
+            ...layerSettings
         };
     }
 };
@@ -325,7 +358,7 @@ export function getGeoLimitsFromCompactPermissions({ groups = [], users = [], or
 }
 
 export const resourceHasPermission = (resource, perm) => {
-    return resource?.perms?.includes(perm);
+    return !!resource?.perms?.includes(perm);
 };
 
 
@@ -343,61 +376,74 @@ export const isDocumentExternalSource = (resource) => {
 };
 
 export const getResourceTypesInfo = () => ({
+    'null': {
+        icon: { glyph: 'dataset' },
+        name: '',
+        canPreviewed: () => false,
+        formatEmbedUrl: () => undefined,
+        formatDetailUrl: () => undefined,
+        formatMetadataUrl: () => undefined,
+        formatMetadataDetailUrl: () => undefined
+    },
     [ResourceTypes.DATASET]: {
-        icon: 'database',
+        icon: { glyph: 'dataset' },
         canPreviewed: (resource) => resourceHasPermission(resource, 'view_resourcebase'),
         formatEmbedUrl: (resource) => resource?.subtype !== "tabular" && resource.embed_url && parseDevHostname(updateUrlQueryParameter(resource.embed_url, {
             config: 'dataset_preview'
         })),
         formatDetailUrl: (resource) => resource?.detail_url && parseDevHostname(resource.detail_url),
         name: 'Dataset',
-        formatMetadataUrl: (resource) => isDefaultDatasetSubtype(resource?.subtype)
-            ? `/datasets/${resource.store ? resource.store + ":" : ''}${resource.alternate}/metadata`
-            : `/resources/${resource.pk}/metadata`
+        formatMetadataUrl: (resource) => `#/metadata/${resource.pk}`,
+        formatMetadataDetailUrl: (resource) => `/metadata/${resource.pk}`
     },
     [ResourceTypes.MAP]: {
-        icon: 'map',
+        icon: { glyph: '1-map' },
         name: 'Map',
         canPreviewed: (resource) => resourceHasPermission(resource, 'view_resourcebase'),
         formatEmbedUrl: (resource) => parseDevHostname(updateUrlQueryParameter(resource.embed_url, {
             config: 'map_preview'
         })),
         formatDetailUrl: (resource) => resource?.detail_url && parseDevHostname(resource.detail_url),
-        formatMetadataUrl: (resource) => (`/maps/${resource.pk}/metadata`)
+        formatMetadataUrl: (resource) => `#/metadata/${resource.pk}`,
+        formatMetadataDetailUrl: (resource) => `/metadata/${resource.pk}`
     },
     [ResourceTypes.DOCUMENT]: {
-        icon: 'file',
+        icon: { glyph: 'document' },
         name: 'Document',
         canPreviewed: (resource) => resourceHasPermission(resource, 'download_resourcebase') && !!(determineResourceType(resource.extension) !== 'unsupported'),
         hasPermission: (resource) => resourceHasPermission(resource, 'download_resourcebase'),
         formatEmbedUrl: (resource) => isDocumentExternalSource(resource) ? undefined : resource?.embed_url && parseDevHostname(resource.embed_url),
         formatDetailUrl: (resource) => resource?.detail_url && parseDevHostname(resource.detail_url),
-        formatMetadataUrl: (resource) => (`/documents/${resource.pk}/metadata`),
-        metadataPreviewUrl: (resource) => (`/documents/${resource.pk}/metadata_detail?preview`)
+        formatMetadataUrl: (resource) => `#/metadata/${resource.pk}`,
+        formatMetadataDetailUrl: (resource) => `/metadata/${resource.pk}`,
+        metadataPreviewUrl: (resource) => `/metadata/${resource.pk}/embed`
     },
     [ResourceTypes.GEOSTORY]: {
-        icon: 'book',
+        icon: { glyph: 'geostory' },
         name: 'GeoStory',
         canPreviewed: (resource) => resourceHasPermission(resource, 'view_resourcebase'),
         formatEmbedUrl: (resource) => resource?.embed_url && parseDevHostname(resource.embed_url),
         formatDetailUrl: (resource) => resource?.detail_url && parseDevHostname(resource.detail_url),
-        formatMetadataUrl: (resource) => (`/apps/${resource.pk}/metadata`)
+        formatMetadataUrl: (resource) => `#/metadata/${resource.pk}`,
+        formatMetadataDetailUrl: (resource) => `/metadata/${resource.pk}`
     },
     [ResourceTypes.DASHBOARD]: {
-        icon: 'dashboard',
+        icon: { glyph: 'dashboard' },
         name: 'Dashboard',
         canPreviewed: (resource) => resourceHasPermission(resource, 'view_resourcebase'),
         formatEmbedUrl: (resource) => resource?.embed_url && parseDevHostname(resource.embed_url),
         formatDetailUrl: (resource) => resource?.detail_url && parseDevHostname(resource.detail_url),
-        formatMetadataUrl: (resource) => (`/apps/${resource.pk}/metadata`)
+        formatMetadataUrl: (resource) => `#/metadata/${resource.pk}`,
+        formatMetadataDetailUrl: (resource) => `/metadata/${resource.pk}`
     },
     [ResourceTypes.VIEWER]: {
-        icon: 'cogs',
+        icon: { glyph: 'context' },
         name: 'MapViewer',
         canPreviewed: (resource) => resourceHasPermission(resource, 'view_resourcebase'),
         formatEmbedUrl: () => false,
         formatDetailUrl: (resource) => resource?.detail_url && parseDevHostname(resource.detail_url),
-        formatMetadataUrl: (resource) => (`/apps/${resource.pk}/metadata`)
+        formatMetadataUrl: (resource) => `#/metadata/${resource.pk}`,
+        formatMetadataDetailUrl: (resource) => `/metadata/${resource.pk}`
     }
 });
 
@@ -410,30 +456,47 @@ export const getMetadataUrl = (resource) => {
 };
 
 export const getMetadataDetailUrl = (resource) => {
-    return (getMetadataUrl(resource)) ? getMetadataUrl(resource) + '_detail' : '';
+    if (resource) {
+        const { formatMetadataDetailUrl = () => '' } = getResourceTypesInfo()[resource?.resource_type] || {};
+        return formatMetadataDetailUrl(resource);
+    }
+    return '';
 };
 
-export const getResourceStatuses = (resource) => {
-    const { processes } = resource || {};
-    const isProcessing = processes
-        ? !!processes.find(({ completed }) => !completed)
-        : false;
-    const deleteProcess = processes && processes.find(({ processType }) => processType === ProcessTypes.DELETE_RESOURCE);
-    const isDeleting = isProcessing && !!deleteProcess?.output?.status && !deleteProcess?.completed;
-    const isDeleted = deleteProcess?.output?.status === ProcessStatus.FINISHED;
-    const copyProcess = processes && processes.find(({ processType }) => processType === ProcessTypes.COPY_RESOURCE);
-    const isCopying = isProcessing && !!copyProcess?.output?.status && !copyProcess?.completed;
-    const isCopied = deleteProcess?.output?.status === ProcessStatus.FINISHED;
+export const getResourceStatuses = (resource, userInfo) => {
+    const { executions = [] } = resource || {};
     const isApproved = resource?.is_approved;
     const isPublished = isApproved && resource?.is_published;
+    const runningExecutions = executions.filter(({ func_name: funcName, status, user }) =>
+        [ProcessStatus.RUNNING, ProcessStatus.READY].includes(status)
+        && ['delete', 'copy', 'copy_geonode_resource', ProcessTypes.DELETE_RESOURCE, ProcessTypes.COPY_RESOURCE].includes(funcName)
+        && (user === undefined || user === userInfo?.info?.preferred_username));
+    const isProcessing = !!runningExecutions.length;
+    const isDeleting = runningExecutions.some(({ func_name: funcName }) => ['delete', ProcessTypes.DELETE_RESOURCE].includes(funcName));
+    const isCopying = runningExecutions.some(({ func_name: funcName }) => ['copy', 'copy_geonode_resource', ProcessTypes.COPY_RESOURCE].includes(funcName));
     return {
         isApproved,
         isPublished,
         isProcessing,
         isDeleting,
-        isDeleted,
         isCopying,
-        isCopied
+        items: [
+            ...(resource.advertised === false ? [{
+                type: 'icon',
+                tooltipId: 'resourcesCatalog.unadvertised',
+                glyph: 'eye-slash'
+            }] : []),
+            ...(isDeleting ? [{
+                type: 'text',
+                labelId: 'gnviewer.deleting',
+                variant: 'danger'
+            }] : []),
+            ...(isCopying ? [{
+                type: 'text',
+                labelId: 'gnviewer.cloning',
+                variant: 'primary'
+            }] : [])
+        ]
     };
 };
 
@@ -447,13 +510,48 @@ export const setAvailableResourceTypes = (value) => {
     availableResourceTypes = value;
 };
 
+export const canManageAnonymousPermissions = (resource) => {
+    return resourceHasPermission(resource, 'can_manage_anonymous_permissions');
+};
+
+export const canManageRegisteredMemberPermissions = (resource) => {
+    return resourceHasPermission(resource, 'can_manage_registered_member_permissions');
+};
+
+/**
+ * Filters permission options for a group if management is disabled.
+ * If management is disabled, it restricts the options to only the current permission.
+ * @param {object} options The permissions options object.
+ * @param {array} groups The list of groups with their current permissions.
+ * @param {array} groupNames Array of group names to filter ('anonymous' or 'registered-members').
+ * @returns {object} Filtered permissions options
+ */
+const filterGroupPermissions = (options, groups, groupNames) => {
+    return groupNames.length
+        ? Object.fromEntries(Object.keys(options)
+            .map((key) => {
+                if (groupNames.some(name => name === key)) {
+                    const group = groups?.find(g => g.name === key);
+                    const permissionValue = group?.permissions;
+                    const currentPermission = options[key].find(p => p.name === permissionValue);
+                    return currentPermission ? [key, [currentPermission]] : [key, options[key]];
+                }
+                return [key, options[key]];
+            }))
+        : options;
+};
+
 /**
  * Extracts lists of permissions into an object for use in the Share plugin select elements
  * @param {Object} options Permission Object to extract permissions from
  * @returns An object containing permissions for each type of user/group
  */
-export const getResourcePermissions = (options) => {
-    const permissionsOptions = {};
+export const getResourcePermissions = (_options, groups, manageAnonymousPermissions = false, manageRegisteredMemberPermissions = false) => {
+    const options = filterGroupPermissions(_options, groups, [
+        ...(manageAnonymousPermissions ? [] : ['anonymous']),
+        ...(manageRegisteredMemberPermissions ? [] : ['registered-members'])
+    ]);
+    let permissionsOptions = {};
     Object.keys(options).forEach((key) => {
         const permissions = options[key];
         let selectOptions = [];
@@ -508,12 +606,9 @@ export function getGeoNodeMapLayers(data) {
                 ...(layer?.extendedParams?.mapLayer && {
                     pk: layer.extendedParams.mapLayer.pk
                 }),
+                current_style: layer.style || '',
                 extra_params: {
-                    msId: layer.id,
-                    ...(layer?.availableStyles && {
-                        styles: cleanStyles(layer?.availableStyles)
-                            .map(({ canEdit, metadata, ...style }) => ({ ...style }))
-                    })
+                    msId: layer.id
                 },
                 ...(layer.type === 'wms' && { current_style: layer.style || '' }),
                 name: layer.name || '',
@@ -563,22 +658,11 @@ export function toMapStoreMapConfig(resource, baseConfig) {
         .map((layer) => {
             const mapLayer = maplayers.find(mLayer => layer.id !== undefined && mLayer?.extra_params?.msId === layer.id);
             if (mapLayer) {
-                const mapLayerDatasetStyles = layer.type === 'wms' ? cleanStyles([
-                    ...(mapLayer?.dataset?.defaul_style ? [mapLayer.dataset.defaul_style] : []),
-                    ...(mapLayer?.dataset?.styles || [])
-                ]).map(({ name }) => name) : [];
-                const template = mapLayer?.dataset?.featureinfo_custom_template || '';
                 return {
                     ...layer,
                     ...(layer.type === 'wms' && {
-                        style: mapLayer.current_style || layer.style || '',
-                        availableStyles: cleanStyles(mapLayer?.extra_params?.styles || [], mapLayerDatasetStyles)
+                        style: mapLayer.current_style || layer.style || ''
                     }),
-                    featureInfo: {
-                        ...layer?.featureInfo,
-                        format: layer?.featureInfo?.format ?? (template ? FEATURE_INFO_FORMAT : undefined),
-                        template
-                    },
                     extendedParams: {
                         ...layer.extendedParams,
                         mapLayer
@@ -699,13 +783,6 @@ export const canCopyResource = (resource, user) => {
     return (canAdd && canCopy) ? true : false;
 };
 
-export const excludeDeletedResources = (suppliedResources) => {
-    return suppliedResources.filter((resource) => {
-        const { isDeleted } = getResourceStatuses(resource);
-        return !isDeleted && resource;
-    });
-};
-
 export const parseUploadResponse = (upload) => {
     return orderBy(uniqBy([...upload], 'id'), 'create_date', 'desc');
 };
@@ -755,47 +832,12 @@ export const cleanUrl = (targetUrl) => {
     });
 };
 
-export const parseUploadFiles = (data) => {
-    const { uploadFiles = {}, supportedDatasetTypes = [], supportedOptionalExtensions = [], supportedRequiresExtensions = [] } = data;
-    const mainFileTypes = supportedDatasetTypes.filter(file => !file.needsFiles);
-    const mainFileTypeKeys = mainFileTypes.map(({ id }) => id);
-
-    return Object.keys(uploadFiles)
-        .reduce((acc, baseName) => {
-            const uploadFile = uploadFiles[baseName] || {};
-            const { requires = [], ext = [], optional = [], needsFiles = [] } = supportedDatasetTypes.find(({ id }) => id === uploadFile.type) || {};
-            const cleanedFiles = pick(uploadFile.files, [...requires, ...ext, ...optional, ...needsFiles]);
-            const filesKeys = Object.keys(cleanedFiles);
-            const files = requires.length > 0
-                ? cleanedFiles
-                : filesKeys.length > 1
-                    ? pick(cleanedFiles, supportedOptionalExtensions.includes(ext[0]) ? [...needsFiles, ext[0]] : ext[0])
-                    : cleanedFiles;
-            const newFileKeys = Object.keys(files);
-            const requiredFilesIncluded = newFileKeys.filter((id) => supportedRequiresExtensions.includes(id)) || [];
-            const missingExt = requires.length > 0
-                ? requires.filter((fileExt) => !filesKeys.includes(fileExt))
-                : requiredFilesIncluded.length > 0 ? difference(supportedRequiresExtensions, requiredFilesIncluded) : [];
-
-            const mainExt = filesKeys.find(key => ext.includes(key));
-            const addMissingFiles = supportedOptionalExtensions.includes(mainExt) && missingExt?.length === 0 && !(mainFileTypeKeys.some((type) => newFileKeys.includes(type)));
-
-            return {
-                ...acc,
-                [baseName]: {
-                    ...uploadFile,
-                    mainExt,
-                    files,
-                    missingExt,
-                    addMissingFiles
-                }
-            };
-        }, {});
-};
-
-
 export const getResourceImageSource = (image) => {
     return image ? image : 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPAAAADICAIAAABZHvsFAAAACXBIWXMAAC4jAAAuIwF4pT92AAABiklEQVR42u3SAQ0AAAjDMMC/5+MAAaSVsKyTFHwxEmBoMDQYGgyNocHQYGgwNBgaQ4OhwdBgaDA0hgZDg6HB0GBoDA2GBkODocHQGBoMDYYGQ4OhMTQYGgwNhgZDY2gwNBgaDI2hwdBgaDA0GBpDg6HB0GBoMDSGBkODocHQYGgMDYYGQ4OhwdAYGgwNhgZDg6ExNBgaDA2GBkNjaDA0GBoMDYbG0GBoMDQYGkODocHQYGgwNIYGQ4OhwdBgaAwNhgZDg6HB0BgaDA2GBkODoTE0GBoMDYYGQ2NoMDQYGgwNhsbQYGgwNBgaQ4OhwdBgaDA0hgZDg6HB0GBoDA2GBkODocHQGBoMDYYGQ4OhMTQYGgwNhgZDY2gwNBgaDA2GxtBgaDA0GBoMjaHB0GBoMDSGBkODocHQYGgMDYYGQ4OhwdAYGgwNhgZDg6ExNBgaDA2GBkNjaDA0GBoMDYbG0GBoMDQYGgyNocHQYGgwNIYGQ4OhwdBgaAwNhgZDg6HB0BgaDA2GBkPDbQH4OQSN0W8qegAAAABJRU5ErkJggg==';
+};
+
+export const hasDefaultDownload = (resource) => {
+    return !isEmpty(resource?.download_urls) && resource.download_urls.some((d) => d.default);
 };
 
 export const getDownloadUrlInfo = (resource) => {
@@ -803,7 +845,17 @@ export const getDownloadUrlInfo = (resource) => {
     if (isDocumentExternalSource(resource)) {
         return hrefUrl;
     }
-    if (!isEmpty(resource?.download_urls)) {
+    const downloadUrls = resource?.download_urls ?? [];
+    if (!isEmpty(downloadUrls)) {
+
+        // For datasets, use only default download url
+        if (resource?.resource_type === ResourceTypes.DATASET) {
+            const downloadData = downloadUrls.find((d) => d.default);
+            const _url = !isEmpty(downloadData) ? downloadData.url : null;
+            const ajaxSafe = !isEmpty(downloadData) ? downloadData.ajax_safe : false;
+            return { url: _url, ajaxSafe };
+        }
+
         const downloadData = resource.download_urls.length === 1
             ? resource.download_urls[0]
             : resource.download_urls.find((d) => d.default);
@@ -812,6 +864,14 @@ export const getDownloadUrlInfo = (resource) => {
         }
     }
     return hrefUrl;
+};
+
+export const formatResourceLinkUrl = (resource) => {
+    let href = window.location.origin;
+    if (resource?.uuid) {
+        href = href + `/catalogue/uuid/${resource.uuid}`;
+    }
+    return href;
 };
 
 export const getCataloguePath = (path = '') => {
@@ -839,10 +899,87 @@ export const getResourceAdditionalProperties = (_resource = {}) => {
     const assets = links.filter(link => link?.extras?.type === 'asset' && link?.extras?.content?.title);
     return {
         ...resource,
-        ...(assets?.length && { assets })
+        assets: assets.length ? assets : [{_showEmptyState: true}] // add empty state flag to show assets section
     };
 };
 
-export const onDeleteRedirectTo = () => {
-    return '/';
+export const parseCatalogResource = (resource, user) => {
+    const {
+        formatDetailUrl,
+        icon,
+        formatEmbedUrl,
+        canPreviewed,
+        hasPermission,
+        name
+    } = getResourceTypesInfo(resource)[resource.resource_type] || {};
+    const resourceCanPreviewed = resource?.pk && canPreviewed && canPreviewed(resource);
+    const embedUrl = resourceCanPreviewed && formatEmbedUrl && resource?.embed_url && formatEmbedUrl(resource);
+    const canView = resource?.pk && hasPermission && hasPermission(resource);
+    const viewerUrl = formatDetailUrl(resource);
+    const viewerUrlParts = (viewerUrl || '').split('#');
+    const viewerPath = viewerUrlParts[viewerUrlParts.length - 1];
+    const metadataDetailUrl = resource?.pk && getMetadataDetailUrl(resource);
+    return {
+        ...resource,
+        id: resource.pk,
+        name: resource.title,
+        '@extras': {
+            info: {
+                title: resource?.title,
+                icon,
+                thumbnailUrl: resource?.thumbnail_url,
+                ...((canView || resourceCanPreviewed) && {
+                    viewerPath: viewerPath,
+                    viewerUrl: viewerUrl
+                }),
+                embedUrl,
+                metadataDetailUrl,
+                typeName: name
+            },
+            status: getResourceStatuses(resource, user)
+        }
+    };
+};
+
+export const resourceToLayers = (resource) => {
+    if (resource?.resource_type === ResourceTypes.DATASET) {
+        return [{...resourceToLayerConfig(resource), isDataset: true}];
+    }
+    if (resource.maplayers && resource?.resource_type === ResourceTypes.MAP) {
+        return resource.maplayers
+            .map(maplayer => {
+                maplayer.dataset ? resourceToLayerConfig(maplayer.dataset) : null;
+                if (maplayer.dataset) {
+                    const layer = resourceToLayerConfig(maplayer.dataset);
+                    return {
+                        ...layer,
+                        style: maplayer.current_style
+                    };
+                }
+                return null;
+            })
+            .filter(value => value);
+    }
+    return [];
+};
+
+export const canManageResourcePublishing = (resource) => {
+    const { perms } = resource || {};
+    const settingsPerms = ['feature_resourcebase', 'change_resourcebase', 'publish_resourcebase'];
+    return !!(perms || []).find(perm => settingsPerms.includes(perm));
+};
+
+export const canManageResourceOptions = (resource) => {
+    const { perms } = resource || {};
+    const settingsPerms = ['change_resourcebase', 'approve_resourcebase'];
+    return !!(perms || []).find(perm => settingsPerms.includes(perm));
+};
+
+export const canManageResourceSettings = (resource) => {
+    return !!(canManageResourcePublishing(resource) || canManageResourceOptions(resource));
+};
+
+export const canAccessPermissions = (resource) => {
+    const { perms } = resource || {};
+    return perms?.includes('change_resourcebase_permissions');
 };

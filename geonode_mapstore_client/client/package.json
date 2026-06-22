@@ -1,6 +1,6 @@
 {
   "name": "geonode-mapstore-client",
-  "version": "4.4.0",
+  "version": "5.0.x",
   "description": "MapStore 2 bundles specific to geonode framework",
   "eslintConfig": {
     "extends": [
@@ -17,6 +17,7 @@
   },
   "scripts": {
     "compile": "mapstore-project compile && node postCompile",
+    "compile:dev": "MAPSTORE_COMPILE_DEV=true mapstore-project compile && node postCompile",
     "start": "mapstore-project start",
     "test": "mapstore-project test",
     "test:watch": "mapstore-project test:watch",
@@ -26,17 +27,25 @@
   "author": "GeoSolutions",
   "license": "BSD-2-Clause",
   "devDependencies": {
-    "@mapstore/project": "git+https://github.com/geosolutions-it/mapstore-project.git#2024.02.xx",
+    "@mapstore/project": "git+https://github.com/geosolutions-it/mapstore-project.git#geonode-5.0.x",
     "dotenv": "10.0.0",
     "jsdoc": "4.0.0"
   },
   "dependencies": {
+    "@babel/runtime": "^7.28.4",
     "@jsdoc/salty": "0.2.1",
-    "dompurify": "2.2.6",
+    "@rjsf/core": "5.19.4",
+    "@rjsf/utils": "5.19.4",
+    "@rjsf/validator-ajv8": "5.19.4",
     "mapstore": "file:MapStore2",
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0",
     "react-helmet": "6.1.0",
     "react-intl": "2.3.0",
-    "react-router-dom": "4.1.1"
+    "react-pdf": "^7.7.3",
+    "react-router-dom": "4.1.1",
+    "rimraf": "^6.1.3",
+    "xlsx": "0.18.5"
   },
   "mapstore": {
     "output": "dist",

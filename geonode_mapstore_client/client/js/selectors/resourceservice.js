@@ -8,7 +8,6 @@
 
 import { getResourceData } from '@js/selectors/resource';
 import { ProcessTypes } from '@js/utils/ResourceServiceUtils';
-import { getSearchResults, getFeaturedResults } from '@js/selectors/search';
 import { ResourceTypes } from '@js/utils/ResourceUtils';
 
 export const isProcessCompleted = (state, payload) => {
@@ -32,32 +31,6 @@ export const processingDownload = (state) => {
     return downloading;
 };
 
-export const generalResourceDownload = (state) => {
-    const generalResources = getSearchResults(state);
-    const downloads = state?.resourceservice?.downloads || [];
-    const generalDownloads = generalResources?.reduce((acc, resource) => {
-        const downloadingResources = downloads.find(download => download.pk === resource.pk);
-        if (downloadingResources) {
-            return [...acc, { ...resource }];
-        }
-        return [...acc];
-    }, []);
-    return generalDownloads;
-};
-
-export const featuredResourceDownload = (state) => {
-    const featuredResources = getFeaturedResults(state);
-    const downloads = state?.resourceservice?.downloads || [];
-    const featuredDownloads = featuredResources?.reduce((acc, resource) => {
-        const downloadingResources = downloads.find(download => download.pk === resource.pk);
-        if (downloadingResources) {
-            return [...acc, { ...resource }];
-        }
-        return [...acc];
-    }, []);
-    return featuredDownloads;
-};
-
 export const getCurrentResourcePermissionsLoading = (state) => {
     const resource = getResourceData(state);
     const permissionsProcess = resource && state?.resourceservice?.processes?.find(process =>
@@ -76,6 +49,16 @@ export const getCurrentResourceCopyLoading = (state) => {
     );
     const isLoading = permissionsProcess ? !permissionsProcess?.completed : false;
     return isLoading;
+};
+
+export const getCurrentResourceClonedUrl = (state) => {
+    const resource = getResourceData(state);
+    const copyProcess = resource && state?.resourceservice?.processes?.find(process =>
+        process?.resource?.pk === resource?.pk
+            && process?.processType === ProcessTypes.COPY_RESOURCE
+            && process?.completed === true
+    );
+    return copyProcess?.clonedResourceUrl || null;
 };
 
 export const getCurrentResourceDeleteLoading = (state) => {

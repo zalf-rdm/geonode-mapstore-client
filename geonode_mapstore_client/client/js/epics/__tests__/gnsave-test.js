@@ -33,6 +33,7 @@ import { SET_EDIT_PERMISSION } from '@mapstore/framework/actions/styleeditor';
 import { configureMap } from '@mapstore/framework/actions/config';
 
 import { selectNode, addLayer } from '@mapstore/framework/actions/layers';
+import { START_ASYNC_PROCESS } from '@js/actions/resourceservice';
 
 
 let mockAxios;
@@ -49,6 +50,93 @@ describe('gnsave epics', () => {
         setTimeout(done);
     });
     it('should create new map with success (gnSaveContent)', (done) => {
+        const NUM_ACTIONS = 5;
+        const metadata = {
+            title: 'Title',
+            description: 'Description',
+            thumbnail: 'thumbnail.jpeg'
+        };
+        mockAxios.onPost().reply(() => [200, { map: {} }]);
+        mockAxios.onPut().reply(() => [200, { output: {} }]);
+        testEpic(
+            gnSaveContent,
+            NUM_ACTIONS,
+            saveContent(undefined, metadata, false),
+            (actions) => {
+                try {
+                    expect(actions.map(({ type }) => type))
+                        .toEqual([
+                            SAVING_RESOURCE,
+                            SAVE_SUCCESS,
+                            SET_RESOURCE,
+                            UPDATE_SINGLE_RESOURCE,
+                            START_ASYNC_PROCESS
+                        ]);
+                } catch (e) {
+                    done(e);
+                }
+                done();
+            },
+            {
+                gnresource: {
+                    data: {
+                        resource_type: "map"
+                    },
+                    isCompactPermissionsChanged: true,
+                    compactPermissions: {
+                        users: [],
+                        organizations: [],
+                        groups: []
+                    }
+                }
+            }
+        );
+    });
+    it('should update existing map with success (gnSaveContent)', (done) => {
+        const NUM_ACTIONS = 5;
+        const id = 1;
+        const metadata = {
+            title: 'Title',
+            description: 'Description',
+            thumbnail: 'thumbnail.jpeg'
+        };
+        mockAxios.onPatch().reply(() => [200, {}]);
+        mockAxios.onPut().reply(() => [200, { output: {} }]);
+        testEpic(
+            gnSaveContent,
+            NUM_ACTIONS,
+            saveContent(id, metadata, false, false),
+            (actions) => {
+                try {
+                    expect(actions.map(({ type }) => type))
+                        .toEqual([
+                            SAVING_RESOURCE,
+                            SAVE_SUCCESS,
+                            SET_RESOURCE,
+                            UPDATE_SINGLE_RESOURCE,
+                            START_ASYNC_PROCESS
+                        ]);
+                } catch (e) {
+                    done(e);
+                }
+                done();
+            },
+            {
+                gnresource: {
+                    data: {
+                        resource_type: "map"
+                    },
+                    isCompactPermissionsChanged: true,
+                    compactPermissions: {
+                        users: [],
+                        organizations: [],
+                        groups: []
+                    }
+                }
+            }
+        );
+    });
+    it('should skip permission update when permission is unchanged', (done) => {
         const NUM_ACTIONS = 4;
         const metadata = {
             title: 'Title',
@@ -56,6 +144,7 @@ describe('gnsave epics', () => {
             thumbnail: 'thumbnail.jpeg'
         };
         mockAxios.onPost().reply(() => [200, { map: {} }]);
+        mockAxios.onPut().reply(() => [200, { output: {} }]);
         testEpic(
             gnSaveContent,
             NUM_ACTIONS,
@@ -74,7 +163,11 @@ describe('gnsave epics', () => {
                 }
                 done();
             },
-            {}
+            {
+                gnresource: {
+                    type: "map"
+                }
+            }
         );
     });
     it('should update existing map with success (gnSaveContent)', (done) => {
@@ -104,7 +197,19 @@ describe('gnsave epics', () => {
                 }
                 done();
             },
-            {}
+            {
+                gnresource: {
+                    data: {
+                        resource_type: "map"
+                    },
+                    isCompactPermissionsChanged: false,
+                    compactPermissions: {
+                        users: [],
+                        organizations: [],
+                        groups: []
+                    }
+                }
+            }
         );
     });
     it("gnCheckSelectedDatasetPermissions should trigger permission actions for style and edit", (done) => {
@@ -126,7 +231,7 @@ describe('gnsave epics', () => {
         mockAxios.onGet().reply(() => [200,
             {datasets: [{perms: ['change_dataset_style', 'change_dataset_data'], alternate: "testLayer"}]}]);
         const NUM_ACTIONS = 1;
-        testEpic(gnSetDatasetsPermissions, NUM_ACTIONS, configureMap({map: {layers: [{name: "testLayer", id: "test_id"}]}}), (actions) => {
+        testEpic(gnSetDatasetsPermissions, NUM_ACTIONS, configureMap({map: {layers: [{name: "testLayer", id: "test_id", extendedParams: {pk: "1"}}]}}), (actions) => {
             try {
                 expect(actions.map(({type}) => type)).toEqual(["UPDATE_NODE"]);
                 done();
@@ -141,7 +246,7 @@ describe('gnsave epics', () => {
         mockAxios.onGet().reply(() => [200,
             {datasets: [{perms: ['change_dataset_style', 'change_dataset_data'], alternate: "testLayer"}]}]);
         const NUM_ACTIONS = 1;
-        testEpic(gnSetDatasetsPermissions, NUM_ACTIONS, addLayer({name: "testLayer"}), (actions) => {
+        testEpic(gnSetDatasetsPermissions, NUM_ACTIONS, addLayer({name: "testLayer", pk: "1", extendedParams: {pk: "1"}}), (actions) => {
             try {
                 expect(actions.map(({type}) => type)).toEqual(["UPDATE_NODE"]);
                 done();
@@ -162,7 +267,7 @@ describe('gnsave epics', () => {
             'thumbnail_url': 'thumbnail.jpeg'
         };
         mockAxios.onGet(new RegExp(`resources/${pk}`))
-            .reply(200, resource);
+            .reply(200, {resource});
         testEpic(
             gnSaveDirectContent,
             NUM_ACTIONS,

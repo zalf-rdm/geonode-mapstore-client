@@ -10,7 +10,7 @@
 // Theme
 // **************
 
-#gn-components-theme(@theme-vars) {
+#ms-components-theme(@theme-vars) {
     .gn-footer {
         .color-var(@theme-vars[footer-color]);
         .background-color-var(@theme-vars[footer-bg]);
@@ -56,5 +56,16 @@
     }
     .nav-link {
         padding: 0 0.5rem;
+    }
+}
+
+.gn-footer-placeholder {
+    display: block;
+}
+.gn-catalogue:has(.page-viewer),
+.gn-catalogue:has(.gn-upload-container),
+.gn-catalogue:has(.gn-create-dataset) {
+    .gn-footer-placeholder {
+        display: none;
     }
 }

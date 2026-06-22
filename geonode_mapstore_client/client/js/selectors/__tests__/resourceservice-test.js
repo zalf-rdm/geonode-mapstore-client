@@ -7,8 +7,9 @@
  */
 
 import expect from 'expect';
-import { getCurrentProcesses, processingDownload, generalResourceDownload, featuredResourceDownload } from '../resourceservice';
+import { getCurrentProcesses, processingDownload, getCurrentResourceClonedUrl } from '../resourceservice';
 import { ResourceTypes } from '@js/utils/ResourceUtils';
+import { ProcessTypes } from '@js/utils/ResourceServiceUtils';
 
 
 describe('resourceservice selector', () => {
@@ -51,30 +52,109 @@ describe('resourceservice selector', () => {
         expect(processingDownload(testState)).toEqual(true);
     });
 
-    it('test featuredResourceDownload', () => {
+    it('test getCurrentResourceClonedUrl when completed copy process has clonedResourceUrl', () => {
         const testState = {
-            resourceservice: {
-                downloads: [{  pk: 1 }]
-            },
-            gnsearch: {
-                featuredResources: {
-                    resources: [{  pk: 1 }]
+            gnresource: {
+                data: {
+                    pk: 1
                 }
-            }
-        };
-        expect(featuredResourceDownload(testState)).toEqual([{ pk: 1 }]);
-    });
-
-    it('test generalResourceDownload', () => {
-        const testState = {
-            resourceservice: {
-                downloads: [{  pk: 1 }]
             },
-            gnsearch: {
-                resources: [{  pk: 1 }]
+            resourceservice: {
+                processes: [{
+                    resource: { pk: 1 },
+                    processType: ProcessTypes.COPY_RESOURCE,
+                    completed: true,
+                    clonedResourceUrl: 'https://example.com/resource/123'
+                }]
             }
         };
-        expect(generalResourceDownload(testState)).toEqual([{ pk: 1 }]);
+        expect(getCurrentResourceClonedUrl(testState)).toEqual('https://example.com/resource/123');
     });
 
+    it('test getCurrentResourceClonedUrl when completed copy process has no clonedResourceUrl', () => {
+        const testState = {
+            gnresource: {
+                data: {
+                    pk: 1
+                }
+            },
+            resourceservice: {
+                processes: [{
+                    resource: { pk: 1 },
+                    processType: ProcessTypes.COPY_RESOURCE,
+                    completed: true
+                }]
+            }
+        };
+        expect(getCurrentResourceClonedUrl(testState)).toEqual(null);
+    });
+
+    it('test getCurrentResourceClonedUrl when copy process is not completed', () => {
+        const testState = {
+            gnresource: {
+                data: {
+                    pk: 1
+                }
+            },
+            resourceservice: {
+                processes: [{
+                    resource: { pk: 1 },
+                    processType: ProcessTypes.COPY_RESOURCE,
+                    completed: false,
+                    clonedResourceUrl: 'https://example.com/resource/123'
+                }]
+            }
+        };
+        expect(getCurrentResourceClonedUrl(testState)).toEqual(null);
+    });
+
+    it('test getCurrentResourceClonedUrl when there is no copy process', () => {
+        const testState = {
+            gnresource: {
+                data: {
+                    pk: 1
+                }
+            },
+            resourceservice: {
+                processes: []
+            }
+        };
+        expect(getCurrentResourceClonedUrl(testState)).toEqual(null);
+    });
+
+    it('test getCurrentResourceClonedUrl when there is no resource', () => {
+        const testState = {
+            gnresource: {
+                data: null
+            },
+            resourceservice: {
+                processes: [{
+                    resource: { pk: 1 },
+                    processType: ProcessTypes.COPY_RESOURCE,
+                    completed: true,
+                    clonedResourceUrl: 'https://example.com/resource/123'
+                }]
+            }
+        };
+        expect(getCurrentResourceClonedUrl(testState)).toEqual(null);
+    });
+
+    it('test getCurrentResourceClonedUrl when copy process is for different resource', () => {
+        const testState = {
+            gnresource: {
+                data: {
+                    pk: 1
+                }
+            },
+            resourceservice: {
+                processes: [{
+                    resource: { pk: 2 },
+                    processType: ProcessTypes.COPY_RESOURCE,
+                    completed: true,
+                    clonedResourceUrl: 'https://example.com/resource/123'
+                }]
+            }
+        };
+        expect(getCurrentResourceClonedUrl(testState)).toEqual(null);
+    });
 });

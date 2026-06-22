@@ -3,28 +3,23 @@
 @import 'ms-theme.less';
 @import '_base.less';
 
-@import '_card-grid.less';
-@import '_details-panel.less';
-@import '_filter-by-extent.less';
-@import '_filter-form.less';
+@import '_action-navbar.less';
+@import '_brand-navbar.less';
+@import '_execution-tracker.less';
 @import '_footer.less';
 @import '_hero.less';
-@import '_layer-settings.less';
 @import '_legend.less';
 @import '_loader.less';
 @import '_main-event.less';
 @import '_map-viewers-catalog.less';
-@import '_menu.less';
-@import '_resource-card.less';
+@import '_metadata.less';
+@import '_operation.less';
+@import '_resource-details.less';
 @import '_resources-catalog.less';
-@import '_resources-grid.less';
 @import '_search-bar.less';
 @import '_share.less';
-@import '_spinner.less';
-@import '_home-container.less';
-@import '_sub-flat-menu.less';
 @import '_upload.less';
-@import '_visual-style-editor.less';
+@import '_dataset.less';
 
 @import '_mixins.less';
 @import '_bootstrap-variables.less';
@@ -39,43 +34,5 @@
 }
 
 // compose theme based on mapstore and custom components
-.write-ms-theme(@gn-theme-vars);
-#gn-base-components-theme(@gn-theme-vars);
-#gn-components-theme(@gn-theme-vars);
-
-#tabular-data-collection-tabs {
-    ul[role=tablist] {
-        li.active > a {
-            background-color: darkgray;
-        }
-    }
-}
-
-#tabular-preview {
-
-    div {
-        overflow: auto; /* make the table scrollable if height is more than 200 px  */
-        height: calc(100vh - 150px); /* gives an initial height of 200px to the table */
-        width: calc(100vw - 10px);
-    }
-
-    .tableFixHead thead th {
-        position: sticky; /* make the table heads sticky */
-        top: 0px; /* table head will be placed from the top of the table and sticks to it */
-    }
-
-    table {
-        border-collapse: collapse; /* make the table borders collapse to each other */
-        width: 100%;
-    }
-
-    th,
-    td {
-        padding: 8px 16px;
-        border: 1px solid #ccc;
-    }
-
-    th {
-        background: #eee;
-    }
-}
+.write-ms-theme(@ms-theme-vars);
+.get-root-css-variables(@ms-theme-vars);

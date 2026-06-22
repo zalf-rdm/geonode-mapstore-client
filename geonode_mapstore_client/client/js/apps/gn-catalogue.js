@@ -38,12 +38,10 @@ import context from '@mapstore/framework/reducers/context';
 // end
 
 import ViewerRoute from '@js/routes/Viewer';
-import UploadDatasetRoute from '@js/routes/UploadDataset';
-import UploadDocumentRoute from '@js/routes/UploadDocument';
-import CatalogueRoute from '@js/routes/Catalogue';
+import ComponentsRoute from '@js/routes/Components';
 import MapViewerRoute from '@js/routes/MapViewer';
+import RedirectRoute from '@js/routes/Redirect';
 
-import gnsearch from '@js/reducers/gnsearch';
 import gnresource from '@js/reducers/gnresource';
 import resourceservice from '@js/reducers/resourceservice';
 import gnsettings from '@js/reducers/gnsettings';
@@ -75,8 +73,6 @@ import {
 import timelineEpics from '@mapstore/framework/epics/timeline';
 import gnresourceEpics from '@js/epics/gnresource';
 import resourceServiceEpics from '@js/epics/resourceservice';
-import gnsearchEpics from '@js/epics/gnsearch';
-import favoriteEpics from '@js/epics/favorite';
 import maplayout from '@mapstore/framework/reducers/maplayout';
 
 import pluginsDefinition, { storeEpicsNamesToExclude, cleanEpics } from '@js/plugins/index';
@@ -88,6 +84,7 @@ import * as geoNodeMediaApi from '@js/observables/media/geonode';
 registerMediaAPI('geonode', geoNodeMediaApi);
 
 import '@js/observables/persistence';
+import { getGeoNodeLocalConfig } from '@js/utils/APIUtils';
 
 const requires = {
     ReactSwipe,
@@ -102,15 +99,18 @@ const ConnectedRouter = connect(
     })
 )(Router);
 
-const viewers = {
-    [appRouteComponentTypes.VIEWER]: ViewerRoute,
-    [appRouteComponentTypes.CATALOGUE]: CatalogueRoute,
-    [appRouteComponentTypes.DATASET_UPLOAD]: UploadDatasetRoute,
-    [appRouteComponentTypes.DOCUMENT_UPLOAD]: UploadDocumentRoute,
-    [appRouteComponentTypes.MAP_VIEWER]: MapViewerRoute
+const getViewer = (component) => {
+    const useRedirect = getGeoNodeLocalConfig('geoNodeSettings.catalogHomeRedirectsTo');
+    const viewers = {
+        [appRouteComponentTypes.VIEWER]: ViewerRoute,
+        [appRouteComponentTypes.CATALOGUE]: useRedirect ? RedirectRoute : ComponentsRoute,
+        [appRouteComponentTypes.COMPONENTS]: ComponentsRoute,
+        [appRouteComponentTypes.MAP_VIEWER]: MapViewerRoute
+    };
+    return viewers[component];
 };
 
-const routes = CATALOGUE_ROUTES.map(({ component, ...config }) => ({ ...config, component: viewers[component] }));
+const routes = CATALOGUE_ROUTES.map(({ component, ...config }) => ({ ...config, component: getViewer(component) }));
 
 initializeApp();
 
@@ -147,8 +147,6 @@ getEndpoints()
                         ...pluginsDefinition.epics,
                         ...gnresourceEpics,
                         ...resourceServiceEpics,
-                        ...gnsearchEpics,
-                        ...favoriteEpics,
                         updateMapLayoutEpic,
                         // needed to initialize the correct time range
                         ...timelineEpics
@@ -198,7 +196,6 @@ getEndpoints()
                             searchconfig,
                             widgets,
                             geostory,
-                            gnsearch,
                             notifications,
                             context,
                             ...pluginsDefinition.reducers

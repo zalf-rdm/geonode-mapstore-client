@@ -14,6 +14,7 @@ import { useEffect, useRef } from 'react';
  * Detect a click out event given a target node
  * @name useDetectClickOut
  * @memberof hooks
+ * @prop {string[]} extraNodes extra selectors to check if the click is inside
  * @prop {boolean} disabled ensure the callback is not triggered
  * @prop {function} onClickOut callback on click outside the targeted node
  * @example
@@ -25,20 +26,31 @@ import { useEffect, useRef } from 'react';
  * }
  */
 function useDetectClickOut({
+    extraNodes,
     disabled,
     onClickOut
 }) {
     const node = useRef();
     useEffect(() => {
         function handleClickOut(event) {
-            const nodeContains = !disabled && node?.current?.contains;
-            if (nodeContains && !node.current.contains(event.target)) {
-                onClickOut();
-            }
+            if (disabled || !node.current) return;
+            const target = event.target;
+            const isNode = target instanceof Node;
+
+            // Check if click is inside any extraNodes
+            const isInsideExtra = extraNodes?.some(extra => document.querySelector(extra)?.contains(target));
+
+            const isInsideNode = isNode
+                ? !node.current.contains(target) && !isInsideExtra
+                : document.activeElement === document.querySelector("iframe");
+
+            isInsideNode && onClickOut();
         }
         window.addEventListener('mousedown', handleClickOut);
+        window.addEventListener('blur', handleClickOut);
         return () => {
             window.removeEventListener('mousedown', handleClickOut);
+            window.removeEventListener('blur', handleClickOut);
         };
     }, [ disabled, node, onClickOut ]);
     return node;

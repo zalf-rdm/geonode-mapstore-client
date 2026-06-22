@@ -9,6 +9,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import axios from '@mapstore/framework/libs/ajax';
 import debounce from 'lodash/debounce';
+import isEmpty from 'lodash/isEmpty';
 import ReactSelect from 'react-select';
 import localizedProps from '@mapstore/framework/components/misc/enhancers/localizedProps';
 
@@ -18,6 +19,9 @@ function SelectInfiniteScroll({
     loadOptions,
     pageSize = 20,
     debounceTime = 500,
+    labelKey = "label",
+    valueKey = "value",
+    newOptionPromptText = "Create option",
     ...props
 }) {
 
@@ -40,6 +44,27 @@ function SelectInfiniteScroll({
         source.current = cancelToken.source();
     };
 
+    const updateNewOption = (newOptions, query) => {
+        if (props.creatable && !isEmpty(query)) {
+            const compareValue = (option) =>
+                option?.[labelKey]?.toLowerCase() === query.toLowerCase();
+
+            const isValueExist = props.value?.some(compareValue);
+            const isOptionExist = newOptions.some(compareValue);
+
+            // Add new option if it doesn't exist and `creatable` is enabled
+            if (!isValueExist && !isOptionExist) {
+                return [{
+                    [labelKey]: `${newOptionPromptText} "${query}"`,
+                    [valueKey]: query,
+                    result: { [valueKey]: query, [labelKey]: query }
+                }].concat(newOptions);
+            }
+            return newOptions;
+        }
+        return newOptions;
+    };
+
     const handleUpdateOptions = useRef();
     handleUpdateOptions.current = (args = {}) => {
         createToken();
@@ -56,8 +81,10 @@ function SelectInfiniteScroll({
             }
         })
             .then((response) => {
-                const newOptions = response.results.map(({ selectOption }) => selectOption);
-                setOptions(newPage === 1 ? newOptions : [...options, ...newOptions]);
+                let newOptions = response.results.map(({ selectOption }) => selectOption);
+                newOptions = newPage === 1 ? newOptions : [...options, ...newOptions];
+                newOptions = updateNewOption(newOptions, query);
+                setOptions(newOptions);
                 setIsNextPageAvailable(response.isNextPageAvailable);
                 setLoading(false);
                 source.current = undefined;
@@ -89,7 +116,7 @@ function SelectInfiniteScroll({
                 handleUpdateOptions.current({ q: value, page: 1 });
             }
         }, debounceTime);
-    }, []);
+    }, [text]);
 
     useEffect(() => {
         if (open) {
@@ -106,16 +133,23 @@ function SelectInfiniteScroll({
         }
     }, [page]);
 
+    const filterOptions = (currentOptions) => {
+        return currentOptions.map(option=> {
+            const match = /\"(.*?)\"/.exec(text);
+            return match ? match[1] : option;
+        });
+    };
+
     return (
         <SelectSync
             {...props}
             isLoading={loading}
             options={options}
+            labelKey={labelKey}
+            valueKey={valueKey}
             onOpen={() => setOpen(true)}
             onClose={() => setOpen(false)}
-            filterOptions={(currentOptions) => {
-                return currentOptions;
-            }}
+            filterOptions={filterOptions}
             onInputChange={(q) => handleInputChange(q)}
             onMenuScrollToBottom={() => {
                 if (!loading && isNextPageAvailable) {
