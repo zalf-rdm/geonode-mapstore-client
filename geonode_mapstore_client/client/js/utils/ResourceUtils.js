@@ -918,6 +918,31 @@ export const getResourceAdditionalProperties = (_resource = {}) => {
     };
 };
 
+const formatUsernameFallback = (username) => {
+    if (!username) {
+        return '';
+    }
+    return String(username)
+        .split(/[._\-\s]+/)
+        .filter(Boolean)
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(' ');
+};
+
+const getPersonDisplayName = (person = {}) => {
+    const fullName = [person.first_name, person.last_name].filter(Boolean).join(' ').trim();
+    return person.full_name || fullName || formatUsernameFallback(person.username);
+};
+
+const getAuthorsDisplayValue = (resource = {}) => {
+    const authors = Array.isArray(resource.author) ? resource.author : [];
+    const names = authors.map(getPersonDisplayName).filter(Boolean);
+    if (names.length) {
+        return names.join('; ');
+    }
+    return getPersonDisplayName(resource.owner);
+};
+
 export const parseCatalogResource = (resource, user) => {
     const {
         formatDetailUrl,
@@ -934,10 +959,13 @@ export const parseCatalogResource = (resource, user) => {
     const viewerUrlParts = (viewerUrl || '').split('#');
     const viewerPath = viewerUrlParts[viewerUrlParts.length - 1];
     const metadataDetailUrl = resource?.pk && getMetadataDetailUrl(resource);
+    const authorDisplay = getAuthorsDisplayValue(resource);
     return {
         ...resource,
         id: resource.pk,
         name: resource.title,
+        author_display: authorDisplay,
+        catalogue_summary: resource.abstract || resource.raw_abstract || resource.description,
         '@extras': {
             info: {
                 title: resource?.title,
