@@ -42,7 +42,7 @@ jobs:
       - name: Add build metadata to version
         run: |
           BASE_VERSION=$(cat VERSION)
-          POST_NUM=$(( ${{ github.run_number5_0_1 }}
+          POST_NUM=${{ github.run_number }}
           echo "${BASE_VERSION}.post${POST_NUM}" > VERSION
 
       - name: Build package
