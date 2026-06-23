@@ -2,6 +2,7 @@
 // on catalogue pages that still use the default GeoNode resource wrapper.
 
 .gn-catalogue {
+    --zalf-nav-height: 78px;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -60,6 +61,14 @@
 
     .ms-resources-grid {
         flex: 1 1 auto;
+    }
+
+    // Viewer routes inside /catalogue/#/ (map, metadata, dataset, etc.) still
+    // mount the MapStore viewer layout at top: 0. Offset them below the sticky
+    // ZALF navigation so map controls and metadata tools begin right after nav.
+    .page-viewer.gn-viewer-layout {
+        top: var(--zalf-nav-height) !important;
+        height: calc(100% - var(--zalf-nav-height)) !important;
     }
 
     // Upload pages: gn-upload-container uses position:absolute by default.

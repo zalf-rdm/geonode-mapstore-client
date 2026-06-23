@@ -32,8 +32,10 @@
 }
 
 /* GeoNode's broad rule hides .gn-footer-placeholder with display:none.
-   Show it when our portal has put content inside it. */
-.gn-catalogue .gn-footer-placeholder:not(:empty) {
+   Show it when our portal has put content inside it.
+   Covers both catalogue and homepage (both are hidden via custom_theme.html). */
+.gn-catalogue .gn-footer-placeholder:not(:empty),
+.gn-homepage .gn-footer-placeholder:not(:empty) {
     display: block !important;
 }
 
