@@ -6,7 +6,9 @@
 /* ── Shell ────────────────────────────────────────────────── */
 .zalf-lp-shell {
   min-height: 100vh;
-  background: var(--zalf-bg);
+  background:
+    radial-gradient(circle at top left, rgba(194, 223, 132, 0.24), transparent 24rem),
+    linear-gradient(180deg, #f7faf9 0%, var(--zalf-bg) 26rem);
   color: var(--zalf-text);
   font-family: var(--zalf-font-sans, 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif);
   font-size: 0.9375rem;
@@ -41,20 +43,24 @@
 
 /* ── Breadcrumb ───────────────────────────────────────────── */
 .zalf-lp-breadcrumb {
-  background: var(--zalf-white);
+  background: rgba(255, 255, 255, 0.92);
   border-bottom: 1px solid var(--zalf-border);
-  padding: 0.6rem 2rem;
+  padding: 0.85rem 2rem;
   font-size: 0.8rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   flex-wrap: wrap;
+  backdrop-filter: blur(10px);
 }
 
 .zalf-lp-breadcrumb-link {
   color: var(--zalf-green);
   text-decoration: none;
   font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
 }
 
 .zalf-lp-breadcrumb-link:hover {
@@ -74,29 +80,46 @@
 }
 
 /* ── Hero ─────────────────────────────────────────────────── */
-.zalf-lp-hero {
-  background: var(--zalf-white);
-  border-bottom: 3px solid var(--zalf-green-nav);
-  padding: 2rem;
+.zalf-lp-breadcrumb-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.zalf-lp-hero-band {
+  position: relative;
+  padding: 2rem 2rem 2.5rem;
+  background:
+    linear-gradient(90deg, rgba(198, 223, 142, 0.72) 0%, rgba(186, 231, 214, 0.4) 34%, rgba(130, 193, 229, 0.52) 100%),
+    url('../../../../../static/img/bg_dataset_landing_topo.png') center center / cover no-repeat;
+  overflow: hidden;
 }
 
 .zalf-lp-hero-inner {
   max-width: 1180px;
   margin: 0 auto;
+}
+
+.zalf-lp-hero-card {
   display: flex;
   gap: 2rem;
-  align-items: flex-start;
+  align-items: stretch;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 18px;
+  padding: 1.15rem;
+  box-shadow: 0 18px 40px rgba(31, 57, 46, 0.18);
+  backdrop-filter: blur(10px);
 }
 
 .zalf-lp-hero-thumb {
   flex-shrink: 0;
-  width: 200px;
-  height: -webkit-fill-available;
-  border-radius: var(--zalf-radius);
+  width: 310px;
+  min-height: 260px;
+  border-radius: 14px;
   overflow: hidden;
   border: 1px solid var(--zalf-border);
-  background: var(--zalf-bg);
-  box-shadow: var(--zalf-shadow);
+  background: linear-gradient(180deg, #d5e9f5 0%, #f5f2ea 100%);
+  box-shadow: 0 10px 24px rgba(30, 62, 44, 0.12);
 }
 
 .zalf-lp-hero-thumb img {
@@ -105,12 +128,25 @@
   object-fit: cover;
 }
 
+.zalf-lp-hero-thumb--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(78, 156, 24, 0.6);
+}
+
+.zalf-lp-hero-thumb-icon {
+  width: 5rem;
+  height: 5rem;
+}
+
 .zalf-lp-hero-body {
   flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  justify-content: center;
+  gap: 0.8rem;
 }
 
 /* Tags row */
@@ -122,19 +158,18 @@
 
 /* Title */
 .zalf-lp-title {
-  font-size: 1.65rem;
+  font-size: clamp(1rem, 2vw, 1.5rem);
   font-weight: 700;
-  line-height: 1.25;
+  line-height: 1.1;
   margin: 0;
   color: var(--zalf-text);
   font-family: var(--zalf-font-sans, 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif);
 }
 
 .zalf-lp-title-alt {
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   color: var(--zalf-text-muted);
   font-family: var(--zalf-font-sans, 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif);
-  font-style: italic;
   margin: 0;
 }
 
@@ -172,12 +207,12 @@
 
 /* Hero meta line (attribution / date) */
 .zalf-lp-hero-meta {
-  font-size: 0.85rem;
+  font-size: 0.96rem;
   color: var(--zalf-text-muted);
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   align-items: flex-start;
-  gap: 0.15rem;
+  gap: 0.8rem 1.4rem;
 }
 
 .zalf-lp-hero-meta a {
@@ -193,8 +228,11 @@
   display: none;
 }
 
-.zalf-lp-hero-date {
-  display: block;
+.zalf-lp-hero-date,
+.zalf-lp-hero-meta>span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
 }
 
 /* Action buttons */
@@ -209,14 +247,15 @@
 .zalf-lp-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.55rem 1.25rem;
-  border-radius: 4px;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 0.85rem 1.35rem;
+  border-radius: 12px;
   font-size: 0.875rem;
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.15s;
   white-space: nowrap;
 }
 
@@ -230,6 +269,8 @@
   background: var(--zalf-green-dark);
   border-color: var(--zalf-green-dark);
   text-decoration: none;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 18px rgba(78, 156, 24, 0.2);
 }
 
 .zalf-lp-btn--outline {
@@ -273,16 +314,20 @@
 }
 
 .zalf-lp-btn-icon {
-  font-size: 0.75rem;
+  width: 1rem;
+  height: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* ── Body layout ──────────────────────────────────────────── */
 .zalf-lp-body {
   max-width: 1180px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1.25rem 2rem 2rem;
   display: grid;
-  grid-template-columns: 1fr 340px;
+  grid-template-columns: minmax(0, 1fr) 400px;
   gap: 2rem;
   align-items: start;
 }
@@ -297,21 +342,38 @@
 .zalf-lp-section {
   background: var(--zalf-white);
   border: 1px solid var(--zalf-border);
-  border-radius: var(--zalf-radius);
-  padding: 1.25rem 1.5rem;
+  border-radius: 16px;
+  padding: 1.5rem 1.6rem;
   margin-bottom: 1rem;
-  box-shadow: var(--zalf-shadow);
+  box-shadow: 0 6px 18px rgba(32, 47, 54, 0.08);
+}
+
+.zalf-lp-section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 0.95rem;
+}
+
+.zalf-lp-section-icon,
+.zalf-lp-card-title-icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #f2fbf2 0%, #e4f2e8 100%);
+  color: var(--zalf-green-nav);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .zalf-lp-section-title {
-  font-size: 0.8rem;
+  font-size: 1.5rem;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: var(--zalf-green-nav);
-  margin: 0 0 0.75rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid var(--zalf-green-light);
+  letter-spacing: -0.02em;
+  color: var(--zalf-text);
+  margin: 0;
   font-family: var(--zalf-font-sans, 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif);
 }
 
@@ -422,9 +484,9 @@
 .zalf-lp-card {
   background: var(--zalf-white);
   border: 1px solid var(--zalf-border);
-  border-radius: var(--zalf-radius);
-  padding: 1.1rem 1.25rem;
-  box-shadow: var(--zalf-shadow);
+  border-radius: 16px;
+  padding: 1.25rem;
+  box-shadow: 0 6px 18px rgba(32, 47, 54, 0.08);
 }
 
 .zalf-lp-card-header {
@@ -432,16 +494,19 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 0.85rem;
-  padding-bottom: 0.45rem;
-  border-bottom: 2px solid var(--zalf-green-light);
+  gap: 1rem;
+}
+
+.zalf-lp-card-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
 }
 
 .zalf-lp-card-title {
-  font-size: 0.78rem;
+  font-size: 1.15rem;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: var(--zalf-green-nav);
+  color: var(--zalf-text);
   margin: 0;
   font-family: var(--zalf-font-sans, 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif);
 }
@@ -453,13 +518,13 @@
 
 .zalf-lp-dots-btn {
   background: none;
-  border: none;
-  padding: 0.1rem 0.35rem;
+  border: 1px solid var(--zalf-border);
+  padding: 0.45rem;
   font-size: 1.1rem;
   line-height: 1;
   color: var(--zalf-text-muted);
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 999px;
   transition: background 0.12s, color 0.12s;
   display: flex;
   align-items: center;
@@ -512,7 +577,7 @@
 
 /* Access card highlight */
 .zalf-lp-card--access {
-  border-top: 3px solid var(--zalf-green-nav);
+  border-top: 4px solid var(--zalf-green-nav);
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
@@ -577,15 +642,15 @@
 /* ── Badges ───────────────────────────────────────────────── */
 .zalf-lp-badge {
   display: inline-block;
-  padding: 0.22rem 0.65rem;
+  padding: 0.34rem 0.75rem;
   border-radius: 20px;
   font-size: 0.775rem;
-  font-weight: 500;
-  background: var(--zalf-green-light);
+  font-weight: 600;
+  background: #eef6ef;
   color: var(--zalf-green);
   text-decoration: none;
   transition: background 0.15s;
-  border: 1px solid transparent;
+  border: 1px solid rgba(78, 156, 24, 0.12);
 }
 
 a.zalf-lp-badge:hover {
@@ -603,6 +668,11 @@ a.zalf-lp-badge:hover {
   background: var(--zalf-green-nav);
   color: #fff;
   border-color: var(--zalf-green-nav);
+}
+
+.zalf-lp-badge--soft {
+  background: rgba(78, 156, 24, 0.1);
+  color: var(--zalf-green);
 }
 
 /* ── People / Contact roles ───────────────────────────────── */
@@ -753,17 +823,21 @@ a.zalf-lp-funder-name:hover {
   margin-top: 0.75rem;
   border: 1px solid var(--zalf-border);
   border-radius: 6px;
-  padding: 0 0.75rem;
+  padding: 0 0.95rem;
+  background: linear-gradient(180deg, #f6fbf6 0%, #edf6ef 100%);
 }
 
 .zalf-lp-details summary {
   cursor: pointer;
-  padding: 0.6rem 0;
+  padding: 0.85rem 0;
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--zalf-green-nav);
   list-style: none;
   user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
 }
 
 .zalf-lp-details summary::-webkit-details-marker {
@@ -775,13 +849,19 @@ a.zalf-lp-funder-name:hover {
   margin-bottom: 0.75rem;
 }
 
+.zalf-lp-summary-chevron {
+  margin-left: auto;
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
 .zalf-lp-details .zalf-lp-text {
   padding-bottom: 0.75rem;
 }
 
 /* ── Citation card ────────────────────────────────────────── */
 .zalf-lp-card--citation {
-  border-top: 3px solid var(--zalf-green-nav);
+  border-top: 4px solid var(--zalf-green-nav);
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
@@ -871,19 +951,21 @@ a.zalf-lp-funder-name:hover {
   align-items: center;
   gap: 1.25rem;
   margin-top: 0.1rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.25rem;
+  flex-wrap: wrap;
 }
 
 .zalf-lp-hero-stat {
   display: flex;
   align-items: center;
   gap: 0.3rem;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   color: var(--zalf-text-muted, #6b7280);
 }
 
 .zalf-lp-hero-stat-icon {
-  font-size: 0.85rem;
+  width: 1rem;
+  height: 1rem;
   line-height: 1;
 }
 
@@ -950,7 +1032,7 @@ a.zalf-lp-funder-name:hover {
   gap: 0.875rem;
   background: var(--zalf-white, #fff);
   border: 1px solid var(--zalf-border, #e5e7eb);
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 0.75rem;
   transition: box-shadow 0.15s, border-color 0.15s;
 }
@@ -958,6 +1040,16 @@ a.zalf-lp-funder-name:hover {
 .zalf-lp-layer-card:hover {
   border-color: var(--zalf-green-mid, #a5d4b8);
   box-shadow: 0 2px 8px rgba(26, 107, 60, 0.08);
+}
+
+.zalf-lp-inline-icon,
+.zalf-lp-meta-inline-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.zalf-lp-meta-inline-icon {
+  flex-shrink: 0;
 }
 
 .zalf-lp-layer-thumb {
@@ -1087,24 +1179,24 @@ a.zalf-lp-funder-name:hover {
     position: static;
   }
 
-  .zalf-lp-hero-inner {
+  .zalf-lp-hero-card {
     flex-direction: column;
   }
 
   .zalf-lp-hero-thumb {
     width: 100%;
-    height: 200px;
+    min-height: 220px;
   }
 
   .zalf-lp-title {
-    font-size: 1.35rem;
+    font-size: 1.75rem;
     font-family: var(--zalf-font-sans, 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif);
   }
 }
 
 @media (max-width: 600px) {
-  .zalf-lp-hero {
-    padding: 1.25rem;
+  .zalf-lp-hero-band {
+    padding: 1.25rem 1rem 1.5rem;
   }
 
   .zalf-lp-breadcrumb {
@@ -1113,5 +1205,23 @@ a.zalf-lp-funder-name:hover {
 
   .zalf-lp-body {
     padding: 1rem;
+  }
+
+  .zalf-lp-hero-card {
+    padding: 0.9rem;
+    gap: 1rem;
+  }
+
+  .zalf-lp-section,
+  .zalf-lp-card {
+    padding: 1.15rem;
+  }
+
+  .zalf-lp-section-title {
+    font-size: 1.4rem;
+  }
+
+  .zalf-lp-card-title {
+    font-size: 1rem;
   }
 }
