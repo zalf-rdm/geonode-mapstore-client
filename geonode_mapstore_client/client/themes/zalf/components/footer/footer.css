@@ -1,3 +1,49 @@
+/* ── Viewer-page scroll fix ────────────────────────────────── *
+ * Full-screen viewer pages (map, dataset, etc.) use a fixed
+ * viewport layout. We fix #ms-container so the page can scroll
+ * past it to reveal the footer in gn-footer-placeholder below.
+ *
+ * NOTE: the build system prefixes all selectors with .msgapi, so
+ * body/html cannot be targeted here — those overrides are done via
+ * JS in Footer.jsx instead. Selectors here use .gn-catalogue as
+ * the scoping ancestor (which IS a descendant of body.msgapi).    */
+
+/* Make container chain expandable so window scroll works */
+.gn-page-wrapper:has(.gn-viewer-layout),
+.gn-catalogue:has(.gn-viewer-layout) {
+    height: auto !important;
+    overflow: visible !important;
+}
+
+.gn-catalogue:has(.gn-viewer-layout) #ms-container {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh !important;
+}
+
+/* Push the footer placeholder below the fixed viewer.
+   position:relative + z-index ensures it paints above the fixed #ms-container. */
+.gn-catalogue:has(.gn-viewer-layout) .gn-footer-placeholder {
+    margin-top: 100vh;
+    position: relative;
+    z-index: 10;
+}
+
+/* GeoNode's broad rule hides .gn-footer-placeholder with display:none.
+   Show it when our portal has put content inside it. */
+.gn-catalogue .gn-footer-placeholder:not(:empty) {
+    display: block !important;
+}
+
+/* GeoNode's resize script sets inline height = gn-footer.clientHeight (0).
+   Override so our portal content can expand the placeholder. */
+.gn-footer-placeholder {
+    height: auto !important;
+}
+
+/* ── Shell ─────────────────────────────────────────────────── */
 .zalf-footer-shell {
     margin-top: auto;
     width: 100%;

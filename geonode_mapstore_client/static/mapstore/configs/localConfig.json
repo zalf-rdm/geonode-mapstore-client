@@ -101,7 +101,7 @@
     },
     "fr": {
       "code": "fr-FR",
-      "description": "Français"
+      "description": "Fran\u00e7ais"
     },
     "de": {
       "code": "de-DE",
@@ -109,7 +109,7 @@
     },
     "es": {
       "code": "es-ES",
-      "description": "Español"
+      "description": "Espa\u00f1ol"
     }
   },
   "mapType": {

@@ -1,11 +1,12 @@
 /**
- * REFERENCE BRANCH: main-ui
- * REFERENCE PATH: geonode_mapstore_client/client/js/plugins/Footer.jsx
  * CUSTOM PATH: themes/zalf/components/footer/Footer.jsx
- * REASON: custom footer for ZALF catalogue pages
+ * REASON: custom footer for ZALF catalogue pages, rendered via React portal
+ * into the Django-rendered gn-footer-placeholder element so it sits below
+ * the full-screen viewer in the normal document flow — visible by scrolling.
  */
 
 import React from 'react';
+import ReactDOM from 'react-dom';
 import Message from '@mapstore/framework/components/I18N/Message';
 import logoCoreTrustSealWhite from '../../../../../static/img/logo_core_trust_seal_white.png';
 import logoZalfWhite from '../../../../../static/img/logo_zalf_white.png';
@@ -50,18 +51,7 @@ function renderLinkList(items) {
     );
 }
 
-function Footer() {
-    React.useEffect(() => {
-        const footer = document.querySelector('.gn-footer');
-        const footerPlaceholder = document.querySelector('.gn-footer-placeholder');
-        if (footer) {
-            footer.style.display = 'none';
-        }
-        if (footerPlaceholder) {
-            footerPlaceholder.style.display = 'none';
-        }
-    }, []);
-
+function FooterBody() {
     return React.createElement(
         'div',
         { className: 'ms-footer zalf-footer-shell' },
@@ -128,6 +118,45 @@ function Footer() {
                 React.createElement(Message, { msgId: 'zalfTheme.footer.copyright' })
             )
         )
+    );
+}
+
+function Footer() {
+    const [portalTarget, setPortalTarget] = React.useState(null);
+
+    React.useEffect(() => {
+        // Hide GeoNode's built-in footer
+        const gnFooter = document.querySelector('.gn-footer');
+        if (gnFooter) gnFooter.style.display = 'none';
+
+        // Use gn-footer-placeholder as the portal target.
+        // This element is rendered by Django after #ms-container so it sits
+        // naturally below the viewer in the document flow.
+        const placeholder = document.querySelector('.gn-footer-placeholder');
+        if (placeholder) {
+            // GeoNode's resize script sets height = gn-footer.clientHeight (0 since hidden).
+            // Clear it so our content can expand the element naturally.
+            placeholder.style.height = '';
+            setPortalTarget(placeholder);
+        }
+
+        // On viewer pages, fix #ms-container to the viewport so the page can
+        // scroll past it to reach the footer.
+        // body/html cannot be targeted via LESS (build prefixes selectors with
+        // .msgapi, making body/html targets invalid), so we set them here.
+        if (document.querySelector('.gn-viewer-layout')) {
+            document.documentElement.style.setProperty('overflow-y', 'auto', 'important');
+            document.documentElement.style.setProperty('height', 'auto', 'important');
+            document.body.style.setProperty('overflow-y', 'auto', 'important');
+            document.body.style.setProperty('height', 'auto', 'important');
+        }
+    }, []);
+
+    if (!portalTarget) return null;
+
+    return ReactDOM.createPortal(
+        React.createElement(FooterBody, {}),
+        portalTarget
     );
 }
 
