@@ -155,9 +155,9 @@
         border-radius: 0;
     }
 
-    .ms-resources-menu > .ms-text,
-    .ms-resources-menu > .ms-flex-box,
-    .ms-resources-menu > ._relative.ms-resources-list-header {
+    .ms-resources-menu>.ms-text,
+    .ms-resources-menu>.ms-flex-box,
+    .ms-resources-menu>._relative.ms-resources-list-header {
         width: min(calc(100vw - 48px), var(--zc-content-width));
         margin-left: auto;
         margin-right: auto;
@@ -193,7 +193,7 @@
         font-size: 0.85rem;
     }
 
-    .ms-resources-menu > .ms-text {
+    .ms-resources-menu>.ms-text {
         font-size: 1.85rem !important;
         font-weight: 600;
         color: #1f2b3d;
@@ -203,13 +203,13 @@
         max-width: none;
     }
 
-    .ms-resources-menu > .ms-flex-box {
+    .ms-resources-menu>.ms-flex-box {
         align-items: center;
         gap: 14px;
         margin-top: 0;
     }
 
-    .ms-resources-menu > .ms-flex-box > .ms-flex-fill .ms-text {
+    .ms-resources-menu>.ms-flex-box>.ms-flex-fill .ms-text {
         display: inline-flex;
         align-items: center;
         gap: 8px;
@@ -218,7 +218,7 @@
         color: #446a2a;
     }
 
-    .ms-resources-menu > .ms-flex-box > .ms-flex-fill .ms-text::before {
+    .ms-resources-menu>.ms-flex-box>.ms-flex-fill .ms-text::before {
         content: "\f178";
         font-family: "mapstore2";
         color: var(--zc-accent);
@@ -247,7 +247,7 @@
         }
     }
 
-    .ms-resources-menu > div > .square-button-md.btn.btn-default {
+    .ms-resources-menu>div>.square-button-md.btn.btn-default {
         width: 46px;
         min-width: 46px;
         height: 46px;
@@ -257,11 +257,11 @@
         position: relative;
     }
 
-    .ms-resources-menu > div > .square-button-md.btn.btn-default .glyphicon {
+    .ms-resources-menu>div>.square-button-md.btn.btn-default .glyphicon {
         color: var(--zc-accent);
     }
 
-    .ms-resources-menu > div > .square-button-md.btn.btn-default::after {
+    .ms-resources-menu>div>.square-button-md.btn.btn-default::after {
         content: "";
         position: absolute;
         inset: -1px;
@@ -343,10 +343,105 @@
     }
 
     .ms-resources-menu .dropdown.open,
-    .ms-resources-menu .open > .dropdown-toggle,
+    .ms-resources-menu .open>.dropdown-toggle,
     .ms-resources-menu .btn-group.open {
         z-index: 31;
     }
+}
+
+// ─────────────────────────────────────────────────────────────
+// Metadata modal polish
+// ─────────────────────────────────────────────────────────────
+
+.modal-content:has(.gn-metadata-preview) {
+    border: 0;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 26px 70px rgba(17, 33, 24, 0.28);
+}
+
+.modal-content:has(.gn-metadata-preview)>.modal-header,
+.gn-simple-dialog .ms-resizable-modal>.modal-content>.modal-header {
+
+    align-items: center;
+    padding: 18px 22px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+    background:
+        linear-gradient(90deg, rgba(29, 74, 49, 0.96) 0%, rgba(52, 108, 54, 0.94) 52%, rgba(103, 153, 74, 0.9) 100%),
+        url('../../../../../static/img/metadata-top-plant-background.png') center center / cover no-repeat;
+}
+
+.modal-content:has(.gn-metadata-preview) [role="header"].ms-flex-box,
+.gn-simple-dialog [role="header"].ms-flex-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 18px 22px;
+
+}
+
+.modal-content:has(.gn-metadata-preview)>.modal-header .modal-title,
+.modal-content:has(.gn-metadata-preview)>.modal-header .modal-title .ms-title,
+.gn-simple-dialog .ms-resizable-modal>.modal-content>.modal-header .modal-title,
+.gn-simple-dialog .ms-resizable-modal>.modal-content>.modal-header .modal-title .ms-title {
+    color: #ffffff;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+}
+
+.modal-content:has(.gn-metadata-preview) [role="header"].ms-flex-box .ms-text,
+.modal-content:has(.gn-metadata-preview) [role="header"].ms-flex-box .ms-text span,
+.gn-simple-dialog [role="header"].ms-flex-box .ms-text,
+.gn-simple-dialog [role="header"].ms-flex-box .ms-text span {
+    color: #ffffff !important;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    text-shadow: none;
+    background: transparent !important;
+}
+
+.modal-content:has(.gn-metadata-preview)>.modal-header .close,
+.gn-simple-dialog .ms-resizable-modal>.modal-content>.modal-header .close {
+    color: #ffffff;
+    opacity: 0.92;
+    text-shadow: none;
+}
+
+.modal-content:has(.gn-metadata-preview) [role="header"].ms-flex-box .btn,
+.modal-content:has(.gn-metadata-preview) [role="header"].ms-flex-box .square-button-md,
+.gn-simple-dialog [role="header"].ms-flex-box .btn,
+.gn-simple-dialog [role="header"].ms-flex-box .square-button-md {
+    margin-left: auto;
+    border-color: rgba(255, 255, 255, 0.22) !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+    color: #ffffff !important;
+    box-shadow: none;
+}
+
+.modal-content:has(.gn-metadata-preview) [role="header"].ms-flex-box .btn .glyphicon,
+.gn-simple-dialog [role="header"].ms-flex-box .btn .glyphicon {
+    color: #ffffff !important;
+}
+
+.modal-content:has(.gn-metadata-preview)>.modal-header .close:hover,
+.gn-simple-dialog .ms-resizable-modal>.modal-content>.modal-header .close:hover {
+    opacity: 1;
+}
+
+.modal-content:has(.gn-metadata-preview)>.modal-body,
+.gn-simple-dialog .ms-resizable-modal>.modal-content>.modal-body {
+    padding: 0;
+    background: linear-gradient(180deg, #eff4f0 0%, #f8fbf8 100%);
+}
+
+.gn-metadata-preview {
+    background: linear-gradient(180deg, #eff4f0 0%, #f8fbf8 100%);
+}
+
+.gn-metadata-preview iframe,
+.gn-simple-dialog iframe {
+    background: transparent;
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -1017,7 +1112,7 @@
         // ─────────────────────────────────────────────────────
         // In the current catalogue DOM the metadata column renders as:
         // <div class="ms-flex-fill ms-flex-box _flex _flex-center-v">...</div>
-        .ms-resource-card-body > .ms-flex-fill.ms-flex-box._flex._flex-center-v {
+        .ms-resource-card-body>.ms-flex-fill.ms-flex-box._flex._flex-center-v {
             display: flex !important;
             flex-direction: row !important;
             flex-wrap: wrap !important;
@@ -1030,7 +1125,7 @@
         }
 
         // Default: full-width row, secondary text
-        .ms-resource-card-body > .ms-flex-fill.ms-flex-box._flex._flex-center-v > .ms-text {
+        .ms-resource-card-body>.ms-flex-fill.ms-flex-box._flex._flex-center-v>.ms-text {
             flex: 0 0 100% !important;
             width: 100% !important;
             padding: 0 !important;
@@ -1055,7 +1150,7 @@
         }
 
         // ── Title ─────────────────────────────────────────────
-        .ms-resource-card-body > .ms-flex-fill.ms-flex-box._flex._flex-center-v > .ms-text:first-child {
+        .ms-resource-card-body>.ms-flex-fill.ms-flex-box._flex._flex-center-v>.ms-text:first-child {
             font-size: 1.12rem !important;
             font-weight: 700 !important;
             color: var(--zc-accent) !important;
@@ -1073,7 +1168,7 @@
         }
 
         // ── Authors ───────────────────────────────────────────
-        .ms-resource-card-body > .ms-flex-fill.ms-flex-box._flex._flex-center-v > .ms-text:has(.glyphicon-user) {
+        .ms-resource-card-body>.ms-flex-fill.ms-flex-box._flex._flex-center-v>.ms-text:has(.glyphicon-user) {
             color: var(--zc-text);
             font-size: 0.93rem;
             font-weight: 600;
@@ -1086,7 +1181,7 @@
         }
 
         // ── Description: 2-line clamp ─────────────────────────
-        .ms-resource-card-body > .ms-flex-fill.ms-flex-box._flex._flex-center-v > .ms-text:not(:first-child):not(:has(.glyphicon)) {
+        .ms-resource-card-body>.ms-flex-fill.ms-flex-box._flex._flex-center-v>.ms-text:not(:first-child):not(:has(.glyphicon)) {
             color: var(--zc-text);
             font-size: 0.9rem;
             display: -webkit-box !important;
@@ -1102,12 +1197,12 @@
         // ── Group (Part of) ───────────────────────────────────
         // Hidden in list mode to keep the sequence:
         // title → authors → description → date → stats
-        .ms-resource-card-body > .ms-flex-fill.ms-flex-box._flex._flex-center-v > .ms-text:has(.glyphicon-folder-open) {
+        .ms-resource-card-body>.ms-flex-fill.ms-flex-box._flex._flex-center-v>.ms-text:has(.glyphicon-folder-open) {
             display: none !important;
         }
 
         // ── Date: full-width row ──────────────────────────────
-        .ms-resource-card-body > .ms-flex-fill.ms-flex-box._flex._flex-center-v > .ms-text:has(.glyphicon-time) {
+        .ms-resource-card-body>.ms-flex-fill.ms-flex-box._flex._flex-center-v>.ms-text:has(.glyphicon-time) {
             flex: 0 0 100% !important;
             width: 100% !important;
             color: var(--zc-text-muted);
@@ -1119,8 +1214,8 @@
         // Result:
         //   🕐 June 18th, 2026
         //   👁 N/A   ⬇ N/A
-        .ms-resource-card-body > .ms-flex-fill.ms-flex-box._flex._flex-center-v > .ms-text:has(.glyphicon-eye-open),
-        .ms-resource-card-body > .ms-flex-fill.ms-flex-box._flex._flex-center-v > .ms-text:has(.glyphicon-download) {
+        .ms-resource-card-body>.ms-flex-fill.ms-flex-box._flex._flex-center-v>.ms-text:has(.glyphicon-eye-open),
+        .ms-resource-card-body>.ms-flex-fill.ms-flex-box._flex._flex-center-v>.ms-text:has(.glyphicon-download) {
             flex: 0 0 auto !important;
             width: auto !important;
             padding-left: 18px !important;
@@ -1134,7 +1229,7 @@
             }
         }
 
-        .ms-resource-card-body > .ms-flex-fill.ms-flex-box._flex._flex-center-v > .ms-text:has(.glyphicon-eye-open) {
+        .ms-resource-card-body>.ms-flex-fill.ms-flex-box._flex._flex-center-v>.ms-text:has(.glyphicon-eye-open) {
             padding-left: 0 !important;
             margin-top: 2px;
         }
@@ -1426,7 +1521,7 @@
             margin-right: -12px;
         }
 
-        .ms-resources-menu > .ms-text {
+        .ms-resources-menu>.ms-text {
             font-size: 1.55rem !important;
         }
 
@@ -1457,7 +1552,7 @@
                 gap: 2px;
             }
 
-            .ms-flex-fill.ms-flex-box._flex._flex-center-v > .ms-text {
+            .ms-flex-fill.ms-flex-box._flex._flex-center-v>.ms-text {
                 width: 100% !important;
             }
 
@@ -1474,5 +1569,23 @@
         .zalf-filter-panel .ms-map-layout {
             width: 72% !important;
         }
+    }
+}
+
+// ─────────────────────────────────────────────────────────────
+// FilterByExtent — override inline styles from MapStore2 core
+// The core component uses inline height/position; !important wins.
+// ─────────────────────────────────────────────────────────────
+
+.ms-filter-by-extent-map {
+    height: 160px !important;
+    position: relative !important;
+    opacity: 1;
+    pointer-events: auto;
+
+    &[style*="opacity: 0.4"],
+    &[style*="opacity:0.4"] {
+        opacity: 0.4 !important;
+        pointer-events: none !important;
     }
 }

@@ -65,7 +65,7 @@ def metadata(request, pk, template="geonode-mapstore-client/metadata.html"):
     metadata_groups = {}
 
     for key in metadata:
-        if key != 'extraErrors':
+        if key not in ('extraErrors', 'contacts'):
             property = metadata[key]
             ui_options = property.get('ui:options', {})
             group = 'General'
@@ -76,13 +76,15 @@ def metadata(request, pk, template="geonode-mapstore-client/metadata.html"):
             metadata_groups[group][key] = property
 
     metadata_groups["Responsible"] = {
-        "Name": resource.owner.name_long,
-        "Email": resource.owner.email,
-        "Position": resource.owner.position,
-        "Organization": resource.owner.organization,
-        "Location": resource.owner.location,
-        "Voice": resource.owner.voice,
-        "Fax": resource.owner.fax,
+        k: v for k, v in {
+            "Name": resource.owner.name_long,
+            "Email": resource.owner.email,
+            "Position": resource.owner.position,
+            "Organization": resource.owner.organization,
+            "Location": resource.owner.location,
+            "Voice": resource.owner.voice,
+            "Fax": resource.owner.fax,
+        }.items() if v and str(v) not in ('None', '')
     }
 
     # adding information from the resource itself
@@ -119,10 +121,42 @@ def metadata(request, pk, template="geonode-mapstore-client/metadata.html"):
         },
     }
 
+    # Build structured contact roles for person-chip rendering
+    contact_roles_data = []
+    try:
+        owner = resource.owner
+        if owner:
+            owner_name = (owner.get_full_name() or '').strip() or owner.username or ''
+            contact_roles_data.append({
+                'label': 'Owner',
+                'people': [{
+                    'name': owner_name,
+                    'initial': owner_name[0].upper() if owner_name else '?',
+                    'profile_url': f'/people/profile/{owner.username}' if owner.username else None,
+                }]
+            })
+        for role_label, contacts in resource.get_defined_multivalue_contact_roles().items():
+            people = []
+            for p in contacts:
+                name = (p.get_full_name() or '').strip() or p.username or ''
+                people.append({
+                    'name': name,
+                    'initial': name[0].upper() if name else '?',
+                    'profile_url': f'/people/profile/{p.username}' if p.username else None,
+                })
+            if people:
+                contact_roles_data.append({'label': role_label, 'people': people})
+    except Exception:
+        contact_roles_data = []
+
     return render(
         request,
         template,
-        context={"resource": resource, "metadata_groups": metadata_groups},
+        context={
+            "resource": resource,
+            "metadata_groups": metadata_groups,
+            "contact_roles_data": contact_roles_data,
+        },
     )
 
 def metadata_embed(request, pk):

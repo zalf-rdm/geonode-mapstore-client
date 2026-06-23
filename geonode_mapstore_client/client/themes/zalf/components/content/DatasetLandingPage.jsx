@@ -172,8 +172,9 @@ function getResourceTypeLabel(r) {
 
 function getViewerHref(pk, r) {
     const rt = r.resource_type || 'dataset';
-    if (rt === 'map') return '#/map/' + pk;
+    if (rt === 'map') return r.subtype === 'tabular-collection' ? '#/tabular-collection/' + pk : '#/map/' + pk;
     if (rt === 'document') return '#/document/' + pk;
+    if (r.subtype === 'tabular') return '#/tabular/' + pk;
     return '#/dataset/' + pk;
 }
 

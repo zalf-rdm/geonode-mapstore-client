@@ -33,9 +33,7 @@ import ZalfHomepagePlugin from '../../themes/zalf/plugins/HomepagePlugin';
 import ZalfFaqPlugin from '../../themes/zalf/plugins/FaqPlugin';
 import ZalfFooterPlugin from '../../themes/zalf/plugins/FooterPlugin';
 import ZalfDatasetLandingPlugin from '../../themes/zalf/plugins/DatasetLandingPlugin';
-import {
-    ResourcesGridPlugin
-} from '@mapstore/framework/plugins/ResourcesCatalog';
+import ResourcesGridPlugin from '../../themes/zalf/plugins/ZalfResourcesGridPlugin';
 import ResourcesFiltersFormPlugin from '../../themes/zalf/plugins/ZalfResourcesFiltersFormPlugin';
 
 let epicsNamesToExclude = [
@@ -500,6 +498,14 @@ export const plugins = {
     UploadResourcePlugin: toModulePlugin(
         'UploadResource',
         () => import(/* webpackChunkName: 'plugins/upload-operation' */ '@js/plugins/UploadResource')
+    ),
+    TabularPreviewPlugin: toModulePlugin(
+        'TabularPreview',
+        () => import(/* webpackChunkName: 'plugins/tabular-preview-plugin' */ '@js/plugins/TabularPreview')
+    ),
+    TabularCollectionViewerPlugin: toModulePlugin(
+        'TabularCollectionViewer',
+        () => import(/* webpackChunkName: 'plugins/tabular-collection-plugin' */ '@js/plugins/TabularCollectionViewer')
     )
 };
 
