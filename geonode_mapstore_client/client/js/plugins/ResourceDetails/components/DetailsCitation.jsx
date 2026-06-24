@@ -7,14 +7,10 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react';
-import CopyToClipboardCmp from 'react-copy-to-clipboard';
-import Button from '@js/components/Button';
-import Dropdown from '@js/components/Dropdown';
-import FaIcon from '@js/components/FaIcon';
+import CopyToClipboard from 'react-copy-to-clipboard';
+import { Glyphicon } from 'react-bootstrap';
+import Button from '@mapstore/framework/components/layout/Button';
 import Message from '@mapstore/framework/components/I18N/Message';
-import tooltip from '@mapstore/framework/components/misc/enhancers/tooltip';
-
-const TooltipButton = tooltip(Button);
 
 const FORMATS = [
     { key: 'apa',       label: 'APA' },
@@ -266,55 +262,36 @@ function DetailsCitation({ resource }) {
     }, []);
 
     const citationText = (generators[activeFormat] || generateAPA)(resource);
-    const activeLabel = FORMATS.find(f => f.key === activeFormat)?.label || activeFormat;
 
     const handleCopy = () => {
         setCopied(true);
         clearTimeout(timeoutIdRef.current);
-        timeoutIdRef.current = setTimeout(() => {
-            setCopied(false);
-        }, 700);
+        timeoutIdRef.current = setTimeout(() => setCopied(false), 1500);
     };
 
     return (
-        <div className="gn-details-citation">
-            <div className="gn-details-citation-header">
-                <div className="gn-details-citation-title">
-                    <Message msgId="gnviewer.citation" />
-                </div>
-                <div className="gn-details-citation-actions">
-                    <Dropdown id="gn-citation-format-dropdown" className="gn-details-citation-dropdown">
-                        <Dropdown.Toggle variant="default" size="xs" noCaret>
-                            {activeLabel} <FaIcon name="caret-down" />
-                        </Dropdown.Toggle>
-                        <Dropdown.Menu>
-                            {FORMATS.map(f => (
-                                <Dropdown.Item
-                                    key={f.key}
-                                    active={activeFormat === f.key}
-                                    onSelect={() => setActiveFormat(f.key)}
-                                >
-                                    {f.label}
-                                </Dropdown.Item>
-                            ))}
-                        </Dropdown.Menu>
-                    </Dropdown>
-                    <CopyToClipboardCmp
-                        text={citationText}
-                        onCopy={handleCopy}
-                    >
-                        <TooltipButton
-                            tooltipPosition="top"
-                            tooltipId={copied ? 'gnviewer.citationCopied' : 'gnviewer.copyCitation'}
-                            variant="default"
-                            size="xs"
-                        >
-                            <FaIcon name={copied ? 'check' : 'copy'} />
-                        </TooltipButton>
-                    </CopyToClipboardCmp>
-                </div>
+        <div className="gn-details-citation" style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+                <select
+                    className="gn-details-citation-select"
+                    value={activeFormat}
+                    onChange={e => setActiveFormat(e.target.value)}
+                >
+                    {FORMATS.map(f => (
+                        <option key={f.key} value={f.key}>{f.label}</option>
+                    ))}
+                </select>
+                <CopyToClipboard text={citationText} onCopy={handleCopy}>
+                    <Button variant="default" size="xs">
+                        <Glyphicon glyph={copied ? 'ok' : 'copy'} />
+                        {' '}
+                        {copied
+                            ? <Message msgId="gnviewer.citationCopied" />
+                            : <Message msgId="gnviewer.copyCitation" />}
+                    </Button>
+                </CopyToClipboard>
             </div>
-            <pre className="gn-details-citation-code">{citationText}</pre>
+            <pre style={{ border: '1px solid #000', background: '#fff', color: '#000', padding: '0.75rem 1rem', fontFamily: 'monospace', fontSize: '0.8rem', lineHeight: '1.7', whiteSpace: 'pre-wrap', wordBreak: 'break-all', flex: 1, minHeight: 0, overflowY: 'auto', margin: 0, borderRadius: '4px' }}>{citationText}</pre>
         </div>
     );
 }

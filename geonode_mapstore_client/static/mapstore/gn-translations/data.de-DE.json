@@ -548,7 +548,10 @@
             "noAssets": "Keine Assets gefunden",
             "errorCloningTitle": "Ressource kann nicht geklont werden",
             "errorDeletingTitle": "Ressource kann nicht gelöscht werden",
-            "errorOperationTitle": "Fehler beim Ausführen der Operation"
+            "errorOperationTitle": "Fehler beim Ausführen der Operation",
+            "citation": "Zitation",
+            "copyCitation": "Zitation kopieren",
+            "citationCopied": "Kopiert!"
         },
         "resourcesCatalog": {
             "anonymous": "Jeder",

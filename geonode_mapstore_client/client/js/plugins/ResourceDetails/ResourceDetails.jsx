@@ -254,6 +254,12 @@ function ResourceDetailsPanel({
             "labelId": "gnviewer.settings",
             "disableIf": "{not canManageResourceSettings(state('gnResourceData'))}",
             "items": [true]
+        },
+        {
+            "type": "citation",
+            "id": "citation",
+            "labelId": "gnviewer.citation",
+            "items": [true]
         }
     ],
     items,

@@ -521,7 +521,10 @@
             "noAssets": "No assets found",
             "errorCloningTitle": "Nie je možné klonovať zdroj",
             "errorDeletingTitle": "Nie je možné vymazať zdroj",
-            "errorOperationTitle": "Pri vykonávaní operácie došlo k chybe"
+            "errorOperationTitle": "Pri vykonávaní operácie došlo k chybe",
+            "citation": "Citácia",
+            "copyCitation": "Kopírovať citáciu",
+            "citationCopied": "Skopírované!"
         },
         "resourcesCatalog": {
             "anonymous": "Anyone",
