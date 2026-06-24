@@ -522,7 +522,10 @@
             "noAssets": "No assets found",
             "errorCloningTitle": "Kan inte klona resursen",
             "errorDeletingTitle": "Kan inte ta bort resursen",
-            "errorOperationTitle": "Ett fel uppstod vid utförandet av operationen"
+            "errorOperationTitle": "Ett fel uppstod vid utförandet av operationen",
+            "citation": "Citering",
+            "copyCitation": "Kopiera citering",
+            "citationCopied": "Kopierat!"
         },
         "resourcesCatalog": {
             "anonymous": "Anyone",

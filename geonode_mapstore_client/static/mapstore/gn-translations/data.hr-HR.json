@@ -521,7 +521,10 @@
             "noAssets": "No assets found",
             "errorCloningTitle": "Nije moguće klonirati resurs",
             "errorDeletingTitle": "Nije moguće obrisati resurs",
-            "errorOperationTitle": "Došlo je do greške prilikom izvođenja operacije"
+            "errorOperationTitle": "Došlo je do greške prilikom izvođenja operacije",
+            "citation": "Citacija",
+            "copyCitation": "Kopiraj citaciju",
+            "citationCopied": "Kopirano!"
         },
         "resourcesCatalog": {
             "anonymous": "Anyone",
