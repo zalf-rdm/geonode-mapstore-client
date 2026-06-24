@@ -521,7 +521,20 @@
             "noAssets": "No assets found",
             "errorCloningTitle": "Không thể sao chép tài nguyên",
             "errorDeletingTitle": "Không thể xóa tài nguyên",
-            "errorOperationTitle": "Đã xảy ra lỗi khi thực hiện thao tác"
+            "errorOperationTitle": "Đã xảy ra lỗi khi thực hiện thao tác",
+            "citation": "Trích dẫn",
+            "copyCitation": "Sao chép trích dẫn",
+            "citationCopied": "Đã sao chép!",
+            "approveDataCollection": "Phê duyệt bộ dữ liệu",
+            "publishDataCollection": "Xuất bản bộ dữ liệu",
+            "dataciteMetadata": "Siêu dữ liệu DataCite",
+            "publishDialogTitle": "Xuất bản bộ dữ liệu",
+            "doiPrefixLabel": "Tiền tố DOI",
+            "confirmPublish": "Xuất bản",
+            "approveSuccess": "Bộ dữ liệu đã được phê duyệt",
+            "publishSuccess": "Bộ dữ liệu đã được xuất bản",
+            "approveConfirm": "Phê duyệt bộ dữ liệu này và tất cả các tài nguyên liên kết của tác giả?",
+            "publishConfirm": "Các tài nguyên sau sẽ được xuất bản với DOI DataCite:"
         },
         "resourcesCatalog": {
             "anonymous": "Anyone",

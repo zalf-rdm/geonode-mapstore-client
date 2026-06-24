@@ -522,7 +522,20 @@
             "noAssets": "No assets found",
             "errorCloningTitle": "Kan inte klona resursen",
             "errorDeletingTitle": "Kan inte ta bort resursen",
-            "errorOperationTitle": "Ett fel uppstod vid utförandet av operationen"
+            "errorOperationTitle": "Ett fel uppstod vid utförandet av operationen",
+            "citation": "Citering",
+            "copyCitation": "Kopiera citering",
+            "citationCopied": "Kopierat!",
+            "approveDataCollection": "Godkänn datasamling",
+            "publishDataCollection": "Publicera datasamling",
+            "dataciteMetadata": "DataCite-metadata",
+            "publishDialogTitle": "Publicera datasamling",
+            "doiPrefixLabel": "DOI-prefix",
+            "confirmPublish": "Publicera",
+            "approveSuccess": "Datasamling godkänd",
+            "publishSuccess": "Datasamling publicerad",
+            "approveConfirm": "Godkänna denna datasamling och alla länkade resurser som tillhör författaren?",
+            "publishConfirm": "Följande resurser kommer att publiceras med ett DataCite DOI:"
         },
         "resourcesCatalog": {
             "anonymous": "Anyone",

@@ -521,7 +521,20 @@
             "noAssets": "No assets found",
             "errorCloningTitle": "Nije moguće klonirati resurs",
             "errorDeletingTitle": "Nije moguće obrisati resurs",
-            "errorOperationTitle": "Došlo je do greške prilikom izvođenja operacije"
+            "errorOperationTitle": "Došlo je do greške prilikom izvođenja operacije",
+            "citation": "Citacija",
+            "copyCitation": "Kopiraj citaciju",
+            "citationCopied": "Kopirano!",
+            "approveDataCollection": "Odobri zbirku podataka",
+            "publishDataCollection": "Objavi zbirku podataka",
+            "dataciteMetadata": "DataCite metapodaci",
+            "publishDialogTitle": "Objavi zbirku podataka",
+            "doiPrefixLabel": "DOI prefiks",
+            "confirmPublish": "Objavi",
+            "approveSuccess": "Zbirka podataka odobrena",
+            "publishSuccess": "Zbirka podataka objavljena",
+            "approveConfirm": "Odobriti ovu zbirku podataka i sve povezane resurse vlasnika?",
+            "publishConfirm": "Sljedeći resursi bit će objavljeni s DataCite DOI-em:"
         },
         "resourcesCatalog": {
             "anonymous": "Anyone",

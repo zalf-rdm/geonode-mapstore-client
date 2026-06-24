@@ -521,7 +521,20 @@
             "noAssets": "No assets found",
             "errorCloningTitle": "Não é possível clonar o recurso",
             "errorDeletingTitle": "Não é possível eliminar o recurso",
-            "errorOperationTitle": "Ocorreu um erro ao realizar a operação"
+            "errorOperationTitle": "Ocorreu um erro ao realizar a operação",
+            "citation": "Citação",
+            "copyCitation": "Copiar citação",
+            "citationCopied": "Copiado!",
+            "approveDataCollection": "Aprovar coleção de dados",
+            "publishDataCollection": "Publicar coleção de dados",
+            "dataciteMetadata": "Metadados DataCite",
+            "publishDialogTitle": "Publicar coleção de dados",
+            "doiPrefixLabel": "Prefixo DOI",
+            "confirmPublish": "Publicar",
+            "approveSuccess": "Coleção de dados aprovada",
+            "publishSuccess": "Coleção de dados publicada",
+            "approveConfirm": "Aprovar esta coleção de dados e todos os recursos vinculados do autor?",
+            "publishConfirm": "Os seguintes recursos serão publicados com um DOI DataCite:"
         },
         "resourcesCatalog": {
             "anonymous": "Anyone",

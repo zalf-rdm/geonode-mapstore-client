@@ -550,7 +550,20 @@
             "noAssets": "Aucun asset trouvé",
             "errorCloningTitle": "Impossible de cloner la ressource",
             "errorDeletingTitle": "Impossible de supprimer la ressource",
-            "errorOperationTitle": "Erreur lors de l'exécution de l'opération"
+            "errorOperationTitle": "Erreur lors de l'exécution de l'opération",
+            "citation": "Citation",
+            "copyCitation": "Copier la citation",
+            "citationCopied": "Copié !",
+            "approveDataCollection": "Approuver la collection de données",
+            "publishDataCollection": "Publier la collection de données",
+            "dataciteMetadata": "Métadonnées DataCite",
+            "publishDialogTitle": "Publier la collection de données",
+            "doiPrefixLabel": "Préfixe DOI",
+            "confirmPublish": "Publier",
+            "approveSuccess": "Collection de données approuvée",
+            "publishSuccess": "Collection de données publiée",
+            "approveConfirm": "Approuver cette collection de données et toutes les ressources liées appartenant à l'auteur ?",
+            "publishConfirm": "Les ressources suivantes seront publiées avec un DOI DataCite :"
         },
         "resourcesCatalog": {
             "anonymous": "N'importe qui",

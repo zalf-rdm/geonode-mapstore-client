@@ -521,7 +521,20 @@
             "noAssets": "No assets found",
             "errorCloningTitle": "Kan de resource niet klonen",
             "errorDeletingTitle": "Kan de resource niet verwijderen",
-            "errorOperationTitle": "Fout bij het uitvoeren van de bewerking"
+            "errorOperationTitle": "Fout bij het uitvoeren van de bewerking",
+            "citation": "Citatie",
+            "copyCitation": "Citatie kopiëren",
+            "citationCopied": "Gekopieerd!",
+            "approveDataCollection": "Gegevensverzameling goedkeuren",
+            "publishDataCollection": "Gegevensverzameling publiceren",
+            "dataciteMetadata": "DataCite-metadata",
+            "publishDialogTitle": "Gegevensverzameling publiceren",
+            "doiPrefixLabel": "DOI-prefix",
+            "confirmPublish": "Publiceren",
+            "approveSuccess": "Gegevensverzameling goedgekeurd",
+            "publishSuccess": "Gegevensverzameling gepubliceerd",
+            "approveConfirm": "Deze gegevensverzameling en alle gekoppelde bronnen van de auteur goedkeuren?",
+            "publishConfirm": "De volgende bronnen worden gepubliceerd met een DataCite DOI:"
         },
         "resourcesCatalog": {
             "anonymous": "Anyone",

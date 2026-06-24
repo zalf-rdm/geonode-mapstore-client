@@ -548,7 +548,20 @@
             "noAssets": "Keine Assets gefunden",
             "errorCloningTitle": "Ressource kann nicht geklont werden",
             "errorDeletingTitle": "Ressource kann nicht gelöscht werden",
-            "errorOperationTitle": "Fehler beim Ausführen der Operation"
+            "errorOperationTitle": "Fehler beim Ausführen der Operation",
+            "citation": "Zitation",
+            "copyCitation": "Zitation kopieren",
+            "citationCopied": "Kopiert!",
+            "approveDataCollection": "Datensammlung genehmigen",
+            "publishDataCollection": "Datensammlung veröffentlichen",
+            "dataciteMetadata": "DataCite Metadaten",
+            "publishDialogTitle": "Datensammlung veröffentlichen",
+            "doiPrefixLabel": "DOI-Präfix",
+            "confirmPublish": "Veröffentlichen",
+            "approveSuccess": "Datensammlung genehmigt",
+            "publishSuccess": "Datensammlung veröffentlicht",
+            "approveConfirm": "Diese Datensammlung und alle verknüpften Ressourcen des Autors genehmigen?",
+            "publishConfirm": "Die folgenden Ressourcen werden mit einem DataCite DOI veröffentlicht:"
         },
         "resourcesCatalog": {
             "anonymous": "Jeder",

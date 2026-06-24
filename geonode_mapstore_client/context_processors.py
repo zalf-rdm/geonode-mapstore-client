@@ -68,5 +68,11 @@ def resource_urls(request):
         "SUPPORTED_DATASET_FILE_TYPES": get_supported_datasets_file_types(),
         "RESOURCE_PUBLISHING": getattr(settings, "RESOURCE_PUBLISHING", False),
         "ADMIN_MODERATE_UPLOADS": getattr(settings, "ADMIN_MODERATE_UPLOADS", False),
+        "ZALF_DATACITE_ENABLED": bool(getattr(settings, "ZALF_DATACITE_ACCOUNTS", [])),
+        "CAN_PUBLISH_DATA_COLLECTION": (
+            request.user.is_authenticated
+            and hasattr(request.user, "can_publish_data_collection")
+            and request.user.can_publish_data_collection()
+        ),
     }
     return defaults
