@@ -14,7 +14,7 @@ import Button from '@mapstore/framework/components/layout/Button';
 import Spinner from '@mapstore/framework/components/layout/Spinner';
 import Message from '@mapstore/framework/components/I18N/Message';
 import { error as errorNotification } from '@mapstore/framework/actions/notifications';
-import { getGeoNodeLocalConfig } from '@mapstore/framework/utils/GeoNodeUtils';
+import { getGeoNodeLocalConfig } from '@js/utils/APIUtils';
 import axios from '@mapstore/framework/libs/ajax';
 import { saveAs } from 'file-saver';
 import { getResourceData } from '@js/selectors/resource';
@@ -22,7 +22,7 @@ import { getResourceData } from '@js/selectors/resource';
 function DataCiteDownload({ resource, onError }) {
     const [loading, setLoading] = useState(false);
 
-    const dataciteEnabled = getGeoNodeLocalConfig('GEONODE_SETTINGS.ZALF_DATACITE_ENABLED', false);
+    const dataciteEnabled = getGeoNodeLocalConfig('geoNodeSettings.zalfDataciteEnabled', false);
 
     if (!dataciteEnabled || !resource?.is_published || !resource?.pk) {
         return null;

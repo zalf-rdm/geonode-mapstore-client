@@ -17,12 +17,12 @@ import { error as errorNotification, success as successNotification } from '@map
 import axios from '@mapstore/framework/libs/ajax';
 import { getResourceData } from '@js/selectors/resource';
 import { requestResource } from '@js/actions/gnresource';
-import { getGeoNodeLocalConfig } from '@mapstore/framework/utils/GeoNodeUtils';
+import { getGeoNodeLocalConfig } from '@js/utils/APIUtils';
 
 function ApproveDataCollection({ resource, onReload, onSuccess, onError }) {
     const [loading, setLoading] = useState(false);
 
-    const canPublish = getGeoNodeLocalConfig('GEONODE_SETTINGS.CAN_PUBLISH_DATA_COLLECTION', false);
+    const canPublish = getGeoNodeLocalConfig('geoNodeSettings.canPublishDataCollection', false);
 
     if (!canPublish || resource?.resource_type !== 'map' || resource?.is_approved) {
         return null;

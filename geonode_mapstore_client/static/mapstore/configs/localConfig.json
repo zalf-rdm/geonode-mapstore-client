@@ -2201,6 +2201,18 @@
                             "type": "plugin",
                             "name": "DatasetsCatalog",
                             "disableIf": "{not canEditResource(state('isNewResource'), state('gnResourceData'))}"
+                        },
+                        {
+                            "type": "plugin",
+                            "name": "ApproveDataCollection"
+                        },
+                        {
+                            "type": "plugin",
+                            "name": "PublishDataCollection"
+                        },
+                        {
+                            "type": "plugin",
+                            "name": "DataCiteDownload"
                         }
                     ]
                 }
@@ -3438,6 +3450,15 @@
                         }
                     ]
                 }
+            },
+            {
+                "name": "ApproveDataCollection"
+            },
+            {
+                "name": "PublishDataCollection"
+            },
+            {
+                "name": "DataCiteDownload"
             }
         ],
         "map_viewer_mobile": [

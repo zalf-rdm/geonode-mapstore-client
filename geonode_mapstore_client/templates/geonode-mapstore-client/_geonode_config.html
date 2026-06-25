@@ -72,6 +72,8 @@
         let catalogPagePath = geoNodeSettings.CATALOG_PAGE_PATH;
         let isPublishedOptionEnabled = geoNodeSettings.RESOURCE_PUBLISHING || false;
         let isApprovedOptionEnabled = geoNodeSettings.ADMIN_MODERATE_UPLOADS || false;
+        let canPublishDataCollection = geoNodeSettings.CAN_PUBLISH_DATA_COLLECTION || false;
+        let zalfDataciteEnabled = geoNodeSettings.ZALF_DATACITE_ENABLED || false;
         let customFilters = geoNodeSettings.CUSTOM_FILTERS || {
             "my-resources": {
                 "filter{owner.pk}": "{get(state('user'), 'pk')}"
@@ -214,7 +216,9 @@
                     catalogHomeRedirectsTo: catalogHomeRedirectsTo,
                     catalogPagePath: catalogPagePath,
                     isPublishedOptionEnabled: isPublishedOptionEnabled,
-                    isApprovedOptionEnabled: isApprovedOptionEnabled
+                    isApprovedOptionEnabled: isApprovedOptionEnabled,
+                    canPublishDataCollection: canPublishDataCollection,
+                    zalfDataciteEnabled: zalfDataciteEnabled
                 }
             },
         };

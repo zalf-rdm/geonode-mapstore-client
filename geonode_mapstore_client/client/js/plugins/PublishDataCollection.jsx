@@ -16,7 +16,7 @@ import Message from '@mapstore/framework/components/I18N/Message';
 import Portal from '@mapstore/framework/components/misc/Portal';
 import ResizableModal from '@mapstore/framework/components/misc/ResizableModal';
 import { error as errorNotification, success as successNotification } from '@mapstore/framework/actions/notifications';
-import { getGeoNodeLocalConfig } from '@mapstore/framework/utils/GeoNodeUtils';
+import { getGeoNodeLocalConfig } from '@js/utils/APIUtils';
 import axios from '@mapstore/framework/libs/ajax';
 import { getResourceData } from '@js/selectors/resource';
 import { requestResource } from '@js/actions/gnresource';
@@ -111,7 +111,7 @@ function PublishDataCollection({ resource, onReload, onSuccess, onError }) {
     const [showDialog, setShowDialog] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const canPublish = getGeoNodeLocalConfig('GEONODE_SETTINGS.CAN_PUBLISH_DATA_COLLECTION', false);
+    const canPublish = getGeoNodeLocalConfig('geoNodeSettings.canPublishDataCollection', false);
 
     if (!canPublish || resource?.resource_type !== 'map' || !resource?.is_approved || resource?.is_published) {
         return null;

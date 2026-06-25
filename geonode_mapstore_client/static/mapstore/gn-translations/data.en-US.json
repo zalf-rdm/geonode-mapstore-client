@@ -564,7 +564,8 @@
             "approveSuccess": "Data collection approved",
             "publishSuccess": "Data collection published",
             "approveConfirm": "Approve this data collection and all linked resources owned by the author?",
-            "publishConfirm": "The following resources will be published with a DataCite DOI:"
+            "publishConfirm": "The following resources will be published with a DataCite DOI:",
+            "cancel": "Cancel"
         },
         "resourcesCatalog": {
             "anonymous": "Anyone",
