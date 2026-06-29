@@ -109,10 +109,10 @@
     display: inline-block;
     margin-bottom: 10px;
     font-size: 0.94rem;
-    font-weight: 900;
+    font-weight: 400;
     letter-spacing: 0;
     text-transform: none;
-    color: var(--zalf-home-olive-soft);
+    color: var(--zalf-home-primary-gradient-start);
 }
 
 .zalf-homepage__title,
