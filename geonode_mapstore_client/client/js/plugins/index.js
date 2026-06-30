@@ -463,10 +463,10 @@ export const plugins = {
         'DataCiteDownload',
         () => import(/* webpackChunkName: 'plugins/iso-download-plugin' */ '@js/plugins/downloads/DataCiteDownload')
     ),
-    ResourcesGridPlugin: toModulePlugin(
-        'ResourcesGrid',
-        () => import(/* webpackChunkName: 'plugins/resources-grid' */ '@js/plugins/ResourcesGrid')
-    ),
+    // ResourcesGridPlugin: toModulePlugin(
+    //     'ResourcesGrid',
+    //     () => import(/* webpackChunkName: 'plugins/resources-grid' */ '@js/plugins/ResourcesGrid')
+    // ),
     FeaturedResourcesGridPlugin: toModulePlugin(
         'FeaturedResourcesGrid',
         () => import(/* webpackChunkName: 'plugins/featured-resources-grid' */ '@js/plugins/FeaturedResourcesGrid')
@@ -514,10 +514,6 @@ export const plugins = {
     PublishDataCollectionPlugin: toModulePlugin(
         'PublishDataCollection',
         () => import(/* webpackChunkName: 'plugins/publish-data-collection-plugin' */ '@js/plugins/PublishDataCollection')
-    ),
-    FooterPlugin: toModulePlugin(
-        'Footer',
-        () => import(/* webpackChunkName: 'plugins/footer-plugin' */ '@js/plugins/Footer')
     )
 };
 
