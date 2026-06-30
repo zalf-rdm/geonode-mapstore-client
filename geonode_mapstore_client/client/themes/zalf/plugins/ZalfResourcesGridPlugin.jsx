@@ -77,19 +77,23 @@ const formatUsernameFallback = (username) => {
         .join(' ');
 };
 
-const getPersonDisplayName = (person = {}) => {
-    const fullName = [person.first_name, person.last_name].filter(Boolean).join(' ').trim();
-    return person.full_name || fullName || formatUsernameFallback(person.username);
+const formatAuthorCitation = (person = {}) => {
+    if (!person.last_name && !person.first_name) {
+        return formatUsernameFallback(person.username);
+    }
+    const initial = person.first_name ? person.first_name.charAt(0).toUpperCase() + '.' : '';
+    return [person.last_name, initial].filter(Boolean).join(', ');
 };
 
 const resolveVirtualPaths = (resource) => {
     if (!resource) return resource;
     const authors = Array.isArray(resource.author) ? resource.author : [];
-    const authorDisplay = authors.map(getPersonDisplayName).filter(Boolean).join('; ')
-        || getPersonDisplayName(resource.owner);
+    const authorDisplay = authors.map(formatAuthorCitation).filter(Boolean).join('; ')
+        || formatAuthorCitation(resource.owner);
     return {
         ...resource,
         author: authorDisplay || resource.author,
+        author_citation: authorDisplay || resource.author,
         catalogue_summary: resource.abstract || resource.raw_abstract
             || resource.description || resource.catalogue_summary
     };
@@ -103,9 +107,9 @@ const defaultGetMainMessageId = ({ id, query, user, isFirstRequest, error, resou
     const isLoggedIn = !!user;
     const messageId = !hasResources && !isFirstRequest && !loading
         ? error && `resourcesCatalog.errorResourcePage`
-            || hasFilter && `resourcesCatalog.noResultsWithFilter`
-            || isLoggedIn && `resourcesCatalog.${id}Section.noContentYet`
-            || `resourcesCatalog.${id}Section.noPublicContent`
+        || hasFilter && `resourcesCatalog.noResultsWithFilter`
+        || isLoggedIn && `resourcesCatalog.${id}Section.noContentYet`
+        || `resourcesCatalog.${id}Section.noPublicContent`
         : undefined;
     return messageId;
 };
@@ -204,8 +208,8 @@ function ZalfResourcesGridContainer({
     const isValidItem = (target) => (item) =>
         item.target === target && (!item?.cfg?.resourcesGridId || item?.cfg?.resourcesGridId === id);
 
-    const cardOptions   = configuredItems.filter(isValidItem('card-options')).sort((a, b) => a.position - b.position);
-    const cardButtons   = configuredItems.filter(isValidItem('card-buttons')).sort((a, b) => a.position - b.position);
+    const cardOptions = configuredItems.filter(isValidItem('card-options')).sort((a, b) => a.position - b.position);
+    const cardButtons = configuredItems.filter(isValidItem('card-buttons')).sort((a, b) => a.position - b.position);
     const menuItemsLeft = configuredItems.filter(isValidItem('left-menu')).sort((a, b) => a.position - b.position);
     const menuItemsRight = configuredItems.filter(isValidItem('right-menu')).sort((a, b) => a.position - b.position);
     const { Component: cardComponent } = configuredItems.find(isValidItem('card')) || {};
@@ -229,7 +233,7 @@ function ZalfResourcesGridContainer({
     return ce(TargetSelectorPortal, { targetSelector },
         ce('div', {
             className: `ms-resources-grid${panel ? ' _panel' : ''}${hideWithNoResults && !resources.length ? ' _hidden' : ''}`,
-            style: { '--ms-menu-sticky-top': stickyTop + 'px', '--ms-grid-sticky-bottom': stickyBottom + 'px' }
+
         },
             ce(ResourcesMenu, {
                 key: columnsId,
@@ -309,34 +313,45 @@ function ZalfResourcesGrid({
     order = {
         defaultLabelId: 'resourcesCatalog.orderBy',
         options: [
-            { label: 'Most recent',  labelId: 'resourcesCatalog.mostRecent', value: '-creation' },
-            { label: 'Less recent',  labelId: 'resourcesCatalog.lessRecent', value: 'creation'  },
-            { label: 'A Z',          labelId: 'resourcesCatalog.aZ',         value: 'name'       },
-            { label: 'Z A',          labelId: 'resourcesCatalog.zA',         value: '-name'      }
+            { label: 'Most recent', labelId: 'resourcesCatalog.mostRecent', value: '-creation' },
+            { label: 'Less recent', labelId: 'resourcesCatalog.lessRecent', value: 'creation' },
+            { label: 'A Z', labelId: 'resourcesCatalog.aZ', value: 'name' },
+            { label: 'Z A', labelId: 'resourcesCatalog.zA', value: '-name' }
         ]
     },
     metadata = {
         list: [
-            { path: 'name',       target: 'header', width: 20, labelId: 'resourcesCatalog.columnName' },
+            { path: 'name', target: 'header', width: 20, labelId: 'resourcesCatalog.columnName' },
             { path: 'description', width: 20, labelId: 'resourcesCatalog.columnDescription' },
-            { path: 'tags', filter: 'filter{tag.in}', itemValue: 'name', itemColor: 'color',
-              width: 30, type: 'tag', noDataLabelId: 'resourcesCatalog.emptyNA',
-              labelId: 'resourcesCatalog.columnTags' },
-            { path: 'lastUpdate', type: 'date', format: 'MMM Do YY, h:mm:ss a', width: 20,
-              icon: { glyph: 'time' }, labelId: 'resourcesCatalog.columnLastModified',
-              noDataLabelId: 'resourcesCatalog.emptyNA' },
-            { path: 'creator', target: 'footer', filter: 'filter{creator.in}',
-              icon: { glyph: 'user' }, width: 10, labelId: 'resourcesCatalog.columnCreatedBy',
-              noDataLabelId: 'resourcesCatalog.emptyUnknown',
-              disableIf: '{!state("userrole")}' }
+            {
+                path: 'tags', filter: 'filter{tag.in}', itemValue: 'name', itemColor: 'color',
+                width: 30, type: 'tag', noDataLabelId: 'resourcesCatalog.emptyNA',
+                labelId: 'resourcesCatalog.columnTags'
+            },
+            {
+                path: 'lastUpdate', type: 'date', format: 'MMM Do YY, h:mm:ss a', width: 20,
+                icon: { glyph: 'time' }, labelId: 'resourcesCatalog.columnLastModified',
+                noDataLabelId: 'resourcesCatalog.emptyNA'
+            },
+            {
+                path: 'author_citation',
+                showFullContent: true,
+                icon: { glyph: 'user' }, width: 10, labelId: 'resourcesCatalog.columnCreatedBy',
+                noDataLabelId: 'resourcesCatalog.emptyUnknown'
+            }
         ],
         grid: [
             { path: 'name', target: 'header' },
-            { path: 'tags', filter: 'filter{tag.in}', itemValue: 'name', itemColor: 'color',
-              type: 'tag', showFullContent: true },
-            { path: 'creator', target: 'footer', filter: 'filter{creator.in}',
-              icon: { glyph: 'user' }, noDataLabelId: 'resourcesCatalog.emptyUnknown',
-              disableIf: '{!state("userrole")}', tooltipId: 'resourcesCatalog.columnCreatedBy' }
+            {
+                path: 'tags', filter: 'filter{tag.in}', itemValue: 'name', itemColor: 'color',
+                type: 'tag', showFullContent: true
+            },
+            {
+                path: 'author_citation',
+                showFullContent: true,
+                icon: { glyph: 'user' }, noDataLabelId: 'resourcesCatalog.emptyUnknown',
+                tooltipId: 'resourcesCatalog.columnCreatedBy'
+            }
         ]
     },
     resourceTypes = ['MAP', 'DASHBOARD', 'GEOSTORY', 'CONTEXT'],

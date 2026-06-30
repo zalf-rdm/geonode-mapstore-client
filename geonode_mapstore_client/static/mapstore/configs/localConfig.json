@@ -3932,7 +3932,7 @@
                 "path": "title"
               },
               {
-                "path": "author_display",
+                "path": "author_citation",
                 "showFullContent": true,
                 "icon": {
                   "glyph": "user"
@@ -3984,7 +3984,7 @@
                 "showFullContent": false
               },
               {
-                "path": "author_display",
+                "path": "author_citation",
                 "showFullContent": true,
                 "icon": {
                   "glyph": "user"

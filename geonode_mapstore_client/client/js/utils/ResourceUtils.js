@@ -925,6 +925,14 @@ const getPersonDisplayName = (person = {}) => {
     return person.full_name || fullName || formatUsernameFallback(person.username);
 };
 
+const formatPersonCitation = (person = {}) => {
+    if (!person || (!person.last_name && !person.first_name)) {
+        return formatUsernameFallback(person?.username);
+    }
+    const initial = person.first_name ? person.first_name.charAt(0).toUpperCase() + '.' : '';
+    return [person.last_name, initial].filter(Boolean).join(', ');
+};
+
 const getAuthorsDisplayValue = (resource = {}) => {
     const authors = Array.isArray(resource.author) ? resource.author : [];
     const names = authors.map(getPersonDisplayName).filter(Boolean);
@@ -932,6 +940,15 @@ const getAuthorsDisplayValue = (resource = {}) => {
         return names.join('; ');
     }
     return getPersonDisplayName(resource.owner);
+};
+
+const getAuthorsCitationValue = (resource = {}) => {
+    const authors = Array.isArray(resource.author) ? resource.author : [];
+    const names = authors.map(formatPersonCitation).filter(Boolean);
+    if (names.length) {
+        return names.join('; ');
+    }
+    return formatPersonCitation(resource.owner);
 };
 
 export const parseCatalogResource = (resource, user) => {
@@ -951,11 +968,13 @@ export const parseCatalogResource = (resource, user) => {
     const viewerPath = viewerUrlParts[viewerUrlParts.length - 1];
     const metadataDetailUrl = resource?.pk && getMetadataDetailUrl(resource);
     const authorDisplay = getAuthorsDisplayValue(resource);
+    const authorCitation = getAuthorsCitationValue(resource);
     return {
         ...resource,
         id: resource.pk,
         name: resource.title,
         author_display: authorDisplay,
+        author_citation: authorCitation,
         catalogue_summary: resource.abstract || resource.raw_abstract || resource.description,
         '@extras': {
             info: {
