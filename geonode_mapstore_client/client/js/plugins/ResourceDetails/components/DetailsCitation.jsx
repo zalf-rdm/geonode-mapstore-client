@@ -56,7 +56,10 @@ function getPublisher(resource) {
     const publishers = resource?.publisher;
     if (!publishers || publishers.length === 0) return null;
     const pub = publishers[0];
-    return [pub.first_name, pub.last_name].filter(Boolean).join(' ') || formatUsernameFallback(pub.username) || null;
+    const fullName = [pub.first_name, pub.last_name].filter(Boolean).join(' ');
+    if (fullName) return fullName;
+    if (pub.department) return pub.department;
+    return pub.username || null;
 }
 
 function getYear(resource) {
@@ -125,7 +128,7 @@ function generateRIS(resource) {
     const year = getYear(resource);
     const publisher = getPublisher(resource);
 
-    const lines = [resource?.resource_type === 'map' ? 'TY  - MAP' : 'TY  - DATA'];
+    const lines = ['TY  - DATA'];
     lines.push(`TI  - ${sanitizeRisField(resource?.title)}`);
     authors.forEach(a => lines.push(`AU  - ${sanitizeRisField(formatAuthorName(a, 'firstFull'))}`));
     if (publisher) lines.push(`PB  - ${sanitizeRisField(publisher)}`);

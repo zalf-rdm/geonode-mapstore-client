@@ -186,6 +186,7 @@
             "close": "Close",
             "share": "Share",
             "download": "Download",
+            "downloadAll": "Download All",
             "moreinfo": "More info",
             "setMapLikeThumbnail": "Set map thumbnail",
             "thumbnailsaved": "Thumbnail saved",

@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - main
-      - merge-5.0.2
   workflow_dispatch:
+
 
 jobs:
   build-and-publish:
@@ -20,13 +20,13 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-      
+
       - name: Set up npm
         uses: actions/setup-node@v4
         with:
-            node-version: 20
+          node-version: 20
 
-      - name: build js files
+      - name: Build JS files
         run: |
           npm install
           npm run compile
@@ -40,15 +40,14 @@ jobs:
       - name: Add build metadata to version
         run: |
           BASE_VERSION=$(cat VERSION)
-          POST_VERSION="${BASE_VERSION}.post${{ github.run_number }}"
-          echo "$POST_VERSION" > VERSION
+          POST_NUM=${{ github.run_number }}
+          echo "${BASE_VERSION}.post${POST_NUM}" > VERSION
 
       - name: Build package
-        run: |
-          python -m build
+        run: python -m build
 
       - name: Publish to PyPI
         env:
-          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
-        run: |
-          twine upload -u __token__ -p $TWINE_PASSWORD dist/*
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: twine upload dist/*

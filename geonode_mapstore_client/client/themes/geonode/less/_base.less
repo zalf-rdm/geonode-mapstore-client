@@ -48,9 +48,10 @@
     }
 
     // default badge color
+    // TODO: revert to badge-color/badge-bg once node_modules/mapstore is updated to v0.11.5+
     .badge {
-        .color-var(@theme-vars[badge-color]);
-        .background-color-var(@theme-vars[badge-bg]);
+        .color-var(@theme-vars[primary-contrast]);
+        .background-color-var(@theme-vars[primary]);
     }
 
     .label {

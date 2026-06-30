@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "django-geonode-mapstore-client"
+name = "zalf-django-geonode-mapstore-client"
 description = "Use GeoNode client in your django projects"
 readme = { file = "README.md", content-type = "text/markdown" }
 requires-python = ">=3.10"
@@ -29,6 +29,10 @@ dynamic = ["version"]
 
 [project.optional-dependencies]
 test = ["requests==2.32.5"]
+dev = [
+  "flake8==7.3.0",
+  "black==24.4.2",
+]
 
 [project.urls]
 Homepage = "https://github.com/zalf-rdm/geonode-mapstore-client"
@@ -44,6 +48,20 @@ exclude = ["tests*"]
 # Legge la versione dal file VERSION (equivalente al tuo setup.py)
 [tool.setuptools.dynamic]
 version = { file = ["VERSION"] }
+
+[tool.black]
+line-length = 120
+target-version = ["py310"]
+exclude = '''
+/(
+    geonode_mapstore_client/.*/migrations/.*
+  | management
+  | scripts
+  | docs
+  | static
+  | migrations
+)/
+'''
 
 [tool.flake8]
 max-line-length = 120
