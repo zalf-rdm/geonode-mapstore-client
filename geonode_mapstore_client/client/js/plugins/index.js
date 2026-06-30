@@ -23,6 +23,7 @@ import Itinerary from "@mapstore/framework/plugins/Itinerary";
 import SecurityPopup from "@mapstore/framework/plugins/SecurityPopup";
 
 import OperationPlugin from '@js/plugins/Operation';
+import ZalfPublicationDebugPlugin from '@js/plugins/ZalfPublicationDebug';
 import ExecutionTrackerPlugin from '@js/plugins/ExecutionTracker';
 import MetadataEditorPlugin from '@js/plugins/MetadataEditor';
 import MetadataViewerPlugin from '@js/plugins/MetadataEditor/MetadataViewer';
@@ -79,6 +80,7 @@ const toModulePlugin = (...args) => {
 export const plugins = {
     TOCPlugin,
     OperationPlugin,
+    ZalfPublicationDebugPlugin,
     ExecutionTrackerPlugin,
     MetadataEditorPlugin,
     MetadataViewerPlugin,

@@ -2185,6 +2185,23 @@
                                     "type": "plugin",
                                     "disableIf": "{not canRemoveMapViewer(state('resourceParams'), state('gnResourceData'), state('gnResourceLinkedViewer'))}",
                                     "name": "RemoveMapViewer"
+                                },
+                                {
+                                    "type": "divider"
+                                },
+                                {
+                                    "type": "plugin",
+                                    "name": "ApproveDataCollection"
+                                },
+                                {
+                                    "type": "link",
+                                    "name": "ApproveDataCollectionTest",
+                                    "href": "{getNewMapViewerUrl(state('gnResourceData'))}",
+                                    "labelId": "gnviewer.approveDataCollection"
+                                },
+                                {
+                                    "type": "plugin",
+                                    "name": "PublishDataCollection"
                                 }
                             ]
                         },
@@ -2204,15 +2221,11 @@
                         },
                         {
                             "type": "plugin",
-                            "name": "ApproveDataCollection"
-                        },
-                        {
-                            "type": "plugin",
-                            "name": "PublishDataCollection"
-                        },
-                        {
-                            "type": "plugin",
                             "name": "DataCiteDownload"
+                        },
+                        {
+                            "type": "plugin",
+                            "name": "ZalfPublicationDebug"
                         }
                     ]
                 }
@@ -3452,13 +3465,20 @@
                 }
             },
             {
+                "mandatory": true,
                 "name": "ApproveDataCollection"
             },
             {
+                "mandatory": true,
                 "name": "PublishDataCollection"
             },
             {
+                "mandatory": true,
                 "name": "DataCiteDownload"
+            },
+            {
+                "mandatory": true,
+                "name": "ZalfPublicationDebug"
             }
         ],
         "map_viewer_mobile": [
