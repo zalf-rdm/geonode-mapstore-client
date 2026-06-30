@@ -9,11 +9,6 @@
 #
 #########################################################################
 
-try:
-    import json
-except ImportError:
-    from django.utils import simplejson as json
-
 from geonode.client.hooksets import BaseHookSet
 from geonode.base.models import ResourceBase
 
@@ -27,7 +22,7 @@ def resource_detail_url(resource_type, resource_id):
     if resource_type == "mapviewer":
         _resource_type = "viewer"
     if resource_type == "3dtiles":
-        _resource_type = f"dataset/3dtiles"
+        _resource_type = "dataset/3dtiles"
     return "/catalogue/#/{}/{}".format(_resource_type, resource_id)
 
 
@@ -120,7 +115,6 @@ class MapStoreHookSet(BaseHookSet):
     def get_map_resource_type(self, resource):
         return "tabular-collection" if resource.subtype == "tabular-collection" else "map"
 
-
     # def map_download_template(self, context=None):
     #    return 'geonode-mapstore-client/legacy/map_view.html'
 
@@ -162,7 +156,7 @@ class MapStoreHookSet(BaseHookSet):
 
     def geoapp_detail_url(self, resource):
         return resource_detail_url(resource.resource_type, resource.id)
-    
+
     # 3dtiles
 
     def tiles3d_detail_url(self, resource):

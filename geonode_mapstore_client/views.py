@@ -1,22 +1,26 @@
-from django.urls import reverse
+import json
 import logging
 import os
-import json
-from rest_framework.views import APIView
-from django.shortcuts import render
-from django.http import Http404
-from django.utils.translation.trans_real import get_language_from_request
+
 from dateutil import parser
 from django.conf import settings
-from django.templatetags.static import static
-from rest_framework.response import Response
 from django.core.cache import cache
+from django.http import Http404  # noqa: F401
+from django.shortcuts import render
+from django.templatetags.static import static  # noqa: F401
+from django.urls import reverse
+from django.utils.translation.trans_real import get_language_from_request
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+logger = logging.getLogger(__name__)
+
 
 def _parse_value(value, schema):
     schema_type = schema.get('type')
-    format = schema.get('format')
-    if schema_type == 'string' and format in ['date-time']:
-        if type(value) == str:
+    fmt = schema.get('format')
+    if schema_type == 'string' and fmt in ['date-time']:
+        if isinstance(value, str):
             return parser.parse(value)
         return value
     if schema_type == 'string':
@@ -25,6 +29,7 @@ def _parse_value(value, schema):
                 if option.get('const') == value:
                     return option.get('title')
     return value
+
 
 def _parse_schema_instance(instance, schema):
     schema_type = schema.get('type')
@@ -50,6 +55,7 @@ def _parse_schema_instance(instance, schema):
     metadata['value'] = _parse_value(instance, schema)
     return metadata
 
+
 def metadata(request, pk, template="geonode-mapstore-client/metadata.html"):
 
     from geonode.base.models import ResourceBase
@@ -62,19 +68,19 @@ def metadata(request, pk, template="geonode-mapstore-client/metadata.html"):
     schema_instance = metadata_manager.build_schema_instance(resource, lang)
 
     full_metadata = _parse_schema_instance(schema_instance, schema)
-    metadata = full_metadata['value']
+    metadata_data = full_metadata['value']
     metadata_groups = {}
 
-    for key in metadata:
+    for key in metadata_data:
         if key not in ('extraErrors', 'contacts'):
-            property = metadata[key]
-            ui_options = property.get('ui:options', {})
+            prop = metadata_data[key]
+            ui_options = prop.get('ui:options', {})
             group = 'General'
             if ui_options.get('geonode-ui:group'):
                 group = ui_options.get('geonode-ui:group')
             if group not in metadata_groups:
-                metadata_groups[group] = { }
-            metadata_groups[group][key] = property
+                metadata_groups[group] = {}
+            metadata_groups[group][key] = prop
 
     metadata_groups["Responsible"] = {
         k: v for k, v in {
@@ -88,7 +94,6 @@ def metadata(request, pk, template="geonode-mapstore-client/metadata.html"):
         }.items() if v and str(v) not in ('None', '')
     }
 
-    # adding information from the resource itself
     metadata_groups["Information"] = {
         "Identification Image": {"type": "thumbnail", "value": resource.thumbnail_url},
         "Projection System": resource.srid,
@@ -104,25 +109,24 @@ def metadata(request, pk, template="geonode-mapstore-client/metadata.html"):
             "Link Online": {
                 "type": "link",
                 "url": build_absolute_uri(resource.detail_url),
-                "text": build_absolute_uri(resource.detail_url)
+                "text": build_absolute_uri(resource.detail_url),
             },
             "Metadata page": {
                 "type": "link",
                 "url": build_absolute_uri(reverse("metadata", args=[resource.id])),
-                "text": build_absolute_uri(reverse("metadata", args=[resource.id]))
+                "text": build_absolute_uri(reverse("metadata", args=[resource.id])),
             },
         },
         **{
             link.name: {
                 "type": "link",
                 "url": link.url,
-                "text": f"{resource.title}.{link.extension}"
+                "text": f"{resource.title}.{link.extension}",
             }
             for link in resource.link_set.exclude(link_type="html")
         },
     }
 
-    # Build structured contact roles for person-chip rendering
     contact_roles_data = []
     try:
         owner = resource.owner
@@ -134,7 +138,7 @@ def metadata(request, pk, template="geonode-mapstore-client/metadata.html"):
                     'name': owner_name,
                     'initial': owner_name[0].upper() if owner_name else '?',
                     'profile_url': f'/people/profile/{owner.username}' if owner.username else None,
-                }]
+                }],
             })
         for role_label, contacts in resource.get_defined_multivalue_contact_roles().items():
             people = []
@@ -148,7 +152,7 @@ def metadata(request, pk, template="geonode-mapstore-client/metadata.html"):
             if people:
                 contact_roles_data.append({'label': role_label, 'people': people})
     except (AttributeError, TypeError, ValueError) as e:
-        logging.getLogger(__name__).warning('Could not build contact roles for resource %s: %s', pk, e)
+        logger.warning('Could not build contact roles for resource %s: %s', pk, e)
         contact_roles_data = []
 
     return render(
@@ -161,9 +165,9 @@ def metadata(request, pk, template="geonode-mapstore-client/metadata.html"):
         },
     )
 
+
 def metadata_embed(request, pk):
     return metadata(request, pk, template="geonode-mapstore-client/metadata_embed.html")
-
 
 
 class ExtensionsView(APIView):

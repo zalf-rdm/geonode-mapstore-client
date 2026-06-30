@@ -14,7 +14,7 @@ from rest_framework.test import APIClient
 from .utils import validate_zip_file
 from .admin import ExtensionAdminForm
 from .models import Extension
-from unittest import mock
+from unittest import mock  # noqa: F401
 
 # Define temporary directories for testing to avoid affecting the real media/static roots
 TEST_MEDIA_ROOT = os.path.join(settings.PROJECT_ROOT, "test_media")
@@ -132,7 +132,6 @@ class ExtensionFeatureTestCase(TestCase):
 
         self.assertIn("ActiveExt", data)
         self.assertNotIn("InactiveExt", data)
-
 
     def test_plugins_config_view_structure(self):
         """Test the plugins config API endpoint and its new response structure."""

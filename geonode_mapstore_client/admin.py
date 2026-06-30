@@ -32,7 +32,8 @@ class ExtensionAdminForm(forms.ModelForm):
             # If the queryset finds any conflicting extension, raise a validation error
             if queryset.exists():
                 raise forms.ValidationError(
-                    f"An extension with the name '{extension_name}' already exists. Please upload a file with a different name."
+                    f"An extension with the name '{extension_name}' already exists. "
+                    "Please upload a file with a different name."
                 )
 
         return uploaded_file

@@ -15,6 +15,7 @@ from django.utils.translation import gettext_lazy as _
 from django.apps import apps, AppConfig as BaseAppConfig
 from . import views
 
+
 def run_setup_hooks(*args, **kwargs):
     from geonode.urls import urlpatterns
     from django.conf import settings
@@ -90,7 +91,6 @@ def run_setup_hooks(*args, **kwargs):
         re_path(r"^metadata/(?P<pk>[^/]*)/embed$", views.metadata_embed, name='metadata_embed'),
         # required, otherwise will raise no-lookup errors to be analysed
         re_path(r"^api/v2/", include(router.urls)),
-        
         # pages
         re_path(r"^all$", TemplateView.as_view(template_name="geonode-mapstore-client/pages/all.html")),
         re_path(r"^datasets$", TemplateView.as_view(template_name="geonode-mapstore-client/pages/datasets.html")),
@@ -267,7 +267,7 @@ def run_setup_hooks(*args, **kwargs):
     }
     settings.REST_API_PRESETS["dataset_viewer"] = {
         "include[]": [
-            "featureinfo_custom_template",            
+            "featureinfo_custom_template",
             "dataset_ows_url",
             "default_style",
             "ptype",
@@ -302,9 +302,8 @@ def run_setup_hooks(*args, **kwargs):
     MAPSTORE_DASHBOARD_CATALOGUE_SELECTED_SERVICE = ""
 
     if GEONODE_CATALOGUE_SERVICE:
-        MAPSTORE_DASHBOARD_CATALOGUE_SERVICES[list(list(GEONODE_CATALOGUE_SERVICE.keys()))[0]] = GEONODE_CATALOGUE_SERVICE[
-            list(list(GEONODE_CATALOGUE_SERVICE.keys()))[0]
-        ]  # noqa
+        _key = list(list(GEONODE_CATALOGUE_SERVICE.keys()))[0]
+        MAPSTORE_DASHBOARD_CATALOGUE_SERVICES[_key] = GEONODE_CATALOGUE_SERVICE[_key]
         MAPSTORE_DASHBOARD_CATALOGUE_SELECTED_SERVICE = list(list(GEONODE_CATALOGUE_SERVICE.keys()))[0]
 
     setattr(settings, "MAPSTORE_DASHBOARD_CATALOGUE_SELECTED_SERVICE", MAPSTORE_DASHBOARD_CATALOGUE_SELECTED_SERVICE)

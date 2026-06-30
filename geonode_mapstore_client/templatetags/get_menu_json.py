@@ -4,6 +4,7 @@ from geonode.base.models import Configuration, Menu, MenuItem
 
 register = template.Library()
 
+
 def _handle_single_item(menu_item):
     m_item = {}
     m_item["type"] = "link"
@@ -12,6 +13,7 @@ def _handle_single_item(menu_item):
     if menu_item.blank_target:
         m_item["target"] = "_blank"
     return m_item
+
 
 @register.simple_tag
 def get_menu_json(placeholder_name):
@@ -36,10 +38,11 @@ def get_menu_json(placeholder_name):
             ms.append(m)
     return ms
 
+
 @register.simple_tag
 def get_settings():
     return {
         'ACCOUNT_OPEN_SIGNUP': settings.ACCOUNT_OPEN_SIGNUP,
         'READ_ONLY': Configuration.load().read_only,
-        'GEOSERVER_WEB_UI_LOCATION': settings.GEOSERVER_WEB_UI_LOCATION
+        'GEOSERVER_WEB_UI_LOCATION': settings.GEOSERVER_WEB_UI_LOCATION,
     }
