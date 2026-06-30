@@ -17,42 +17,40 @@ logger = logging.getLogger(__name__)
 
 
 def _parse_value(value, schema):
-    schema_type = schema.get('type')
-    fmt = schema.get('format')
-    if schema_type == 'string' and fmt in ['date-time']:
+    schema_type = schema.get("type")
+    fmt = schema.get("format")
+    if schema_type == "string" and fmt in ["date-time"]:
         if isinstance(value, str):
             return parser.parse(value)
         return value
-    if schema_type == 'string':
-        if 'oneOf' in schema:
-            for option in schema.get('oneOf'):
-                if option.get('const') == value:
-                    return option.get('title')
+    if schema_type == "string":
+        if "oneOf" in schema:
+            for option in schema.get("oneOf"):
+                if option.get("const") == value:
+                    return option.get("title")
     return value
 
 
 def _parse_schema_instance(instance, schema):
-    schema_type = schema.get('type')
+    schema_type = schema.get("type")
     metadata = {}
-    metadata['schema'] = schema
-    if schema_type == 'object':
-        metadata['value'] = {}
+    metadata["schema"] = schema
+    if schema_type == "object":
+        metadata["value"] = {}
         for key in instance:
             property_schema = None
-            if key in schema.get('properties'):
-                property_schema = schema.get('properties')[key]
+            if key in schema.get("properties"):
+                property_schema = schema.get("properties")[key]
             if instance[key] and property_schema:
-                metadata['value'][key] = _parse_schema_instance(instance[key], property_schema)
+                metadata["value"][key] = _parse_schema_instance(instance[key], property_schema)
         return metadata
-    if schema_type == 'array':
-        metadata['value'] = []
+    if schema_type == "array":
+        metadata["value"] = []
         for entry in instance:
-            if schema.get('items'):
-                metadata['value'].append(
-                    _parse_schema_instance(entry, schema.get('items'))
-                )
+            if schema.get("items"):
+                metadata["value"].append(_parse_schema_instance(entry, schema.get("items")))
         return metadata
-    metadata['value'] = _parse_value(instance, schema)
+    metadata["value"] = _parse_value(instance, schema)
     return metadata
 
 
@@ -68,22 +66,23 @@ def metadata(request, pk, template="geonode-mapstore-client/metadata.html"):
     schema_instance = metadata_manager.build_schema_instance(resource, lang)
 
     full_metadata = _parse_schema_instance(schema_instance, schema)
-    metadata_data = full_metadata['value']
+    metadata_data = full_metadata["value"]
     metadata_groups = {}
 
     for key in metadata_data:
-        if key not in ('extraErrors', 'contacts'):
+        if key not in ("extraErrors", "contacts"):
             prop = metadata_data[key]
-            ui_options = prop.get('ui:options', {})
-            group = 'General'
-            if ui_options.get('geonode-ui:group'):
-                group = ui_options.get('geonode-ui:group')
+            ui_options = prop.get("ui:options", {})
+            group = "General"
+            if ui_options.get("geonode-ui:group"):
+                group = ui_options.get("geonode-ui:group")
             if group not in metadata_groups:
                 metadata_groups[group] = {}
             metadata_groups[group][key] = prop
 
     metadata_groups["Responsible"] = {
-        k: v for k, v in {
+        k: v
+        for k, v in {
             "Name": resource.owner.name_long,
             "Email": resource.owner.email,
             "Position": resource.owner.position,
@@ -91,7 +90,8 @@ def metadata(request, pk, template="geonode-mapstore-client/metadata.html"):
             "Location": resource.owner.location,
             "Voice": resource.owner.voice,
             "Fax": resource.owner.fax,
-        }.items() if v and str(v) not in ('None', '')
+        }.items()
+        if v and str(v) not in ("None", "")
     }
 
     metadata_groups["Information"] = {
@@ -131,28 +131,34 @@ def metadata(request, pk, template="geonode-mapstore-client/metadata.html"):
     try:
         owner = resource.owner
         if owner:
-            owner_name = (owner.get_full_name() or '').strip() or owner.username or ''
-            contact_roles_data.append({
-                'label': 'Owner',
-                'people': [{
-                    'name': owner_name,
-                    'initial': owner_name[0].upper() if owner_name else '?',
-                    'profile_url': f'/people/profile/{owner.username}' if owner.username else None,
-                }],
-            })
+            owner_name = (owner.get_full_name() or "").strip() or owner.username or ""
+            contact_roles_data.append(
+                {
+                    "label": "Owner",
+                    "people": [
+                        {
+                            "name": owner_name,
+                            "initial": owner_name[0].upper() if owner_name else "?",
+                            "profile_url": f"/people/profile/{owner.username}" if owner.username else None,
+                        }
+                    ],
+                }
+            )
         for role_label, contacts in resource.get_defined_multivalue_contact_roles().items():
             people = []
             for p in contacts:
-                name = (p.get_full_name() or '').strip() or p.username or ''
-                people.append({
-                    'name': name,
-                    'initial': name[0].upper() if name else '?',
-                    'profile_url': f'/people/profile/{p.username}' if p.username else None,
-                })
+                name = (p.get_full_name() or "").strip() or p.username or ""
+                people.append(
+                    {
+                        "name": name,
+                        "initial": name[0].upper() if name else "?",
+                        "profile_url": f"/people/profile/{p.username}" if p.username else None,
+                    }
+                )
             if people:
-                contact_roles_data.append({'label': role_label, 'people': people})
+                contact_roles_data.append({"label": role_label, "people": people})
     except (AttributeError, TypeError, ValueError) as e:
-        logger.warning('Could not build contact roles for resource %s: %s', pk, e)
+        logger.warning("Could not build contact roles for resource %s: %s", pk, e)
         contact_roles_data = []
 
     return render(
@@ -185,9 +191,7 @@ class ExtensionsView(APIView):
             return Response(cached_data)
 
         final_extensions = {}
-        legacy_file_path = os.path.join(
-            settings.STATIC_ROOT, "mapstore", "extensions", "index.json"
-        )
+        legacy_file_path = os.path.join(settings.STATIC_ROOT, "mapstore", "extensions", "index.json")
 
         try:
             with open(legacy_file_path, "r") as f:
@@ -229,9 +233,7 @@ class PluginsConfigView(APIView):
         if cached_data:
             return Response(cached_data)
 
-        base_config_path = os.path.join(
-            settings.STATIC_ROOT, "mapstore", "configs", "pluginsConfig.json"
-        )
+        base_config_path = os.path.join(settings.STATIC_ROOT, "mapstore", "configs", "pluginsConfig.json")
 
         config_data = {"plugins": []}
 
@@ -248,12 +250,14 @@ class PluginsConfigView(APIView):
 
         for ext in map_extensions:
             if ext.name not in existing_plugin_names:
-                plugins.append({
-                    "name": ext.name,
-                    "bundle": f"{ext.name}/index.js",
-                    "translations": f"{ext.name}/translations",
-                    "assets": f"{ext.name}/assets",
-                })
+                plugins.append(
+                    {
+                        "name": ext.name,
+                        "bundle": f"{ext.name}/index.js",
+                        "translations": f"{ext.name}/translations",
+                        "assets": f"{ext.name}/assets",
+                    }
+                )
 
         cache.set(
             MAPSTORE_PLUGINS_CACHE_KEY,

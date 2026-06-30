@@ -14,22 +14,16 @@ MAPSTORE_EXTENSION_CACHE_TIMEOUT = 60 * 60 * 24 * 1  # 1 day
 
 def set_default_style_to_open_in_visual_mode(instance, **kwargs):
     if isinstance(instance, Dataset):
-        style = gs_catalog.get_style(
-            instance.name, workspace=instance.workspace
-        ) or gs_catalog.get_style(instance.name)
+        style = gs_catalog.get_style(instance.name, workspace=instance.workspace) or gs_catalog.get_style(instance.name)
         if style:
             headers = {"Content-type": "application/json", "Accept": "application/json"}
             data = {"style": {"metadata": {"msForceVisual": "true"}}}
             body_href = os.path.splitext(style.body_href)[0] + ".json"
 
-            resp = gs_catalog.http_request(
-                body_href, method="put", data=json.dumps(data), headers=headers
-            )
+            resp = gs_catalog.http_request(body_href, method="put", data=json.dumps(data), headers=headers)
             if resp.status_code not in (200, 201, 202):
                 raise FailedRequestError(
-                    "Failed to update style {} : {}, {}".format(
-                        style.name, resp.status_code, resp.text
-                    )
+                    "Failed to update style {} : {}, {}".format(style.name, resp.status_code, resp.text)
                 )
 
 
@@ -41,9 +35,9 @@ def validate_zip_file(file):
         raise ValidationError("File is not a valid zip archive.")
 
     file.seek(0)
-    with zipfile.ZipFile(file, 'r') as zip_ref:
+    with zipfile.ZipFile(file, "r") as zip_ref:
         filenames = zip_ref.namelist()
-        required_files = {'index.js', 'index.json'}
+        required_files = {"index.js", "index.json"}
         if not required_files.issubset(filenames):
             raise ValidationError("The zip file must contain index.js and index.json at its root.")
     file.seek(0)

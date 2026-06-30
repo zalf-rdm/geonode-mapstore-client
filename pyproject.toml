@@ -55,6 +55,7 @@ target-version = ["py310"]
 exclude = '''
 /(
     geonode_mapstore_client/.*/migrations/.*
+  | geonode_mapstore_client/client/.*
   | management
   | scripts
   | docs

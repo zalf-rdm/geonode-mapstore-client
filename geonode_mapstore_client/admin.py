@@ -12,13 +12,13 @@ class SearchServiceAdmin(admin.ModelAdmin):
 class ExtensionAdminForm(forms.ModelForm):
     class Meta:
         model = Extension
-        fields = '__all__'
+        fields = "__all__"
 
     def clean_uploaded_file(self):
         """
         It checks the uploaded file's name for uniqueness before the model is saved.
         """
-        uploaded_file = self.cleaned_data.get('uploaded_file')
+        uploaded_file = self.cleaned_data.get("uploaded_file")
 
         if uploaded_file:
             extension_name = os.path.splitext(os.path.basename(uploaded_file.name))[0]
@@ -43,7 +43,7 @@ class ExtensionAdminForm(forms.ModelForm):
 class ExtensionAdmin(admin.ModelAdmin):
 
     form = ExtensionAdminForm
-    list_display = ('name', 'active', 'is_map_extension', 'updated_at')
-    list_filter = ('active', 'is_map_extension')
-    search_fields = ('name',)
-    readonly_fields = ('name', 'created_at', 'updated_at')
+    list_display = ("name", "active", "is_map_extension", "updated_at")
+    list_filter = ("active", "is_map_extension")
+    search_fields = ("name",)
+    readonly_fields = ("name", "created_at", "updated_at")

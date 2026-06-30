@@ -142,9 +142,7 @@ def handle_extension_upload(sender, instance, **kwargs):
     """
     Unzips the extension file and clears the API cache after saving.
     """
-    target_path = os.path.join(
-        settings.STATIC_ROOT, settings.MAPSTORE_EXTENSIONS_FOLDER_PATH, instance.name
-    )
+    target_path = os.path.join(settings.STATIC_ROOT, settings.MAPSTORE_EXTENSIONS_FOLDER_PATH, instance.name)
 
     if os.path.exists(target_path):
         shutil.rmtree(target_path)
@@ -164,9 +162,7 @@ def handle_extension_delete(sender, instance, **kwargs):
     Removes the extension's files and clears the API cache on deletion.
     """
     if instance.name:
-        extension_path = os.path.join(
-            settings.STATIC_ROOT, settings.MAPSTORE_EXTENSIONS_FOLDER_PATH, instance.name
-        )
+        extension_path = os.path.join(settings.STATIC_ROOT, settings.MAPSTORE_EXTENSIONS_FOLDER_PATH, instance.name)
         if os.path.exists(extension_path):
             shutil.rmtree(extension_path)
 

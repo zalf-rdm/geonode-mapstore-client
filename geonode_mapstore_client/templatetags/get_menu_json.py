@@ -42,7 +42,7 @@ def get_menu_json(placeholder_name):
 @register.simple_tag
 def get_settings():
     return {
-        'ACCOUNT_OPEN_SIGNUP': settings.ACCOUNT_OPEN_SIGNUP,
-        'READ_ONLY': Configuration.load().read_only,
-        'GEOSERVER_WEB_UI_LOCATION': settings.GEOSERVER_WEB_UI_LOCATION,
+        "ACCOUNT_OPEN_SIGNUP": settings.ACCOUNT_OPEN_SIGNUP,
+        "READ_ONLY": Configuration.load().read_only,
+        "GEOSERVER_WEB_UI_LOCATION": settings.GEOSERVER_WEB_UI_LOCATION,
     }

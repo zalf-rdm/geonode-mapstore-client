@@ -80,15 +80,12 @@ def run_setup_hooks(*args, **kwargs):
     urlpatterns += [
         re_path("/client/extensions", views.ExtensionsView.as_view(), name="mapstore-extension"),
         re_path("/client/pluginsconfig", views.PluginsConfigView.as_view(), name="mapstore-pluginsconfig"),
-
         re_path(
             r"^catalogue/",
-            TemplateView.as_view(
-                template_name="geonode-mapstore-client/catalogue.html"
-            ),
+            TemplateView.as_view(template_name="geonode-mapstore-client/catalogue.html"),
         ),
-        re_path(r"^metadata/(?P<pk>[^/]*)$", views.metadata, name='metadata'),
-        re_path(r"^metadata/(?P<pk>[^/]*)/embed$", views.metadata_embed, name='metadata_embed'),
+        re_path(r"^metadata/(?P<pk>[^/]*)$", views.metadata, name="metadata"),
+        re_path(r"^metadata/(?P<pk>[^/]*)/embed$", views.metadata_embed, name="metadata_embed"),
         # required, otherwise will raise no-lookup errors to be analysed
         re_path(r"^api/v2/", include(router.urls)),
         # pages
@@ -134,7 +131,7 @@ def run_setup_hooks(*args, **kwargs):
             "executions",
             "thumbnail_url",
             "created",
-            "favorite"
+            "favorite",
         ],
     }
     settings.REST_API_PRESETS["dataset_list"] = {
@@ -160,7 +157,7 @@ def run_setup_hooks(*args, **kwargs):
             "ptype",
             "extent",
             "is_approved",
-            "is_published"
+            "is_published",
         ],
     }
     settings.REST_API_PRESETS["map_list"] = {
@@ -180,7 +177,7 @@ def run_setup_hooks(*args, **kwargs):
             "subtype",
             "title",
             "executions",
-            "thumbnail_url"
+            "thumbnail_url",
         ],
     }
     settings.REST_API_PRESETS["document_list"] = {
@@ -196,7 +193,7 @@ def run_setup_hooks(*args, **kwargs):
             "thumbnail_url",
             "alternate",
             "attribution",
-            "href"
+            "href",
         ],
     }
     settings.REST_API_PRESETS["viewer_common"] = {
@@ -245,26 +242,12 @@ def run_setup_hooks(*args, **kwargs):
             "author",
             "publisher",
             "doi",
-            "date_issued"
+            "date_issued",
         ],
     }
-    settings.REST_API_PRESETS["map_details"] = {
-        "include[]": [
-            "maplayers"
-        ]
-    }
-    settings.REST_API_PRESETS["map_viewer"] = {
-        "include[]": [
-            "data",
-            "maplayers"
-        ]
-    }
-    settings.REST_API_PRESETS["document_viewer"] = {
-        "include[]": [
-            "href",
-            "extension"
-        ]
-    }
+    settings.REST_API_PRESETS["map_details"] = {"include[]": ["maplayers"]}
+    settings.REST_API_PRESETS["map_viewer"] = {"include[]": ["data", "maplayers"]}
+    settings.REST_API_PRESETS["document_viewer"] = {"include[]": ["href", "extension"]}
     settings.REST_API_PRESETS["dataset_viewer"] = {
         "include[]": [
             "featureinfo_custom_template",
@@ -274,7 +257,7 @@ def run_setup_hooks(*args, **kwargs):
             "store",
             "has_time",
             "attribute_set",
-            "data"
+            "data",
         ]
     }
     settings.PROXY_ALLOWED_PARAMS_NEEDLES += (
@@ -314,9 +297,7 @@ def connect_geoserver_style_visual_mode_signal():
     from geonode.geoserver.signals import geoserver_automatic_default_style_set
     from geonode_mapstore_client.utils import set_default_style_to_open_in_visual_mode
 
-    geoserver_automatic_default_style_set.connect(
-        set_default_style_to_open_in_visual_mode
-    )
+    geoserver_automatic_default_style_set.connect(set_default_style_to_open_in_visual_mode)
 
 
 class AppConfig(BaseAppConfig):
