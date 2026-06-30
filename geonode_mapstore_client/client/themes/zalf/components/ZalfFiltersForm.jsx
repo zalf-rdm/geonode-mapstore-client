@@ -11,7 +11,7 @@ import CoreFiltersForm from '@mapstore/framework/plugins/ResourcesCatalog/compon
 const ce = React.createElement;
 
 export default function ZalfFiltersForm(props) {
-    const [expanded, setExpanded] = useState(true);
+    const [expanded, setExpanded] = useState(false);
     const panelClassName = 'zalf-filter-panel'
         + (expanded ? ' zalf-filter-panel--open' : ' zalf-filter-panel--closed');
 
