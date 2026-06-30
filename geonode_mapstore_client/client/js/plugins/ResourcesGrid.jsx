@@ -257,7 +257,7 @@ function ResourcesGrid({
     menuItems = [
         {
             labelId: 'gnhome.addResource',
-            disableIf: "{(state('settings') && state('settings').isMobile) || !(state('user') && state('user').perms && state('user').perms.includes('add_resource'))}",
+            disableIf: "{(state('settings') && state('settings').isMobile) || !(state('user') && state('user').perms && ('add_resource' in state('user').perms))}",
             type: 'dropdown',
             variant: 'primary',
             responsive: true,

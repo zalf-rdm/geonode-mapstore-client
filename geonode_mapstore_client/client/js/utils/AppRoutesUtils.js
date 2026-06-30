@@ -120,30 +120,6 @@ export const CATALOGUE_ROUTES = [
         component: appRouteComponentTypes.VIEWER
     },
     {
-        // tabular view needs an extra route
-        name: 'tabular_viewer',
-        path: [
-            '/tabular/:pk'
-        ],
-        pageConfig: {
-            resourceType: ResourceTypes.DATASET
-        },
-        component: appRouteComponentTypes.VIEWER,
-        shouldNotRequestResources: true
-    },
-    {
-        // tabular-collection needs an extra route
-        name: 'tabular-collection_viewer',
-        path: [
-            '/tabular-collection/:pk'
-        ],
-        pageConfig: {
-            resourceType: ResourceTypes.MAP
-        },
-        component: appRouteComponentTypes.VIEWER,
-        shouldNotRequestResources: true
-    },
-    {
         name: 'dataset_edit_data_viewer',
         path: [
             '/dataset/:pk/edit/data'

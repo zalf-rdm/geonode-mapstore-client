@@ -455,6 +455,10 @@ export const plugins = {
         'IsoDownload',
         () => import(/* webpackChunkName: 'plugins/iso-download-plugin' */ '@js/plugins/downloads/IsoDownload')
     ),
+    DataCiteDownloadPlugin: toModulePlugin(
+        'DataCiteDownload',
+        () => import(/* webpackChunkName: 'plugins/iso-download-plugin' */ '@js/plugins/downloads/DataCiteDownload')
+    ),
     MapViewersCatalogPlugin: toModulePlugin(
         'MapViewersCatalog',
         () => import(/* webpackChunkName: 'plugins/map-viewers-catalog' */ '@js/plugins/MapViewersCatalog')
@@ -490,6 +494,14 @@ export const plugins = {
     UploadResourcePlugin: toModulePlugin(
         'UploadResource',
         () => import(/* webpackChunkName: 'plugins/upload-operation' */ '@js/plugins/UploadResource')
+    ),
+    ApproveDataCollectionPlugin: toModulePlugin(
+        'ApproveDataCollection',
+        () => import(/* webpackChunkName: 'plugins/approve-data-collection-plugin' */ '@js/plugins/ApproveDataCollection')
+    ),
+    PublishDataCollectionPlugin: toModulePlugin(
+        'PublishDataCollection',
+        () => import(/* webpackChunkName: 'plugins/publish-data-collection-plugin' */ '@js/plugins/PublishDataCollection')
     )
 };
 
