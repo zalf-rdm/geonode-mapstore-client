@@ -28,10 +28,15 @@ import MetadataEditorPlugin from '@js/plugins/MetadataEditor';
 import MetadataViewerPlugin from '@js/plugins/MetadataEditor/MetadataViewer';
 import FavoritesPlugin from '@js/plugins/Favorites';
 import CreateDatasetPlugin from '@js/plugins/CreateDataset';
-import {
-    ResourcesGridPlugin,
-    ResourcesFiltersFormPlugin
-} from '@mapstore/framework/plugins/ResourcesCatalog';
+import ZalfNavigationPlugin from '../../themes/zalf/plugins/NavigationPlugin';
+import ZalfHomepagePlugin from '../../themes/zalf/plugins/HomepagePlugin';
+import ZalfFaqPlugin from '../../themes/zalf/plugins/FaqPlugin';
+import ZalfCmsPlugin from '../../themes/zalf/plugins/CmsPlugin';
+import ZalfTrainingListPlugin from '../../themes/zalf/plugins/TrainingListPlugin';
+import ZalfFooterPlugin from '../../themes/zalf/plugins/FooterPlugin';
+import ZalfDatasetLandingPlugin from '../../themes/zalf/plugins/DatasetLandingPlugin';
+import ResourcesGridPlugin from '../../themes/zalf/plugins/ZalfResourcesGridPlugin';
+import ResourcesFiltersFormPlugin from '../../themes/zalf/plugins/ZalfResourcesFiltersFormPlugin';
 
 let epicsNamesToExclude = [
     'loadGeostoryEpic',
@@ -86,6 +91,13 @@ export const plugins = {
     FavoritesPlugin,
     ResourcesFiltersFormPlugin,
     CreateDatasetPlugin,
+    ZalfNavigationPlugin,
+    ZalfHomepagePlugin,
+    ZalfFaqPlugin,
+    ZalfCmsPlugin,
+    ZalfTrainingListPlugin,
+    ZalfFooterPlugin,
+    ZalfDatasetLandingPlugin,
     IsochronePlugin: Isochrone,
     ItineraryPlugin: Itinerary,
     SecurityPopupPlugin: SecurityPopup,
@@ -490,6 +502,14 @@ export const plugins = {
     UploadResourcePlugin: toModulePlugin(
         'UploadResource',
         () => import(/* webpackChunkName: 'plugins/upload-operation' */ '@js/plugins/UploadResource')
+    ),
+    TabularPreviewPlugin: toModulePlugin(
+        'TabularPreview',
+        () => import(/* webpackChunkName: 'plugins/tabular-preview-plugin' */ '@js/plugins/TabularPreview')
+    ),
+    TabularCollectionViewerPlugin: toModulePlugin(
+        'TabularCollectionViewer',
+        () => import(/* webpackChunkName: 'plugins/tabular-collection-plugin' */ '@js/plugins/TabularCollectionViewer')
     )
 };
 

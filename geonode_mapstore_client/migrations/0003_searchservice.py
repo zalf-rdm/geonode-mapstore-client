@@ -53,7 +53,10 @@ class Migration(migrations.Migration):
                     "attributes",
                     django.contrib.postgres.fields.ArrayField(
                         base_field=models.CharField(max_length=250),
-                        help_text="Comma separated list of attributes. Search is performed on these fields. Only textual fields can be configured",
+                        help_text=(
+                            "Comma separated list of attributes. Search is performed on these fields. "
+                            "Only textual fields can be configured"
+                        ),
                         max_length=250,
                         size=None,
                         verbose_name="Attributes",

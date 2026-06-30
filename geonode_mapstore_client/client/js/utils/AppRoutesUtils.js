@@ -12,7 +12,8 @@ export const appRouteComponentTypes = {
     VIEWER: 'ViewerRoute',
     CATALOGUE: 'CatalogueRoute',
     COMPONENTS: 'ComponentsRoute',
-    MAP_VIEWER: 'MapViewerRoute'
+    MAP_VIEWER: 'MapViewerRoute',
+    DATASET_LANDING: 'DatasetLandingRoute'
 };
 
 export const COMPONENTS_ROUTES = [
@@ -98,6 +99,21 @@ export const CATALOGUE_ROUTES = [
         name: 'metadata',
         path: ['/metadata/:pk'],
         component: appRouteComponentTypes.VIEWER
+    },
+    {
+        name: 'dataset_landing',
+        path: ['/landing/dataset/:pk'],
+        component: appRouteComponentTypes.DATASET_LANDING
+    },
+    {
+        name: 'map_landing',
+        path: ['/landing/map/:pk'],
+        component: appRouteComponentTypes.DATASET_LANDING
+    },
+    {
+        name: 'document_landing',
+        path: ['/landing/document/:pk'],
+        component: appRouteComponentTypes.DATASET_LANDING
     },
     {
         name: 'dataset_viewer',

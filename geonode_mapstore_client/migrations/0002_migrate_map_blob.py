@@ -21,7 +21,10 @@ drop_mapstore2_adapter_mapstoreresource_attributes = (
 
 def migrate_map_forward(apps, schema_editor):
     exists = False
-    sql_exists = "SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'mapstore2_adapter_mapstoredata');"
+    sql_exists = (
+        "SELECT EXISTS (SELECT FROM information_schema.tables "
+        "WHERE table_name = 'mapstore2_adapter_mapstoredata');"
+    )
     with connections["default"].cursor() as cursor:
         cursor.execute(sql_exists)
         result = cursor.fetchall()
@@ -45,10 +48,13 @@ def migrate_map_forward(apps, schema_editor):
                 if result:
                     try:
                         to_update["blob"] = json.loads(result[0][0])
-                    except Exception as e:
+                    except Exception:
                         to_update["blob"] = result[0][0]
 
-            sql_string = f"SELECT name, value from mapstore2_adapter_mapstoreattribute where resource_id={_resource.id};"
+            sql_string = (
+                f"SELECT name, value from mapstore2_adapter_mapstoreattribute "
+                f"where resource_id={_resource.id};"
+            )
             """
             Getting the attributes
             """
@@ -64,7 +70,7 @@ def migrate_map_forward(apps, schema_editor):
                             to_update[x[0]] = base64.b64decode(
                                 ast.literal_eval(x[1])
                             ).decode()
-                        except:
+                        except Exception:
                             to_update[x[0]] = x[1]
 
                 thumb = to_update.pop("thumbnail", None)

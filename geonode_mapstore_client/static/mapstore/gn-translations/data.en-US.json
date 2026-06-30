@@ -253,6 +253,8 @@
             "datasetsCatalogFilterPlaceholder": "Filter datasets by title or abstract...",
             "datasetsCatalogEntriesNoResults": "No results match your search",
             "legend": "Legend",
+            "nodeTooltipContent": "Tooltip content",
+            "nodeTooltipPlacement": "Tooltip placement",
             "zoomToLayer": "Zoom to layer extent",
             "applyCurrentStyleToLayer": "Apply current style to layer",
             "deleteCurrentStyle": "Delete current style",
@@ -556,6 +558,57 @@
         "resourcesCatalog": {
             "anonymous": "Anyone",
             "registered-members": "Registered members"
+        },
+        "zalfTheme": {
+            "nav": {
+                "allData": "All Data",
+                "topics": "Topics",
+                "toolsServices": "Tools & Services",
+                "trainings": "Trainings",
+                "lteMaps": "LTE Maps",
+                "soilProfiles": "Soil Profiles",
+                "dqKit": "DQ Kit",
+                "upload": "Upload",
+                "about": "About",
+                "development": "Development",
+                "ogcServicesApi": "OGC Services and API",
+                "faq": "FAQ",
+                "contactUs": "Contact Us",
+                "version": "Version {version}",
+                "searchDatasets": "Search Datasets",
+                "toggleNavigationMenu": "Toggle navigation menu",
+                "primaryNavigation": "Primary navigation"
+            },
+            "topic": {
+                "animals": "Animals",
+                "atmosphere": "Atmosphere",
+                "climate": "Climate",
+                "forest": "Forest",
+                "hydrology": "Hydrology",
+                "landscape": "Landscape",
+                "longTermFieldExperiment": "Long Term Field Experiment",
+                "plants": "Plants",
+                "soilProfiles": "Soil Profiles",
+                "water": "Water"
+            },
+            "footer": {
+                "repositoryTitle": "BonaRes Repository",
+                "repositoryDescription": "Discover, visualize, and share high-quality datasets powering open science, policy, and innovation.",
+                "quickLinks": "Quick Links",
+                "resources": "Resources",
+                "certifiedBy": "Certified By",
+                "poweredBy": "Powered by",
+                "about": "About",
+                "upload": "Upload",
+                "ogcServicesApi": "OGC Services and API",
+                "researchDataManagement": "Research Data Management",
+                "publications": "Publications",
+                "dataPolicy": "Data Policy",
+                "howToCiteUs": "How to Cite Us",
+                "imprint": "Imprint",
+                "privacy": "Privacy",
+                "copyright": "© BonaRes Repository. All rights reserved"
+            }
         }
     }
 }

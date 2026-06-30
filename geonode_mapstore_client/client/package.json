@@ -18,7 +18,7 @@
   "scripts": {
     "compile": "mapstore-project compile && node postCompile",
     "compile:dev": "MAPSTORE_COMPILE_DEV=true mapstore-project compile && node postCompile",
-    "start": "mapstore-project start",
+    "start": "node ./node_modules/@mapstore/project/scripts/start.js --type=standard --port=8082",
     "test": "mapstore-project test",
     "test:watch": "mapstore-project test:watch",
     "lint": "eslint js --ext .jsx,.js --fix",
@@ -37,6 +37,7 @@
     "@rjsf/core": "5.19.4",
     "@rjsf/utils": "5.19.4",
     "@rjsf/validator-ajv8": "5.19.4",
+    "gsap": "^3.15.0",
     "mapstore": "file:MapStore2",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",

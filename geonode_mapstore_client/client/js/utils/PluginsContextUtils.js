@@ -21,14 +21,14 @@ import {
     getUploadMainFile,
     getUploadProperty
 } from "@js/utils/UploadUtils";
+import { formatUsernameFallback } from "@js/utils/SearchUtils";
 import get from "lodash/get";
 import { getEndpointUrl } from "@js/api/geonode/v2/constants";
 import { isArray } from "lodash";
 
 function getUserResourceName(user) {
-    return user?.first_name !== "" && user?.last_name !== ""
-        ? `${user?.first_name} ${user?.last_name}`
-        : user?.username;
+    const fullName = [user?.first_name, user?.last_name].filter(Boolean).join(' ').trim();
+    return user?.full_name || fullName || formatUsernameFallback(user?.username);
 }
 
 function getUserResourceNames(users = []) {

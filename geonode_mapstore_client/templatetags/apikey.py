@@ -13,7 +13,7 @@ import logging
 from urllib.parse import urlparse
 
 from django.conf import settings
-from geonode.base.auth import extract_user_from_headers, get_auth_token
+from geonode.base.auth import get_auth_token
 
 from django import template
 

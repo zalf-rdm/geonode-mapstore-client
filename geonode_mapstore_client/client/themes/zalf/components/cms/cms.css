@@ -1,0 +1,625 @@
+/* =====================================================================
+   ZALF CMS — Layout & Components
+   Follows the same design language as faq.css / homepage.css
+   ===================================================================== */
+
+/* ------------------------------------------------------------------ */
+/* Page shell                                                           */
+/* ------------------------------------------------------------------ */
+
+.zalf-cms {
+    min-height: 100vh;
+    background: #f4f7f1;
+    color: #132238;
+    font-family: inherit;
+}
+
+/* ------------------------------------------------------------------ */
+/* Header banner (same topo as catalogue)                               */
+/* ------------------------------------------------------------------ */
+
+.zalf-cms__header-band {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    padding: 48px 24px 36px;
+}
+
+.zalf-cms__header-band::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(135deg, rgba(22, 48, 38, 0.88) 0%, rgba(30, 69, 53, 0.78) 50%, rgba(42, 92, 63, 0.82) 100%),
+        url('../../../../../static/img/bg_dataset_landing_topo.png') center center / cover no-repeat;
+    z-index: -1;
+}
+
+.zalf-cms__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: min(1100px, calc(100% - 48px));
+    margin: 0 auto;
+    gap: 16px;
+}
+
+.zalf-cms__title {
+    margin: 0;
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 700;
+    line-height: 1.15;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+}
+
+.zalf-cms__back {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 6px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.88);
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.12);
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.zalf-cms__back:hover {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.5);
+    color: #163026;
+    text-decoration: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* Tabs                                                                 */
+/* ------------------------------------------------------------------ */
+
+.zalf-cms__tabs {
+    display: flex;
+    gap: 4px;
+    width: min(1100px, calc(100% - 48px));
+    margin: 28px auto 0;
+    padding-bottom: 0;
+    border-bottom: 2px solid rgba(22, 48, 38, 0.10);
+}
+
+.zalf-cms__tab {
+    padding: 10px 22px 12px;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    background: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #5b7a6e;
+    cursor: pointer;
+    border-radius: 6px 6px 0 0;
+    transition: color 0.15s, background 0.15s;
+}
+
+.zalf-cms__tab:hover {
+    color: #163026;
+    background: rgba(22, 48, 38, 0.04);
+}
+
+.zalf-cms__tab.is-active {
+    color: #163026;
+    font-weight: 600;
+    border-bottom-color: #5d9d46;
+    background: rgba(93, 157, 70, 0.06);
+}
+
+/* ------------------------------------------------------------------ */
+/* Panel (tab content area)                                             */
+/* ------------------------------------------------------------------ */
+
+.zalf-cms__panel {
+    width: min(1100px, calc(100% - 48px));
+    margin: 32px auto 64px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Editor list                                                          */
+/* ------------------------------------------------------------------ */
+
+.cms-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.cms-editor__toolbar {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.cms-editor__toolbar .btn-primary {
+    background: #5d9d46;
+    border-color: #4d8a38;
+    font-weight: 600;
+    padding: 9px 20px;
+    border-radius: 6px;
+    transition: background 0.15s;
+}
+
+.cms-editor__toolbar .btn-primary:hover {
+    background: #4d8a38;
+}
+
+.cms-editor__empty {
+    padding: 48px;
+    text-align: center;
+    color: #7a9a8e;
+    font-size: 0.95rem;
+    background: rgba(255,255,255,0.7);
+    border: 1px dashed rgba(22, 48, 38, 0.18);
+    border-radius: 8px;
+}
+
+.cms-editor__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.cms-editor__row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 18px;
+    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid rgba(22, 48, 38, 0.09);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(19, 34, 56, 0.04);
+    transition: box-shadow 0.15s, border-color 0.15s;
+}
+
+.cms-editor__row:hover {
+    box-shadow: 0 4px 16px rgba(19, 34, 56, 0.08);
+    border-color: rgba(22, 48, 38, 0.16);
+}
+
+.cms-editor__row.is-inactive {
+    opacity: 0.55;
+    background: rgba(240, 240, 240, 0.6);
+}
+
+.cms-editor__thumb {
+    width: 64px;
+    height: 64px;
+    border-radius: 5px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.cms-editor__thumb--empty {
+    background: linear-gradient(135deg, #d8e8d0, #c8dcc0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cms-editor__info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.cms-editor__info strong {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #163026;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cms-editor__info span {
+    font-size: 0.84rem;
+    color: #6b8b7e;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cms-editor__badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    background: #f0e8c8;
+    color: #8a6a10;
+    border: 1px solid rgba(138, 106, 16, 0.2);
+}
+
+.cms-editor__actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.cms-editor__actions .btn-xs {
+    padding: 5px 12px;
+    font-size: 0.8rem;
+    border-radius: 5px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.cms-editor__actions .btn-default {
+    border-color: rgba(22, 48, 38, 0.2);
+    color: #2d5a4a;
+    background: rgba(255,255,255,0.9);
+}
+
+.cms-editor__actions .btn-default:hover {
+    background: #f0f7ed;
+    border-color: #5d9d46;
+    color: #163026;
+}
+
+.cms-editor__actions .btn-danger {
+    border-color: rgba(180, 40, 40, 0.25);
+    color: #b42828;
+    background: rgba(255, 245, 245, 0.9);
+}
+
+.cms-editor__actions .btn-danger:hover {
+    background: #ffeaea;
+    border-color: #b42828;
+}
+
+/* ------------------------------------------------------------------ */
+/* Modal                                                                */
+/* ------------------------------------------------------------------ */
+
+.cms-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: rgba(10, 22, 18, 0.55);
+    backdrop-filter: blur(3px);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 90px 24px 40px;
+    overflow-y: auto;
+}
+
+.cms-modal {
+    width: 100%;
+    max-width: 680px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 32px 80px rgba(10, 22, 18, 0.22);
+    overflow: hidden;
+    animation: cms-modal-in 0.2s ease;
+}
+
+@keyframes cms-modal-in {
+    from { opacity: 0; transform: translateY(-12px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.cms-modal__title {
+    margin: 0;
+    padding: 24px 28px 20px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #163026;
+    border-bottom: 1px solid rgba(22, 48, 38, 0.09);
+    background: linear-gradient(135deg, #f4f7f1, #edf4eb);
+}
+
+.cms-modal form {
+    padding: 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Modal form fields                                                    */
+/* ------------------------------------------------------------------ */
+
+.cms-modal__field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.cms-modal__field label {
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: #3d5a50;
+    letter-spacing: 0.01em;
+}
+
+.cms-modal__field select,
+.cms-modal__field input[type="text"],
+.cms-modal__field input[type="number"],
+.cms-modal__field textarea {
+    padding: 9px 12px;
+    border: 1px solid rgba(22, 48, 38, 0.2);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    color: #132238;
+    background: #fafcfa;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    font-family: inherit;
+    resize: vertical;
+}
+
+.cms-modal__field select:focus,
+.cms-modal__field input[type="text"]:focus,
+.cms-modal__field input[type="number"]:focus,
+.cms-modal__field textarea:focus {
+    outline: none;
+    border-color: #5d9d46;
+    box-shadow: 0 0 0 3px rgba(93, 157, 70, 0.15);
+    background: #fff;
+}
+
+.cms-modal__field small {
+    font-size: 0.78rem;
+    align-self: flex-end;
+    margin-top: -2px;
+}
+
+.cms-modal__field input[type="file"] {
+    font-size: 0.88rem;
+    color: #4d6d60;
+    cursor: pointer;
+}
+
+.cms-modal__field--row {
+    flex-direction: row;
+    gap: 16px;
+}
+
+.cms-modal__field--row > div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.cms-modal__field--row label {
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: #3d5a50;
+}
+
+.cms-modal__field--row input[type="date"] {
+    padding: 9px 12px;
+    border: 1px solid rgba(22, 48, 38, 0.2);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    color: #132238;
+    background: #fafcfa;
+    font-family: inherit;
+    transition: border-color 0.15s;
+}
+
+.cms-modal__field--row input[type="date"]:focus {
+    outline: none;
+    border-color: #5d9d46;
+    box-shadow: 0 0 0 3px rgba(93, 157, 70, 0.15);
+}
+
+.cms-modal__field--check {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    background: rgba(93, 157, 70, 0.06);
+    border: 1px solid rgba(93, 157, 70, 0.18);
+    border-radius: 6px;
+}
+
+.cms-modal__field--check input[type="checkbox"] {
+    width: 17px;
+    height: 17px;
+    accent-color: #5d9d46;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.cms-modal__field--check label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #2d5a3a;
+    cursor: pointer;
+    margin: 0;
+}
+
+.cms-modal__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(22, 48, 38, 0.08);
+    margin-top: 4px;
+}
+
+.cms-modal__actions .btn {
+    padding: 10px 22px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.cms-modal__actions .btn-default {
+    background: #f4f7f1;
+    border-color: rgba(22, 48, 38, 0.18);
+    color: #3d5a50;
+}
+
+.cms-modal__actions .btn-default:hover {
+    background: #e8f0e4;
+}
+
+.cms-modal__actions .btn-primary {
+    background: #5d9d46;
+    border-color: #4d8a38;
+    color: #fff;
+}
+
+.cms-modal__actions .btn-primary:hover {
+    background: #4d8a38;
+}
+
+.cms-modal__actions .btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ------------------------------------------------------------------ */
+/* Markdown editor                                                      */
+/* ------------------------------------------------------------------ */
+
+.cms-md-editor {
+    border: 1px solid rgba(22, 48, 38, 0.2);
+    border-radius: 6px;
+    overflow: hidden;
+    background: #fafcfa;
+}
+
+.cms-md-editor__tabs {
+    display: flex;
+    border-bottom: 1px solid rgba(22, 48, 38, 0.12);
+    background: #f0f4ee;
+}
+
+.cms-md-editor__tab {
+    padding: 7px 18px;
+    border: none;
+    background: none;
+    font-size: 0.84rem;
+    font-weight: 500;
+    color: #6b8b7e;
+    cursor: pointer;
+    transition: color 0.15s, background 0.15s;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+}
+
+.cms-md-editor__tab:hover {
+    color: #163026;
+    background: rgba(22, 48, 38, 0.04);
+}
+
+.cms-md-editor__tab.is-active {
+    color: #163026;
+    font-weight: 600;
+    border-bottom-color: #5d9d46;
+    background: #fafcfa;
+}
+
+.cms-md-editor__input {
+    display: block;
+    width: 100%;
+    min-height: 220px;
+    padding: 14px 16px;
+    border: none;
+    background: transparent;
+    font-size: 0.92rem;
+    font-family: 'Fira Code', 'Consolas', monospace;
+    line-height: 1.65;
+    color: #1a2e26;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+.cms-md-editor__input:focus {
+    outline: none;
+}
+
+.cms-md-editor__preview {
+    min-height: 220px;
+    padding: 14px 16px;
+    font-size: 0.92rem;
+    line-height: 1.7;
+    color: #1a2e26;
+}
+
+.cms-md-editor__preview h2 { font-size: 1.2rem; margin: 1.2em 0 0.5em; color: #163026; }
+.cms-md-editor__preview h3 { font-size: 1.05rem; margin: 1em 0 0.4em; color: #163026; }
+.cms-md-editor__preview p  { margin: 0 0 0.8em; }
+.cms-md-editor__preview ul,
+.cms-md-editor__preview ol { padding-left: 1.4em; margin: 0 0 0.8em; }
+.cms-md-editor__preview blockquote {
+    border-left: 3px solid #5d9d46;
+    margin: 0.8em 0;
+    padding: 0.4em 1em;
+    color: #5b7a6e;
+}
+.cms-md-editor__preview code {
+    background: rgba(22, 48, 38, 0.07);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 0.88em;
+}
+.cms-md-editor__preview img {
+    max-width: 100%;
+    border-radius: 4px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Responsive                                                           */
+/* ------------------------------------------------------------------ */
+
+@media (max-width: 768px) {
+    .zalf-cms__header,
+    .zalf-cms__tabs,
+    .zalf-cms__panel {
+        width: calc(100% - 32px);
+    }
+
+    .zalf-cms__header {
+        flex-wrap: wrap;
+        padding: 24px 0 20px;
+    }
+
+    .zalf-cms__tabs {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .cms-editor__row {
+        flex-wrap: wrap;
+    }
+
+    .cms-editor__actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .cms-modal-backdrop {
+        padding: 80px 16px 32px;
+        align-items: flex-start;
+    }
+
+    .cms-modal form {
+        padding: 18px 20px;
+    }
+
+    .cms-modal__title {
+        padding: 18px 20px 16px;
+    }
+}

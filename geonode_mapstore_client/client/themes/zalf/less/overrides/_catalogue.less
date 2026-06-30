@@ -1,0 +1,1670 @@
+// ZALF Catalogue — Scientific Repository Redesign
+// Scope: .gn-catalogue — affects /catalogue/ pages only, never viewer panels.
+// Inspired by Zenodo, Dataverse, PANGAEA, HuggingFace Datasets, GitHub Search.
+//
+// Approach: CSS-only overrides. No core JS/JSX changes.
+// All selectors are scoped or prefixed to avoid bleeding into map viewers.
+
+// ─────────────────────────────────────────────────────────────
+// 0. Local tokens (catalogue-specific, built on ZALF variables)
+// ─────────────────────────────────────────────────────────────
+
+.gn-catalogue {
+    --zc-hero-height: 144px;
+    --zc-surface: #ffffff;
+    --zc-surface-alt: #f7f8fa;
+    --zc-surface-hover: #f0f4f8;
+    --zc-border: #e2e6ea;
+    --zc-border-strong: #c9d1d9;
+    --zc-text: #1a1e23;
+    --zc-text-secondary: #586069;
+    --zc-text-muted: #8b949e;
+    --zc-accent: var(--zalf-brand-primary);
+    --zc-accent-hover: var(--zalf-brand-primary-hover);
+    --zc-accent-light: var(--zalf-brand-surface-light);
+    --zc-radius-sm: 6px;
+    --zc-radius-md: 10px;
+    --zc-radius-lg: 14px;
+    --zc-shadow-card: 0 1px 3px rgba(0, 0, 0, .08), 0 4px 12px rgba(0, 0, 0, .05);
+    --zc-shadow-hover: 0 4px 12px rgba(0, 0, 0, .12), 0 8px 24px rgba(0, 0, 0, .08);
+    --zc-filter-width: 280px;
+    --zc-content-width: 1380px; // max-width of sidebar + content combined
+    --zc-hero-bg: url('../../../../../static/img/bg_dataset_landing_topo.png');
+
+    // Page background
+    background-color: var(--zc-surface-alt);
+    font-family: var(--zalf-font-sans);
+    color: var(--zc-text);
+}
+
+// ─────────────────────────────────────────────────────────────
+// 1. Page layout — CSS Grid two-column layout (Zenodo-style)
+//
+// Actual DOM (discovered via Playwright):
+//   .gn-catalogue
+//     .zalf-navigation-shell          ← sticky nav (direct child)
+//     DIV > .app-router > .gn-components
+//       .ms-resources-grid            ← ResourcesGrid plugin
+//       .ms-resources-panel-wrapper._fixed  ← filter (position:fixed)
+//       .ms-footer                    ← ZalfFooter plugin
+//
+// Strategy:
+//   1. Make .gn-components a CSS Grid (overrides its default flex)
+//   2. .ms-resources-panel-wrapper  → grid col 1 (sticky sidebar)
+//   3. .ms-resources-grid           → grid col 2 (content)
+//   4. .ms-footer                   → full width (col 1/-1)
+//   5. Default (filter closed): col 1 = 0px (hidden), col 2 = 1fr
+//      Filter open (:has): col 1 = 280px, col 2 = 1fr
+// ─────────────────────────────────────────────────────────────
+
+.gn-catalogue {
+
+    // ── CSS Grid on the actual plugin container ───────────────
+    //
+    // Scoped with :has(.ms-resources-grid) so the grid ONLY activates on the
+    // catalogue view — never on landing pages, upload, viewer, etc., which
+    // all render into the same .gn-components but without ResourcesGrid.
+    //
+    // 4-column grid: [gutter-L] [sidebar] [content] [gutter-R]
+    // Gutters collapse to 0 on narrow viewports.
+    // Footer spans 1/-1 = always full viewport width.
+    // ─────────────────────────────────────────────────────────
+    .gn-components:has(.ms-resources-grid) {
+        display: grid !important;
+        width: 100%;
+        position: relative;
+        background: var(--zc-surface-alt);
+        // Default: gutter | sidebar | content | gutter
+        grid-template-columns:
+            minmax(0px, calc((100% - var(--zc-content-width)) / 2)) var(--zc-filter-width) 1fr minmax(0px, calc((100% - var(--zc-content-width)) / 2));
+        grid-template-rows: auto auto;
+        align-items: start;
+    }
+
+    // When filter open: keep the same sidebar width
+    &:has(.zalf-filter-panel--open) .gn-components:has(.ms-resources-grid) {
+        grid-template-columns:
+            minmax(0px, calc((100% - var(--zc-content-width)) / 2)) var(--zc-filter-width) 1fr minmax(0px, calc((100% - var(--zc-content-width)) / 2));
+    }
+
+    // ── Col 2: filter panel (sidebar) ────────────────────────
+    .gn-components:has(.ms-resources-grid)>.ms-resources-panel-wrapper {
+        grid-column: 2;
+        grid-row: 1;
+        padding-top: calc(var(--zc-hero-height) + 12px);
+        padding-bottom: 24px;
+    }
+
+    // ── Col 3: resource grid (main content) ──────────────────
+    .gn-components>.ms-resources-grid {
+        grid-column: 3;
+        grid-row: 1;
+        min-width: 0;
+        min-height: calc(100vh - 78px);
+        background: transparent;
+        padding-top: 0;
+    }
+
+    // ── Footer: cols 1 / -1 = full viewport width ─────────────
+    .gn-components:has(.ms-resources-grid)>.ms-footer {
+        grid-column: 1 / -1;
+        grid-row: 2;
+    }
+
+    // Cancel core's auto margin-left — grid handles column spacing
+    .ms-resources-grid,
+    .gn-resource-page-catalog-section {
+        margin-left: 0 !important;
+    }
+
+    // Inner content padding (no extra max-width — right col bounds it)
+    .ms-resources-container {
+        background-color: transparent;
+        padding: 0;
+        margin-top: 0;
+    }
+
+    .ms-resources-container>div {
+        padding: 0 24px;
+    }
+}
+
+// ─────────────────────────────────────────────────────────────
+// 2. Toolbar / Resources Menu bar
+// ─────────────────────────────────────────────────────────────
+
+.gn-catalogue {
+
+    .ms-resources-menu {
+        border-bottom: 1px solid rgba(199, 216, 225, 0.9);
+        padding: 16px 0 16px !important;
+        // Break out of the grid col to fill the full viewport width.
+        // col-3 starts at: gutter + sidebar. Gutter = max(0, (100vw - content-width) / 2).
+        // The menu is now a direct child of ms-resources-grid (no inner 24px padding offset).
+        // ~"" escapes the expression so LESS passes it as raw CSS (max() is reserved by LESS).
+        margin: ~"0 0 18px calc(-1 * (max(0px, (100vw - var(--zc-content-width)) / 2) + var(--zc-filter-width)))";
+        width: 100vw;
+        top: var(--ms-menu-sticky-top, 0);
+        z-index: 1;
+        overflow: visible;
+        isolation: isolate;
+        box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.55);
+        backdrop-filter: blur(8px);
+        min-height: var(--zc-hero-height);
+        justify-content: flex-start;
+        border-radius: 0;
+    }
+
+    .ms-resources-menu>.ms-text,
+    .ms-resources-menu>.ms-flex-box,
+    .ms-resources-menu>._relative.ms-resources-list-header {
+        width: min(calc(100vw - 48px), var(--zc-content-width));
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .ms-resources-menu::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+            linear-gradient(90deg, rgba(198, 223, 142, 0.82) 0%, rgba(186, 231, 214, 0.5) 34%, rgba(130, 193, 229, 0.62) 100%),
+            url('../../../../../static/img/bg_dataset_landing_topo.png') center center / cover no-repeat;
+        z-index: -1;
+    }
+
+    .ms-resources-menu::after {
+        content: "";
+        position: absolute;
+        inset: auto 0 0;
+        height: 1px;
+        background: rgba(255, 255, 255, 0.7);
+        z-index: -1;
+    }
+
+    // Prevent ms-main-colors from overriding the page background
+    .ms-main-colors {
+        background-color: transparent !important;
+    }
+
+    // Resource count text
+    .ms-resources-menu .ms-text {
+        color: var(--zc-text-secondary);
+        font-size: 0.85rem;
+    }
+
+    .ms-resources-menu>.ms-text {
+        font-size: clamp(2rem, 4vw, 3rem) !important;
+        font-weight: 700;
+        color: #132238;
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+        margin-top: 10px;
+        margin-bottom: 6px;
+        max-width: none;
+    }
+
+    .ms-resources-menu>.ms-flex-box {
+        align-items: center;
+        gap: 14px;
+        margin-top: 0;
+    }
+
+    .ms-resources-menu>.ms-flex-box>.ms-flex-fill .ms-text {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #446a2a;
+    }
+
+    .ms-resources-menu>.ms-flex-box>.ms-flex-fill .ms-text::before {
+        content: "\f178";
+        font-family: "mapstore2";
+        color: var(--zc-accent);
+        font-size: 0.82rem;
+    }
+
+    // View-toggle button (grid / list)
+    .ms-resources-menu>div>.btn-default,
+    .ms-resources-menu>div>div>.btn-default {
+        border: 1px solid rgba(210, 223, 228, 0.95);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.92);
+        color: var(--zc-text-secondary);
+        padding: 11px 14px;
+        font-size: 0.88rem;
+        box-shadow: 0 8px 20px rgba(31, 57, 46, 0.08);
+        transition: background 120ms, border-color 120ms, color 120ms, box-shadow 120ms, transform 120ms;
+
+        &:hover,
+        &:focus {
+            background: #ffffff;
+            border-color: var(--zc-accent);
+            color: var(--zc-accent);
+            transform: translateY(-1px);
+            box-shadow: 0 10px 24px rgba(31, 57, 46, 0.12);
+        }
+    }
+
+    .ms-resources-menu>div>.square-button-md.btn.btn-default {
+        width: 46px;
+        min-width: 46px;
+        height: 46px;
+        padding: 0;
+        border-radius: 12px;
+        font-size: 1rem;
+        position: relative;
+    }
+
+    .ms-resources-menu>div>.square-button-md.btn.btn-default .glyphicon {
+        color: var(--zc-accent);
+    }
+
+    .ms-resources-menu>div>.square-button-md.btn.btn-default::after {
+        content: "";
+        position: absolute;
+        inset: -1px;
+        border-radius: 13px;
+        border: 1px solid rgba(78, 156, 24, 0.12);
+        pointer-events: none;
+    }
+
+    // Sort dropdown toggle
+    .ms-resources-menu .dropdown>.dropdown-toggle {
+        border: 1px solid rgba(210, 223, 228, 0.95);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.92);
+        color: var(--zc-text-secondary);
+        font-size: 0.95rem;
+        padding: 12px 18px;
+        min-width: 150px;
+        text-align: left;
+        box-shadow: 0 8px 20px rgba(31, 57, 46, 0.08);
+        transition: border-color 120ms, background 120ms, box-shadow 120ms;
+
+        &:hover,
+        &:focus {
+            border-color: var(--zc-accent);
+            background: #ffffff;
+            box-shadow: 0 10px 24px rgba(31, 57, 46, 0.12);
+        }
+    }
+
+    .ms-resources-menu .ms-menu-list {
+        margin-left: auto;
+    }
+
+    // Sort dropdown menu
+    .ms-resources-menu .dropdown-menu {
+        border: 1px solid var(--zc-border);
+        border-radius: var(--zc-radius-md);
+        box-shadow: var(--zc-shadow-hover);
+        padding: 6px 0;
+        min-width: 180px;
+        background: var(--zc-surface);
+        z-index: 30;
+
+        >li>a {
+            color: var(--zc-text);
+            font-size: 0.85rem;
+            padding: 8px 16px;
+
+            &:hover,
+            &:focus {
+                background: var(--zc-accent-light);
+                color: var(--zc-accent);
+            }
+        }
+
+        >li.active>a {
+            background: var(--zc-accent-light);
+            color: var(--zc-accent);
+            font-weight: 600;
+        }
+    }
+
+    // "Add Resource" / action menu in toolbar
+    .ms-resources-menu .btn-primary {
+        border: 1px solid rgba(210, 223, 228, 0.95);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.92);
+        color: var(--zc-accent) !important;
+        font-size: 0.92rem;
+        font-weight: 700;
+        padding: 12px 18px;
+        box-shadow: 0 8px 20px rgba(31, 57, 46, 0.08);
+
+        &:hover,
+        &:focus {
+            background: #ffffff;
+            border-color: var(--zc-accent);
+        }
+    }
+
+    .ms-resources-menu .dropdown.open,
+    .ms-resources-menu .open>.dropdown-toggle,
+    .ms-resources-menu .btn-group.open {
+        z-index: 31;
+    }
+}
+
+// ─────────────────────────────────────────────────────────────
+// Metadata modal polish
+// ─────────────────────────────────────────────────────────────
+
+.modal-content:has(.gn-metadata-preview) {
+    border: 0;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 26px 70px rgba(17, 33, 24, 0.28);
+}
+
+.modal-content:has(.gn-metadata-preview)>.modal-header,
+.gn-simple-dialog .ms-resizable-modal>.modal-content>.modal-header {
+
+    align-items: center;
+    padding: 18px 22px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+    background:
+        linear-gradient(90deg, rgba(29, 74, 49, 0.96) 0%, rgba(52, 108, 54, 0.94) 52%, rgba(103, 153, 74, 0.9) 100%),
+        url('../../../../../static/img/metadata-top-plant-background.png') center center / cover no-repeat;
+}
+
+.modal-content:has(.gn-metadata-preview) [role="header"].ms-flex-box,
+.gn-simple-dialog [role="header"].ms-flex-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 18px 22px;
+
+}
+
+.modal-content:has(.gn-metadata-preview)>.modal-header .modal-title,
+.modal-content:has(.gn-metadata-preview)>.modal-header .modal-title .ms-title,
+.gn-simple-dialog .ms-resizable-modal>.modal-content>.modal-header .modal-title,
+.gn-simple-dialog .ms-resizable-modal>.modal-content>.modal-header .modal-title .ms-title {
+    color: #ffffff;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+}
+
+.modal-content:has(.gn-metadata-preview) [role="header"].ms-flex-box .ms-text,
+.modal-content:has(.gn-metadata-preview) [role="header"].ms-flex-box .ms-text span,
+.gn-simple-dialog [role="header"].ms-flex-box .ms-text,
+.gn-simple-dialog [role="header"].ms-flex-box .ms-text span {
+    color: #ffffff !important;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    text-shadow: none;
+    background: transparent !important;
+}
+
+.modal-content:has(.gn-metadata-preview)>.modal-header .close,
+.gn-simple-dialog .ms-resizable-modal>.modal-content>.modal-header .close {
+    color: #ffffff;
+    opacity: 0.92;
+    text-shadow: none;
+}
+
+.modal-content:has(.gn-metadata-preview) [role="header"].ms-flex-box .btn,
+.modal-content:has(.gn-metadata-preview) [role="header"].ms-flex-box .square-button-md,
+.gn-simple-dialog [role="header"].ms-flex-box .btn,
+.gn-simple-dialog [role="header"].ms-flex-box .square-button-md {
+    margin-left: auto;
+    border-color: rgba(255, 255, 255, 0.22) !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+    color: #ffffff !important;
+    box-shadow: none;
+}
+
+.modal-content:has(.gn-metadata-preview) [role="header"].ms-flex-box .btn .glyphicon,
+.gn-simple-dialog [role="header"].ms-flex-box .btn .glyphicon {
+    color: #ffffff !important;
+}
+
+.modal-content:has(.gn-metadata-preview)>.modal-header .close:hover,
+.gn-simple-dialog .ms-resizable-modal>.modal-content>.modal-header .close:hover {
+    opacity: 1;
+}
+
+.modal-content:has(.gn-metadata-preview)>.modal-body,
+.gn-simple-dialog .ms-resizable-modal>.modal-content>.modal-body {
+    padding: 0;
+    background: linear-gradient(180deg, #eff4f0 0%, #f8fbf8 100%);
+}
+
+.gn-metadata-preview {
+    background: linear-gradient(180deg, #eff4f0 0%, #f8fbf8 100%);
+}
+
+.gn-metadata-preview iframe,
+.gn-simple-dialog iframe {
+    background: transparent;
+}
+
+// ─────────────────────────────────────────────────────────────
+// 3. Filter sidebar — sticky left column
+//
+// .ms-resources-panel-wrapper has _fixed (position:fixed) and
+// inline style="top:78px; bottom:0; width:100%; visibility:…"
+//
+// We override:
+//   1. position: sticky  → in-flow sticky column (not fixed overlay)
+//   2. top/height        → sticks below the 78px nav, fills viewport
+//   3. overflow-y:auto   → sidebar scrolls independently
+//   4. visibility:visible → ignore JS inline hide/show
+// The inline width:100% works for us (fills the 280px grid column).
+// ─────────────────────────────────────────────────────────────
+
+.gn-catalogue {
+
+    // ── Panel wrapper: static left column ────────────────────
+    // Static positioning: filter occupies its natural height in the layout,
+    // pushes the footer down cleanly, and never overlaps anything.
+    .gn-components>.ms-resources-panel-wrapper {
+        position: static !important;
+        height: auto !important;
+        overflow: visible !important;
+        visibility: visible !important;
+        z-index: auto !important;
+
+        // Keep wrapper transparent; the filter card provides its own surface.
+        background: transparent !important;
+        border-right: none;
+        box-shadow: none !important;
+    }
+
+    // ── Filter form: natural height inside the sticky wrapper ─
+    .ms-resources-filter {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        overflow: visible !important;
+        background: transparent !important;
+        border-right: none !important;
+        box-shadow: none !important;
+    }
+
+    .zalf-filter-panel {
+        background: var(--zc-surface);
+        min-height: 100%;
+        border: 1px solid var(--zc-border);
+        border-radius: 24px;
+        box-shadow: 0 18px 40px rgba(15, 31, 54, 0.08);
+        overflow: hidden;
+        width: calc(100% - 24px);
+        margin: 12px 12px 12px;
+    }
+
+    .zalf-filter-panel .ol-viewport,
+    .zalf-filter-panel .leaflet-container,
+    .zalf-filter-panel .ms-map-layout {
+        min-width: 0;
+        margin: 0 auto;
+        border-radius: 14px;
+        overflow: hidden;
+    }
+
+    .zalf-filter-panel .ol-viewport,
+    .zalf-filter-panel .leaflet-container {
+        height: 180px !important;
+    }
+
+    .zalf-filter-panel--closed {
+        min-height: auto;
+    }
+
+    // ── Hide core FiltersForm header — ZalfFiltersForm has its own toggle ──
+    .zalf-filter-panel .ms-filters-form>._sticky {
+        display: none !important;
+    }
+
+    // ── Collapsible toggle header ──────────────────────────────
+    .zalf-filter-panel-toggle {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        padding: 16px;
+        background: #ffffff;
+        border: none;
+        cursor: pointer;
+        font-family: var(--zalf-font-sans);
+        text-align: left;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background: #f5f7fa;
+        }
+
+        .zalf-filter-panel-toggle-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            flex: 0 0 32px;
+            border-radius: 12px;
+            background: #eef8e5;
+            color: #75b72a;
+            font-size: 0.95rem;
+        }
+
+        .zalf-filter-panel-toggle-copy {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .zalf-filter-panel-toggle-label {
+            font-size: 1rem;
+            font-weight: 800;
+            line-height: 1.2;
+            color: #1f2b3d;
+            letter-spacing: 0;
+            text-transform: none;
+        }
+
+        .zalf-filter-panel-toggle-description {
+            margin-top: 0.15rem;
+            font-size: 0.82rem;
+            font-weight: 400;
+            line-height: 1.35;
+            color: #7b8aa0;
+        }
+
+        .zalf-filter-panel-caret {
+            margin-left: auto;
+            font-size: 0.875rem;
+            color: #7b8aa0;
+            transition: transform 0.3s ease;
+        }
+    }
+
+    .zalf-filter-panel--open .zalf-filter-panel-caret {
+        transform: rotate(180deg);
+    }
+
+    .zalf-filter-panel--open .zalf-filter-panel-toggle {
+        border-bottom: 1px solid #edf2f7;
+        border-radius: 24px 24px 0 0;
+        background: #ffffff;
+    }
+
+    .zalf-filter-panel--closed .zalf-filter-panel-toggle {
+        border-radius: 24px;
+    }
+
+    .zalf-filter-panel-body {
+        padding: 0 0 12px;
+    }
+
+    // ── Filter accordion groups ────────────────────────────────
+    .ms-filter-accordion {
+        padding: 0 18px 24px;
+
+        .ms-filter-header,
+        .form-group>label,
+        .panel-heading {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--zc-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            padding: 14px 0 6px;
+            border: 0;
+            background: transparent;
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid rgba(226, 230, 234, 0.85);
+        }
+
+        .form-group:last-child {
+            border-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .checkbox label,
+        .radio label {
+            font-size: 0.86rem;
+            color: var(--zc-text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 0;
+            padding-left: 0;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: color 120ms ease;
+
+            input {
+                margin: 0;
+                accent-color: var(--zc-accent);
+            }
+
+            &:hover {
+                color: var(--zc-accent);
+            }
+        }
+
+        .ms-tag {
+            border-radius: 999px;
+            font-size: 0.75rem;
+            padding: 2px 10px;
+            border: 1px solid var(--zc-border);
+            background: var(--zc-surface-alt);
+            color: var(--zc-text-secondary);
+            transition: background 120ms, border-color 120ms, color 120ms;
+            cursor: pointer;
+
+            &.active {
+                background: var(--zc-accent-light);
+                border-color: var(--zc-accent);
+                color: var(--zc-accent);
+                font-weight: 600;
+            }
+
+            &:hover {
+                border-color: var(--zc-accent);
+                color: var(--zc-accent);
+            }
+        }
+
+        .form-control {
+            border: 1px solid var(--zc-border);
+            border-radius: var(--zc-radius-sm);
+            font-size: 0.85rem;
+            background: var(--zc-surface-alt);
+            color: var(--zc-text);
+            padding: 6px 10px;
+            height: 34px;
+
+            &:focus {
+                border-color: var(--zc-accent);
+                outline: none;
+                box-shadow: 0 0 0 3px rgba(78, 156, 24, 0.15);
+                background: var(--zc-surface);
+            }
+        }
+
+        .Select {
+            .Select-control {
+                border: 1px solid var(--zc-border);
+                border-radius: 8px;
+                min-height: 38px;
+                background: var(--zc-surface-alt);
+                box-shadow: none;
+            }
+
+            &.is-focused .Select-control,
+            .Select-control:hover {
+                border-color: var(--zc-accent);
+                background: var(--zc-surface);
+            }
+
+            .Select-placeholder,
+            .Select-value-label,
+            .Select-input>input {
+                color: var(--zc-text);
+                font-size: 0.84rem;
+            }
+
+            .Select-placeholder {
+                color: var(--zc-text-muted);
+            }
+
+            .Select-menu-outer {
+                border: 1px solid var(--zc-border);
+                border-radius: 10px;
+                box-shadow: var(--zc-shadow-hover);
+                margin-top: 6px;
+            }
+
+            .Select-option {
+                font-size: 0.84rem;
+                padding: 8px 12px;
+            }
+
+            .Select-option.is-focused {
+                background: var(--zc-accent-light);
+                color: var(--zc-accent);
+            }
+        }
+
+        .panel+.panel {
+            border-top: 1px solid var(--zc-border);
+        }
+    }
+
+    // ── Clear/close buttons ────────────────────────────────────
+    .ms-resources-filter .btn-link,
+    .ms-resources-filter .btn-default {
+        font-size: 0.82rem;
+        color: var(--zc-text-secondary);
+        border: 1px solid var(--zc-border);
+        border-radius: var(--zc-radius-sm);
+        padding: 4px 10px;
+
+        &:hover {
+            color: var(--zc-accent);
+            border-color: var(--zc-accent);
+        }
+    }
+
+    .zalf-filter-panel .ms-filters-form {
+        background: transparent;
+    }
+
+    .zalf-filter-panel .ms-filters-form form {
+        padding-top: 8px;
+    }
+
+    .zalf-filter-panel .ms-filters-form .ms-filter-by {
+        margin: 0;
+        padding: 0 18px 10px;
+        border-bottom: 1px solid rgba(226, 230, 234, 0.85);
+
+        .ms-text {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--zc-text-muted);
+        }
+    }
+}
+
+// ─────────────────────────────────────────────────────────────
+// 4. Search bar (ms-resources-search)
+// ─────────────────────────────────────────────────────────────
+
+.gn-catalogue {
+
+    .ms-resources-search {
+        padding: 20px 24px 12px;
+        background: var(--zc-surface-alt);
+    }
+
+    .ms-resources-search-field {
+        max-width: 680px;
+        margin: 0;
+        background: var(--zc-surface);
+        border: 1px solid var(--zc-border-strong) !important;
+        border-radius: var(--zc-radius-md) !important;
+        padding: 6px 14px !important;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+        transition: border-color 150ms, box-shadow 150ms;
+        border-bottom: 1px solid var(--zc-border-strong) !important;
+
+        &:has(input:focus) {
+            border-color: var(--zc-accent) !important;
+            box-shadow: 0 0 0 3px rgba(78, 156, 24, 0.18);
+            outline: none !important;
+            border-bottom: 1px solid var(--zc-accent) !important;
+        }
+
+        input,
+        input:focus {
+            font-size: 0.97rem;
+            color: var(--zc-text);
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            outline: none;
+
+            &::placeholder {
+                color: var(--zc-text-muted);
+            }
+        }
+
+        .btn,
+        .btn-default {
+            color: var(--zc-text-muted);
+            background: transparent;
+            border: none;
+            box-shadow: none;
+
+            &:hover {
+                color: var(--zc-accent);
+            }
+        }
+    }
+}
+
+// ─────────────────────────────────────────────────────────────
+// 5. Grid cards — compact information-rich cards (4 cols)
+// ─────────────────────────────────────────────────────────────
+
+.gn-catalogue {
+
+    .ms-resources-container-grid>li {
+        padding: 6px;
+    }
+
+    .ms-resource-card-type-grid {
+        background: var(--zc-surface);
+        border: 1px solid rgba(222, 228, 233, 0.95);
+        border-radius: 16px;
+        box-shadow: 0 8px 22px rgba(31, 57, 46, 0.08);
+        transition: box-shadow 160ms ease, border-color 160ms ease, transform 120ms ease;
+        overflow: hidden;
+        padding: 0;
+        cursor: pointer;
+
+        &:hover {
+            box-shadow: 0 14px 32px rgba(31, 57, 46, 0.14);
+            border-color: var(--zc-accent);
+            transform: translateY(-1px);
+        }
+
+        &._active {
+            border-color: var(--zc-accent);
+            box-shadow: 0 0 0 2px rgba(78, 156, 24, 0.22), var(--zc-shadow-hover);
+        }
+    }
+
+    // Thumbnail — ~40% shorter than the default 130px
+    .ms-resource-card-type-grid .ms-resource-card-img {
+        height: 104px;
+        object-fit: cover;
+        width: 100%;
+        border-bottom: 1px solid var(--zc-border);
+    }
+
+    // Icon placeholder when no thumbnail
+    .ms-resource-card-type-grid .ms-resource-card-body>.ms-flex-box:not(._fill):first-child {
+        height: 104px;
+        background: var(--zc-surface-alt);
+        border-bottom: 1px solid var(--zc-border);
+    }
+
+    // Card body padding
+    .ms-resource-card-type-grid .ms-resource-card-body>._fill {
+        padding: 12px 14px 10px;
+        gap: 5px;
+    }
+
+    // Title
+    .ms-resource-card-type-grid .ms-resource-card-body-header .ms-text {
+        font-size: 0.98rem;
+        font-weight: 700;
+        color: var(--zc-text);
+        line-height: 1.3;
+
+        a {
+            color: var(--zc-text);
+            text-decoration: none;
+
+            &:hover {
+                color: var(--zc-accent);
+            }
+        }
+
+        .glyphicon {
+            color: var(--zc-accent);
+            font-size: 0.85rem;
+            margin-right: 4px;
+        }
+    }
+
+    // Metadata rows
+    .ms-resource-card-type-grid .ms-resource-card-body>._fill>.ms-text {
+        font-size: 0.82rem;
+        color: var(--zc-text-secondary);
+        line-height: 1.4;
+
+        a {
+            color: var(--zc-text-secondary);
+            text-decoration: none;
+
+            &:hover {
+                color: var(--zc-accent);
+            }
+        }
+
+        .glyphicon {
+            color: var(--zc-text-muted);
+            font-size: 0.72rem;
+            margin-right: 3px;
+        }
+    }
+
+    // Tags
+    .ms-resource-card-type-grid .ms-tag {
+        display: inline-block;
+        border-radius: 999px;
+        font-size: 0.7rem;
+        padding: 2px 8px;
+        background: var(--zc-surface-alt);
+        border: 1px solid var(--zc-border);
+        color: var(--zc-text-secondary);
+        margin: 1px 2px 1px 0;
+        text-decoration: none;
+        transition: background 100ms, color 100ms;
+
+        &:hover,
+        &.active {
+            background: var(--zc-accent-light);
+            border-color: var(--zc-accent);
+            color: var(--zc-accent);
+        }
+    }
+
+    // Footer row
+    .ms-resource-card-type-grid .ms-resource-card-body-footer {
+        padding-top: 8px;
+        border-top: 1px solid var(--zc-border);
+        margin-top: 2px;
+    }
+
+    .ms-resource-card-type-grid .ms-resource-icon-logo {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+    }
+
+    // Action overlay
+    .ms-resource-card-type-grid .ms-resource-card-action-buttons {
+        .dropdown-toggle {
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(210, 223, 228, 0.95);
+            border-radius: 12px;
+            padding: 6px 8px;
+            color: var(--zc-text-secondary);
+            backdrop-filter: blur(4px);
+            box-shadow: 0 8px 18px rgba(31, 57, 46, 0.08);
+
+            &:hover {
+                border-color: var(--zc-accent);
+                color: var(--zc-accent);
+            }
+        }
+
+        .dropdown-menu {
+            border-radius: var(--zc-radius-md);
+            border: 1px solid var(--zc-border);
+            box-shadow: var(--zc-shadow-hover);
+            padding: 4px 0;
+            min-width: 160px;
+            background: var(--zc-surface);
+
+            >li>a,
+            >li>button {
+                font-size: 0.83rem;
+                padding: 8px 14px;
+                color: var(--zc-text);
+
+                &:hover {
+                    background: var(--zc-accent-light);
+                    color: var(--zc-accent);
+                }
+            }
+        }
+    }
+
+    // Inline buttons
+    .ms-resource-card-type-grid .ms-resource-card-buttons .btn {
+        border: 1px solid var(--zc-border);
+        border-radius: var(--zc-radius-sm);
+        background: transparent;
+        color: var(--zc-text-muted);
+        padding: 3px 7px;
+        font-size: 0.78rem;
+        transition: color 120ms, border-color 120ms;
+
+        &:hover {
+            color: var(--zc-accent);
+            border-color: var(--zc-accent);
+        }
+    }
+}
+
+// ─────────────────────────────────────────────────────────────
+// 6. List view — Zenodo-style repository rows
+//    Structure: [icon] [stacked metadata columns] [actions]
+//    The ._fill metadata flex is forced column so all entries
+//    stack vertically (title → author → description → date)
+//    instead of appearing as horizontal table columns.
+// ─────────────────────────────────────────────────────────────
+
+.gn-catalogue {
+
+    // Full-width rows separated by hairlines
+    .ms-resources-container-list {
+        padding: 0;
+        overflow: hidden; // prevent any child from escaping the list width
+
+        >li {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0;
+            overflow: hidden;
+            border-bottom: 1px solid var(--zc-border);
+            transition: background 120ms;
+
+            &:first-child {
+                border-top: 1px solid var(--zc-border);
+            }
+
+            &:hover {
+                background: transparent;
+            }
+        }
+    }
+
+    // Hide the table header (not relevant in stacked layout)
+    .ms-resources-list-header {
+        display: none;
+    }
+
+    .ms-resource-card-type-list {
+        border: 1px solid rgba(222, 228, 233, 0.95);
+        border-left: 3px solid var(--zc-accent);
+        border-radius: 18px;
+        box-shadow: 0 8px 22px rgba(31, 57, 46, 0.08);
+        background: var(--zc-surface);
+        padding: 18px 24px;
+        margin: 10px 0;
+        transition: box-shadow 160ms ease, border-color 160ms ease, transform 120ms ease;
+
+        &:hover {
+            box-shadow: 0 14px 32px rgba(31, 57, 46, 0.14);
+            border-color: var(--zc-accent);
+            transform: translateY(-1px);
+        }
+
+        // ── Left: resource type icon ──────────────────────────
+        .ms-resource-card-limit:first-child {
+            width: 64px;
+            min-width: 64px;
+            height: 64px;
+            align-items: center;
+            justify-content: center;
+            margin-right: 18px;
+            border-radius: 16px;
+            background: linear-gradient(180deg, #f0f8eb 0%, #e5f1e9 100%);
+            color: var(--zc-accent);
+            font-size: 1.45rem;
+            box-shadow: inset 0 0 0 1px rgba(78, 156, 24, 0.08);
+        }
+
+        // ── Middle: Zenodo-style stacked layout ───────────────
+        //
+        // flex-direction: row + flex-wrap: wrap lets us control
+        // which items share a row via flex-basis.
+        //
+        // Most items: flex-basis 100% → each on its own row.
+        // Bottom row exception:
+        //   created  → flex: 1 (expands to fill available space)
+        //   views    → flex: 0 auto (fits content, right side)
+        //   downloads→ flex: 0 auto (fits content, right side)
+        //
+        // Result:
+        //   Title
+        //   Authors
+        //   Description (2-line clamp)
+        //   📁 Part of [Group]
+        //   🕐 Uploaded on June 18, 2025        👁 591  ⬇ 259
+        // ─────────────────────────────────────────────────────
+        // In the current catalogue DOM the metadata column renders as:
+        // <div class="ms-flex-fill ms-flex-box _flex _flex-center-v">...</div>
+        .ms-resource-card-body>.ms-flex-fill.ms-flex-box._flex._flex-center-v {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
+            align-items: baseline !important;
+            align-content: flex-start !important;
+            row-gap: 5px !important;
+            column-gap: 0 !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+
+        // Default: full-width row, secondary text
+        .ms-resource-card-body>.ms-flex-fill.ms-flex-box._flex._flex-center-v>.ms-text {
+            flex: 0 0 100% !important;
+            width: 100% !important;
+            padding: 0 !important;
+            font-size: 0.9rem;
+            color: var(--zc-text-secondary);
+            line-height: 1.5;
+
+            a {
+                color: var(--zc-text-secondary);
+                text-decoration: none;
+
+                &:hover {
+                    color: var(--zc-accent);
+                }
+            }
+
+            .glyphicon {
+                font-size: 0.8rem;
+                margin-right: 7px;
+                color: var(--zc-text-muted);
+            }
+        }
+
+        // ── Title ─────────────────────────────────────────────
+        .ms-resource-card-body>.ms-flex-fill.ms-flex-box._flex._flex-center-v>.ms-text:first-child {
+            font-size: 1.12rem !important;
+            font-weight: 700 !important;
+            color: var(--zc-accent) !important;
+            line-height: 1.35;
+            margin-bottom: 3px;
+
+            a {
+                color: var(--zc-accent) !important;
+                text-decoration: none;
+
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
+        }
+
+        // ── Authors ───────────────────────────────────────────
+        .ms-resource-card-body>.ms-flex-fill.ms-flex-box._flex._flex-center-v>.ms-text:has(.glyphicon-user) {
+            color: var(--zc-text);
+            font-size: 0.93rem;
+            font-weight: 600;
+
+            .glyphicon {
+                display: none;
+            }
+
+            // hide icon, name alone reads better
+        }
+
+        // ── Description: 2-line clamp ─────────────────────────
+        .ms-resource-card-body>.ms-flex-fill.ms-flex-box._flex._flex-center-v>.ms-text:not(:first-child):not(:has(.glyphicon)) {
+            color: var(--zc-text);
+            font-size: 0.9rem;
+            display: -webkit-box !important;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            white-space: normal !important;
+            line-height: 1.45;
+            max-height: calc(1.45em * 2);
+            max-width: 100%;
+            word-break: break-word;
+        }
+
+        // ── Group (Part of) ───────────────────────────────────
+        // Hidden in list mode to keep the sequence:
+        // title → authors → description → date → stats
+        .ms-resource-card-body>.ms-flex-fill.ms-flex-box._flex._flex-center-v>.ms-text:has(.glyphicon-folder-open) {
+            display: none !important;
+        }
+
+        // ── Date: full-width row ──────────────────────────────
+        .ms-resource-card-body>.ms-flex-fill.ms-flex-box._flex._flex-center-v>.ms-text:has(.glyphicon-time) {
+            flex: 0 0 100% !important;
+            width: 100% !important;
+            color: var(--zc-text-muted);
+            font-size: 0.88rem;
+            margin-top: 2px;
+        }
+
+        // ── Stats: share the last row ─────────────────────────
+        // Result:
+        //   🕐 June 18th, 2026
+        //   👁 N/A   ⬇ N/A
+        .ms-resource-card-body>.ms-flex-fill.ms-flex-box._flex._flex-center-v>.ms-text:has(.glyphicon-eye-open),
+        .ms-resource-card-body>.ms-flex-fill.ms-flex-box._flex._flex-center-v>.ms-text:has(.glyphicon-download) {
+            flex: 0 0 auto !important;
+            width: auto !important;
+            padding-left: 18px !important;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--zc-text-secondary);
+            white-space: nowrap;
+
+            .glyphicon {
+                color: var(--zc-text-muted);
+            }
+        }
+
+        .ms-resource-card-body>.ms-flex-fill.ms-flex-box._flex._flex-center-v>.ms-text:has(.glyphicon-eye-open) {
+            padding-left: 0 !important;
+            margin-top: 2px;
+        }
+
+        // ── Actions column ────────────────────────────────────
+        .ms-resource-card-limit:last-child {
+            width: 46px;
+            min-width: 46px;
+            align-items: flex-start;
+            padding-top: 0;
+        }
+    }
+
+    // Card body: top-align all columns, must shrink below content width
+    .ms-resource-card-type-list .ms-resource-card-body {
+        padding: 0;
+        align-items: flex-start !important;
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    .ms-resource-card-type-list .ms-resource-card-body>.ms-flex-fill.ms-flex-box._flex._flex-center-v {
+        min-width: 0;
+    }
+
+    // Action buttons dropdown
+    .ms-resource-card-type-list .ms-resource-card-action-buttons {
+        .dropdown-toggle {
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(210, 223, 228, 0.95);
+            border-radius: 12px;
+            padding: 8px 10px;
+            color: var(--zc-text-secondary);
+            box-shadow: 0 8px 18px rgba(31, 57, 46, 0.08);
+
+            &:hover {
+                border-color: var(--zc-accent);
+                color: var(--zc-accent);
+            }
+        }
+
+        .dropdown-menu {
+            border-radius: var(--zc-radius-md);
+            border: 1px solid var(--zc-border);
+            box-shadow: var(--zc-shadow-hover);
+            padding: 4px 0;
+            min-width: 160px;
+            background: var(--zc-surface);
+
+            >li>a,
+            >li>button {
+                font-size: 0.83rem;
+                padding: 8px 14px;
+                color: var(--zc-text);
+
+                &:hover {
+                    background: var(--zc-accent-light);
+                    color: var(--zc-accent);
+                }
+            }
+        }
+    }
+}
+
+// ─────────────────────────────────────────────────────────────
+// 7. Pagination
+// ─────────────────────────────────────────────────────────────
+
+.gn-catalogue {
+
+    // Sticky pagination bar
+    .ms-resources-grid>.ms-resources-container>div>.ms-flex-box._sticky {
+        background: transparent !important;
+        border-top: 1px solid var(--zc-border);
+        padding: 10px 0 !important;
+    }
+
+    .pagination.custom {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        >li {
+            margin: 0;
+        }
+
+        >li>a,
+        >li>span {
+            border-radius: var(--zc-radius-sm) !important;
+            color: var(--zc-text-secondary);
+            font-size: 0.85rem;
+            min-width: 32px;
+            height: 32px;
+            border: 1px solid var(--zc-border);
+            background: var(--zc-surface);
+            transition: background 120ms, border-color 120ms, color 120ms;
+
+            &:hover {
+                background: var(--zc-accent-light);
+                border-color: var(--zc-accent);
+                color: var(--zc-accent);
+            }
+        }
+
+        >.active>a,
+        >.active>span,
+        >.active>a:hover,
+        >.active>span:hover {
+            background: var(--zc-accent) !important;
+            border-color: var(--zc-accent) !important;
+            color: #fff !important;
+            font-weight: 600;
+        }
+
+        >.disabled>a,
+        >.disabled>span {
+            color: var(--zc-text-muted);
+            border-color: var(--zc-border);
+            cursor: default;
+            background: transparent;
+        }
+    }
+}
+
+// ─────────────────────────────────────────────────────────────
+// 8. Empty state & messages
+// ─────────────────────────────────────────────────────────────
+
+.gn-catalogue {
+
+    .gn-card-grid-message,
+    .ms-resources-container .ms-text._text-align-center {
+        padding: 60px 24px;
+        color: var(--zc-text-secondary);
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--zc-text);
+            margin-bottom: 12px;
+        }
+
+        p {
+            font-size: 1rem;
+            color: var(--zc-text-secondary);
+            font-weight: 400;
+            line-height: 1.6;
+        }
+
+        a {
+            color: var(--zc-accent);
+            text-decoration: underline;
+        }
+    }
+}
+
+// ─────────────────────────────────────────────────────────────
+// 9. Resource status badges
+// ─────────────────────────────────────────────────────────────
+
+.gn-catalogue {
+
+    .gn-resource-status,
+    .ms-resource-status {
+        border-radius: 999px;
+        font-size: 0.7rem;
+        padding: 2px 8px;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+    }
+
+    .gn-resource-status-warning {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .gn-resource-status-danger {
+        background: #fde8e8;
+        color: #c62828;
+    }
+
+    .gn-resource-status-success {
+        background: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    .gn-resource-status-primary {
+        background: var(--zc-accent-light);
+        color: var(--zc-accent);
+    }
+}
+
+// ─────────────────────────────────────────────────────────────
+// 10. Detail panel (when a resource is selected)
+// ─────────────────────────────────────────────────────────────
+
+.gn-catalogue {
+
+    .ms-resource-detail {
+        background: var(--zc-surface) !important;
+        border-left: 1px solid var(--zc-border);
+        box-shadow: -4px 0 20px rgba(0, 0, 0, 0.06) !important;
+    }
+}
+
+// ─────────────────────────────────────────────────────────────
+// 11. Grid — responsive column breakpoints (cards)
+// ─────────────────────────────────────────────────────────────
+
+@container resources-container (width < 1100px) {
+    .gn-catalogue .ms-resources-container-grid>li {
+        width: calc(50% - 0.75rem);
+    }
+}
+
+@container resources-container (width < 600px) {
+    .gn-catalogue .ms-resources-container-grid>li {
+        width: 100%;
+        padding: 4px 0;
+    }
+}
+
+// ─────────────────────────────────────────────────────────────
+// 12. Mobile — single-column, filter between hero and cards
+//
+// Layout (4 rows): [hero] [filter] [cards] [footer]
+//
+// Trick: display:contents on .ms-resources-grid makes its
+// children (.ms-resources-menu and .ms-resources-container)
+// become direct grid participants of .gn-components, so we can
+// slot the filter panel between them using grid-row.
+// ─────────────────────────────────────────────────────────────
+
+@media (max-width: 768px) {
+
+    .gn-catalogue {
+
+        // 4 rows: hero | filter | cards | footer
+        .gn-components:has(.ms-resources-grid),
+        &:has(.zalf-filter-panel--open) .gn-components:has(.ms-resources-grid) {
+            grid-template-columns: 1fr !important;
+            grid-template-rows: auto auto auto auto !important;
+            row-gap: 0 !important;
+        }
+
+        // Dissolve ms-resources-grid into the parent grid
+        .gn-components>.ms-resources-grid {
+            display: contents !important;
+        }
+
+        // Row 1: hero / toolbar
+        .gn-components .ms-resources-menu {
+            grid-column: 1 !important;
+            grid-row: 1 !important;
+            position: relative !important; // disable sticky on mobile
+            top: auto !important;
+            z-index: 1 !important;
+        }
+
+        // Row 2: filter panel — in-flow, full width
+        .gn-components:has(.ms-resources-grid)>.ms-resources-panel-wrapper {
+            grid-column: 1 !important;
+            grid-row: 2 !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+        }
+
+        .gn-components>.ms-resources-panel-wrapper {
+            position: static !important;
+            height: auto !important;
+            width: 100% !important;
+            z-index: auto !important;
+            visibility: visible !important;
+        }
+
+        // Row 3: cards / resources container
+        .gn-components .ms-resources-container {
+            grid-column: 1 !important;
+            grid-row: 3 !important;
+        }
+
+        // Row 4: footer
+        .gn-components:has(.ms-resources-grid)>.ms-footer {
+            grid-column: 1 !important;
+            grid-row: 4 !important;
+        }
+
+        .ms-resources-filter {
+            height: auto !important;
+            overflow: visible !important;
+        }
+
+        // Filter panel card: full width, no rounded corners, flush edges
+        .zalf-filter-panel {
+            width: 100% !important;
+            margin: 0 !important;
+            border-radius: 0 !important;
+            border-left: none !important;
+            border-right: none !important;
+            border-top: none !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+        }
+
+        .zalf-filter-panel--closed {
+            min-height: auto;
+        }
+
+        .zalf-filter-panel--closed .zalf-filter-panel-toggle {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 0;
+        }
+
+        // Content layout tweaks
+        .ms-resources-search {
+            padding: 12px 16px 8px;
+        }
+
+        // Hero bar: full width, compact, no desktop bleed-out margins
+        .ms-resources-menu {
+            padding: 12px 16px !important;
+            min-height: auto !important;
+            width: 100% !important;
+            margin: 0 !important;
+            margin-bottom: 0 !important;
+            border-bottom: none !important;
+        }
+
+        .ms-resources-menu>.ms-text {
+            font-size: 1.55rem !important;
+        }
+
+        .ms-resources-container>div {
+            padding: 0 12px;
+        }
+
+        .ms-resources-container {
+            margin-top: 8px;
+        }
+
+        .ms-resources-container-list>li {
+            border-radius: 0;
+        }
+
+        // ── List cards — prevent text overflow ────────────────
+        // The flexbox "minimum size" trap: flex children won't shrink
+        // below their content width without min-width: 0.
+        .ms-resource-card-type-list {
+            flex-wrap: nowrap;
+            padding: 14px 12px;
+            gap: 10px;
+            overflow: hidden; // contain any overflow at card level
+
+            // Icon column: smaller on mobile, fixed gap to text
+            .ms-resource-card-limit:first-child {
+                width: 38px;
+                min-width: 38px;
+                flex: 0 0 38px;
+                height: 38px;
+                margin-right: 12px;
+                font-size: 1rem;
+            }
+
+            // Metadata column: must have min-width 0 to shrink below content size
+            .ms-resource-card-body {
+                min-width: 0;
+                overflow: hidden;
+                flex: 1 1 0%;
+            }
+
+            .ms-flex-fill.ms-flex-box._flex._flex-center-v {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 3px;
+                min-width: 0; // critical — allows column to shrink
+                width: 100%;
+            }
+
+            .ms-flex-fill.ms-flex-box._flex._flex-center-v>.ms-text {
+                width: 100% !important;
+                max-width: 100% !important;
+                min-width: 0;
+            }
+
+            // Title: single line with ellipsis
+            .ms-resource-card-body>.ms-flex-fill.ms-flex-box._flex._flex-center-v>.ms-text:first-child {
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                white-space: nowrap !important;
+                font-size: 1rem !important;
+            }
+
+            // Description: 2-line clamp, no horizontal overflow
+            .ms-resource-card-body>.ms-flex-fill.ms-flex-box._flex._flex-center-v>.ms-text:not(:first-child):not(:has(.glyphicon)) {
+                max-width: 100% !important;
+                -webkit-line-clamp: 2;
+                overflow: hidden !important;
+                word-break: break-word;
+            }
+
+            // Actions column: fixed, no shrink
+            .ms-resource-card-limit:last-child {
+                flex: 0 0 36px;
+                min-width: 36px;
+                width: 36px;
+            }
+        }
+
+        .zalf-filter-panel .ol-viewport,
+        .zalf-filter-panel .leaflet-container,
+        .zalf-filter-panel .ms-map-layout {
+            width: 72% !important;
+        }
+    }
+}
+
+// ─────────────────────────────────────────────────────────────
+// FilterByExtent — override inline styles from MapStore2 core
+// The core component uses inline height/position; !important wins.
+// ─────────────────────────────────────────────────────────────
+
+.ms-filter-by-extent-map {
+    height: 160px !important;
+    position: relative !important;
+    opacity: 1;
+    pointer-events: auto;
+
+    &[style*="opacity: 0.4"],
+    &[style*="opacity:0.4"] {
+        opacity: 0.4 !important;
+        pointer-events: none !important;
+    }
+}

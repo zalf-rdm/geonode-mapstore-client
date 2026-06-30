@@ -10,6 +10,7 @@ module.exports = (devServerDefault, projectConfig) => {
     const devServerHost = envConfig.DEV_SERVER_HOSTNAME || 'localhost';
     const proxyTargetHost = envConfig.DEV_TARGET_GEONODE_HOST || 'localhost:8000';
     const protocol = envConfig.DEV_SERVER_PROTOCOL || 'http';
+    const devServerPort = envConfig.DEV_SERVER_PORT || 8082;
 
     const proxyTargetURL = `${protocol}://${proxyTargetHost}`;
 
@@ -53,9 +54,10 @@ module.exports = (devServerDefault, projectConfig) => {
                     '!**/static/mapstore/dist/**',
                     '!**/static/mapstore/gn-translations/**',
                     '!**/static/mapstore/img/**',
-                    '!**/static/mapstore/ms-translations/**',
+                    '!**/static/mapstore/ms-translations/**', // served from contentBase
                     '!**/static/mapstore/symbols/**',
                     '!**/static/mapstore/version.txt',
+                    '!**/static/img/**',
                     '!**/MapStore2/**',
                     '!**/node_modules/**',
                     '!**/docs/**'
@@ -68,15 +70,13 @@ module.exports = (devServerDefault, projectConfig) => {
             },
             {
                 context: [
-                    '/static/mapstore/ms-translations/**',
                     '/docs/**',
                     '/static/mapstore/dist/js/web-ifc/**'
                 ],
-                target: `${protocol}://${devServerHost}:8081`,
+                target: `${protocol}://${devServerHost}:${devServerPort}`,
                 secure: false,
                 changeOrigin: true,
                 pathRewrite: {
-                    '/static/mapstore/ms-translations': '/node_modules/mapstore/web/client/translations',
                     '/static/mapstore/dist/js/web-ifc': '/node_modules/web-ifc'
                 }
             }

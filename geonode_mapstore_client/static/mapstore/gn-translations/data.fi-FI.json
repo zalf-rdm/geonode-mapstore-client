@@ -331,12 +331,8 @@
             "readMore": "Read more",
             "readLess": "Read less",
             "linkedResources": {
-<<<<<<< HEAD
-                "label": "Relations",
-=======
                 "label": "Linked Resources",
                 "downloadLabel": "Download",
->>>>>>> 8142c3520e268a8ac8fc27a04e60cc6e515bc54e
                 "linkedBy": "Linked By",
                 "linkedTo": "Linked To",
                 "uses": "Uses",
