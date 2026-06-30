@@ -1,7 +1,7 @@
 
 import React, { useState, useCallback } from 'react';
 import { connect } from 'react-redux';
-import { Glyphicon } from 'react-bootstrap';
+import { Glyphicon, MenuItem } from 'react-bootstrap';
 import { createStructuredSelector } from 'reselect';
 import { createPlugin } from '@mapstore/framework/utils/PluginsUtils';
 import Message from '@mapstore/framework/components/I18N/Message';
@@ -10,8 +10,6 @@ import Dialog from '@mapstore/framework/components/misc/Dialog';
 import Portal from '@mapstore/framework/components/misc/Portal';
 import tooltip from '@mapstore/framework/components/misc/enhancers/tooltip';
 import axios from '@mapstore/framework/libs/ajax';
-import FaIcon from '@js/components/FaIcon';
-import Dropdown from '@js/components/Dropdown';
 import { parseDevHostname } from '@js/utils/APIUtils';
 import { updateResourceProperties } from '@js/actions/gnresource';
 import {
@@ -118,7 +116,7 @@ const ApproveDataCollectionDialogButton = ({
                 size={size}
                 onClick={toggleDialog}
             >
-                {showText ? <Message { ...i18n("button") } /> : <FaIcon name="thumbs-up" />}
+                {showText ? <Message { ...i18n("button") } /> : <i className="fa fa-thumbs-up" />}
             </TooltipButton>
             { isDialogOpen && <ApproveDataCollectionComponent {...props} /> }
         </>
@@ -152,10 +150,10 @@ const ApproveDataCollectionMenuItem = ({
 
     return (
         <>
-            <Dropdown.Item onClick={toggleDialog}>
-                <FaIcon name="thumbs-up" />{' '}
+            <MenuItem onClick={toggleDialog}>
+                <i className="fa fa-thumbs-up" />{' '}
                 <Message { ...i18n("button") } />
-            </Dropdown.Item>
+            </MenuItem>
             { isDialogOpen && <ApproveDataCollectionComponent {...props} /> }
         </>
     );

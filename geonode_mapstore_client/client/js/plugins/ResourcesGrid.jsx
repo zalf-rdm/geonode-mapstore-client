@@ -280,7 +280,7 @@ function ResourcesGrid({
                     value: 'layer',
                     type: 'link',
                     href: '/createlayer/',
-                    disableIf: "{!(state('settings') && state('settings').createLayer)}"
+                    disableIf: "{(state('settings') && state('settings').createLayer) ? false : true}"
                 },
                 {
                     labelId: 'gnhome.createMap',

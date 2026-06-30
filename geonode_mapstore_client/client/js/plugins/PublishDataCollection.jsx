@@ -1,17 +1,15 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
-import { FormGroup, Checkbox, FormControl, ControlLabel, Glyphicon } from 'react-bootstrap';
+import { FormGroup, Checkbox, FormControl, ControlLabel, Glyphicon, MenuItem } from 'react-bootstrap';
 import { createStructuredSelector } from 'reselect';
 import { createPlugin } from '@mapstore/framework/utils/PluginsUtils';
 import Message from '@mapstore/framework/components/I18N/Message';
-import Button from '@js/components/Button';
+import Button from '@mapstore/framework/components/layout/Button';
 import Dialog from '@mapstore/framework/components/misc/Dialog';
 import Portal from '@mapstore/framework/components/misc/Portal';
 import tooltip from '@mapstore/framework/components/misc/enhancers/tooltip';
 import axios from '@mapstore/framework/libs/ajax';
-import FaIcon from '@js/components/FaIcon';
-import Dropdown from '@js/components/Dropdown';
 import { parseDevHostname } from '@js/utils/APIUtils';
 import { updateResourceProperties } from '@js/actions/gnresource';
 import {
@@ -252,7 +250,7 @@ const OpenDialogButton = ({
                 size={size}
                 onClick={toggleDialog}
             >
-                {showText ? <Message { ...i18n("button") } /> : <FaIcon name="bookmark" />}
+                {showText ? <Message { ...i18n("button") } /> : <i className="fa fa-bookmark" />}
             </TooltipButton>
             { isDialogOpen && <PublishDataCollectionComponent {...props} /> }
         </>
@@ -286,10 +284,10 @@ const PublishDataCollectionMenuItem = ({
 
     return (
         <>
-            <Dropdown.Item onClick={toggleDialog}>
-                <FaIcon name="bookmark" />{' '}
+            <MenuItem onClick={toggleDialog}>
+                <i className="fa fa-bookmark" />{' '}
                 <Message { ...i18n("button") } />
-            </Dropdown.Item>
+            </MenuItem>
             { isDialogOpen && <PublishDataCollectionComponent {...props} /> }
         </>
     );
