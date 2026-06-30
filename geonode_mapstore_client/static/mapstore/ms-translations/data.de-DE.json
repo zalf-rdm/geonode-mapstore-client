@@ -4455,6 +4455,8 @@
       "customFiltersTitle": "Ressourcen",
       "noResultsWithFilterTitle": "Keine Ergebnisse",
       "noResultsWithFilterContent": "Für die ausgewählten Filter liegen keine Ergebnisse vor. <br/> Löschen Sie alle Filter und versuchen Sie es mit einer neuen Anfrage.",
+      "noResultsWithQueryTitle": "Keine Ergebnisse für \"{q}\"",
+      "noResultsWithQueryContent": "Keine Ressourcen entsprechen Ihrer Suche. Versuchen Sie einen anderen Begriff oder löschen Sie alle Filter.",
       "errorResourcePageTitle": "Fehler beim Laden der Seite",
       "errorResourcePageContent": "Die ausgewählte Ressourcenseite ist nicht verfügbar",
       "catalogSection": {

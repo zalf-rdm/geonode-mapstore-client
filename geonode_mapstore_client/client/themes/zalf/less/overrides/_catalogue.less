@@ -1477,6 +1477,7 @@
         &:has(.zalf-filter-panel--open) .gn-components:has(.ms-resources-grid) {
             grid-template-columns: 1fr !important;
             grid-template-rows: auto auto auto auto !important;
+            row-gap: 0 !important;
         }
 
         // Dissolve ms-resources-grid into the parent grid
@@ -1555,9 +1556,11 @@
         // Hero bar: full width, compact, no desktop bleed-out margins
         .ms-resources-menu {
             padding: 12px 16px !important;
-            min-height: auto;
+            min-height: auto !important;
             width: 100% !important;
             margin: 0 !important;
+            margin-bottom: 0 !important;
+            border-bottom: none !important;
         }
 
         .ms-resources-menu>.ms-text {

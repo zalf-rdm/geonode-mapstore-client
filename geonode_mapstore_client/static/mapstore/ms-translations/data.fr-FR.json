@@ -4417,6 +4417,8 @@
       "customFiltersTitle": "Ressources",
       "noResultsWithFilterTitle": "Aucun résultat",
       "noResultsWithFilterContent": "Aucun résultat n'est disponible pour les filtres sélectionnés. <br/> Effacez tous les filtres et réessayez avec une nouvelle demande.",
+      "noResultsWithQueryTitle": "Aucun résultat pour \"{q}\"",
+      "noResultsWithQueryContent": "Aucune ressource ne correspond à votre recherche. Essayez un autre terme ou effacez tous les filtres.",
       "errorResourcePageTitle": "Erreur de chargement de la page",
       "errorResourcePageContent": "La page des ressources sélectionnées n'est pas disponible",
       "catalogSection": {

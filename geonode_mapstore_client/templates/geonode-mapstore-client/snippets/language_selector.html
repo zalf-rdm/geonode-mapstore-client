@@ -55,7 +55,7 @@
                     class="dropdown-toggle btn btn-{{variant|default:'default'}}"
                     data-toggle="dropdown"
                 >
-                    {{ lang_info.name_local }}
+                    {{ LANGUAGE|upper }}
                 </button>
                 <ul class="dropdown-menu{% if align_right %} dropdown-menu-right{% endif %}" aria-labelledby="gn-language-selector">
                     {% for lang in LANGUAGES %}
@@ -75,12 +75,17 @@
                 
                 const languageNodes = document.querySelectorAll('#gn-language-selector-dropdown .dropdown-menu li a');
 
+                const nextInput = languageForm.querySelector('input[name="next"]');
+
                 for (var i = 0; i < languageNodes.length; i++) {
                     languageNodes[i].addEventListener('click', function(event) {
                         const language = event.target.getAttribute('data-lang-code');
                         if (language) {
                             languageInput.value = language;
-                            languageForm.action = '/i18n/setlang/?next=' + (window.location && (window.location.pathname + window.location.hash) || '/');
+                            if (nextInput) {
+                                nextInput.value = window.location.pathname + (window.location.hash || '');
+                            }
+                            languageForm.action = '/i18n/setlang/';
                             languageForm.submit();
                         }
                     });

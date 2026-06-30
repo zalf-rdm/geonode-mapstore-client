@@ -34,7 +34,7 @@ import useQueryResourcesByLocation from '@mapstore/framework/plugins/ResourcesCa
 import useParsePluginConfigExpressions from '@mapstore/framework/plugins/ResourcesCatalog/hooks/useParsePluginConfigExpressions';
 import useCardLayoutStyle from '@mapstore/framework/plugins/ResourcesCatalog/hooks/useCardLayoutStyle';
 import useLocalStorage from '@mapstore/framework/plugins/ResourcesCatalog/hooks/useLocalStorage';
-import ResourcesContainer from '@mapstore/framework/plugins/ResourcesCatalog/components/ResourcesContainer';
+import ZalfResourcesContainer from '../components/ZalfResourcesContainer';
 import Button from '@mapstore/framework/components/layout/Button';
 import TargetSelectorPortal from '@mapstore/framework/plugins/ResourcesCatalog/components/TargetSelectorPortal';
 import PaginationCustom from '@mapstore/framework/plugins/ResourcesCatalog/components/PaginationCustom';
@@ -104,9 +104,11 @@ const resolveVirtualPaths = (resource) => {
 const defaultGetMainMessageId = ({ id, query, user, isFirstRequest, error, resources, loading }) => {
     const hasResources = resources?.length > 0;
     const hasFilter = Object.keys(query || {}).filter(key => key !== 'sort').length > 0;
+    const hasQuery = !!(query?.q);
     const isLoggedIn = !!user;
     const messageId = !hasResources && !isFirstRequest && !loading
         ? error && `resourcesCatalog.errorResourcePage`
+        || hasQuery && `resourcesCatalog.noResultsWithQuery`
         || hasFilter && `resourcesCatalog.noResultsWithFilter`
         || isLoggedIn && `resourcesCatalog.${id}Section.noContentYet`
         || `resourcesCatalog.${id}Section.noPublicContent`
@@ -256,7 +258,7 @@ function ZalfResourcesGridContainer({
                 target: defaultTarget,
                 resourcesFoundMsgId
             }),
-            ce(ResourcesContainer, {
+            ce(ZalfResourcesContainer, {
                 id,
                 theme,
                 resources: processedResources,

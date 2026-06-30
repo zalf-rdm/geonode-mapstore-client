@@ -10,8 +10,10 @@ import CoreFiltersForm from '@mapstore/framework/plugins/ResourcesCatalog/compon
 
 const ce = React.createElement;
 
+const MOBILE_BREAKPOINT = 768;
+
 export default function ZalfFiltersForm(props) {
-    const [expanded, setExpanded] = useState(false);
+    const [expanded, setExpanded] = useState(() => window.innerWidth > MOBILE_BREAKPOINT);
     const panelClassName = 'zalf-filter-panel'
         + (expanded ? ' zalf-filter-panel--open' : ' zalf-filter-panel--closed');
 

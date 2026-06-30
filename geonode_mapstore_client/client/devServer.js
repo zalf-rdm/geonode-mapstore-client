@@ -54,7 +54,7 @@ module.exports = (devServerDefault, projectConfig) => {
                     '!**/static/mapstore/dist/**',
                     '!**/static/mapstore/gn-translations/**',
                     '!**/static/mapstore/img/**',
-                    '!**/static/mapstore/ms-translations/**',
+                    '!**/static/mapstore/ms-translations/**', // served from contentBase
                     '!**/static/mapstore/symbols/**',
                     '!**/static/mapstore/version.txt',
                     '!**/static/img/**',
@@ -70,7 +70,6 @@ module.exports = (devServerDefault, projectConfig) => {
             },
             {
                 context: [
-                    '/static/mapstore/ms-translations/**',
                     '/docs/**',
                     '/static/mapstore/dist/js/web-ifc/**'
                 ],
@@ -78,7 +77,6 @@ module.exports = (devServerDefault, projectConfig) => {
                 secure: false,
                 changeOrigin: true,
                 pathRewrite: {
-                    '/static/mapstore/ms-translations': '/node_modules/mapstore/web/client/translations',
                     '/static/mapstore/dist/js/web-ifc': '/node_modules/web-ifc'
                 }
             }
