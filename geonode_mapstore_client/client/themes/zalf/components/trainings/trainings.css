@@ -1,0 +1,288 @@
+/* =====================================================================
+   ZALF Training Resources — public listing page
+   ===================================================================== */
+
+.zalf-trainings {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #f6f9f4;
+    color: #132238;
+    font-family: inherit;
+}
+
+/* ------------------------------------------------------------------ */
+/* Header band                                                          */
+/* ------------------------------------------------------------------ */
+
+.zalf-trainings__header {
+    position: relative;
+    padding: 56px 24px 48px;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.zalf-trainings__header::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(90deg, rgba(198, 223, 142, 0.82) 0%, rgba(186, 231, 214, 0.5) 34%, rgba(130, 193, 229, 0.62) 100%),
+        url('../../../../../static/img/bg_dataset_landing_topo.png') center center / cover no-repeat;
+    z-index: -1;
+}
+
+.zalf-trainings__header-inner {
+    width: min(960px, 100%);
+    margin: 0 auto;
+}
+
+.zalf-trainings__title {
+    margin: 0 0 12px;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    color: #132238;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+}
+
+.zalf-trainings__subtitle {
+    margin: 0;
+    font-size: 1.05rem;
+    color: rgba(19, 34, 56, 0.72);
+    max-width: 560px;
+    line-height: 1.55;
+}
+
+/* ------------------------------------------------------------------ */
+/* Body                                                                 */
+/* ------------------------------------------------------------------ */
+
+.zalf-trainings__body {
+    flex: 1;
+    width: min(960px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: 40px 0 80px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Filter bar                                                           */
+/* ------------------------------------------------------------------ */
+
+.zalf-trainings__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 32px;
+    align-items: center;
+}
+
+.zalf-trainings__search {
+    flex: 1 1 260px;
+    padding: 10px 14px;
+    border: 1px solid rgba(22, 48, 38, 0.2);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: #132238;
+    background: #fff;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    font-family: inherit;
+}
+
+.zalf-trainings__search:focus {
+    outline: none;
+    border-color: #5d9d46;
+    box-shadow: 0 0 0 3px rgba(93, 157, 70, 0.15);
+}
+
+.zalf-trainings__select {
+    flex: 0 1 200px;
+    padding: 10px 36px 10px 12px;
+    border: 1px solid rgba(22, 48, 38, 0.2);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #132238;
+    background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23132238' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 12px center;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    font-family: inherit;
+    transition: border-color 0.15s;
+}
+
+.zalf-trainings__select:focus {
+    outline: none;
+    border-color: #5d9d46;
+}
+
+.zalf-trainings__clear {
+    padding: 9px 16px;
+    border: 1px solid rgba(180, 40, 40, 0.25);
+    border-radius: 8px;
+    background: rgba(255, 245, 245, 0.9);
+    color: #b42828;
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.zalf-trainings__clear:hover {
+    background: #ffeaea;
+    border-color: #b42828;
+}
+
+/* ------------------------------------------------------------------ */
+/* Grid                                                                 */
+/* ------------------------------------------------------------------ */
+
+.zalf-trainings__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Card                                                                 */
+/* ------------------------------------------------------------------ */
+
+.zalf-trainings__card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-decoration: none;
+    color: inherit;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid rgba(22, 48, 38, 0.09);
+    box-shadow: 0 2px 8px rgba(19, 34, 56, 0.05);
+    transition: box-shadow 0.18s, transform 0.18s, border-color 0.18s;
+}
+
+.zalf-trainings__card:hover {
+    box-shadow: 0 8px 28px rgba(19, 34, 56, 0.12);
+    transform: translateY(-2px);
+    border-color: rgba(93, 157, 70, 0.3);
+    text-decoration: none;
+    color: inherit;
+}
+
+.zalf-trainings__thumb {
+    aspect-ratio: 1 / 1;
+    width: 100%;
+    background: linear-gradient(135deg, #d8e8d0, #c2d8ba);
+}
+
+.zalf-trainings__info {
+    padding: 14px 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.zalf-trainings__card-title {
+    margin: 0;
+    font-size: 0.97rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: #163026;
+}
+
+.zalf-trainings__organizer {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #5d9d46;
+}
+
+.zalf-trainings__duration {
+    font-size: 0.76rem;
+    font-weight: 400;
+    color: #7a9a8e;
+}
+
+.zalf-trainings__card--skeleton .zalf-trainings__thumb {
+    background: linear-gradient(90deg, #e8ede6 25%, #d8e4d4 50%, #e8ede6 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.4s infinite;
+}
+
+.zalf-trainings__card--skeleton .zalf-trainings__info {
+    gap: 8px;
+}
+
+.zalf-trainings__card--skeleton .zalf-trainings__card-title {
+    height: 14px;
+    background: #e0e8dc;
+    border-radius: 4px;
+    width: 80%;
+}
+
+.zalf-trainings__card--skeleton .zalf-trainings__organizer {
+    height: 11px;
+    background: #e0e8dc;
+    border-radius: 3px;
+    width: 55%;
+}
+
+@keyframes skeleton-shimmer {
+    from { background-position: 200% 0; }
+    to   { background-position: -200% 0; }
+}
+
+/* ------------------------------------------------------------------ */
+/* Footer info                                                          */
+/* ------------------------------------------------------------------ */
+
+.zalf-trainings__empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 48px;
+    color: #7a9a8e;
+    font-size: 0.95rem;
+}
+
+.zalf-trainings__count {
+    margin-top: 28px;
+    font-size: 0.85rem;
+    color: #7a9a8e;
+    text-align: right;
+}
+
+/* ------------------------------------------------------------------ */
+/* Responsive                                                           */
+/* ------------------------------------------------------------------ */
+
+@media (max-width: 900px) {
+    .zalf-trainings__grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .zalf-trainings__header {
+        padding: 40px 20px 32px;
+    }
+
+    .zalf-trainings__body {
+        width: calc(100% - 32px);
+        padding: 28px 0 60px;
+    }
+
+    .zalf-trainings__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .zalf-trainings__filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .zalf-trainings__search,
+    .zalf-trainings__select {
+        flex: 1 1 auto;
+        width: 100%;
+    }
+}

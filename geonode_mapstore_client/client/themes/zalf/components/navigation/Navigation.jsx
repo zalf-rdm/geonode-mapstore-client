@@ -34,6 +34,7 @@ const navigationItems = [
         key: 'tools-services',
         labelId: 'zalfTheme.nav.toolsServices',
         children: [
+            { href: '/trainings/', labelId: 'zalfTheme.nav.trainings' },
             { href: 'https://tools.bonares.de/ltfe/', labelId: 'zalfTheme.nav.lteMaps', external: true },
             { href: 'https://tools.bonares.de/bp_db/', labelId: 'zalfTheme.nav.soilProfiles', external: true },
             { href: 'https://dqkit.bonares.de/', labelId: 'zalfTheme.nav.dqKit', external: true }

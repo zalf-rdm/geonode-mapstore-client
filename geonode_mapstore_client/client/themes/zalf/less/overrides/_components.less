@@ -161,6 +161,11 @@ body,
     border-bottom: 0;
 }
 
+body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header,
+body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header-placeholder {
+    display: none !important;
+}
+
 .zalf-navigation {
     background:
         linear-gradient(90deg, var(--zalf-nav-bg), var(--zalf-nav-bg));
@@ -387,6 +392,8 @@ body,
 .zalf-navigation__utilities-slot .btn,
 .zalf-navigation__utilities-slot .dropdown-toggle,
 .zalf-navigation__utilities-slot .nav-link.btn {
+    display: inline-flex;
+    align-items: center;
     background: transparent;
     border: 1px solid var(--zalf-nav-button-border);
     color: var(--zalf-nav-text);

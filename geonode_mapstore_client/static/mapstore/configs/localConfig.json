@@ -4189,6 +4189,28 @@
         "name": "ZalfFooter"
       }
     ],
+    "zalf_cms": [
+      {
+        "name": "ZalfNavigation"
+      },
+      {
+        "name": "ZalfCms"
+      },
+      {
+        "name": "ZalfFooter"
+      }
+    ],
+    "zalf_trainings_list": [
+      {
+        "name": "ZalfNavigation"
+      },
+      {
+        "name": "ZalfTrainingList"
+      },
+      {
+        "name": "ZalfFooter"
+      }
+    ],
     "viewer": [
       {
         "name": "ZalfNavigation",

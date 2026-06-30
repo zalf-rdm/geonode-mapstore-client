@@ -31,6 +31,8 @@ import CreateDatasetPlugin from '@js/plugins/CreateDataset';
 import ZalfNavigationPlugin from '../../themes/zalf/plugins/NavigationPlugin';
 import ZalfHomepagePlugin from '../../themes/zalf/plugins/HomepagePlugin';
 import ZalfFaqPlugin from '../../themes/zalf/plugins/FaqPlugin';
+import ZalfCmsPlugin from '../../themes/zalf/plugins/CmsPlugin';
+import ZalfTrainingListPlugin from '../../themes/zalf/plugins/TrainingListPlugin';
 import ZalfFooterPlugin from '../../themes/zalf/plugins/FooterPlugin';
 import ZalfDatasetLandingPlugin from '../../themes/zalf/plugins/DatasetLandingPlugin';
 import ResourcesGridPlugin from '../../themes/zalf/plugins/ZalfResourcesGridPlugin';
@@ -92,6 +94,8 @@ export const plugins = {
     ZalfNavigationPlugin,
     ZalfHomepagePlugin,
     ZalfFaqPlugin,
+    ZalfCmsPlugin,
+    ZalfTrainingListPlugin,
     ZalfFooterPlugin,
     ZalfDatasetLandingPlugin,
     IsochronePlugin: Isochrone,
