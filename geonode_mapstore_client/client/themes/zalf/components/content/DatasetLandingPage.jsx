@@ -8,6 +8,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import axios from '@mapstore/framework/libs/ajax';
+import { formatUsernameFallback } from '../../../../js/utils/SearchUtils';
 import './datasetlanding.css';
 
 const ce = React.createElement;
@@ -133,14 +134,6 @@ function Icon({ name, className, size }) {
     return ce('svg', common, ...(paths[name] || paths.info));
 }
 
-function formatUsernameFallback(username) {
-    if (!username) return '';
-    return String(username)
-        .split(/[._\-\s]+/)
-        .filter(Boolean)
-        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-        .join(' ') || String(username);
-}
 
 function extractPkFromHash() {
     // Matches #/landing/<resource_type>/<pk>

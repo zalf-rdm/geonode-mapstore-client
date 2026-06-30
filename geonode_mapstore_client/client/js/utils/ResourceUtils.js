@@ -17,6 +17,7 @@ import { excludeGoogleBackground, extractTileMatrixFromSources, ServerTypes } fr
 import { getGeoNodeLocalConfig, parseDevHostname } from '@js/utils/APIUtils';
 import { ProcessTypes, ProcessStatus } from '@js/utils/ResourceServiceUtils';
 import { determineResourceType } from '@js/utils/FileUtils';
+import { formatUsernameFallback } from '@js/utils/SearchUtils';
 
 /**
 * @module utils/ResourceUtils
@@ -918,16 +919,6 @@ export const getResourceAdditionalProperties = (_resource = {}) => {
     };
 };
 
-const formatUsernameFallback = (username) => {
-    if (!username) {
-        return '';
-    }
-    return String(username)
-        .split(/[._\-\s]+/)
-        .filter(Boolean)
-        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-        .join(' ');
-};
 
 const getPersonDisplayName = (person = {}) => {
     const fullName = [person.first_name, person.last_name].filter(Boolean).join(' ').trim();

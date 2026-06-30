@@ -1,9 +1,5 @@
 import React from 'react';
-
-function getCsrfToken() {
-    const cookie = document.cookie.split('; ').find(row => row.startsWith('csrftoken='));
-    return cookie ? cookie.split('=')[1] : '';
-}
+import { getCsrfToken } from '../cmsApi';
 
 function MarkdownEditor({ value, onChange }) {
     const [preview, setPreview] = React.useState('');

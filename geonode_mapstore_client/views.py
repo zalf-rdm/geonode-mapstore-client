@@ -1,4 +1,5 @@
 from django.urls import reverse
+import logging
 import os
 import json
 from rest_framework.views import APIView
@@ -146,7 +147,8 @@ def metadata(request, pk, template="geonode-mapstore-client/metadata.html"):
                 })
             if people:
                 contact_roles_data.append({'label': role_label, 'people': people})
-    except Exception:
+    except (AttributeError, TypeError, ValueError) as e:
+        logging.getLogger(__name__).warning('Could not build contact roles for resource %s: %s', pk, e)
         contact_roles_data = []
 
     return render(
