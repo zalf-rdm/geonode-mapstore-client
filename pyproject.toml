@@ -76,4 +76,4 @@ exclude = [
   "migrations",
   "geonode_mapstore_client/mapstore2_adapter/*settings.py"
 ]
-ignore = ["E121", "E122", "E124", "E126", "E226"]
+ignore = ["E121", "E122", "E124", "E126", "E226", "W503"]
