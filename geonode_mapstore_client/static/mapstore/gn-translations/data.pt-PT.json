@@ -521,7 +521,10 @@
             "noAssets": "No assets found",
             "errorCloningTitle": "Não é possível clonar o recurso",
             "errorDeletingTitle": "Não é possível eliminar o recurso",
-            "errorOperationTitle": "Ocorreu um erro ao realizar a operação"
+            "errorOperationTitle": "Ocorreu um erro ao realizar a operação",
+            "citation": "Citação",
+            "copyCitation": "Copiar citação",
+            "citationCopied": "Copiado!"
         },
         "resourcesCatalog": {
             "anonymous": "Anyone",

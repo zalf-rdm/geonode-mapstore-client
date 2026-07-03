@@ -521,7 +521,10 @@
             "noAssets": "No assets found",
             "errorCloningTitle": "Kan de resource niet klonen",
             "errorDeletingTitle": "Kan de resource niet verwijderen",
-            "errorOperationTitle": "Fout bij het uitvoeren van de bewerking"
+            "errorOperationTitle": "Fout bij het uitvoeren van de bewerking",
+            "citation": "Citatie",
+            "copyCitation": "Citatie kopiëren",
+            "citationCopied": "Gekopieerd!"
         },
         "resourcesCatalog": {
             "anonymous": "Anyone",
