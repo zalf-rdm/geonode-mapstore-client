@@ -15,6 +15,35 @@ from geonode.upload.utils import get_max_upload_size, get_max_upload_parallelism
 from geonode.utils import get_supported_datasets_file_types
 
 
+def _get_datacite_settings(request):
+    """
+    Return DataCite publishing info for the current user, embedded directly
+    into the page so the frontend needs no extra HTTP round-trip.
+
+    ``can_approve`` (any member of an allowed group) and ``can_publish``
+    (group managers only) are derived from group membership — no DataCite API
+    call.  ``prefixes`` are fetched from the DataCite API and cached per
+    account — they are only fetched when the user can publish.
+    """
+    user = getattr(request, "user", None)
+    if user is None or not user.is_authenticated:
+        return {"can_approve": False, "can_publish": False, "prefixes": []}
+
+    can_approve = user.can_approve_data_collection()
+    can_publish = user.can_publish_data_collection()
+
+    prefixes = []
+    if can_publish:
+        try:
+            from geonode.zalf.api.datacite import get_doi_prefixes_for_user
+
+            prefixes = get_doi_prefixes_for_user(user)
+        except ImportError:
+            prefixes = []
+
+    return {"can_approve": can_approve, "can_publish": can_publish, "prefixes": prefixes}
+
+
 def resource_urls(request):
     """Global values to pass to templates"""
     defaults = dict(GEOAPPS=["GeoStory", "GeoDashboard", "MapViewer"])
@@ -55,5 +84,6 @@ def resource_urls(request):
         "SUPPORTED_DATASET_FILE_TYPES": get_supported_datasets_file_types(),
         "RESOURCE_PUBLISHING": getattr(settings, "RESOURCE_PUBLISHING", False),
         "ADMIN_MODERATE_UPLOADS": getattr(settings, "ADMIN_MODERATE_UPLOADS", False),
+        "DATACITE": _get_datacite_settings(request),
     }
     return defaults

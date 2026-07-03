@@ -8,9 +8,8 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import CopyToClipboardCmp from 'react-copy-to-clipboard';
-import Button from '@js/components/Button';
-import Dropdown from '@js/components/Dropdown';
-import FaIcon from '@js/components/FaIcon';
+import { Dropdown, MenuItem, Glyphicon } from 'react-bootstrap';
+import Button from '@mapstore/framework/components/layout/Button';
 import { formatUsernameFallback } from '@js/utils/SearchUtils';
 import Message from '@mapstore/framework/components/I18N/Message';
 import tooltip from '@mapstore/framework/components/misc/enhancers/tooltip';
@@ -286,18 +285,18 @@ function DetailsCitation({ resource }) {
                 </div>
                 <div className="gn-details-citation-actions">
                     <Dropdown id="gn-citation-format-dropdown" className="gn-details-citation-dropdown">
-                        <Dropdown.Toggle variant="default" size="xs" noCaret>
-                            {activeLabel} <FaIcon name="caret-down" />
+                        <Dropdown.Toggle bsStyle="default" bsSize="xsmall" noCaret>
+                            {activeLabel} <Glyphicon glyph="triangle-bottom" />
                         </Dropdown.Toggle>
                         <Dropdown.Menu>
                             {FORMATS.map(f => (
-                                <Dropdown.Item
+                                <MenuItem
                                     key={f.key}
                                     active={activeFormat === f.key}
                                     onSelect={() => setActiveFormat(f.key)}
                                 >
                                     {f.label}
-                                </Dropdown.Item>
+                                </MenuItem>
                             ))}
                         </Dropdown.Menu>
                     </Dropdown>
@@ -311,7 +310,7 @@ function DetailsCitation({ resource }) {
                             variant="default"
                             size="xs"
                         >
-                            <FaIcon name={copied ? 'check' : 'copy'} />
+                            <Glyphicon glyph={copied ? 'ok' : 'copy'} />
                         </TooltipButton>
                     </CopyToClipboardCmp>
                 </div>

@@ -443,10 +443,6 @@ export const plugins = {
         'LayerDetailViewer',
         () => import(/* webpackChunkName: 'plugins/detail-viewer-plugin' */ '@js/plugins/LayerDetailViewer')
     ),
-    LayerDetailViewerPlugin: toModulePlugin(
-        'LayerDetailViewer',
-        () => import(/* webpackChunkName: 'plugins/detail-viewer-plugin' */ '@js/plugins/LayerDetailViewer')
-    ),
     LegendPlugin: toModulePlugin(
         'Legend',
         () => import(/* webpackChunkName: 'plugins/legend-plugin' */ '@js/plugins/Legend')
@@ -466,6 +462,10 @@ export const plugins = {
     IsoDownloadPlugin: toModulePlugin(
         'IsoDownload',
         () => import(/* webpackChunkName: 'plugins/iso-download-plugin' */ '@js/plugins/downloads/IsoDownload')
+    ),
+    DataCiteDownloadPlugin: toModulePlugin(
+        'DataCiteDownload',
+        () => import(/* webpackChunkName: 'plugins/iso-download-plugin' */ '@js/plugins/downloads/DataCiteDownload')
     ),
     MapViewersCatalogPlugin: toModulePlugin(
         'MapViewersCatalog',
@@ -510,6 +510,14 @@ export const plugins = {
     TabularCollectionViewerPlugin: toModulePlugin(
         'TabularCollectionViewer',
         () => import(/* webpackChunkName: 'plugins/tabular-collection-plugin' */ '@js/plugins/TabularCollectionViewer')
+    ),
+    ApproveDataCollectionPlugin: toModulePlugin(
+        'ApproveDataCollection',
+        () => import(/* webpackChunkName: 'plugins/approve-data-collection-plugin' */ '@js/plugins/ApproveDataCollection')
+    ),
+    PublishDataCollectionPlugin: toModulePlugin(
+        'PublishDataCollection',
+        () => import(/* webpackChunkName: 'plugins/publish-data-collection-plugin' */ '@js/plugins/PublishDataCollection')
     )
 };
 

@@ -25,6 +25,30 @@
                 "emptyList": "Keine Ergebnisse für diese Anfrage. Versuchen Sie, den Filter zu wechseln oder einen anderen Dienst aus der Eingabe in der oberen rechten Ecke auszuwählen."
             }
         },
+        "plugins": {
+            "VisualStyleEditor": {
+                "description": "Der Stileditor des Datensatzes",
+                "title": "Visueller Stil-Editor"
+            },
+            "ApproveDataCollection": {
+                "button": "Datensammlung genehmigen",
+                "cancel": "Abbrechen",
+                "buttonTooltip": "Datensammlung genehmigen",
+                "title": "Datensammlung genehmigen",
+                "description": "Um die Datensammlung zu publizieren, verifizieren ihre Richtigkeit und klicken Sie auf 'Genehmigen'. Ein Data Steward kann dann die Publikation vornehmen. \n\n Wollen Sie die Datensammlung '{title}' genehmigen?",
+                "approve": "Genehmigen"
+            },
+            "PublishDataCollection": {
+                "button": "Datensammlung publizieren",
+                "cancel": "Abbrechen",
+                "buttonTooltip": "Datensammlung publizieren",
+                "title": "Datensammlung publizieren",
+                "description": "Wählen Sie die zu publizierenden Datensätze für die Datensammlung {title}",
+                "selectDoiPrefix": "Wählen Sie einen DOI-Präfix",
+                "skipDoiPrefix": "Ohne DOI publizieren",
+                "publish": "Datenpublikation starten"
+            }
+        },
         "gnhome": {
             "description": "<h1>GeoNode</h1><p>Austausch von Geodaten und Karten.</p>",
             "orderBy": "Sortieren nach",
@@ -330,6 +354,7 @@
             "embeddashboard": "Betten Sie dieses Dashboard ein",
             "directLink": "Direkte Verbindung",
             "iso": "ISO -Metadaten",
+            "dataCite": "DataCite Metadaten",
             "dublinCore": "Dublin Core Metadaten",
             "owner": "Eigentümer",
             "creation": "Erstellungsdatum",
@@ -550,7 +575,10 @@
             "noAssets": "Keine Assets gefunden",
             "errorCloningTitle": "Ressource kann nicht geklont werden",
             "errorDeletingTitle": "Ressource kann nicht gelöscht werden",
-            "errorOperationTitle": "Fehler beim Ausführen der Operation"
+            "errorOperationTitle": "Fehler beim Ausführen der Operation",
+            "citation": "Zitation",
+            "copyCitation": "Zitation kopieren",
+            "citationCopied": "Kopiert!"
         },
         "resourcesCatalog": {
             "anonymous": "Jeder",

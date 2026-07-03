@@ -521,7 +521,10 @@
             "noAssets": "No assets found",
             "errorCloningTitle": "Không thể sao chép tài nguyên",
             "errorDeletingTitle": "Không thể xóa tài nguyên",
-            "errorOperationTitle": "Đã xảy ra lỗi khi thực hiện thao tác"
+            "errorOperationTitle": "Đã xảy ra lỗi khi thực hiện thao tác",
+            "citation": "Trích dẫn",
+            "copyCitation": "Sao chép trích dẫn",
+            "citationCopied": "Đã sao chép!"
         },
         "resourcesCatalog": {
             "anonymous": "Anyone",

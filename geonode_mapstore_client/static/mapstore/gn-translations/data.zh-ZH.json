@@ -521,7 +521,10 @@
             "noAssets": "No assets found",
             "errorCloningTitle": "无法克隆资源",
             "errorDeletingTitle": "无法删除资源",
-            "errorOperationTitle": "执行操作时发生错误"
+            "errorOperationTitle": "执行操作时发生错误",
+            "citation": "引用",
+            "copyCitation": "复制引用",
+            "citationCopied": "已复制！"
         },
         "resourcesCatalog": {
             "anonymous": "Anyone",

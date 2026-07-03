@@ -608,6 +608,16 @@
                   "type": "link",
                   "href": "{'/datasets/' + (state('gnResourceData') || {}).alternate + '/metadata_upload'}",
                   "labelId": "gnviewer.metadataUpload"
+                },
+                {
+                  "type": "plugin",
+                  "name": "ApproveDataCollection",
+                  "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'change_resourcebase') || context.get(state('gnResourceData'), 'is_approved')}"
+                },
+                {
+                  "type": "plugin",
+                  "name": "PublishDataCollection",
+                  "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'change_resourcebase') || context.get(state('gnResourceData'), 'is_published')}"
                 }
               ]
             },
@@ -627,6 +637,10 @@
                 {
                   "type": "plugin",
                   "name": "DublinCoreDownload"
+                },
+                {
+                  "type": "plugin",
+                  "name": "DataCiteDownload"
                 }
               ]
             }
@@ -816,6 +830,9 @@
         "name": "DublinCoreDownload"
       },
       {
+        "name": "DataCiteDownload"
+      },
+      {
         "name": "LayerDownload",
         "cfg": {
           "disablePluginIf": "{!state('selectedLayerPermissions').includes('download_resourcebase')}",
@@ -851,6 +868,20 @@
         "name": "Notifications"
       },
       {
+        "mandatory": true,
+        "name": "ApproveDataCollection",
+        "cfg": {
+          "showText": true
+        }
+      },
+      {
+        "mandatory": true,
+        "name": "PublishDataCollection",
+        "cfg": {
+          "showText": true
+        }
+      },
+      {
         "name": "TabularPreview"
       },
       {
@@ -881,25 +912,28 @@
               "name": "DetailViewerButton"
             },
             {
-              "labelId": "gnviewer.edit",
+              "labelId": "gnviewer.resource",
               "type": "dropdown",
-              "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'change_resourcebase')}",
               "items": [
                 {
-                  "type": "link",
-                  "href": "{context.getMetadataUrl(state('gnResourceData'))}",
-                  "labelId": "gnviewer.editMetadata"
+                  "type": "plugin",
+                  "name": "Share"
                 },
                 {
-                  "type": "link",
-                  "href": "{'/datasets/' + (state('gnResourceData') || {}).alternate + '/metadata_upload'}",
-                  "labelId": "gnviewer.metadataUpload"
+                  "type": "divider",
+                  "disableIf": "{state('isNewResource') || !context.resourceHasPermission(state('gnResourceData'), 'delete_resourcebase')}"
+                },
+                {
+                  "type": "plugin",
+                  "name": "DeleteResource",
+                  "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'delete_resourcebase')}"
                 }
               ]
             },
             {
               "labelId": "gnviewer.view",
               "type": "dropdown",
+              "disableIf": "{state('isNewResource')}",
               "items": [
                 {
                   "type": "plugin",
@@ -913,17 +947,30 @@
               ]
             },
             {
-              "type": "plugin",
-              "name": "Share"
-            },
-            {
-              "type": "plugin",
-              "name": "DeleteResource",
-              "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'delete_resourcebase')}"
-            },
-            {
-              "type": "divider",
-              "authenticated": true
+              "labelId": "gnviewer.edit",
+              "type": "dropdown",
+              "disableIf": "{state('isNewResource') || !context.resourceHasPermission(state('gnResourceData'), 'change_resourcebase')}",
+              "items": [
+                {
+                  "type": "link",
+                  "href": "{context.getMetadataUrl(state('gnResourceData'))}",
+                  "labelId": "gnviewer.editMetadata"
+                },
+                {
+                  "type": "divider",
+                  "disableIf": "{state('resourceParams')?.appPk && (context.get(state('gnResourceData'), 'is_published') || context.get(state('gnResourceData'), 'is_approved'))}"
+                },
+                {
+                  "type": "plugin",
+                  "name": "ApproveDataCollection",
+                  "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'change_resourcebase') && !state('isNewResource') || context.get(state('gnResourceData'), 'is_approved')}"
+                },
+                {
+                  "type": "plugin",
+                  "name": "PublishDataCollection",
+                  "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'change_resourcebase') && !state('isNewResource') || context.get(state('gnResourceData'), 'is_published')}"
+                }
+              ]
             },
             {
               "labelId": "gnviewer.download",
@@ -941,6 +988,10 @@
                 {
                   "type": "plugin",
                   "name": "DublinCoreDownload"
+                },
+                {
+                  "type": "plugin",
+                  "name": "DataCiteDownload"
                 }
               ]
             }
@@ -1123,6 +1174,9 @@
         "name": "DublinCoreDownload"
       },
       {
+        "name": "DataCiteDownload"
+      },
+      {
         "name": "LayerDownload",
         "cfg": {
           "disablePluginIf": "{!state('selectedLayerPermissions').includes('download_resourcebase')}",
@@ -1156,6 +1210,20 @@
       },
       {
         "name": "Notifications"
+      },
+      {
+        "mandatory": true,
+        "name": "ApproveDataCollection",
+        "cfg": {
+          "showText": true
+        }
+      },
+      {
+        "mandatory": true,
+        "name": "PublishDataCollection",
+        "cfg": {
+          "showText": true
+        }
       },
       {
         "name": "TabularCollectionViewer"
@@ -1288,6 +1356,14 @@
                 {
                   "type": "plugin",
                   "name": "IsoDownload"
+                },
+                {
+                  "type": "plugin",
+                  "name": "DublinCoreDownload"
+                },
+                {
+                  "type": "plugin",
+                  "name": "DataCiteDownload"
                 }
               ]
             },
@@ -1534,6 +1610,12 @@
       },
       {
         "name": "IsoDownload"
+      },
+      {
+        "name": "DublinCoreDownload"
+      },
+      {
+        "name": "DataCiteDownload"
       },
       {
         "name": "LayerDownload",
@@ -2239,7 +2321,21 @@
                 },
                 {
                   "type": "divider",
-                  "disableIf": "{get(state('resourceParams'), 'appPk')}"
+                  "disableIf": "{state('resourceParams')?.appPk && (context.get(state('gnResourceData'), 'is_published') || context.get(state('gnResourceData'), 'is_approved'))}"
+                },
+                {
+                  "type": "plugin",
+                  "name": "ApproveDataCollection",
+                  "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'change_resourcebase') && !state('isNewResource')  || context.get(state('gnResourceData'), 'is_approved')}"
+                },
+                {
+                  "type": "plugin",
+                  "name": "PublishDataCollection",
+                  "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'change_resourcebase') && !state('isNewResource') || context.get(state('gnResourceData'), 'is_published')}"
+                },
+                {
+                  "type": "divider",
+                  "disableIf": "{state('resourceParams')?.appPk}"
                 },
                 {
                   "type": "link",
@@ -2745,6 +2841,24 @@
       {
         "mandatory": true,
         "name": "DatasetsCatalog"
+      },
+      {
+        "mandatory": true,
+        "name": "ApproveDataCollection",
+        "cfg": {
+          "showText": true
+        }
+      },
+      {
+        "mandatory": true,
+        "name": "PublishDataCollection",
+        "cfg": {
+          "showText": true
+        }
+      },
+      {
+        "mandatory": true,
+        "name": "DataCiteDownload"
       },
       {
         "name": "StyleEditor",
