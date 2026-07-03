@@ -22,6 +22,9 @@ function MarkdownEditor({ value, onChange }) {
                 .then(r => r.ok ? r.json() : { html: '' })
                 .then(data => {
                     if (active) setPreview(data.html || '');
+                })
+                .catch(err => {
+                    console.error('Failed to preview markdown:', err);
                 });
         }, 300);
         return () => {

@@ -75,7 +75,7 @@ def metadata(request, pk, template="geonode-mapstore-client/metadata.html"):
     for key in metadata_data:
         if key not in ("extraErrors", "contacts"):
             prop = metadata_data[key]
-            ui_options = prop.get("ui:options", {})
+            ui_options = prop.get("schema", {}).get("ui:options", {})
             group = "General"
             if ui_options.get("geonode-ui:group"):
                 group = ui_options.get("geonode-ui:group")

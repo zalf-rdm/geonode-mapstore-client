@@ -31,3 +31,7 @@ geonode_mapstore_client/client/package-lock.json
 
 /dist/
 testing/
+
+# unused legacy dev-server config (devServer.js reads client/.env, not this file)
+geonode_mapstore_client/client/env.json
+geonode_mapstore_client/client/env.json.bck

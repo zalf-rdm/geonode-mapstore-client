@@ -13,6 +13,17 @@ import './datasetlanding.css';
 
 const ce = React.createElement;
 
+function parseValidDate(dateStr) {
+    if (!dateStr) return null;
+    const d = new Date(dateStr);
+    return isNaN(d.getTime()) ? null : d;
+}
+
+function formatDateSafe(dateStr, options) {
+    const d = parseValidDate(dateStr);
+    return d ? d.toLocaleDateString('en-GB', options) : null;
+}
+
 function Icon({ name, className, size }) {
     const common = {
         className: className || '',
@@ -208,13 +219,19 @@ function CopyMenu({ pk }) {
     }, [open]);
 
     function copy(text, key) {
-        navigator.clipboard.writeText(text).then(() => {
-            setCopied(key);
-            setTimeout(() => {
-                setCopied(null);
-                setOpen(false);
-            }, 1200);
-        });
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(() => {
+                setCopied(key);
+                setTimeout(() => {
+                    setCopied(null);
+                    setOpen(false);
+                }, 1200);
+            }).catch((err) => {
+                console.error('Failed to copy text: ', err);
+            });
+        } else {
+            console.warn('Clipboard API not available');
+        }
     }
 
     const landingUrl = window.location.origin + window.location.pathname + window.location.hash;
@@ -277,7 +294,7 @@ function buildCitation(r, style) {
     const authorList = buildAuthorList(people, style)
         || formatPersonName(r.owner || {}, style)
         || 'ZALF';
-    const year = r.date ? new Date(r.date).getFullYear() : new Date().getFullYear();
+    const year = (parseValidDate(r.date) || new Date()).getFullYear();
     const title = r.title || 'Untitled Resource';
     const institution = r.attribution || 'Leibniz Centre for Agricultural Landscape Research (ZALF)';
     const doi = r.doi ? 'https://doi.org/' + r.doi : null;
@@ -306,10 +323,16 @@ function CitationCard({ r }) {
     const citation = buildCitation(r, style);
 
     function copy() {
-        navigator.clipboard.writeText(citation).then(() => {
-            setCopied(true);
-            setTimeout(() => setCopied(false), 1600);
-        });
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(citation).then(() => {
+                setCopied(true);
+                setTimeout(() => setCopied(false), 1600);
+            }).catch((err) => {
+                console.error('Failed to copy citation: ', err);
+            });
+        } else {
+            console.warn('Clipboard API not available');
+        }
     }
 
     return ce('div', { className: 'zalf-lp-card zalf-lp-card--citation' },
@@ -618,11 +641,6 @@ export default function DatasetLandingPage() {
     const license = r.license?.name_long || r.license?.name || r.license?.identifier || null;
     const licenseUrl = r.license?.url || null;
     const doiUrl = r.doi ? 'https://doi.org/' + r.doi : null;
-    const formatDateSafe = (dateStr, options) => {
-        if (!dateStr) return null;
-        const d = new Date(dateStr);
-        return isNaN(d.getTime()) ? null : d.toLocaleDateString('en-GB', options);
-    };
     const pubDate = formatDateSafe(r.date, { year: 'numeric', month: 'long', day: 'numeric' });
     const tempStart = formatDateSafe(r.temporal_extent_start, { year: 'numeric', month: 'short' });
     const tempEnd = formatDateSafe(r.temporal_extent_end, { year: 'numeric', month: 'short' });

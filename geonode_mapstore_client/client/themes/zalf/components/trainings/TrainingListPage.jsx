@@ -40,7 +40,7 @@ function TrainingListPage() {
     React.useEffect(() => {
         fetch('/api/v2/cms/trainings/')
             .then(r => r.ok ? r.json() : [])
-            .then(data => setAll([...data].sort((a, b) => b.id - a.id)))
+            .then(data => setAll(Array.isArray(data) ? [...data].sort((a, b) => b.id - a.id) : []))
             .catch(() => {})
             .finally(() => setLoading(false));
     }, []);
