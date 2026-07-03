@@ -24,6 +24,7 @@ import SecurityPopup from "@mapstore/framework/plugins/SecurityPopup";
 
 import OperationPlugin from '@js/plugins/Operation';
 import ExecutionTrackerPlugin from '@js/plugins/ExecutionTracker';
+import ZalfPublicationDebugPlugin from '@js/plugins/ZalfPublicationDebug';
 import MetadataEditorPlugin from '@js/plugins/MetadataEditor';
 import MetadataViewerPlugin from '@js/plugins/MetadataEditor/MetadataViewer';
 import FavoritesPlugin from '@js/plugins/Favorites';
@@ -455,6 +456,10 @@ export const plugins = {
         'IsoDownload',
         () => import(/* webpackChunkName: 'plugins/iso-download-plugin' */ '@js/plugins/downloads/IsoDownload')
     ),
+    DataCiteDownloadPlugin: toModulePlugin(
+        'DataCiteDownload',
+        () => import(/* webpackChunkName: 'plugins/iso-download-plugin' */ '@js/plugins/downloads/DataCiteDownload')
+    ),
     MapViewersCatalogPlugin: toModulePlugin(
         'MapViewersCatalog',
         () => import(/* webpackChunkName: 'plugins/map-viewers-catalog' */ '@js/plugins/MapViewersCatalog')
@@ -490,7 +495,16 @@ export const plugins = {
     UploadResourcePlugin: toModulePlugin(
         'UploadResource',
         () => import(/* webpackChunkName: 'plugins/upload-operation' */ '@js/plugins/UploadResource')
-    )
+    ),
+    ApproveDataCollectionPlugin: toModulePlugin(
+        'ApproveDataCollection',
+        () => import(/* webpackChunkName: 'plugins/approve-data-collection-plugin' */ '@js/plugins/ApproveDataCollection')
+    ),
+    PublishDataCollectionPlugin: toModulePlugin(
+        'PublishDataCollection',
+        () => import(/* webpackChunkName: 'plugins/publish-data-collection-plugin' */ '@js/plugins/PublishDataCollection')
+    ),
+    ZalfPublicationDebugPlugin
 };
 
 const pluginsDefinition = {
