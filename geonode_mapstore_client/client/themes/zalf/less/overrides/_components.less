@@ -1,1 +1,651 @@
-// General component overrides (placeholder)
+// GeoNode's base.css sets body { padding-top: 20px } for its legacy fixed navbar.
+// Our sticky zalf nav sits at top:0, so we zero that padding on all Django-rendered pages.
+body.gn-desktop {
+    padding-top: 0;
+}
+
+body,
+.ms2,
+.msgapi {
+    font-family: var(--zalf-font-sans);
+}
+
+// Align global interactive states with the ZALF palette so catalogue pages
+// keep the green theme even when they use core GeoNode / MapStore components.
+.btn-primary,
+.btn.btn-primary,
+.btn-group > .btn.btn-primary,
+.open > .dropdown-toggle.btn-primary,
+.open > .dropdown-toggle.btn.btn-primary,
+.dropdown-toggle.btn-primary,
+.dropdown-toggle.btn.btn-primary {
+    color: var(--ms-button-primary-color);
+    background-color: var(--ms-button-primary-bg);
+    border-color: var(--ms-button-primary-border-color);
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary.focus,
+.btn.btn-primary:hover,
+.btn.btn-primary:focus,
+.btn.btn-primary.focus,
+.btn-group > .btn.btn-primary:hover,
+.btn-group > .btn.btn-primary:focus,
+.btn-group > .btn.btn-primary.focus,
+.open > .dropdown-toggle.btn-primary:hover,
+.open > .dropdown-toggle.btn-primary:focus,
+.open > .dropdown-toggle.btn.btn-primary:hover,
+.open > .dropdown-toggle.btn.btn-primary:focus,
+.dropdown-toggle.btn-primary:hover,
+.dropdown-toggle.btn-primary:focus,
+.dropdown-toggle.btn.btn-primary:hover,
+.dropdown-toggle.btn.btn-primary:focus {
+    color: var(--ms-button-primary-focus-color);
+    background-color: var(--ms-button-primary-focus-bg);
+    border-color: var(--ms-button-primary-focus-border-color);
+}
+
+.btn-primary:active,
+.btn-primary.active,
+.btn.btn-primary:active,
+.btn.btn-primary.active,
+.btn-group > .btn.btn-primary:active,
+.btn-group > .btn.btn-primary.active,
+.open > .dropdown-toggle.btn-primary,
+.open > .dropdown-toggle.btn.btn-primary,
+.dropdown-toggle.btn-primary:active,
+.dropdown-toggle.btn-primary.active,
+.dropdown-toggle.btn.btn-primary:active,
+.dropdown-toggle.btn.btn-primary.active {
+    color: var(--ms-button-primary-active-color);
+    background-color: var(--ms-button-primary-active-bg);
+    border-color: var(--ms-button-primary-active-border-color);
+}
+
+.btn-primary:active:hover,
+.btn-primary.active:hover,
+.btn-primary:active:focus,
+.btn-primary.active:focus,
+.btn.btn-primary:active:hover,
+.btn.btn-primary.active:hover,
+.btn.btn-primary:active:focus,
+.btn.btn-primary.active:focus,
+.open > .dropdown-toggle.btn-primary:hover,
+.open > .dropdown-toggle.btn-primary:focus,
+.open > .dropdown-toggle.btn.btn-primary:hover,
+.open > .dropdown-toggle.btn.btn-primary:focus,
+.dropdown-toggle.btn-primary:active:hover,
+.dropdown-toggle.btn-primary.active:hover,
+.dropdown-toggle.btn.btn-primary:active:hover,
+.dropdown-toggle.btn.btn-primary.active:hover {
+    color: var(--ms-button-primary-active-hover-color);
+    background-color: var(--ms-button-primary-active-hover-bg);
+    border-color: var(--ms-button-primary-active-hover-border-color);
+}
+
+.btn-primary:focus,
+.btn-primary.focus,
+.btn.btn-primary:focus,
+.btn.btn-primary.focus,
+.dropdown-toggle.btn-primary:focus,
+.dropdown-toggle.btn-primary.focus,
+.dropdown-toggle.btn.btn-primary:focus,
+.dropdown-toggle.btn.btn-primary.focus {
+    box-shadow: 0 0 0 3px fade(@zalf-brand-primary, 20%);
+    outline: none;
+}
+
+.btn-primary .badge,
+.btn.btn-primary .badge {
+    color: var(--ms-button-primary-badge-color);
+}
+
+.pagination > .active > a,
+.pagination > .active > span,
+.pagination > .active > a:hover,
+.pagination > .active > span:hover,
+.pagination > .active > a:focus,
+.pagination > .active > span:focus,
+.pagination.custom > .active > a,
+.pagination.custom > .active > span,
+.pagination.custom > .active > a:hover,
+.pagination.custom > .active > span:hover,
+.pagination.custom > .active > a:focus,
+.pagination.custom > .active > span:focus,
+.page-item.active .page-link,
+.page-item.active .page-link:hover,
+.page-item.active .page-link:focus {
+    color: var(--zalf-brand-primary-contrast);
+    background-color: var(--ms-primary);
+    border-color: var(--zalf-brand-primary-border);
+}
+
+.nav-pills > li.active > a,
+.nav-pills > li.active > a:hover,
+.nav-pills > li.active > a:focus {
+    color: var(--zalf-brand-primary-contrast);
+    background-color: var(--ms-primary);
+}
+
+.nav .open > a,
+.nav .open > a:hover,
+.nav .open > a:focus {
+    color: var(--ms-link-color);
+    background-color: var(--zalf-brand-surface-light);
+}
+
+.label-primary,
+.badge-primary,
+.list-group-item.active,
+.list-group-item.active:hover,
+.list-group-item.active:focus {
+    color: var(--zalf-brand-primary-contrast);
+    background-color: var(--ms-primary);
+    border-color: var(--zalf-brand-primary-border);
+}
+
+// Shared navigation skin for both the React plugin and the server-rendered
+// header override used by Django pages.
+.zalf-navigation-shell {
+    position: sticky;
+    top: 0;
+    z-index: 1001;
+}
+
+.zalf-navigation-shell > .gn-main-header.zalf-navigation[data-zalf-source="server"] {
+    position: static;
+    top: auto;
+    width: auto;
+    z-index: auto;
+    border-bottom: 0;
+}
+
+body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header:not(.zalf-navigation),
+body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header-placeholder {
+    display: none !important;
+}
+
+.zalf-navigation {
+    background:
+        linear-gradient(90deg, var(--zalf-nav-bg), var(--zalf-nav-bg));
+    border-bottom: 1px solid var(--zalf-nav-border);
+    box-shadow: var(--zalf-nav-shadow);
+    backdrop-filter: blur(16px);
+}
+
+.zalf-navigation__inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px;
+    min-height: 78px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.zalf-navigation__brand {
+    display: inline-flex;
+    align-items: flex-start;
+    justify-content: center;
+    min-width: 168px;
+    text-decoration: none;
+}
+
+.zalf-navigation__brand-logo {
+    display: block;
+    width: auto;
+    height: 62px;
+    max-width: 180px;
+}
+
+.zalf-navigation__content {
+    display: flex;
+    align-items: center;
+    flex: 1 1 auto;
+    gap: 24px;
+    min-width: 0;
+}
+
+.zalf-navigation__primary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.zalf-navigation__dropdown {
+    position: relative;
+}
+
+.zalf-navigation__dropdown-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.zalf-navigation__dropdown-caret {
+    font-size: 0.8rem;
+    line-height: 1;
+}
+
+.zalf-navigation__dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    display: none;
+    min-width: 250px;
+    padding: 14px 0 12px;
+    background: var(--zalf-nav-panel-bg);
+    border: 1px solid var(--zalf-nav-panel-border);
+    border-radius: 16px;
+    box-shadow: var(--zalf-nav-panel-shadow);
+    z-index: 30;
+}
+
+.zalf-navigation__dropdown-menu.is-wide {
+    min-width: 520px;
+    padding: 2px 0 0;
+    display: none;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.zalf-navigation__dropdown-menu.is-open {
+    display: block;
+}
+
+.zalf-navigation__dropdown-menu.is-wide.is-open {
+    display: grid;
+}
+
+.zalf-navigation__dropdown-column {
+    padding: 12px 0;
+}
+
+.zalf-navigation__dropdown-column + .zalf-navigation__dropdown-column {
+    border-left: 2px solid var(--zalf-nav-divider-strong);
+}
+
+.zalf-navigation__dropdown-link {
+    display: block;
+    padding: 10px 18px;
+    color: var(--zalf-nav-text);
+    text-decoration: none;
+    font-size: 0.92rem;
+    line-height: 1.35;
+}
+
+.zalf-navigation__dropdown-link:hover,
+.zalf-navigation__dropdown-link:focus {
+    background: var(--zalf-nav-hover-bg);
+    color: var(--zalf-nav-highlight);
+    text-decoration: none;
+}
+
+.zalf-navigation__dropdown-link.is-muted {
+    opacity: 0.88;
+}
+
+.zalf-navigation__tools {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 0 0 auto;
+    gap: 16px;
+}
+
+.zalf-navigation__search-slot {
+    flex: 0 0 280px;
+    width: 280px;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.zalf-navigation__utilities-slot {
+    display: flex;
+    align-items: center;
+    flex-shrink: 1;
+    min-width: 0;
+}
+
+.zalf-navigation__utilities-slot .gn-brand-navbar-right-menu-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex-wrap: nowrap;
+}
+
+.zalf-navigation__utilities-slot .gn-brand-navbar-right-menu-container > li {
+    margin: 0;
+    padding: 0;
+}
+
+.zalf-navigation__search-slot .gn-search-bar {
+    position: relative;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    color: var(--zalf-nav-text) !important;
+}
+
+.zalf-navigation__search-slot .gn-search-bar.focus {
+    background: transparent !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.zalf-navigation__search-slot .gn-search-bar .input-group {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    background: transparent !important;
+    border: 1px solid var(--zalf-nav-search-border) !important;
+    border-radius: 999px !important;
+    overflow: hidden !important;
+    box-shadow: none !important;
+}
+
+.zalf-navigation__search-slot .gn-search-bar .input-group-prepend,
+.zalf-navigation__search-slot .gn-search-bar .input-group-append {
+    display: flex;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+
+.zalf-navigation__search-slot .gn-search-bar .form-control {
+    flex: 1 1 auto;
+    min-width: 0;
+    background: transparent !important;
+    background-image: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    color: var(--zalf-nav-text) !important;
+    height: 44px !important;
+    padding: 0 14px !important;
+    box-shadow: none !important;
+    outline: none !important;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.zalf-navigation__search-slot .gn-search-bar .form-control:focus {
+    background: transparent !important;
+    background-image: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+}
+
+.zalf-navigation__search-slot .gn-search-bar .form-control::placeholder {
+    color: var(--zalf-nav-text-muted) !important;
+}
+
+.zalf-navigation__search-slot .gn-search-bar .btn,
+.zalf-navigation__search-slot .gn-search-bar .btn-default,
+.zalf-navigation__utilities-slot .btn,
+.zalf-navigation__utilities-slot .dropdown-toggle,
+.zalf-navigation__utilities-slot .nav-link.btn {
+    display: inline-flex;
+    align-items: center;
+    background: transparent;
+    border: 1px solid var(--zalf-nav-button-border);
+    color: var(--zalf-nav-text);
+    border-radius: 999px;
+    min-height: 44px;
+    padding: 10px 14px;
+    line-height: 1;
+    text-decoration: none;
+    box-shadow: none;
+}
+
+.zalf-navigation__search-slot .gn-search-bar .btn,
+.zalf-navigation__search-slot .gn-search-bar .btn-default {
+    min-width: 44px;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    background-image: none !important;
+    color: var(--zalf-nav-text) !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+.zalf-navigation__search-slot .gn-search-bar .btn:hover,
+.zalf-navigation__search-slot .gn-search-bar .btn:focus,
+.zalf-navigation__search-slot .gn-search-bar .btn-default:hover,
+.zalf-navigation__search-slot .gn-search-bar .btn-default:focus {
+    background: transparent !important;
+    color: var(--zalf-nav-text) !important;
+    box-shadow: none !important;
+}
+
+.zalf-navigation__search-slot .gn-search-bar .input-group-prepend .btn + .btn {
+    margin-left: 0 !important;
+}
+
+.zalf-navigation__search-slot .gn-search-bar .input-group-prepend .btn i,
+.zalf-navigation__search-slot .gn-search-bar .input-group-append .btn i {
+    color: var(--zalf-nav-text) !important;
+}
+
+.zalf-navigation__utilities-slot a,
+.zalf-navigation__utilities-slot a:hover,
+.zalf-navigation__utilities-slot a:focus {
+    color: var(--zalf-nav-text);
+    text-decoration: none;
+}
+
+.zalf-navigation__utilities-slot .dropdown {
+    position: relative;
+}
+
+.zalf-navigation__utilities-slot .gn-language-selector .dropdown-menu,
+.zalf-navigation__utilities-slot .gn-user-menu-dropdown .dropdown-menu {
+    position: absolute !important;
+    right: 0;
+    left: auto;
+    min-width: 180px;
+    margin-top: 10px;
+    padding: 8px 0;
+    border: 1px solid var(--zalf-nav-panel-border);
+    background: var(--zalf-nav-panel-bg);
+    border-radius: 16px;
+    box-shadow: var(--zalf-nav-panel-shadow);
+}
+
+.zalf-navigation__utilities-slot .dropdown-menu > li > a {
+    display: block;
+    padding: 10px 16px;
+    color: var(--zalf-nav-text);
+}
+
+.zalf-navigation__utilities-slot .dropdown-menu > li > a:hover,
+.zalf-navigation__utilities-slot .dropdown-menu > li > a:focus {
+    background: var(--zalf-nav-hover-bg);
+    color: var(--zalf-nav-highlight);
+}
+
+.zalf-navigation__utilities-slot .dropdown-menu .divider {
+    margin: 6px 0;
+    border-top: 1px solid var(--zalf-nav-divider-soft);
+}
+
+.zalf-navigation__utilities-slot .gn-user-menu-dropdown img {
+    display: block;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+}
+
+.zalf-navigation__search-slot .gn-suggestions {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    right: 0;
+    z-index: 20;
+    background: var(--zalf-nav-panel-bg);
+    border: 1px solid var(--zalf-nav-panel-border);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--zalf-nav-panel-shadow);
+}
+
+.zalf-navigation__search-slot .gn-suggestions .list-group {
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+.zalf-navigation__search-slot .list-group-item {
+    width: 100%;
+    padding: 12px 16px;
+    border: 0;
+    border-top: 1px solid var(--zalf-nav-list-border);
+    background: transparent;
+    color: var(--zalf-nav-text);
+    text-align: left;
+}
+
+.zalf-navigation__search-slot .list-group-item:hover,
+.zalf-navigation__search-slot .list-group-item:focus {
+    background: var(--zalf-nav-hover-bg);
+    color: var(--zalf-nav-highlight);
+}
+
+.zalf-navigation__link {
+    color: var(--zalf-nav-text);
+    text-decoration: none;
+    font-size: 0.96rem;
+    font-weight: 500;
+    line-height: 1;
+    padding: 12px 14px;
+    border-radius: 999px;
+    transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+
+.zalf-navigation__link:hover,
+.zalf-navigation__link:focus {
+    color: var(--zalf-nav-text);
+    background: var(--zalf-nav-hover-bg);
+    border-color: var(--zalf-nav-border-subtle);
+    text-decoration: none;
+}
+
+.zalf-navigation__link.is-active {
+    color: var(--zalf-nav-text);
+    background: var(--zalf-nav-hover-bg);
+    border-color: var(--zalf-nav-border-active);
+}
+
+.zalf-navigation__link.is-accent {
+    color: var(--zalf-nav-text);
+    background: var(--zalf-nav-panel-bg);
+    border-color: var(--zalf-nav-panel-bg);
+}
+
+.zalf-navigation__link.is-accent:hover,
+.zalf-navigation__link.is-accent:focus {
+    color: var(--zalf-nav-text);
+    background: var(--zalf-nav-panel-hover-bg);
+    border-color: var(--zalf-nav-panel-hover-bg);
+}
+
+.zalf-navigation__toggle {
+    display: none;
+    margin-left: auto;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    background: transparent;
+    border: 1px solid var(--zalf-nav-toggle-border);
+    border-radius: 14px;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    flex-direction: column;
+}
+
+.zalf-navigation__toggle span {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: var(--zalf-nav-text);
+    border-radius: 999px;
+}
+
+@media (max-width: 991px) {
+    .zalf-navigation__inner {
+        min-height: 72px;
+        padding: 0 16px;
+        flex-wrap: wrap;
+    }
+
+    .zalf-navigation__toggle {
+        display: inline-flex;
+    }
+
+    .zalf-navigation__content {
+        display: none;
+        width: 100%;
+        padding: 0 0 16px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .zalf-navigation__content.is-open {
+        display: flex;
+    }
+
+    .zalf-navigation__primary,
+    .zalf-navigation__tools {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .zalf-navigation__dropdown-menu,
+    .zalf-navigation__dropdown-menu.is-wide {
+        position: static;
+        min-width: 100%;
+        margin-top: 8px;
+    }
+
+    .zalf-navigation__dropdown-menu.is-wide.is-open {
+        display: block;
+    }
+
+    .zalf-navigation__dropdown-column + .zalf-navigation__dropdown-column {
+        border-left: 0;
+        border-top: 1px solid var(--zalf-nav-divider-soft);
+    }
+
+    .zalf-navigation__search-slot,
+    .zalf-navigation__utilities-slot,
+    .zalf-navigation__utilities-slot .gn-brand-navbar-right-menu-container {
+        width: 100%;
+    }
+
+    .zalf-navigation__utilities-slot .gn-brand-navbar-right-menu-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .zalf-navigation__link {
+        width: 100%;
+        text-align: left;
+    }
+}

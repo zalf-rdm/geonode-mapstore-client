@@ -4426,6 +4426,8 @@
       "customFiltersTitle": "Resources",
       "noResultsWithFilterTitle": "No results",
       "noResultsWithFilterContent": "There are not results for the selected filters. <br/> Clear all filters and try with a new request.",
+      "noResultsWithQueryTitle": "No results for \"{q}\"",
+      "noResultsWithQueryContent": "No resources match your search. Try a different term or clear all filters.",
       "errorResourcePageTitle": "Page Loading Error",
       "errorResourcePageContent": "The selected resources page is not available",
       "catalogSection": {

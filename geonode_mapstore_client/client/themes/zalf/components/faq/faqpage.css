@@ -1,0 +1,112 @@
+.zalf-faq {
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at top left, rgba(140, 198, 112, 0.16), transparent 28%),
+        linear-gradient(180deg, #f4f7f1 0%, #ffffff 38%, #eef5ef 100%);
+    color: #132238;
+}
+
+.zalf-faq__container {
+    width: min(1200px, calc(100% - 48px));
+    margin: 0 auto;
+}
+
+.zalf-faq__hero {
+    padding: 88px 0 44px;
+}
+
+.zalf-faq__eyebrow {
+    display: inline-block;
+    margin-bottom: 12px;
+    color: #5b7a2f;
+    font-size: 0.92rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.zalf-faq__title {
+    margin: 0;
+    max-width: 14ch;
+    font-size: clamp(2.8rem, 5vw, 5rem);
+    line-height: 0.96;
+    color: #163026;
+}
+
+.zalf-faq__lead {
+    margin: 20px 0 0;
+    max-width: 68ch;
+    font-size: 1.08rem;
+    line-height: 1.7;
+    color: #4f655d;
+}
+
+.zalf-faq__section {
+    padding: 24px 0 88px;
+}
+
+.zalf-faq__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    align-items: start;
+}
+
+.zalf-faq__card {
+    padding: 28px;
+    border: 1px solid rgba(22, 48, 38, 0.08);
+    background: rgba(255, 255, 255, 0.86);
+    box-shadow: 0 20px 50px rgba(19, 34, 56, 0.08);
+    backdrop-filter: blur(10px);
+}
+
+.zalf-faq__section-title {
+    margin: 0 0 20px;
+    font-size: 1.3rem;
+    line-height: 1.15;
+    color: #163026;
+}
+
+.zalf-faq__item + .zalf-faq__item {
+    margin-top: 22px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(22, 48, 38, 0.1);
+}
+
+.zalf-faq__question {
+    margin: 0 0 8px;
+    font-size: 1rem;
+    line-height: 1.4;
+    color: #1a3529;
+}
+
+.zalf-faq__answer {
+    margin: 0;
+    font-size: 0.98rem;
+    line-height: 1.65;
+    color: #536a61;
+}
+
+@media (max-width: 1024px) {
+    .zalf-faq__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .zalf-faq__container {
+        width: min(100%, calc(100% - 32px));
+    }
+
+    .zalf-faq__hero {
+        padding: 64px 0 28px;
+    }
+
+    .zalf-faq__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .zalf-faq__card {
+        padding: 22px;
+    }
+}

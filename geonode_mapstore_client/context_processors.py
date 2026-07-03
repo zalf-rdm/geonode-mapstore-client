@@ -36,6 +36,7 @@ def _get_datacite_settings(request):
     if can_publish:
         try:
             from geonode.zalf.api.datacite import get_doi_prefixes_for_user
+
             prefixes = get_doi_prefixes_for_user(user)
         except ImportError:
             prefixes = []
@@ -50,9 +51,7 @@ def resource_urls(request):
         "MAP_BASELAYERS": getattr(settings, "MAPSTORE_BASELAYERS", []),
         "MAP_BASELAYERS_SOURCES": getattr(settings, "MAPSTORE_BASELAYERS_SOURCES", {}),
         "CATALOGUE_SERVICES": getattr(settings, "MAPSTORE_CATALOGUE_SERVICES", {}),
-        "CATALOGUE_SELECTED_SERVICE": getattr(
-            settings, "MAPSTORE_CATALOGUE_SELECTED_SERVICE", None
-        ),
+        "CATALOGUE_SELECTED_SERVICE": getattr(settings, "MAPSTORE_CATALOGUE_SELECTED_SERVICE", None),
         "DASHBOARD_CATALOGUE_SERVICES": getattr(settings, "MAPSTORE_DASHBOARD_CATALOGUE_SERVICES", {}),
         "DASHBOARD_CATALOGUE_SELECTED_SERVICE": getattr(
             settings, "MAPSTORE_DASHBOARD_CATALOGUE_SELECTED_SERVICE", None
@@ -66,12 +65,8 @@ def resource_urls(request):
         "DATASET_MAX_UPLOAD_SIZE": get_max_upload_size("dataset_upload_size"),
         "DOCUMENT_MAX_UPLOAD_SIZE": get_max_upload_size("document_upload_size"),
         "DEFAULT_LAYER_FORMAT": getattr(settings, "DEFAULT_LAYER_FORMAT", "image/png"),
-        "DEFAULT_THUMBNAIL_SIZE": getattr(
-            settings, "THUMBNAIL_SIZE", {"width": 500, "height": 200}
-        ),
-        "MAX_PARALLEL_UPLOADS": get_max_upload_parallelism_limit(
-            "default_max_parallel_uploads"
-        ),
+        "DEFAULT_THUMBNAIL_SIZE": getattr(settings, "THUMBNAIL_SIZE", {"width": 500, "height": 200}),
+        "MAX_PARALLEL_UPLOADS": get_max_upload_parallelism_limit("default_max_parallel_uploads"),
         "ALLOWED_DOCUMENT_TYPES": getattr(settings, "ALLOWED_DOCUMENT_TYPES", []),
         "LANGUAGES": getattr(settings, "LANGUAGES", []),
         "TRANSLATIONS_PATH": getattr(
@@ -80,19 +75,12 @@ def resource_urls(request):
             ["/static/mapstore/ms-translations", "/static/mapstore/gn-translations"],
         ),
         "PROJECTION_DEFS": getattr(settings, "MAPSTORE_PROJECTION_DEFS", []),
-        "PLUGINS_CONFIG_PATCH_RULES": getattr(
-            settings, "MAPSTORE_PLUGINS_CONFIG_PATCH_RULES", []
-        ),
-        "EXTENSIONS_FOLDER_PATH": settings.STATIC_URL + getattr(
-            settings, "MAPSTORE_EXTENSIONS_FOLDER_PATH", "mapstore/extensions/"
-        ),
+        "PLUGINS_CONFIG_PATCH_RULES": getattr(settings, "MAPSTORE_PLUGINS_CONFIG_PATCH_RULES", []),
+        "EXTENSIONS_FOLDER_PATH": settings.STATIC_URL
+        + getattr(settings, "MAPSTORE_EXTENSIONS_FOLDER_PATH", "mapstore/extensions/"),
         "CUSTOM_FILTERS": getattr(settings, "MAPSTORE_CUSTOM_FILTERS", None),
-        "TIME_ENABLED": getattr(settings, "UPLOADER", dict())
-        .get("OPTIONS", dict())
-        .get("TIME_ENABLED", False),
-        "MOSAIC_ENABLED": getattr(settings, "UPLOADER", dict())
-        .get("OPTIONS", dict())
-        .get("MOSAIC_ENABLED", False),
+        "TIME_ENABLED": getattr(settings, "UPLOADER", dict()).get("OPTIONS", dict()).get("TIME_ENABLED", False),
+        "MOSAIC_ENABLED": getattr(settings, "UPLOADER", dict()).get("OPTIONS", dict()).get("MOSAIC_ENABLED", False),
         "SUPPORTED_DATASET_FILE_TYPES": get_supported_datasets_file_types(),
         "RESOURCE_PUBLISHING": getattr(settings, "RESOURCE_PUBLISHING", False),
         "ADMIN_MODERATE_UPLOADS": getattr(settings, "ADMIN_MODERATE_UPLOADS", False),

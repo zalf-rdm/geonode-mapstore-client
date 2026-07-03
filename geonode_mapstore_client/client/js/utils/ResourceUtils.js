@@ -17,6 +17,7 @@ import { excludeGoogleBackground, extractTileMatrixFromSources, ServerTypes } fr
 import { getGeoNodeLocalConfig, parseDevHostname } from '@js/utils/APIUtils';
 import { ProcessTypes, ProcessStatus } from '@js/utils/ResourceServiceUtils';
 import { determineResourceType } from '@js/utils/FileUtils';
+import { formatUsernameFallback } from '@js/utils/SearchUtils';
 
 /**
 * @module utils/ResourceUtils
@@ -391,7 +392,14 @@ export const getResourceTypesInfo = () => ({
         formatEmbedUrl: (resource) => resource?.subtype !== "tabular" && resource.embed_url && parseDevHostname(updateUrlQueryParameter(resource.embed_url, {
             config: 'dataset_preview'
         })),
-        formatDetailUrl: (resource) => resource?.detail_url && parseDevHostname(resource.detail_url),
+        formatDetailUrl: (resource) => {
+            const url = resource?.detail_url && parseDevHostname(resource.detail_url);
+            if (!url) return url;
+            // Redirect catalogue card clicks to the ZALF dataset landing page
+            return url
+                .replace(/#\/dataset\/([^/]+)$/, '#/landing/dataset/$1')
+                .replace(/#\/tabular\/([^/]+)$/, '#/landing/dataset/$1');
+        },
         name: 'Dataset',
         formatMetadataUrl: (resource) => `#/metadata/${resource.pk}`,
         formatMetadataDetailUrl: (resource) => `/metadata/${resource.pk}`
@@ -403,7 +411,11 @@ export const getResourceTypesInfo = () => ({
         formatEmbedUrl: (resource) => parseDevHostname(updateUrlQueryParameter(resource.embed_url, {
             config: 'map_preview'
         })),
-        formatDetailUrl: (resource) => resource?.detail_url && parseDevHostname(resource.detail_url),
+        formatDetailUrl: (resource) => {
+            const url = resource?.detail_url && parseDevHostname(resource.detail_url);
+            if (!url) return url;
+            return url.replace(/#\/map\/([^/]+)$/, '#/landing/map/$1');
+        },
         formatMetadataUrl: (resource) => `#/metadata/${resource.pk}`,
         formatMetadataDetailUrl: (resource) => `/metadata/${resource.pk}`
     },
@@ -413,7 +425,11 @@ export const getResourceTypesInfo = () => ({
         canPreviewed: (resource) => resourceHasPermission(resource, 'download_resourcebase') && !!(determineResourceType(resource.extension) !== 'unsupported'),
         hasPermission: (resource) => resourceHasPermission(resource, 'download_resourcebase'),
         formatEmbedUrl: (resource) => isDocumentExternalSource(resource) ? undefined : resource?.embed_url && parseDevHostname(resource.embed_url),
-        formatDetailUrl: (resource) => resource?.detail_url && parseDevHostname(resource.detail_url),
+        formatDetailUrl: (resource) => {
+            const url = resource?.detail_url && parseDevHostname(resource.detail_url);
+            if (!url) return url;
+            return url.replace(/#\/document\/([^/]+)$/, '#/landing/document/$1');
+        },
         formatMetadataUrl: (resource) => `#/metadata/${resource.pk}`,
         formatMetadataDetailUrl: (resource) => `/metadata/${resource.pk}`,
         metadataPreviewUrl: (resource) => `/metadata/${resource.pk}/embed`
@@ -903,6 +919,39 @@ export const getResourceAdditionalProperties = (_resource = {}) => {
     };
 };
 
+
+const getPersonDisplayName = (person) => {
+    if (!person) return '';
+    const fullName = [person.first_name, person.last_name].filter(Boolean).join(' ').trim();
+    return person.full_name || fullName || formatUsernameFallback(person.username);
+};
+
+const formatPersonCitation = (person = {}) => {
+    if (!person || (!person.last_name && !person.first_name)) {
+        return formatUsernameFallback(person?.username);
+    }
+    const initial = person.first_name ? person.first_name.charAt(0).toUpperCase() + '.' : '';
+    return [person.last_name, initial].filter(Boolean).join(', ');
+};
+
+const getAuthorsDisplayValue = (resource = {}) => {
+    const authors = Array.isArray(resource.author) ? resource.author : [];
+    const names = authors.map(getPersonDisplayName).filter(Boolean);
+    if (names.length) {
+        return names.join('; ');
+    }
+    return getPersonDisplayName(resource.owner);
+};
+
+const getAuthorsCitationValue = (resource = {}) => {
+    const authors = Array.isArray(resource.author) ? resource.author : [];
+    const names = authors.map(formatPersonCitation).filter(Boolean);
+    if (names.length) {
+        return names.join('; ');
+    }
+    return formatPersonCitation(resource.owner);
+};
+
 export const parseCatalogResource = (resource, user) => {
     const {
         formatDetailUrl,
@@ -919,10 +968,15 @@ export const parseCatalogResource = (resource, user) => {
     const viewerUrlParts = (viewerUrl || '').split('#');
     const viewerPath = viewerUrlParts[viewerUrlParts.length - 1];
     const metadataDetailUrl = resource?.pk && getMetadataDetailUrl(resource);
+    const authorDisplay = getAuthorsDisplayValue(resource);
+    const authorCitation = getAuthorsCitationValue(resource);
     return {
         ...resource,
         id: resource.pk,
         name: resource.title,
+        author_display: authorDisplay,
+        author_citation: authorCitation,
+        catalogue_summary: resource.abstract || resource.raw_abstract || resource.description,
         '@extras': {
             info: {
                 title: resource?.title,

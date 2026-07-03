@@ -7,10 +7,14 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react';
-import CopyToClipboard from 'react-copy-to-clipboard';
-import { Glyphicon } from 'react-bootstrap';
+import CopyToClipboardCmp from 'react-copy-to-clipboard';
+import { Dropdown, MenuItem, Glyphicon } from 'react-bootstrap';
 import Button from '@mapstore/framework/components/layout/Button';
+import { formatUsernameFallback } from '@js/utils/SearchUtils';
 import Message from '@mapstore/framework/components/I18N/Message';
+import tooltip from '@mapstore/framework/components/misc/enhancers/tooltip';
+
+const TooltipButton = tooltip(Button);
 
 const FORMATS = [
     { key: 'apa',       label: 'APA' },
@@ -24,14 +28,16 @@ const FORMATS = [
 ];
 
 function formatAuthorName(person, style) {
+    if (!person) return '';
     const last = (person.last_name || '').trim();
     const first = (person.first_name || '').trim();
+    const fallbackName = formatUsernameFallback(person.username);
     const initials = first.split(/\s+/).filter(Boolean).map(n => n[0] + '.').join(' ');
     switch (style) {
-    case 'firstInitials': return last && first ? `${last}, ${initials}` : last || first || person.username || '';
-    case 'firstFull':     return last && first ? `${last}, ${first}` : last || first || person.username || '';
-    case 'fullNormal':    return last && first ? `${first} ${last}` : last || first || person.username || '';
-    default:              return last && first ? `${last}, ${first}` : last || first || person.username || '';
+    case 'firstInitials': return last && first ? `${last}, ${initials}` : last || first || fallbackName || '';
+    case 'firstFull':     return last && first ? `${last}, ${first}` : last || first || fallbackName || '';
+    case 'fullNormal':    return last && first ? `${first} ${last}` : last || first || fallbackName || '';
+    default:              return last && first ? `${last}, ${first}` : last || first || fallbackName || '';
     }
 }
 
@@ -262,36 +268,55 @@ function DetailsCitation({ resource }) {
     }, []);
 
     const citationText = (generators[activeFormat] || generateAPA)(resource);
+    const activeLabel = FORMATS.find(f => f.key === activeFormat)?.label || activeFormat;
 
     const handleCopy = () => {
         setCopied(true);
         clearTimeout(timeoutIdRef.current);
-        timeoutIdRef.current = setTimeout(() => setCopied(false), 1500);
+        timeoutIdRef.current = setTimeout(() => {
+            setCopied(false);
+        }, 700);
     };
 
     return (
-        <div className="gn-details-citation" style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                <select
-                    className="gn-details-citation-select"
-                    value={activeFormat}
-                    onChange={e => setActiveFormat(e.target.value)}
-                >
-                    {FORMATS.map(f => (
-                        <option key={f.key} value={f.key}>{f.label}</option>
-                    ))}
-                </select>
-                <CopyToClipboard text={citationText} onCopy={handleCopy}>
-                    <Button variant="default" size="xs">
-                        <Glyphicon glyph={copied ? 'ok' : 'copy'} />
-                        {' '}
-                        {copied
-                            ? <Message msgId="gnviewer.citationCopied" />
-                            : <Message msgId="gnviewer.copyCitation" />}
-                    </Button>
-                </CopyToClipboard>
+        <div className="gn-details-citation">
+            <div className="gn-details-citation-header">
+                <div className="gn-details-citation-title">
+                    <Message msgId="gnviewer.citation" />
+                </div>
+                <div className="gn-details-citation-actions">
+                    <Dropdown id="gn-citation-format-dropdown" className="gn-details-citation-dropdown">
+                        <Dropdown.Toggle bsStyle="default" bsSize="xsmall" noCaret>
+                            {activeLabel} <Glyphicon glyph="triangle-bottom" />
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu>
+                            {FORMATS.map(f => (
+                                <MenuItem
+                                    key={f.key}
+                                    active={activeFormat === f.key}
+                                    onSelect={() => setActiveFormat(f.key)}
+                                >
+                                    {f.label}
+                                </MenuItem>
+                            ))}
+                        </Dropdown.Menu>
+                    </Dropdown>
+                    <CopyToClipboardCmp
+                        text={citationText}
+                        onCopy={handleCopy}
+                    >
+                        <TooltipButton
+                            tooltipPosition="top"
+                            tooltipId={copied ? 'gnviewer.citationCopied' : 'gnviewer.copyCitation'}
+                            variant="default"
+                            size="xs"
+                        >
+                            <Glyphicon glyph={copied ? 'ok' : 'copy'} />
+                        </TooltipButton>
+                    </CopyToClipboardCmp>
+                </div>
             </div>
-            <pre style={{ border: '1px solid #000', background: '#fff', color: '#000', padding: '0.75rem 1rem', fontFamily: 'monospace', fontSize: '0.8rem', lineHeight: '1.7', whiteSpace: 'pre-wrap', wordBreak: 'break-all', flex: 1, minHeight: 0, overflowY: 'auto', margin: 0, borderRadius: '4px' }}>{citationText}</pre>
+            <pre className="gn-details-citation-code">{citationText}</pre>
         </div>
     );
 }

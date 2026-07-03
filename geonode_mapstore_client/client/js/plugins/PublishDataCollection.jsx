@@ -15,15 +15,15 @@ import { updateResourceProperties } from '@js/actions/gnresource';
 import {
     getResourceData,
     getResourcePerms,
-    getCompactPermissions,
+    getCompactPermissions
 } from '@js/selectors/resource';
 import useDatacitePrefixes from '@js/hooks/useDatacitePrefixes';
 
 
-const i18n = (shortId, msgParams={}) => {
+const i18n = (shortId, msgParams = {}) => {
     const msgId = `plugins.PublishDataCollection.${shortId}`;
     return { msgId, msgParams };
-}
+};
 
 const PublishDataCollectionComponent = ({
     resourceData,
@@ -31,16 +31,16 @@ const PublishDataCollectionComponent = ({
     onClose,
     style,
     closeGlyph,
-    dispatch 
+    dispatch
 }) => {
 
-    const { title, pk, owner, maplayers=[], linkedResources={} } = resourceData;
-    const { linkedTo=[] } = linkedResources;
+    const { title, pk, owner, maplayers = [], linkedResources = {} } = resourceData;
+    const { linkedTo = [] } = linkedResources;
 
     const maplayersData = maplayers.map(ml => ({
         pk: ml.dataset.pk,
         title: ml.dataset.title,
-        source: "maplayer",
+        source: "maplayer"
     }));
     const maplayerPks = new Set(maplayersData.map(ml => ml.pk));
     const uniqueLinkedTo = new Map();
@@ -49,15 +49,15 @@ const PublishDataCollectionComponent = ({
             uniqueLinkedTo.set(lt.pk, {
                 pk: lt.pk,
                 title: lt.title,
-                source: "linked " + lt.resource_type,
+                source: "linked " + lt.resource_type
             });
         }
     });
     const doiResourceCandidates = [
         ...maplayersData,
-        ...Array.from(uniqueLinkedTo.values()),
+        ...Array.from(uniqueLinkedTo.values())
     ];
-    
+
     const doiResourceCandidatesUnique = Object.assign({},
         doiResourceCandidates.reduce((acc, value) => ({...acc, [value.pk]: value}), {})
     );
@@ -67,7 +67,7 @@ const PublishDataCollectionComponent = ({
         const { name, checked } = event.target;
         setCheckedItems(prev => ({
             ...prev,
-            [name]: checked,
+            [name]: checked
         }));
     }, []);
 
@@ -89,21 +89,21 @@ const PublishDataCollectionComponent = ({
             "filter{owner}": owner.pk,
             "exclude[]": "*",
             "include[]": "pk"
-        }
+        };
 
         const url = "/api/v2/resources";
         axios.get(url, { params }).then(response => {
             const ownedResources = (response.data.resources || []);
             setCheckedItems( prev => ({
-                    ...prev,
-                    ...ownedResources.reduce((acc, value) => ({ ...acc, [value.pk]: true}), {})
-                })
+                ...prev,
+                ...ownedResources.reduce((acc, value) => ({ ...acc, [value.pk]: true}), {})
+            })
             );
         }).catch(e => {
             setSelectionError('Could not load resource ownership data. Some items may not be pre-selected.');
             console.error(`Could not send request! ${e}`);
         });
-    }, [maplayers, linkedResources])
+    }, [maplayers, linkedResources]);
 
     const onPublish = useCallback(() => {
         setIconPublishButton("cog fa-spin");
@@ -113,7 +113,7 @@ const PublishDataCollectionComponent = ({
             "owner": owner.pk,
             "doi_prefix": skipDoiPrefix ? undefined : (doiPrefix || doiPrefixes?.[0]),
             "resources": Object.keys(checkedItems).filter(itemPk => checkedItems[itemPk])
-        }
+        };
 
         const url = parseDevHostname(`/api/v2/publish/${pk}/`);
         axios.post(url, payload).then(response => {
@@ -125,12 +125,12 @@ const PublishDataCollectionComponent = ({
                     resourceData,
                     // TODO upstream bug? Status seems not reactive
                     // see https://github.com/GeoNode/geonode-mapstore-client/blob/18986963cf435b963dcb98be25a7b65674741b95/geonode_mapstore_client/client/js/components/ResourceStatus/ResourceStatus.jsx#L20-L27
-                    // Unfortunately, handling of ResourceStatus will change in next versions 
+                    // Unfortunately, handling of ResourceStatus will change in next versions
                     // so we may just accept the status flag not being updated
                     is_published: true
                 }));
             }
-            
+
             setTimeout(onClose, 200);
         }).catch(error => {
             setIconPublishButton("exclamation-circle");
@@ -168,7 +168,7 @@ const PublishDataCollectionComponent = ({
                             )
                         }
                     </FormGroup>
-                    
+
                     <FormGroup className="mb-3">
                         <ControlLabel>
                             <Message { ...i18n("selectDoiPrefix") } />
@@ -178,18 +178,18 @@ const PublishDataCollectionComponent = ({
                             type="switch"
                             onChange={toggleSkipDoiPrefix}
                         >
-                             <Message { ...i18n("skipDoiPrefix") } />
+                            <Message { ...i18n("skipDoiPrefix") } />
                         </Checkbox>
-                        <FormControl id="doi-select" 
+                        <FormControl id="doi-select"
                             componentClass="select"
                             onChange={(e) => setDoiPrefix(e.target.value)}
                             // TODO allow "empty"/"undefined" select for random DOI prefixes
-                            disabled={ prefixesLoading || doiPrefixes.length===0 || skipDoiPrefix }
+                            disabled={ prefixesLoading || doiPrefixes.length === 0 || skipDoiPrefix }
                         >
                             {
                                 prefixesLoading
                                     ? <option value="">Loading...</option>
-                                    : doiPrefixes.map((prefix, i) => 
+                                    : doiPrefixes.map((prefix, i) =>
                                         <option key={i} value={prefix}>{prefix}</option>
                                     )
                             }
@@ -203,16 +203,16 @@ const PublishDataCollectionComponent = ({
                     </Button>
                     <Button
                         variant="primary" onClick={onPublish}
-                        //disabled={!this.props.downloadOptions.selectedFormat || this.props.loading}
-                        //</div>onClick={this.handleExport}
+                        // disabled={!this.props.downloadOptions.selectedFormat || this.props.loading}
+                        // </div>onClick={this.handleExport}
                     >
                         <span><i className={"fa fa-" + iconPublishButton}></i></span> <Message { ...i18n("publish") } />
                     </Button>
                 </div>
             </Dialog>
         </Portal>
-    )
-}
+    );
+};
 
 const OpenDialogButton = ({
     variant,
@@ -231,7 +231,7 @@ const OpenDialogButton = ({
         return null;
     }
 
-    // TODO disable or confirmation 
+    // TODO disable or confirmation
     //   - when map state is dirty
     //   - shall a dataset be set read_only somehow?
 
@@ -241,7 +241,7 @@ const OpenDialogButton = ({
         open: isDialogOpen,
         resourceData,
         ...rest
-    }
+    };
     return (
         <>
             <TooltipButton
@@ -257,13 +257,13 @@ const OpenDialogButton = ({
             { isDialogOpen && <PublishDataCollectionComponent {...props} /> }
         </>
     );
-}
+};
 
 const ConnectedOpenDialogButton = connect(
     createStructuredSelector({
         resourceData: getResourceData,
         userPermissions: getResourcePerms,
-        compactPermissions: getCompactPermissions,
+        compactPermissions: getCompactPermissions
     })
 )(OpenDialogButton);
 

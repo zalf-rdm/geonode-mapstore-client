@@ -81,6 +81,19 @@
     .gn-details-panel-preview-wrapper {
         .border-color-var(@theme-vars[main-border-color]);
     }
+    .gn-details-citation {
+        .border-top-color-var(@theme-vars[main-border-color]);
+        .gn-details-citation-title {
+            .color-var(@theme-vars[main-color]);
+        }
+        .gn-details-citation-code {
+            .color-var(@theme-vars[main-color]);
+            .background-color-var(@theme-vars[main-bg]);
+        }
+        .gn-details-citation-dropdown .dropdown-toggle {
+            .color-var(@theme-vars[main-color]);
+        }
+    }
 }
 
 // **************
@@ -157,7 +170,7 @@
         }
     }
     .gn-viewer-extent-map {
-        height: 300px;
+        height: 150px;
         position: relative;
         display: flex;
         width: 100%;
@@ -626,18 +639,65 @@
 
 // Citation widget
 .gn-details-citation {
-    flex: 1;
-    min-height: 0;
+    margin-top: 0.8rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid transparent;
+    font-size: @font-size-small;
 
-    .gn-details-citation-select {
-        appearance: auto;
-        background: transparent;
-        border: 1px solid transparent;
-        border-radius: @border-radius-base;
-        cursor: pointer;
-        &:hover, &:focus {
-            outline: none;
-            border-color: currentColor;
+    .gn-details-citation-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        padding: 0 0.25rem;
+    }
+
+    .gn-details-citation-title {
+        font-weight: 600;
+        letter-spacing: 0.01em;
+        text-transform: uppercase;
+        font-size: @font-size-small * 0.9;
+    }
+
+    .gn-details-citation-actions {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+
+        .gn-details-citation-dropdown {
+            .dropdown-toggle {
+                border: 1px solid transparent;
+                border-radius: @border-radius-base;
+                background: transparent;
+                padding: 1px 8px;
+                font-size: @font-size-small;
+                line-height: 1.6;
+                &:hover {
+                    border-color: currentColor;
+                }
+            }
+            &.open .dropdown-toggle {
+                border-color: currentColor;
+            }
         }
+
+        .btn:last-child {
+            opacity: 0.7;
+            &:hover { opacity: 1; }
+        }
+    }
+
+    .gn-details-citation-code {
+        display: block;
+        width: 100%;
+        margin: 0;
+        border-radius: @border-radius-base;
+        padding: 0.75rem 1rem;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        font-size: 0.78rem;
+        line-height: 1.7;
+        white-space: pre-wrap;
+        word-break: break-all;
+        user-select: all;
     }
 }

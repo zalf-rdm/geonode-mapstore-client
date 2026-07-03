@@ -1,18 +1,18 @@
 import os
 import shutil
 import zipfile
-from django.db import models
-from django.utils.translation import gettext_lazy as _
+
+from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
-from django.dispatch import receiver
-from django.db.models import signals
 from django.core.cache import caches
 from django.db import models
+from django.db.models import signals
+from django.dispatch import receiver
+from django.utils.translation import gettext_lazy as _
 from geonode_mapstore_client.utils import validate_zip_file, clear_extension_caches
 from geonode_mapstore_client.templatetags.get_search_services import (
     populate_search_service_options,
 )
-from django.conf import settings
 
 
 class SearchService(models.Model):
@@ -59,7 +59,10 @@ class SearchService(models.Model):
         null=False,
         base_field=models.CharField(max_length=250, null=False),
         verbose_name="Attributes",
-        help_text="Comma separated list of attributes. Search is performed on these fields. Only textual fields can be configured",
+        help_text=(
+            "Comma separated list of attributes. Search is performed on these fields. "
+            "Only textual fields can be configured"
+        ),
     )
     sortby = models.CharField(
         max_length=250,
@@ -91,7 +94,6 @@ def post_save_search_service(instance, sender, created, **kwargs):
         services_cache.delete("search_services")
 
     services_cache.set("search_services", populate_search_service_options(), 300)
-
 
 
 def extension_upload_path(instance, filename):
@@ -140,9 +142,7 @@ def handle_extension_upload(sender, instance, **kwargs):
     """
     Unzips the extension file and clears the API cache after saving.
     """
-    target_path = os.path.join(
-        settings.STATIC_ROOT, settings.MAPSTORE_EXTENSIONS_FOLDER_PATH, instance.name
-    )
+    target_path = os.path.join(settings.STATIC_ROOT, settings.MAPSTORE_EXTENSIONS_FOLDER_PATH, instance.name)
 
     if os.path.exists(target_path):
         shutil.rmtree(target_path)
@@ -162,9 +162,7 @@ def handle_extension_delete(sender, instance, **kwargs):
     Removes the extension's files and clears the API cache on deletion.
     """
     if instance.name:
-        extension_path = os.path.join(
-            settings.STATIC_ROOT, settings.MAPSTORE_EXTENSIONS_FOLDER_PATH, instance.name
-        )
+        extension_path = os.path.join(settings.STATIC_ROOT, settings.MAPSTORE_EXTENSIONS_FOLDER_PATH, instance.name)
         if os.path.exists(extension_path):
             shutil.rmtree(extension_path)
 

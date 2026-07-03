@@ -105,7 +105,8 @@ const getViewer = (component) => {
         [appRouteComponentTypes.VIEWER]: ViewerRoute,
         [appRouteComponentTypes.CATALOGUE]: useRedirect ? RedirectRoute : ComponentsRoute,
         [appRouteComponentTypes.COMPONENTS]: ComponentsRoute,
-        [appRouteComponentTypes.MAP_VIEWER]: MapViewerRoute
+        [appRouteComponentTypes.MAP_VIEWER]: MapViewerRoute,
+        [appRouteComponentTypes.DATASET_LANDING]: ComponentsRoute
     };
     return viewers[component];
 };
@@ -161,7 +162,15 @@ getEndpoints()
                         loaderComponent: MainLoader,
                         initialState: {
                             defaultState: {
-                                ...securityState
+                                ...securityState,
+                                // ZALF: open the filter sidebar by default (like Zenodo)
+                                resources: {
+                                    sections: {
+                                        catalog: {
+                                            showFiltersForm: true
+                                        }
+                                    }
+                                }
                             }
                         },
                         themeCfg: null,

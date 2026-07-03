@@ -1,0 +1,255 @@
+/* ── Viewer-page scroll fix ────────────────────────────────── *
+ * Full-screen viewer pages (map, dataset, etc.) use a fixed
+ * viewport layout. We fix #ms-container so the page can scroll
+ * past it to reveal the footer in gn-footer-placeholder below.
+ *
+ * NOTE: the build system prefixes all selectors with .msgapi, so
+ * body/html cannot be targeted here — those overrides are done via
+ * JS in Footer.jsx instead. Selectors here use .gn-catalogue as
+ * the scoping ancestor (which IS a descendant of body.msgapi).    */
+
+/* Make container chain expandable so window scroll works */
+.gn-page-wrapper:has(.gn-viewer-layout),
+.gn-catalogue:has(.gn-viewer-layout) {
+    height: auto !important;
+    overflow: visible !important;
+}
+
+.gn-catalogue:has(.gn-viewer-layout) #ms-container {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh !important;
+}
+
+/* Push the footer placeholder below the fixed viewer.
+   position:relative + z-index ensures it paints above the fixed #ms-container. */
+.gn-catalogue:has(.gn-viewer-layout) .gn-footer-placeholder {
+    margin-top: 100vh;
+    position: relative;
+    z-index: 10;
+}
+
+/* GeoNode's broad rule hides .gn-footer-placeholder with display:none.
+   Show it when our portal has put content inside it.
+   Covers both catalogue and homepage (both are hidden via custom_theme.html). */
+.gn-catalogue .gn-footer-placeholder:not(:empty),
+.gn-homepage .gn-footer-placeholder:not(:empty) {
+    display: block !important;
+}
+
+/* GeoNode's resize script sets inline height = gn-footer.clientHeight (0).
+   Override so our portal content can expand the placeholder. */
+.gn-footer-placeholder {
+    height: auto !important;
+}
+
+/* ── Shell ─────────────────────────────────────────────────── */
+.zalf-footer-shell {
+    margin-top: auto;
+    width: 100%;
+    background-color: var(--zalf-footer-bg, #0b0b0b) !important;
+    color: var(--zalf-footer-text, #f4f4f4) !important;
+}
+
+.zalf-footer-shell footer.footer {
+    font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: var(--zalf-footer-bg, #0b0b0b) !important;
+    color: var(--zalf-footer-text, #f4f4f4) !important;
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+}
+
+.zalf-footer-shell footer.footer,
+.zalf-footer-shell footer.footer * {
+    box-sizing: border-box;
+}
+
+.zalf-footer-shell .font-inter {
+    font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+}
+
+.zalf-footer-shell .bg-dark {
+    background-color: var(--zalf-footer-bg, #0b0b0b) !important;
+}
+
+.zalf-footer-shell .text-white,
+.zalf-footer-shell .text-light {
+    color: var(--zalf-footer-text, #f4f4f4) !important;
+}
+
+.zalf-footer-shell .text-gray-3,
+.zalf-footer-shell p {
+    color: var(--zalf-footer-muted, #adb5bd) !important;
+}
+
+.zalf-footer-shell a,
+.zalf-footer-shell a:visited,
+.zalf-footer-shell .link-light {
+    color: var(--zalf-footer-link, #4d9b70) !important;
+    text-decoration: none !important;
+}
+
+.zalf-footer-shell a:hover,
+.zalf-footer-shell a:focus,
+.zalf-footer-shell a:active,
+.zalf-footer-shell .link-light:hover,
+.zalf-footer-shell .link-light:focus {
+    color: var(--zalf-footer-link-hover, #3f845f) !important;
+    text-decoration: none !important;
+}
+
+.zalf-footer-shell .container {
+    width: 100%;
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 24px;
+    padding-right: 24px;
+}
+
+.zalf-footer-shell .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: -16px;
+    margin-right: -16px;
+}
+
+.zalf-footer-shell .row > [class*="col-"] {
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+.zalf-footer-shell .gy-4 {
+    row-gap: 1.5rem !important;
+}
+
+.zalf-footer-shell .col-6 {
+    width: 50%;
+}
+
+@media (min-width: 768px) {
+    .zalf-footer-shell .col-md-6 {
+        width: 50%;
+    }
+
+    .zalf-footer-shell .text-md-start {
+        text-align: left !important;
+    }
+
+    .zalf-footer-shell .mx-md-0 {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+}
+
+@media (min-width: 992px) {
+    .zalf-footer-shell .col-lg-3 {
+        width: 25%;
+    }
+}
+
+@media (max-width: 640px) {
+    .zalf-footer-shell .col-6 {
+        width: 100%;
+    }
+
+    .zalf-footer-shell .container {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+}
+
+.zalf-footer-shell .list-unstyled {
+    list-style: none !important;
+    padding-left: 0 !important;
+}
+
+.zalf-footer-shell .text-start {
+    text-align: left !important;
+}
+
+.zalf-footer-shell .text-center {
+    text-align: center !important;
+}
+
+.zalf-footer-shell .fw-normal {
+    font-weight: 400 !important;
+}
+
+.zalf-footer-shell .fw-bold {
+    font-weight: 700 !important;
+}
+
+.zalf-footer-shell .fw-semibold {
+    font-weight: 600 !important;
+}
+
+.zalf-footer-shell .fs-5 {
+    font-size: 1.25rem !important;
+}
+
+.zalf-footer-shell .fs-6 {
+    font-size: 1rem !important;
+}
+
+.zalf-footer-shell .fs-7 {
+    font-size: 0.875rem !important;
+}
+
+.zalf-footer-shell .m-0 {
+    margin: 0 !important;
+}
+
+.zalf-footer-shell .mb-0 {
+    margin-bottom: 0 !important;
+}
+
+.zalf-footer-shell .mb-2 {
+    margin-bottom: 0.5rem !important;
+}
+
+.zalf-footer-shell .mb-3 {
+    margin-bottom: 1rem !important;
+}
+
+.zalf-footer-shell .mt-5 {
+    margin-top: 3rem !important;
+}
+
+.zalf-footer-shell .pt-4 {
+    padding-top: 1.5rem !important;
+}
+
+.zalf-footer-shell .pb-5 {
+    padding-bottom: 3rem !important;
+}
+
+.zalf-footer-shell .py-5 {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+}
+
+.zalf-footer-shell .mx-auto {
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+.zalf-footer-shell .border-top {
+    border-top: 1px solid var(--zalf-footer-border, #adb5bd) !important;
+}
+
+.zalf-footer-shell .border-gray {
+    border-color: var(--zalf-footer-border, #adb5bd) !important;
+}
+
+.zalf-footer-shell .img-fluid {
+    display: block;
+    max-width: 100%;
+    height: auto !important;
+}
+
+.zalf-footer-shell .zalf-footer-logo {
+    max-height: 50px;
+}

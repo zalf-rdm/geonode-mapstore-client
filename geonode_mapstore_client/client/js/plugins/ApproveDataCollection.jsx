@@ -15,20 +15,20 @@ import { updateResourceProperties } from '@js/actions/gnresource';
 import {
     getResourceData,
     getResourcePerms,
-    getCompactPermissions,
+    getCompactPermissions
 } from '@js/selectors/resource';
 import useDatacitePrefixes from '@js/hooks/useDatacitePrefixes';
 
 
-const i18n = (shortId, msgParams={}) => {
+const i18n = (shortId, msgParams = {}) => {
     const msgId = `plugins.ApproveDataCollection.${shortId}`;
     return { msgId, msgParams };
-}
+};
 
 const DEFAULT_DIALOG_STYLE = { "white-space": "pre-line" };
 
 const ApproveDataCollectionComponent = (props) => {
-    const { open, onClose, style=DEFAULT_DIALOG_STYLE, closeGlyph, dispatch } = props;
+    const { open, onClose, style = DEFAULT_DIALOG_STYLE, closeGlyph, dispatch } = props;
     const { title, owner } = props.resourceData;
 
     const [ iconApproveButton, setIconApproveButton ] = useState("thumbs-up");
@@ -76,8 +76,8 @@ const ApproveDataCollectionComponent = (props) => {
                 </div>
             </Dialog>
         </Portal>
-    )
-}
+    );
+};
 
 const ApproveDataCollectionDialogButton = ({
     variant,
@@ -104,7 +104,7 @@ const ApproveDataCollectionDialogButton = ({
         open: isDialogOpen,
         resourceData,
         ...rest
-    }
+    };
     return (
         <>
             <TooltipButton
@@ -120,13 +120,13 @@ const ApproveDataCollectionDialogButton = ({
             { isDialogOpen && <ApproveDataCollectionComponent {...props} /> }
         </>
     );
-}
+};
 
 const ConnectedApproveDataCollectionDialogButton = connect(
     createStructuredSelector({
         resourceData: getResourceData,
         userPermissions: getResourcePerms,
-        compactPermissions: getCompactPermissions,
+        compactPermissions: getCompactPermissions
     })
 )(ApproveDataCollectionDialogButton);
 
