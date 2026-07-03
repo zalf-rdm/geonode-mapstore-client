@@ -28,6 +28,7 @@ const FORMATS = [
 ];
 
 function formatAuthorName(person, style) {
+    if (!person) return '';
     const last = (person.last_name || '').trim();
     const first = (person.first_name || '').trim();
     const fallbackName = formatUsernameFallback(person.username);

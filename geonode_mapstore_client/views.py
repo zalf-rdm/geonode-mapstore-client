@@ -21,7 +21,10 @@ def _parse_value(value, schema):
     fmt = schema.get("format")
     if schema_type == "string" and fmt in ["date-time"]:
         if isinstance(value, str):
-            return parser.parse(value)
+            try:
+                return parser.parse(value)
+            except (ValueError, TypeError):
+                return value
         return value
     if schema_type == "string":
         if "oneOf" in schema:

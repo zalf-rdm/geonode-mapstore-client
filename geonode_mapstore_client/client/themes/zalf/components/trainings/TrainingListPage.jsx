@@ -53,7 +53,7 @@ function TrainingListPage() {
     const visible = all.filter(t => {
         if (filterOrg && t.organizer !== filterOrg) return false;
         if (filterDur && t.duration !== filterDur) return false;
-        if (q && !t.title.toLowerCase().includes(q) && !t.organizer.toLowerCase().includes(q)) return false;
+        if (q && !(t.title || '').toLowerCase().includes(q) && !(t.organizer || '').toLowerCase().includes(q)) return false;
         return true;
     });
 

@@ -65,17 +65,9 @@ import {
 } from '@mapstore/framework/plugins/ResourcesCatalog/selectors/resources';
 import resourcesEpics from '@mapstore/framework/plugins/ResourcesCatalog/epics/resources';
 import resourcesReducer from '@mapstore/framework/plugins/ResourcesCatalog/reducers/resources';
+import { formatUsernameFallback } from '@js/utils/SearchUtils';
 
 // ─── Resource pre-processing (replaces MapStore2 ResourcesUtils virtual paths) ──
-
-const formatUsernameFallback = (username) => {
-    if (!username) return '';
-    return String(username)
-        .split(/[._\-\s]+/)
-        .filter(Boolean)
-        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-        .join(' ');
-};
 
 const formatAuthorCitation = (person = {}) => {
     if (!person.last_name && !person.first_name) {

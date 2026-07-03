@@ -70,9 +70,9 @@ function useCmsData() {
 
     React.useEffect(() => {
         Promise.all([
-            fetch('/api/v2/cms/cases/').then(r => r.ok ? r.json() : []),
-            fetch('/api/v2/cms/banners/').then(r => r.ok ? r.json() : []),
-            fetch('/api/v2/cms/trainings/').then(r => r.ok ? r.json() : []),
+            fetch('/api/v2/cms/cases/').then(r => r.ok ? r.json() : []).catch(() => []),
+            fetch('/api/v2/cms/banners/').then(r => r.ok ? r.json() : []).catch(() => []),
+            fetch('/api/v2/cms/trainings/').then(r => r.ok ? r.json() : []).catch(() => []),
         ]).then(([c, b, t]) => {
             setCases(c);
             setBanners(b);

@@ -246,6 +246,7 @@ function CopyMenu({ pk }) {
 const CITATION_STYLES = ['Chicago', 'APA', 'DataCite'];
 
 function formatPersonName(person, style) {
+    if (!person) return '';
     const last  = (person.last_name  || '').trim();
     const first = (person.first_name || '').trim();
     const fallbackName = formatUsernameFallback(person.username);
@@ -258,7 +259,7 @@ function formatPersonName(person, style) {
 }
 
 function buildAuthorList(people, style) {
-    if (!people || people.length === 0) return null;
+    if (!Array.isArray(people) || people.length === 0) return null;
     const names = people.map(p => formatPersonName(p, style)).filter(Boolean);
     if (names.length === 0) return null;
     if (names.length === 1) return names[0];
@@ -272,7 +273,7 @@ function buildAuthorList(people, style) {
 }
 
 function buildCitation(r, style) {
-    const people = (r.author || []).length ? r.author : (r.owner ? [r.owner] : []);
+    const people = Array.isArray(r.author) && r.author.length ? r.author : (r.owner ? [r.owner] : []);
     const authorList = buildAuthorList(people, style)
         || formatPersonName(r.owner || {}, style)
         || 'ZALF';
@@ -428,7 +429,7 @@ function RelatedIdentifierList({ items }) {
     if (!items || !items.length) return null;
     return ce('ul', { className: 'zalf-lp-related-list' },
         ...items.map((ri, i) => {
-            const id = ri.identifier || ri.related_identifier || '';
+            const id = String(ri.identifier || ri.related_identifier || '');
             const type = ri.related_identifier_type?.label || ri.related_identifier_type || 'ID';
             const rel = ri.relation_type?.label || ri.relation_type || '';
             const isDoi = type === 'DOI';

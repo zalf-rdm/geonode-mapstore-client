@@ -17,8 +17,8 @@ function propertyToKey(property) {
 }
 
 function headerFromFeatures(data) {
-    const feature = data.features[0] || [];
-    const properties = feature.properties;
+    const feature = data?.features?.[0];
+    const properties = feature?.properties || {};
     return Object.keys(properties).map((p) => ({ value: p, key: propertyToKey(p) }));
 }
 
