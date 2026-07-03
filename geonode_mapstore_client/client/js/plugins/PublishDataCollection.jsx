@@ -224,8 +224,10 @@ const OpenDialogButton = ({
 }) => {
     const [isDialogOpen, setDialogOpen] = useState(false);
     const toggleDialog = () => setDialogOpen(!isDialogOpen);
+    // Publishing is restricted to managers of an allowed DataCite group
+    const { canPublish } = useDatacitePrefixes();
 
-    if (resourceData?.is_published || !resourceData?.is_approved || !resourceData?.perms?.includes('change_resourcebase')) {
+    if (!canPublish || resourceData?.is_published || !resourceData?.is_approved) {
         return null;
     }
 
@@ -271,6 +273,8 @@ const PublishDataCollectionMenuItem = ({
 }) => {
     const [isDialogOpen, setDialogOpen] = useState(false);
     const toggleDialog = () => setDialogOpen(!isDialogOpen);
+    // Publishing is restricted to managers of an allowed DataCite group
+    const { canPublish } = useDatacitePrefixes();
     const props = {
         onClose: toggleDialog,
         open: isDialogOpen,
@@ -278,7 +282,7 @@ const PublishDataCollectionMenuItem = ({
         ...rest
     };
 
-    if (!resource?.perms?.includes('change_resourcebase') || resource?.is_published || !resource?.is_approved) {
+    if (!canPublish || resource?.is_published || !resource?.is_approved) {
         return null;
     }
 

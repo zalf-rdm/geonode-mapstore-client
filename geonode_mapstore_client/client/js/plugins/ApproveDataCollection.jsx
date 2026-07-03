@@ -89,11 +89,10 @@ const ApproveDataCollectionDialogButton = ({
 }) => {
     const [isDialogOpen, setDialogOpen] = useState(false);
     const toggleDialog = () => setDialogOpen(!isDialogOpen);
-    const { canPublish } = useDatacitePrefixes();
+    const { canApprove } = useDatacitePrefixes();
 
-    // Only show the approve button to users who belong to an allowed group
-    // (canPublish = true means the datacite/prefixes/ API returned ≥1 prefix for this user).
-    if (!canPublish || resourceData?.is_approved) {
+    // Only show the approve button to members (any role) of an allowed group
+    if (!canApprove || resourceData?.is_approved) {
         return null;
     }
 
@@ -137,14 +136,14 @@ const ApproveDataCollectionMenuItem = ({
 }) => {
     const [isDialogOpen, setDialogOpen] = useState(false);
     const toggleDialog = () => setDialogOpen(!isDialogOpen);
-    const { canPublish } = useDatacitePrefixes();
+    const { canApprove } = useDatacitePrefixes();
     const props = {
         onClose: toggleDialog,
         open: isDialogOpen,
         resourceData: resource,
         ...rest
     };
-    if (!canPublish || resource?.is_approved) {
+    if (!canApprove || resource?.is_approved) {
         return null;
     }
 

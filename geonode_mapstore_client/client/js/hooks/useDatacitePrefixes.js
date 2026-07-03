@@ -10,16 +10,18 @@
  * Returns:
  *   prefixes      - array of prefix strings (e.g. ["10.20387"])
  *   loading       - always false (data is synchronously available)
- *   canPublish    - true when the user is a member of an allowed group
+ *   canApprove    - true when the user is a member (any role) of an allowed group
+ *   canPublish    - true when the user is a manager of an allowed group
  */
 
 const useDatacitePrefixes = () => {
     const datacite = window?.__GEONODE_CONFIG__?.localConfig?.geoNodeSettings?.datacite
-        ?? { can_publish: false, prefixes: [] };
+        ?? { can_approve: false, can_publish: false, prefixes: [] };
 
     return {
         prefixes: Array.isArray(datacite.prefixes) ? datacite.prefixes : [],
         loading: false,
+        canApprove: datacite.can_approve === true,
         canPublish: datacite.can_publish === true
     };
 };

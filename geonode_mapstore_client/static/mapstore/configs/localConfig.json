@@ -604,10 +604,6 @@
                         "labelId": "gnviewer.metadataUpload"
                       },
                       {
-                        "type": "divider",
-                        "disableIf": "{state('isNewResource') && (context.get(state('gnResourceData'), 'is_published') || context.get(state('gnResourceData'), 'is_approved'))}"
-                      },
-                      {
                         "type": "plugin",
                         "name": "ApproveDataCollection",
                         "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'change_resourcebase') || context.get(state('gnResourceData'), 'is_approved')}"
@@ -2783,7 +2779,15 @@
                 "name": "PublishDataCollection",
                 "cfg": {
                     "showText": true
-                }                
+                }
+            },
+            {
+                "mandatory": true,
+                "name": "DataCiteDownload"
+            },
+            {
+                "mandatory": true,
+                "name": "ZalfPublicationDebug"
             },
             {
                 "name": "StyleEditor",

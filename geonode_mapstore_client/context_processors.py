@@ -20,25 +20,27 @@ def _get_datacite_settings(request):
     Return DataCite publishing info for the current user, embedded directly
     into the page so the frontend needs no extra HTTP round-trip.
 
-    ``can_publish`` is derived from group membership only (no DataCite API
-    call).  ``prefixes`` are fetched from the DataCite API and cached per
+    ``can_approve`` (any member of an allowed group) and ``can_publish``
+    (group managers only) are derived from group membership — no DataCite API
+    call.  ``prefixes`` are fetched from the DataCite API and cached per
     account — they are only fetched when the user can publish.
     """
     user = getattr(request, "user", None)
     if user is None or not user.is_authenticated:
-        return {"can_publish": False, "prefixes": []}
+        return {"can_approve": False, "can_publish": False, "prefixes": []}
 
+    can_approve = user.can_approve_data_collection()
     can_publish = user.can_publish_data_collection()
-    if not can_publish:
-        return {"can_publish": False, "prefixes": []}
 
-    try:
-        from geonode.zalf.api.datacite import get_doi_prefixes_for_user
-        prefixes = get_doi_prefixes_for_user(user)
-    except ImportError:
-        prefixes = []
+    prefixes = []
+    if can_publish:
+        try:
+            from geonode.zalf.api.datacite import get_doi_prefixes_for_user
+            prefixes = get_doi_prefixes_for_user(user)
+        except ImportError:
+            prefixes = []
 
-    return {"can_publish": True, "prefixes": prefixes}
+    return {"can_approve": can_approve, "can_publish": can_publish, "prefixes": prefixes}
 
 
 def resource_urls(request):

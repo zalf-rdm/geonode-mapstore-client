@@ -24,6 +24,7 @@ import SecurityPopup from "@mapstore/framework/plugins/SecurityPopup";
 
 import OperationPlugin from '@js/plugins/Operation';
 import ExecutionTrackerPlugin from '@js/plugins/ExecutionTracker';
+import ZalfPublicationDebugPlugin from '@js/plugins/ZalfPublicationDebug';
 import MetadataEditorPlugin from '@js/plugins/MetadataEditor';
 import MetadataViewerPlugin from '@js/plugins/MetadataEditor/MetadataViewer';
 import FavoritesPlugin from '@js/plugins/Favorites';
@@ -502,7 +503,8 @@ export const plugins = {
     PublishDataCollectionPlugin: toModulePlugin(
         'PublishDataCollection',
         () => import(/* webpackChunkName: 'plugins/publish-data-collection-plugin' */ '@js/plugins/PublishDataCollection')
-    )
+    ),
+    ZalfPublicationDebugPlugin
 };
 
 const pluginsDefinition = {
