@@ -150,6 +150,12 @@ function Footer() {
             document.body.style.setProperty('overflow-y', 'auto', 'important');
             document.body.style.setProperty('height', 'auto', 'important');
         }
+        return () => {
+            document.documentElement.style.removeProperty('overflow-y');
+            document.documentElement.style.removeProperty('height');
+            document.body.style.removeProperty('overflow-y');
+            document.body.style.removeProperty('height');
+        };
     }, []);
 
     if (!portalTarget) return null;

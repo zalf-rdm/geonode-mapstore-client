@@ -111,13 +111,13 @@ function Modal({ item, onClose, onSaved }) {
                         'div',
                         { style: { flex: 1 } },
                         React.createElement('label', null, 'Start date'),
-                        React.createElement('input', { type: 'date', value: form.start_date || '', onChange: e => set('start_date', e.target.value || null) })
+                        React.createElement('input', { type: 'date', value: form.start_date ? form.start_date.split('T')[0] : '', onChange: e => set('start_date', e.target.value || null) })
                     ),
                     React.createElement(
                         'div',
                         { style: { flex: 1 } },
                         React.createElement('label', null, 'End date'),
-                        React.createElement('input', { type: 'date', value: form.end_date || '', onChange: e => set('end_date', e.target.value || null) })
+                        React.createElement('input', { type: 'date', value: form.end_date ? form.end_date.split('T')[0] : '', onChange: e => set('end_date', e.target.value || null) })
                     )
                 ),
 

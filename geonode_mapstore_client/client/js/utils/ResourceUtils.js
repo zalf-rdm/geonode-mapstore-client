@@ -920,7 +920,8 @@ export const getResourceAdditionalProperties = (_resource = {}) => {
 };
 
 
-const getPersonDisplayName = (person = {}) => {
+const getPersonDisplayName = (person) => {
+    if (!person) return '';
     const fullName = [person.first_name, person.last_name].filter(Boolean).join(' ').trim();
     return person.full_name || fullName || formatUsernameFallback(person.username);
 };

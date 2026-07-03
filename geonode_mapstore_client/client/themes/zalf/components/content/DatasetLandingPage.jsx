@@ -378,6 +378,7 @@ function TextBlock({ text }) {
 }
 
 function PersonChip({ person }) {
+    if (!person) return null;
     const name = person.full_name || [person.first_name, person.last_name].filter(Boolean).join(' ') || formatUsernameFallback(person.username) || '—';
     const href = person.username ? `/people/profile/${person.username}` : null;
     return ce('div', { className: 'zalf-lp-person' },
@@ -616,15 +617,14 @@ export default function DatasetLandingPage() {
     const license = r.license?.name_long || r.license?.name || r.license?.identifier || null;
     const licenseUrl = r.license?.url || null;
     const doiUrl = r.doi ? 'https://doi.org/' + r.doi : null;
-    const pubDate = r.date
-        ? new Date(r.date).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' })
-        : null;
-    const tempStart = r.temporal_extent_start
-        ? new Date(r.temporal_extent_start).toLocaleDateString('en-GB', { year: 'numeric', month: 'short' })
-        : null;
-    const tempEnd = r.temporal_extent_end
-        ? new Date(r.temporal_extent_end).toLocaleDateString('en-GB', { year: 'numeric', month: 'short' })
-        : null;
+    const formatDateSafe = (dateStr, options) => {
+        if (!dateStr) return null;
+        const d = new Date(dateStr);
+        return isNaN(d.getTime()) ? null : d.toLocaleDateString('en-GB', options);
+    };
+    const pubDate = formatDateSafe(r.date, { year: 'numeric', month: 'long', day: 'numeric' });
+    const tempStart = formatDateSafe(r.temporal_extent_start, { year: 'numeric', month: 'short' });
+    const tempEnd = formatDateSafe(r.temporal_extent_end, { year: 'numeric', month: 'short' });
     const dateTypeLabel = r.date_type
         ? r.date_type.charAt(0).toUpperCase() + r.date_type.slice(1)
         : 'Date';

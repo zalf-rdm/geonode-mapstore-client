@@ -23,10 +23,10 @@ function headerFromFeatures(data) {
 }
 
 function rowsFromFeatures(data) {
-    const features = data.features || [];
+    const features = data?.features || [];
     return features.map((feature) => {
         const row = {};
-        const properties = feature.properties;
+        const properties = feature?.properties || {};
         Object.keys(properties)
             .forEach(name => Object.assign(row, { [propertyToKey(name)]: properties[name] }));
         return row;
@@ -127,7 +127,7 @@ const TabularPreviewPlugin = connect(
         (state) => state?.gnsettings?.geoserverUrl,
         (state) => state?.gnresource?.data
     ], (geoserverUrl, resource) => {
-        if (!resource.subtype || !geoserverUrl) {
+        if (!resource?.subtype || !geoserverUrl) {
             return {};
         }
         const owsUrl = `${geoserverUrl}ows`;

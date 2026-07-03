@@ -80,19 +80,20 @@ def metadata(request, pk, template="geonode-mapstore-client/metadata.html"):
                 metadata_groups[group] = {}
             metadata_groups[group][key] = prop
 
-    metadata_groups["Responsible"] = {
-        k: v
-        for k, v in {
-            "Name": resource.owner.name_long,
-            "Email": resource.owner.email,
-            "Position": resource.owner.position,
-            "Organization": resource.owner.organization,
-            "Location": resource.owner.location,
-            "Voice": resource.owner.voice,
-            "Fax": resource.owner.fax,
-        }.items()
-        if v and str(v) not in ("None", "")
-    }
+    if resource.owner:
+        metadata_groups["Responsible"] = {
+            k: v
+            for k, v in {
+                "Name": resource.owner.name_long,
+                "Email": resource.owner.email,
+                "Position": resource.owner.position,
+                "Organization": resource.owner.organization,
+                "Location": resource.owner.location,
+                "Voice": resource.owner.voice,
+                "Fax": resource.owner.fax,
+            }.items()
+            if v and str(v) not in ("None", "")
+        }
 
     metadata_groups["Information"] = {
         "Identification Image": {"type": "thumbnail", "value": resource.thumbnail_url},

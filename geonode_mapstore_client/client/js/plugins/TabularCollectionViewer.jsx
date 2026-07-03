@@ -51,8 +51,8 @@ const TabularCollectionViewerPlugin = connect(
         state => state?.gnresource?.data || null,
         (state) => state?.gnsettings?.geoserverUrl
     ], (resource, geoserverUrl) => {
-        const owsUrl = `${geoserverUrl}ows`;
-        const tableLayers = resource.maplayers || [];
+        const owsUrl = geoserverUrl ? `${geoserverUrl}ows` : '';
+        const tableLayers = resource?.maplayers || [];
         return { owsUrl, tableLayers };
     })
 )(TabbedTablesComponent);

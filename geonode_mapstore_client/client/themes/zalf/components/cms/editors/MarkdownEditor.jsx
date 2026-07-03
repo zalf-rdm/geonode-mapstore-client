@@ -8,6 +8,7 @@ function MarkdownEditor({ value, onChange }) {
 
     React.useEffect(() => {
         if (tab !== 'preview') return;
+        let active = true;
         if (debounceRef.current) clearTimeout(debounceRef.current);
         debounceRef.current = setTimeout(() => {
             fetch('/api/v2/cms/preview-markdown/', {
@@ -19,9 +20,14 @@ function MarkdownEditor({ value, onChange }) {
                 body: JSON.stringify({ text: value || '' }),
             })
                 .then(r => r.ok ? r.json() : { html: '' })
-                .then(data => setPreview(data.html || ''));
+                .then(data => {
+                    if (active) setPreview(data.html || '');
+                });
         }, 300);
-        return () => clearTimeout(debounceRef.current);
+        return () => {
+            active = false;
+            clearTimeout(debounceRef.current);
+        };
     }, [value, tab]);
 
     return React.createElement(
