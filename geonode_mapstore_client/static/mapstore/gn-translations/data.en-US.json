@@ -576,7 +576,10 @@
             "noAssets": "No assets found",
             "errorCloningTitle": "Cannot clone the resource",
             "errorDeletingTitle": "Cannot delete the resource",
-            "errorOperationTitle": "Error occurred while performing the operation"
+            "errorOperationTitle": "Error occurred while performing the operation",
+            "citation": "Citation",
+            "copyCitation": "Copy citation",
+            "citationCopied": "Copied!"
         },
         "resourcesCatalog": {
             "anonymous": "Anyone",

@@ -550,7 +550,10 @@
             "noAssets": "Aucun asset trouvé",
             "errorCloningTitle": "Impossible de cloner la ressource",
             "errorDeletingTitle": "Impossible de supprimer la ressource",
-            "errorOperationTitle": "Erreur lors de l'exécution de l'opération"
+            "errorOperationTitle": "Erreur lors de l'exécution de l'opération",
+            "citation": "Citation",
+            "copyCitation": "Copier la citation",
+            "citationCopied": "Copié !"
         },
         "resourcesCatalog": {
             "anonymous": "N'importe qui",
