@@ -364,7 +364,6 @@ CollectionNavigator.propTypes = {
 
 export function DatasetTable({ dataset, geoserverUrl, activeIndex, totalDatasets }) {
     const [columns, setColumns] = useState([]);
-    const [rows, setRows] = useState([]);
     const [rawFeatureData, setRawFeatureData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -409,7 +408,6 @@ export function DatasetTable({ dataset, geoserverUrl, activeIndex, totalDatasets
 
     useEffect(() => {
         setColumns([]);
-        setRows([]);
         setRawFeatureData(null);
         setSearchDraft('');
         setSearchText('');
@@ -457,8 +455,6 @@ export function DatasetTable({ dataset, geoserverUrl, activeIndex, totalDatasets
                 if (requestRef.current === requestId) {
                     setError(e);
                     setRawFeatureData(null);
-                    setRows([]);
-                    setTotalRows(0);
                 }
             } finally {
                 if (requestRef.current === requestId) {
@@ -470,23 +466,32 @@ export function DatasetTable({ dataset, geoserverUrl, activeIndex, totalDatasets
     }, [owsUrl, typeName, pageSize, currentPage, searchText]);
 
     useEffect(() => {
+        if (rawFeatureData && !columns.length) {
+            const resolvedColumns = normalizeColumnsFromFeatures(rawFeatureData);
+            if (resolvedColumns.length) {
+                setColumns(resolvedColumns);
+            }
+        }
+    }, [rawFeatureData, columns.length]);
+
+    const { rows, totalRows } = useMemo(() => {
         if (!rawFeatureData) {
-            return;
+            return { rows: [], totalRows: 0 };
         }
         const resolvedColumns = columns.length ? columns : normalizeColumnsFromFeatures(rawFeatureData);
-        if (!columns.length && resolvedColumns.length) {
-            setColumns(resolvedColumns);
-        }
         const nextRows = rowsFromFeatures(rawFeatureData, resolvedColumns);
         if (searchText) {
             const filteredRows = nextRows.filter((row) => rowMatchesSearch(row, searchText, resolvedColumns));
             const pagedRows = filteredRows.slice((currentPage - 1) * pageSize, currentPage * pageSize);
-            setRows(pagedRows);
-            setTotalRows(filteredRows.length);
-        } else {
-            setRows(nextRows);
-            setTotalRows(parseTotalFeatures(rawFeatureData, nextRows.length));
+            return {
+                rows: pagedRows,
+                totalRows: filteredRows.length
+            };
         }
+        return {
+            rows: nextRows,
+            totalRows: parseTotalFeatures(rawFeatureData, nextRows.length)
+        };
     }, [rawFeatureData, columns, searchText, pageSize, currentPage]);
 
     useEffect(() => {
