@@ -71,6 +71,26 @@
         height: calc(100% - var(--zalf-nav-height)) !important;
     }
 
+    .page-tabular-viewer.gn-viewer-layout,
+    .page-tabular-collection-viewer.gn-viewer-layout {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        height: auto !important;
+        min-height: calc(100vh - var(--zalf-nav-height)) !important;
+    }
+
+    .page-tabular-viewer .gn-viewer-layout-body,
+    .page-tabular-collection-viewer .gn-viewer-layout-body {
+        display: block;
+        flex: 0 0 auto;
+    }
+
+    .page-tabular-viewer .gn-viewer-layout-center,
+    .page-tabular-collection-viewer .gn-viewer-layout-center {
+        min-height: calc(100vh - 132px);
+    }
+
     // Upload pages: gn-upload-container uses position:absolute by default.
     // gn-create-dataset gets position:absolute from the ._absolute utility class.
     // Override both so they participate in the flex column instead of covering

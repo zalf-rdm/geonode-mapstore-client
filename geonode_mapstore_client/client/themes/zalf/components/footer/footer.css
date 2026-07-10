@@ -23,12 +23,27 @@
     height: 100vh !important;
 }
 
+.gn-catalogue:has(.page-tabular-viewer.gn-viewer-layout) #ms-container,
+.gn-catalogue:has(.page-tabular-collection-viewer.gn-viewer-layout) #ms-container {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+}
+
 /* Push the footer placeholder below the fixed viewer.
    position:relative + z-index ensures it paints above the fixed #ms-container. */
 .gn-catalogue:has(.gn-viewer-layout) .gn-footer-placeholder {
     margin-top: 100vh;
     position: relative;
     z-index: 10;
+}
+
+.gn-catalogue:has(.page-tabular-viewer.gn-viewer-layout) .gn-footer-placeholder,
+.gn-catalogue:has(.page-tabular-collection-viewer.gn-viewer-layout) .gn-footer-placeholder {
+    margin-top: 0;
+    z-index: auto;
 }
 
 /* GeoNode's broad rule hides .gn-footer-placeholder with display:none.

@@ -116,6 +116,11 @@ export const CATALOGUE_ROUTES = [
         component: appRouteComponentTypes.DATASET_LANDING
     },
     {
+        name: 'tabular-collection_landing',
+        path: ['/landing/tabular-collection/:pk'],
+        component: appRouteComponentTypes.DATASET_LANDING
+    },
+    {
         name: 'dataset_viewer',
         path: [
             '/dataset/:subtype/:pk'

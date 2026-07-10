@@ -140,6 +140,21 @@ function Icon({ name, className, size }) {
             ce('path', { key: 'p1', d: 'M12 3l9 5-9 5-9-5 9-5z' }),
             ce('path', { key: 'p2', d: 'M3 12l9 5 9-5' }),
             ce('path', { key: 'p3', d: 'M3 16l9 5 9-5' })
+        ],
+        table: [
+            ce('rect', { key: 'p1', x: '3', y: '5', width: '18', height: '14', rx: '2' }),
+            ce('path', { key: 'p2', d: 'M3 10h18' }),
+            ce('path', { key: 'p3', d: 'M3 14h18' }),
+            ce('path', { key: 'p4', d: 'M9 5v14' }),
+            ce('path', { key: 'p5', d: 'M15 5v14' })
+        ],
+        'table-collection': [
+            ce('rect', { key: 'p1', x: '6', y: '4', width: '13', height: '10', rx: '1.8' }),
+            ce('path', { key: 'p2', d: 'M6 8h13' }),
+            ce('path', { key: 'p3', d: 'M10 4v10' }),
+            ce('rect', { key: 'p4', x: '3', y: '10', width: '13', height: '10', rx: '1.8' }),
+            ce('path', { key: 'p5', d: 'M3 14h13' }),
+            ce('path', { key: 'p6', d: 'M7 10v10' })
         ]
     };
     return ce('svg', common, ...(paths[name] || paths.info));
@@ -169,6 +184,7 @@ function getResourceTypeLabel(r) {
         if (st === 'remote') return 'Remote Service';
         return 'Dataset';
     }
+    if (rt === 'map' && st === 'tabular-collection') return 'Table Collection';
     if (rt === 'map') return 'Map';
     if (rt === 'document') return 'Document';
     return rt.charAt(0).toUpperCase() + rt.slice(1);
@@ -184,9 +200,23 @@ function getViewerHref(pk, r) {
 
 function getViewerButtonLabel(r) {
     const rt = r.resource_type || 'dataset';
+    if (rt === 'map' && r.subtype === 'tabular-collection') return 'Data Access';
     if (rt === 'map') return 'Open Map';
     if (rt === 'document') return 'View Document';
     return 'Data Access';
+}
+
+function getHeroIconName(r) {
+    if (r.subtype === 'tabular-collection') {
+        return 'table-collection';
+    }
+    if (r.subtype === 'tabular' || r.subtype === 'table') {
+        return 'table';
+    }
+    if (r.resource_type === 'map') {
+        return 'map';
+    }
+    return 'layer';
 }
 
 function formatFileSize(bytes) {
@@ -690,7 +720,7 @@ export default function DatasetLandingPage() {
                             ce('img', { src: r.thumbnail_url, alt: r.title })
                         )
                         : ce('div', { className: 'zalf-lp-hero-thumb zalf-lp-hero-thumb--placeholder' },
-                            ce(Icon, { name: r.resource_type === 'map' ? 'map' : 'layer', className: 'zalf-lp-hero-thumb-icon', size: '5rem' })
+                            ce(Icon, { name: getHeroIconName(r), className: 'zalf-lp-hero-thumb-icon', size: '5rem' })
                         ),
                     ce('div', { className: 'zalf-lp-hero-body' },
                         ce('div', { className: 'zalf-lp-hero-tags' },

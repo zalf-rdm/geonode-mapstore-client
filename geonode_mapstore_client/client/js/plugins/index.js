@@ -35,6 +35,8 @@ import ZalfCmsPlugin from '../../themes/zalf/plugins/CmsPlugin';
 import ZalfTrainingListPlugin from '../../themes/zalf/plugins/TrainingListPlugin';
 import ZalfFooterPlugin from '../../themes/zalf/plugins/FooterPlugin';
 import ZalfDatasetLandingPlugin from '../../themes/zalf/plugins/DatasetLandingPlugin';
+import ZalfTabularViewerPlugin from '../../themes/zalf/plugins/TabularViewerPlugin';
+import ZalfTabularCollectionViewerPlugin from '../../themes/zalf/plugins/TabularCollectionViewerPlugin';
 import ResourcesGridPlugin from '../../themes/zalf/plugins/ZalfResourcesGridPlugin';
 import ResourcesFiltersFormPlugin from '../../themes/zalf/plugins/ZalfResourcesFiltersFormPlugin';
 
@@ -98,6 +100,8 @@ export const plugins = {
     ZalfTrainingListPlugin,
     ZalfFooterPlugin,
     ZalfDatasetLandingPlugin,
+    ZalfTabularViewerPlugin,
+    ZalfTabularCollectionViewerPlugin,
     IsochronePlugin: Isochrone,
     ItineraryPlugin: Itinerary,
     SecurityPopupPlugin: SecurityPopup,

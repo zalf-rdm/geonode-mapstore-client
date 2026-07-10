@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 
 import { createPlugin } from '@mapstore/framework/utils/PluginsUtils';
-import { describeFeatureType, getFeatureSimple } from '@mapstore/framework/api/WFS';
+import { getFeatureSimple } from '@mapstore/framework/api/WFS';
 
 import Table from '@js/components/Table';
 import resourceReducer from '@js/reducers/gnresource';
