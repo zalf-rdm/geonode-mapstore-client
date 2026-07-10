@@ -722,40 +722,6 @@ describe('Test Resource Utils', () => {
             expect(name).toBe('Map');
             expect(formatMetadataUrl(resource)).toBe('#/metadata/100');
         });
-        it('test tabular subtype of getResourceTypesInfo', () => {
-            const {
-                icon,
-                canPreviewed,
-                formatDetailUrl,
-                name
-            } = getResourceTypesInfo().tabular;
-            let resource = {
-                perms: ['view_resourcebase'],
-                pk: '100',
-                detail_url: '/catalogue/#/tabular/100'
-            };
-            expect(icon.glyph).toBe('th-list');
-            expect(canPreviewed(resource)).toBeTruthy();
-            expect(name).toBe('Table');
-            expect(formatDetailUrl(resource)).toBe('/catalogue/#/landing/dataset/100');
-        });
-        it('test tabular collection subtype of getResourceTypesInfo', () => {
-            const {
-                icon,
-                canPreviewed,
-                formatDetailUrl,
-                name
-            } = getResourceTypesInfo()['tabular-collection'];
-            let resource = {
-                perms: ['view_resourcebase'],
-                pk: '100',
-                detail_url: '/catalogue/#/tabular-collection/100'
-            };
-            expect(icon.glyph).toBe('duplicate');
-            expect(canPreviewed(resource)).toBeTruthy();
-            expect(name).toBe('Table Collection');
-            expect(formatDetailUrl(resource)).toBe('/catalogue/#/landing/tabular-collection/100');
-        });
         it('test document of getResourceTypesInfo', () => {
             const {
                 icon,

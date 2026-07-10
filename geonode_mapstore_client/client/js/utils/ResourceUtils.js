@@ -404,21 +404,6 @@ export const getResourceTypesInfo = () => ({
         formatMetadataUrl: (resource) => `#/metadata/${resource.pk}`,
         formatMetadataDetailUrl: (resource) => `/metadata/${resource.pk}`
     },
-    tabular: {
-        icon: { glyph: 'th-list' },
-        canPreviewed: (resource) => resourceHasPermission(resource, 'view_resourcebase'),
-        formatEmbedUrl: () => undefined,
-        formatDetailUrl: (resource) => {
-            const url = resource?.detail_url && parseDevHostname(resource.detail_url);
-            if (!url) return url;
-            return url
-                .replace(/#\/dataset\/([^/]+)$/, '#/landing/dataset/$1')
-                .replace(/#\/tabular\/([^/]+)$/, '#/landing/dataset/$1');
-        },
-        name: 'Table',
-        formatMetadataUrl: (resource) => `#/metadata/${resource.pk}`,
-        formatMetadataDetailUrl: (resource) => `/metadata/${resource.pk}`
-    },
     [ResourceTypes.MAP]: {
         icon: { glyph: '1-map' },
         name: 'Map',
@@ -429,25 +414,7 @@ export const getResourceTypesInfo = () => ({
         formatDetailUrl: (resource) => {
             const url = resource?.detail_url && parseDevHostname(resource.detail_url);
             if (!url) return url;
-            if (resource?.subtype === 'tabular-collection') {
-                return url.replace(/#\/tabular-collection\/([^/]+)$/, '#/landing/tabular-collection/$1');
-            }
             return url.replace(/#\/map\/([^/]+)$/, '#/landing/map/$1');
-        },
-        formatMetadataUrl: (resource) => `#/metadata/${resource.pk}`,
-        formatMetadataDetailUrl: (resource) => `/metadata/${resource.pk}`
-    },
-    'tabular-collection': {
-        icon: { glyph: 'duplicate' },
-        name: 'Table Collection',
-        canPreviewed: (resource) => resourceHasPermission(resource, 'view_resourcebase'),
-        formatEmbedUrl: (resource) => parseDevHostname(updateUrlQueryParameter(resource.embed_url, {
-            config: 'map_preview'
-        })),
-        formatDetailUrl: (resource) => {
-            const url = resource?.detail_url && parseDevHostname(resource.detail_url);
-            if (!url) return url;
-            return url.replace(/#\/tabular-collection\/([^/]+)$/, '#/landing/tabular-collection/$1');
         },
         formatMetadataUrl: (resource) => `#/metadata/${resource.pk}`,
         formatMetadataDetailUrl: (resource) => `/metadata/${resource.pk}`
@@ -986,9 +953,6 @@ const getAuthorsCitationValue = (resource = {}) => {
 };
 
 export const parseCatalogResource = (resource, user) => {
-    const resourceTypesInfo = getResourceTypesInfo(resource);
-    const subtypeKey = resource?.subtype && resourceTypesInfo[resource.subtype] ? resource.subtype : null;
-    const resourceTypeKey = subtypeKey || resource?.resource_type;
     const {
         formatDetailUrl,
         icon,
@@ -996,7 +960,7 @@ export const parseCatalogResource = (resource, user) => {
         canPreviewed,
         hasPermission,
         name
-    } = resourceTypesInfo[resourceTypeKey] || {};
+    } = getResourceTypesInfo(resource)[resource.resource_type] || {};
     const resourceCanPreviewed = resource?.pk && canPreviewed && canPreviewed(resource);
     const embedUrl = resourceCanPreviewed && formatEmbedUrl && resource?.embed_url && formatEmbedUrl(resource);
     const canView = resource?.pk && hasPermission && hasPermission(resource);

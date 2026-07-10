@@ -19,8 +19,7 @@ describe('Test App Routes Utils', () => {
             VIEWER: 'ViewerRoute',
             CATALOGUE: 'CatalogueRoute',
             COMPONENTS: 'ComponentsRoute',
-            MAP_VIEWER: 'MapViewerRoute',
-            DATASET_LANDING: 'DatasetLandingRoute'
+            MAP_VIEWER: 'MapViewerRoute'
         });
     });
 
@@ -57,10 +56,6 @@ describe('Test App Routes Utils', () => {
     it('test catalogue routes', () => {
         const [
             metadataRoute,
-            datasetLandingRoute,
-            mapLandingRoute,
-            documentLandingRoute,
-            tabularCollectionLandingRoute,
             datasetSubtypeRoute,
             datasetRoute,
             datasetEditDataRoute,
@@ -78,14 +73,6 @@ describe('Test App Routes Utils', () => {
         ] = routeUtils.CATALOGUE_ROUTES;
         expect(metadataRoute.path).toEqual(['/metadata/:pk']);
         expect(metadataRoute.name).toEqual('metadata');
-        expect(datasetLandingRoute.path).toEqual(['/landing/dataset/:pk']);
-        expect(datasetLandingRoute.name).toEqual('dataset_landing');
-        expect(mapLandingRoute.path).toEqual(['/landing/map/:pk']);
-        expect(mapLandingRoute.name).toEqual('map_landing');
-        expect(documentLandingRoute.path).toEqual(['/landing/document/:pk']);
-        expect(documentLandingRoute.name).toEqual('document_landing');
-        expect(tabularCollectionLandingRoute.path).toEqual(['/landing/tabular-collection/:pk']);
-        expect(tabularCollectionLandingRoute.name).toEqual('tabular-collection_landing');
         expect(datasetSubtypeRoute.path).toEqual(['/dataset/:subtype/:pk']);
         expect(datasetSubtypeRoute.name).toEqual('dataset_viewer');
         expect(datasetRoute.path).toEqual(['/dataset/:pk']);

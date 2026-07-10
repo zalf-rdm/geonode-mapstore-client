@@ -111,12 +111,7 @@ function ViewerRoute({
     const loading = loadingConfig || pluginLoading;
     const parsedPlugins = useMemo(() => ({ ...loadedPlugins, ...getPlugins(plugins) }), [loadedPlugins]);
     const Loader = loaderComponent;
-    const pageName = name === 'tabular-collection_viewer'
-        ? 'tabular-collection'
-        : name === 'tabular_viewer'
-            ? 'tabular'
-            : (resourceType || name);
-    const className = `page-${pageName}-viewer page-viewer`;
+    const className = `page-${resourceType || name}-viewer page-viewer`;
 
     return (
         <>

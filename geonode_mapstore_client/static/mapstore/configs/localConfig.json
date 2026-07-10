@@ -821,6 +821,9 @@
         "name": "DeleteResource"
       },
       {
+        "name": "FullScreen"
+      },
+      {
         "name": "IsoDownload"
       },
       {
@@ -854,6 +857,14 @@
         }
       },
       {
+        "name": "FullScreen",
+        "override": {
+          "Toolbar": {
+            "alwaysVisible": true
+          }
+        }
+      },
+      {
         "name": "Notifications"
       },
       {
@@ -871,7 +882,7 @@
         }
       },
       {
-        "name": "ZalfTabularViewer"
+        "name": "TabularPreview"
       },
       {
         "name": "ZalfFooter"
@@ -1154,6 +1165,9 @@
         "name": "DeleteResource"
       },
       {
+        "name": "FullScreen"
+      },
+      {
         "name": "IsoDownload"
       },
       {
@@ -1187,6 +1201,14 @@
         }
       },
       {
+        "name": "FullScreen",
+        "override": {
+          "Toolbar": {
+            "alwaysVisible": true
+          }
+        }
+      },
+      {
         "name": "Notifications"
       },
       {
@@ -1204,7 +1226,7 @@
         }
       },
       {
-        "name": "ZalfTabularCollectionViewer"
+        "name": "TabularCollectionViewer"
       },
       {
         "name": "ZalfFooter"
@@ -4560,17 +4582,6 @@
       }
     ],
     "document_landing": [
-      {
-        "name": "ZalfNavigation"
-      },
-      {
-        "name": "ZalfDatasetLanding"
-      },
-      {
-        "name": "ZalfFooter"
-      }
-    ],
-    "tabular-collection_landing": [
       {
         "name": "ZalfNavigation"
       },
