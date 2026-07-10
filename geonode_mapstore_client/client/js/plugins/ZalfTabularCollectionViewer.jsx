@@ -54,10 +54,6 @@ function rowsFromFeatures(data, columns) {
     });
 }
 
-function escapeCqlLiteral(value = '') {
-    return value.replace(/'/g, "''");
-}
-
 function normalizeSearchString(value = '') {
     return `${value}`
         .normalize('NFD')
@@ -142,10 +138,13 @@ function rowMatchesSearch(row, term, columns) {
     const tokens = normalizedQuery.split(' ').filter(Boolean);
     const searchableRow = normalizeSearchString(columns.map((column) => {
         const rawValue = row?.[column.key];
+        const formattedValue = rawValue === null || rawValue === undefined
+            ? ''
+            : (typeof rawValue === 'object' ? JSON.stringify(rawValue) : `${rawValue}`);
         return [
             column.label,
             column.key,
-            rawValue === null || rawValue === undefined ? '' : rawValue
+            formattedValue
         ].join(' ');
     }).join(' '));
     return tokens.every((token) => searchableRow.includes(token));
@@ -266,7 +265,7 @@ function TableDownloadMenu({ options, disabled, onSelect }) {
 
     return (
         <div className={`ztcv-download-menu ${open ? 'is-open' : ''}`} ref={rootRef}>
-            <Button className="ztcv-download-btn" onClick={() => setOpen((value) => !value)}>
+            <Button className="ztcv-download-btn" disabled={disabled} onClick={() => !disabled && setOpen((value) => !value)}>
                 {disabled ? 'Preparing download...' : 'Download table'}
                 <span className="ztcv-download-caret">{open ? '▴' : '▾'}</span>
             </Button>
@@ -306,7 +305,7 @@ function CollectionNavigator({ datasets, activeKey, onSelect }) {
         return (
             <Tabs id="zalf-tabular-collection-tabs" activeKey={activeKey} onSelect={(key) => onSelect(parseInt(key, 10))}>
                 {datasets.map((dataset, index) => (
-                    <Tab key={dataset.pk || index} eventKey={index} title={dataset.title || dataset.name || dataset.alternate} />
+                    <Tab key={dataset.pk || index} eventKey={index} title={getDatasetDisplayTitle(dataset)} />
                 ))}
             </Tabs>
         );
@@ -335,7 +334,7 @@ function CollectionNavigator({ datasets, activeKey, onSelect }) {
                             onChange={(event) => onSelect(parseInt(event.target.value, 10))}>
                             {datasets.map((dataset, index) => (
                                 <option key={dataset.pk || index} value={index}>
-                                    {index + 1}. {dataset.title || dataset.name || dataset.alternate}
+                                    {index + 1}. {getDatasetDisplayTitle(dataset)}
                                 </option>
                             ))}
                         </select>
@@ -351,7 +350,7 @@ function CollectionNavigator({ datasets, activeKey, onSelect }) {
             </div>
             <div className="ztcv-collection-nav-meta">
                 <span className="ztcv-collection-nav-badge">Table {activeKey + 1} of {datasets.length}</span>
-                {activeDataset?.title || activeDataset?.name || activeDataset?.alternate}
+                {getDatasetDisplayTitle(activeDataset)}
             </div>
         </div>
     );
@@ -365,7 +364,7 @@ CollectionNavigator.propTypes = {
 
 export function DatasetTable({ dataset, geoserverUrl, activeIndex, totalDatasets }) {
     const [columns, setColumns] = useState([]);
-    const [rows, setRows] = useState([]);
+    const [rawFeatureData, setRawFeatureData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [searchDraft, setSearchDraft] = useState('');
@@ -377,7 +376,13 @@ export function DatasetTable({ dataset, geoserverUrl, activeIndex, totalDatasets
     const requestRef = useRef(0);
     const tableWrapRef = useRef(null);
     const typeName = dataset?.alternate;
-    const owsUrl = useMemo(() => `${geoserverUrl}ows`, [geoserverUrl]);
+    const owsUrl = useMemo(() => {
+        if (!geoserverUrl) {
+            return '';
+        }
+        const baseUrl = geoserverUrl.endsWith('/') ? geoserverUrl : `${geoserverUrl}/`;
+        return `${baseUrl}ows`;
+    }, [geoserverUrl]);
     const downloadOptions = useMemo(() => getDatasetDownloadOptions(dataset), [dataset]);
 
     useEffect(() => {
@@ -402,6 +407,8 @@ export function DatasetTable({ dataset, geoserverUrl, activeIndex, totalDatasets
     }, [owsUrl, typeName]);
 
     useEffect(() => {
+        setColumns([]);
+        setRawFeatureData(null);
         setSearchDraft('');
         setSearchText('');
         setPageSize(DEFAULT_PAGE_SIZE);
@@ -443,25 +450,11 @@ export function DatasetTable({ dataset, geoserverUrl, activeIndex, totalDatasets
                 if (requestRef.current !== requestId) {
                     return;
                 }
-                const resolvedColumns = columns.length ? columns : normalizeColumnsFromFeatures(data);
-                if (!columns.length && resolvedColumns.length) {
-                    setColumns(resolvedColumns);
-                }
-                const nextRows = rowsFromFeatures(data, resolvedColumns);
-                if (searchText) {
-                    const filteredRows = nextRows.filter((row) => rowMatchesSearch(row, searchText, resolvedColumns));
-                    const pagedRows = filteredRows.slice((currentPage - 1) * pageSize, currentPage * pageSize);
-                    setRows(pagedRows);
-                    setTotalRows(filteredRows.length);
-                } else {
-                    setRows(nextRows);
-                    setTotalRows(parseTotalFeatures(data, nextRows.length));
-                }
+                setRawFeatureData(data);
             } catch (e) {
                 if (requestRef.current === requestId) {
                     setError(e);
-                    setRows([]);
-                    setTotalRows(0);
+                    setRawFeatureData(null);
                 }
             } finally {
                 if (requestRef.current === requestId) {
@@ -470,7 +463,36 @@ export function DatasetTable({ dataset, geoserverUrl, activeIndex, totalDatasets
             }
         };
         fetchData();
-    }, [owsUrl, typeName, pageSize, currentPage, searchText, columns]);
+    }, [owsUrl, typeName, pageSize, currentPage, searchText]);
+
+    useEffect(() => {
+        if (rawFeatureData && !columns.length) {
+            const resolvedColumns = normalizeColumnsFromFeatures(rawFeatureData);
+            if (resolvedColumns.length) {
+                setColumns(resolvedColumns);
+            }
+        }
+    }, [rawFeatureData, columns.length]);
+
+    const { rows, totalRows } = useMemo(() => {
+        if (!rawFeatureData) {
+            return { rows: [], totalRows: 0 };
+        }
+        const resolvedColumns = columns.length ? columns : normalizeColumnsFromFeatures(rawFeatureData);
+        const nextRows = rowsFromFeatures(rawFeatureData, resolvedColumns);
+        if (searchText) {
+            const filteredRows = nextRows.filter((row) => rowMatchesSearch(row, searchText, resolvedColumns));
+            const pagedRows = filteredRows.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+            return {
+                rows: pagedRows,
+                totalRows: filteredRows.length
+            };
+        }
+        return {
+            rows: nextRows,
+            totalRows: parseTotalFeatures(rawFeatureData, nextRows.length)
+        };
+    }, [rawFeatureData, columns, searchText, pageSize, currentPage]);
 
     useEffect(() => {
         const element = tableWrapRef.current;
