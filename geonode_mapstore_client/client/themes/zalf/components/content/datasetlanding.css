@@ -1108,6 +1108,290 @@ a.zalf-lp-funder-name:hover {
   color: var(--zalf-text-muted, #6b7280);
 }
 
+/* ── Attribute table (dataset schema) ─────────────────────── */
+.zalf-lp-attr-table-wrap {
+  max-height: 24rem;
+  overflow-y: auto;
+  overflow-x: auto;
+  border: 1px solid var(--zalf-border, #e5e7eb);
+  border-radius: 8px;
+}
+
+.zalf-lp-attr-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.825rem;
+}
+
+.zalf-lp-attr-table th {
+  text-align: left;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--zalf-text-muted, #6b7280);
+  background: var(--zalf-bg, #f3f4f6);
+  padding: 0.55rem 0.85rem;
+  border-bottom: 1px solid var(--zalf-border, #e5e7eb);
+  white-space: nowrap;
+}
+
+.zalf-lp-attr-table td {
+  padding: 0.45rem 0.85rem;
+  border-bottom: 1px solid #f0f2f4;
+  color: var(--zalf-text, #111827);
+  vertical-align: baseline;
+}
+
+.zalf-lp-attr-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.zalf-lp-attr-table tbody tr:hover {
+  background: var(--zalf-green-light, #e8f5ee);
+}
+
+.zalf-lp-attr-name {
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--zalf-green, #1a6b3c);
+  word-break: break-word;
+}
+
+.zalf-lp-attr-type {
+  display: inline-block;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 0.72rem;
+  color: var(--zalf-text-muted, #6b7280);
+  background: var(--zalf-bg, #f3f4f6);
+  border: 1px solid var(--zalf-border, #e5e7eb);
+  border-radius: 3px;
+  padding: 0.05rem 0.4rem;
+}
+
+.zalf-lp-attr-desc {
+  color: var(--zalf-text-muted, #6b7280);
+}
+
+.zalf-lp-attr-unit {
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 0.78rem;
+  color: var(--zalf-text, #111827);
+  white-space: nowrap;
+}
+
+/* ── Map content tree (explorer view) ─────────────────────── */
+.zalf-lp-tree,
+.zalf-lp-tree-children {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.zalf-lp-tree-children {
+  margin-left: 0.85rem;
+  padding-left: 0.85rem;
+  border-left: 1px solid var(--zalf-border, #e5e7eb);
+}
+
+.zalf-lp-tree-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.42rem 0.5rem;
+  border-radius: 8px;
+  min-width: 0;
+  transition: background 0.12s;
+}
+
+.zalf-lp-tree-row:hover {
+  background: var(--zalf-green-light, #e8f5ee);
+}
+
+.zalf-lp-tree-chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  color: var(--zalf-text-muted, #6b7280);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.15s, color 0.12s, background 0.12s;
+}
+
+.zalf-lp-tree-chevron:hover {
+  color: var(--zalf-green, #1a6b3c);
+  background: rgba(26, 107, 60, 0.08);
+}
+
+.zalf-lp-tree-chevron:focus-visible {
+  outline: 2px solid var(--zalf-green, #1a6b3c);
+  outline-offset: 1px;
+}
+
+.zalf-lp-tree-chevron--open {
+  transform: rotate(90deg);
+}
+
+.zalf-lp-tree-chevron--none {
+  cursor: default;
+}
+
+.zalf-lp-tree-icon {
+  display: inline-flex;
+  align-items: center;
+  color: var(--zalf-green, #1a6b3c);
+  flex-shrink: 0;
+}
+
+.zalf-lp-tree-icon--folder {
+  color: var(--zalf-green-nav, #4e9c18);
+}
+
+.zalf-lp-tree-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--zalf-text, #111827);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+a.zalf-lp-tree-title:hover {
+  color: var(--zalf-green, #1a6b3c);
+  text-decoration: underline;
+}
+
+/* Title rendered as a toggle button (expands/collapses the node) */
+.zalf-lp-tree-title--toggle {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.zalf-lp-tree-title--toggle:hover {
+  color: var(--zalf-green, #1a6b3c);
+}
+
+.zalf-lp-tree-title--toggle:focus-visible {
+  outline: 2px solid var(--zalf-green, #1a6b3c);
+  outline-offset: 1px;
+  border-radius: 3px;
+}
+
+.zalf-lp-tree-title--root {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.zalf-lp-tree-count {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--zalf-text-muted, #6b7280);
+  flex-shrink: 0;
+  padding-left: 0.5rem;
+}
+
+.zalf-lp-tree-children--attrs {
+  margin-left: 1.55rem;
+}
+
+.zalf-lp-tree-attr {
+  display: flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  padding: 0.28rem 0.5rem;
+  font-size: 0.8rem;
+  border-radius: 6px;
+  min-width: 0;
+}
+
+.zalf-lp-tree-attr:hover {
+  background: var(--zalf-bg, #f3f4f6);
+}
+
+.zalf-lp-tree-attr::before {
+  content: '◦';
+  color: var(--zalf-green-mid, #a5d4b8);
+  flex-shrink: 0;
+}
+
+.zalf-lp-tree-attr-name {
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--zalf-text, #111827);
+  word-break: break-word;
+}
+
+.zalf-lp-tree-attr-label {
+  color: var(--zalf-text-muted, #6b7280);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.zalf-lp-tree-attr-type {
+  margin-left: auto;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 0.7rem;
+  color: var(--zalf-text-muted, #6b7280);
+  background: var(--zalf-bg, #f3f4f6);
+  border: 1px solid var(--zalf-border, #e5e7eb);
+  border-radius: 3px;
+  padding: 0.02rem 0.35rem;
+  flex-shrink: 0;
+}
+
+/* Per-datatype colors (applied on .zalf-lp-attr-type and .zalf-lp-tree-attr-type;
+   must come after both base classes to win the cascade) */
+.zalf-lp-attr-type--int {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+
+.zalf-lp-attr-type--float {
+  background: #f5f3ff;
+  border-color: #ddd6fe;
+  color: #6d28d9;
+}
+
+.zalf-lp-attr-type--string {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #047857;
+}
+
+.zalf-lp-attr-type--date {
+  background: #fffbeb;
+  border-color: #fde68a;
+  color: #b45309;
+}
+
+.zalf-lp-attr-type--bool {
+  background: #fff1f2;
+  border-color: #fecdd3;
+  color: #be123c;
+}
+
+.zalf-lp-attr-type--geom {
+  background: #f0fdfa;
+  border-color: #99f6e4;
+  color: #0f766e;
+}
+
 /* ── Linked Resources Grid ────────────────────────────────── */
 .zalf-lp-linked-grid {
   display: grid;
