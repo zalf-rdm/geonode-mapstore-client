@@ -371,7 +371,6 @@ export function DatasetTable({ dataset, geoserverUrl, activeIndex, totalDatasets
     const [searchText, setSearchText] = useState('');
     const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
     const [currentPage, setCurrentPage] = useState(1);
-    const [totalRows, setTotalRows] = useState(0);
     const [showScrollHint, setShowScrollHint] = useState(false);
     const requestRef = useRef(0);
     const tableWrapRef = useRef(null);
