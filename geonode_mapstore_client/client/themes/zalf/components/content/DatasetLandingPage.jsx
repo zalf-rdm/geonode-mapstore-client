@@ -511,16 +511,18 @@ function subtypeLabel(st) {
     return map[st] || (st.charAt(0).toUpperCase() + st.slice(1));
 }
 
-function MapStatsBar({ layers }) {
+function MapStatsBar({ layers, isCollection }) {
     const total = layers.length;
     const vectorCount = layers.filter(l => l.datasetDetail && l.datasetDetail.subtype === 'vector').length;
     const rasterCount = layers.filter(l => l.datasetDetail && l.datasetDetail.subtype === 'raster').length;
+    const tableCount = layers.filter(l => l.datasetDetail && (l.datasetDetail.subtype === 'tabular' || l.datasetDetail.subtype === 'table')).length;
     const totalAttrs = layers.reduce((acc, l) => acc + ((l.datasetDetail && l.datasetDetail.attribute_set) ? l.datasetDetail.attribute_set.length : 0), 0);
+    const totalLabel = isCollection ? 'Tables' : 'Layers';
 
     return ce('div', { className: 'zalf-lp-stats-bar' },
         ce('div', { className: 'zalf-lp-stat-item' },
             ce('span', { className: 'zalf-lp-stat-value' }, total),
-            ce('span', { className: 'zalf-lp-stat-label' }, 'Layers')
+            ce('span', { className: 'zalf-lp-stat-label' }, totalLabel)
         ),
         vectorCount > 0 && ce('div', { className: 'zalf-lp-stat-item' },
             ce('span', { className: 'zalf-lp-stat-value' }, vectorCount),
@@ -529,6 +531,10 @@ function MapStatsBar({ layers }) {
         rasterCount > 0 && ce('div', { className: 'zalf-lp-stat-item' },
             ce('span', { className: 'zalf-lp-stat-value' }, rasterCount),
             ce('span', { className: 'zalf-lp-stat-label' }, 'Raster')
+        ),
+        !isCollection && tableCount > 0 && ce('div', { className: 'zalf-lp-stat-item' },
+            ce('span', { className: 'zalf-lp-stat-value' }, tableCount),
+            ce('span', { className: 'zalf-lp-stat-label' }, 'Tables')
         ),
         totalAttrs > 0 && ce('div', { className: 'zalf-lp-stat-item' },
             ce('span', { className: 'zalf-lp-stat-value' }, totalAttrs),
@@ -1037,7 +1043,10 @@ export default function DatasetLandingPage() {
                         title: r.subtype === 'tabular-collection' ? 'Tables in this Collection' : 'Layers in this Map',
                         icon: r.subtype === 'tabular-collection' ? 'table-collection' : 'map'
                     },
-                        ce(MapStatsBar, { layers: mapLayers }),
+                        ce(MapStatsBar, {
+                            layers: mapLayers,
+                            isCollection: r.subtype === 'tabular-collection'
+                        }),
                         ce(MapContentTree, {
                             rootTitle: r.title,
                             layers: mapLayers,

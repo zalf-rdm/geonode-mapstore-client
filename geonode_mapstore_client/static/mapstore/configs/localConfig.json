@@ -1951,9 +1951,6 @@
         "cfg": {
           "containerPosition": "header"
         }
-      },
-      {
-        "name": "ZalfFooter"
       }
     ],
     "dataset_edit_data_viewer": [
@@ -2192,9 +2189,6 @@
       },
       {
         "name": "FullScreen"
-      },
-      {
-        "name": "ZalfFooter"
       }
     ],
     "map_viewer": [
@@ -3197,9 +3191,6 @@
       },
       {
         "name": "MetadataViewer"
-      },
-      {
-        "name": "ZalfFooter"
       }
     ],
     "document_viewer": [
@@ -4446,9 +4437,6 @@
       },
       {
         "name": "MetadataViewer"
-      },
-      {
-        "name": "ZalfFooter"
       }
     ],
     "metadata": [

@@ -24,6 +24,12 @@ const UploadResource = ({ resourceType, ...uploadConfig }) => {
     const Component =  resourceType === "dataset" ? UploadDataset : UploadDocument;
     return (
         <div className="gn-upload-container">
+            <header className="zalf-upload-hero">
+                <div className="zalf-upload-hero__inner">
+                    <h1>Upload</h1>
+                    <p>Share your research data with the BonaRes Repository.</p>
+                </div>
+            </header>
             <Component uploadConfig={uploadConfig}/>
         </div>
     );
