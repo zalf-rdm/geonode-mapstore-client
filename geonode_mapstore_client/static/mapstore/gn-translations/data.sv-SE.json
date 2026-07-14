@@ -530,6 +530,19 @@
         "resourcesCatalog": {
             "anonymous": "Anyone",
             "registered-members": "Registered members"
+        },
+        "zalfTheme": {
+            "upload": {
+                "heroSubtitle": "Share your research data with the BonaRes Repository."
+            },
+            "datasetAttributes": {
+                "name": "Name",
+                "label": "Label",
+                "type": "Type",
+                "unit": "Unit",
+                "method": "Method",
+                "description": "Description"
+            }
         }
     }
 }

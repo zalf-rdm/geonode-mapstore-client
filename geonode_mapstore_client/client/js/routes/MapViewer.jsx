@@ -26,7 +26,7 @@ const DEFAULT_PLUGINS_CONFIG = [];
 const VIEWER_PLUGINS_BLOCKLIST = ['ZalfFooter'];
 
 function filterBlockedViewerPlugins(plugins = []) {
-    return (plugins || []).filter(({ name }) => VIEWER_PLUGINS_BLOCKLIST.indexOf(name) === -1);
+    return (plugins || []).filter((plugin) => plugin && !VIEWER_PLUGINS_BLOCKLIST.includes(plugin.name));
 }
 
 function getPluginsConfiguration(name, pluginsConfig) {

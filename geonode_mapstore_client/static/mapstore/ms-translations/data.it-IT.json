@@ -4418,8 +4418,6 @@
       "customFiltersTitle": "Risorse",
       "noResultsWithFilterTitle": "Nessun risultato",
       "noResultsWithFilterContent": "Non ci sono risultati per i filtri selezionati. <br/> Cancella tutti i filtri e prova con una nuova richiesta.",
-      "noResultsWithQueryTitle": "Nessun risultato per \"{q}\"",
-      "noResultsWithQueryContent": "Nessuna risorsa corrisponde alla tua ricerca. Prova un termine diverso o cancella tutti i filtri.",
       "errorResourcePageTitle": "Errore di caricamento della pagina",
       "errorResourcePageContent": "La pagina delle risorse selezionate non è disponibile",
       "catalogSection": {

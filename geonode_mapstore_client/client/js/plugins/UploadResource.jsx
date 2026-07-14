@@ -7,6 +7,7 @@
  */
 import React from 'react';
 import { createPlugin } from "@mapstore/framework/utils/PluginsUtils";
+import Message from '@mapstore/framework/components/I18N/Message';
 import UploadDataset from "@js/routes/UploadDataset";
 import UploadDocument from "@js/routes/UploadDocument";
 
@@ -26,8 +27,8 @@ const UploadResource = ({ resourceType, ...uploadConfig }) => {
         <div className="gn-upload-container">
             <header className="zalf-upload-hero">
                 <div className="zalf-upload-hero__inner">
-                    <h1>Upload</h1>
-                    <p>Share your research data with the BonaRes Repository.</p>
+                    <h1><Message msgId="zalfTheme.nav.upload" /></h1>
+                    <p><Message msgId="zalfTheme.upload.heroSubtitle" /></p>
                 </div>
             </header>
             <Component uploadConfig={uploadConfig}/>

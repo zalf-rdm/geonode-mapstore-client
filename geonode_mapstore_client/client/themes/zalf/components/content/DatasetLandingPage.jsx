@@ -8,6 +8,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import axios from '@mapstore/framework/libs/ajax';
+import Message from '@mapstore/framework/components/I18N/Message';
 import { formatUsernameFallback } from '../../../../js/utils/SearchUtils';
 import { paramsSerializer } from '../../../../js/utils/APIUtils';
 import './datasetlanding.css';
@@ -604,18 +605,18 @@ function cleanAttrType(t) {
     return String(t).replace(/^xsd:/, '');
 }
 
-function sortAttributes(attrs) {
-    return [...attrs].sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
+function sortAttributes(attrs = []) {
+    return [...(attrs || [])].sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
 }
 
 function attrTypeCategory(t) {
     const type = (cleanAttrType(t) || '').toLowerCase();
     if (!type) return null;
     if (type.startsWith('gml:') || type.includes('geometry') || type.includes('propertytype')) return 'geom';
-    if (['int', 'integer', 'long', 'short', 'byte'].indexOf(type) !== -1) return 'int';
-    if (['double', 'float', 'decimal', 'number'].indexOf(type) !== -1) return 'float';
-    if (['string', 'char', 'text'].indexOf(type) !== -1) return 'string';
-    if (type.indexOf('date') !== -1 || type.indexOf('time') !== -1) return 'date';
+    if (['int', 'integer', 'long', 'short', 'byte'].includes(type)) return 'int';
+    if (['double', 'float', 'decimal', 'number'].includes(type)) return 'float';
+    if (['string', 'char', 'text'].includes(type)) return 'string';
+    if (type.includes('date') || type.includes('time')) return 'date';
     if (type === 'boolean') return 'bool';
     return null;
 }
@@ -635,12 +636,12 @@ function AttributeTable({ attributes }) {
         ce('table', { className: 'zalf-lp-attr-table' },
             ce('thead', null,
                 ce('tr', null,
-                    ce('th', null, 'Name'),
-                    hasLabel && ce('th', null, 'Label'),
-                    ce('th', null, 'Type'),
-                    ce('th', null, 'Unit'),
-                    ce('th', null, 'Method'),
-                    hasDescription && ce('th', null, 'Description')
+                    ce('th', null, ce(Message, { msgId: 'zalfTheme.datasetAttributes.name' })),
+                    hasLabel && ce('th', null, ce(Message, { msgId: 'zalfTheme.datasetAttributes.label' })),
+                    ce('th', null, ce(Message, { msgId: 'zalfTheme.datasetAttributes.type' })),
+                    ce('th', null, ce(Message, { msgId: 'zalfTheme.datasetAttributes.unit' })),
+                    ce('th', null, ce(Message, { msgId: 'zalfTheme.datasetAttributes.method' })),
+                    hasDescription && ce('th', null, ce(Message, { msgId: 'zalfTheme.datasetAttributes.description' }))
                 )
             ),
             ce('tbody', null,

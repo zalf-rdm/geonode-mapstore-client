@@ -607,6 +607,17 @@
                 "imprint": "Mentions légales",
                 "privacy": "Confidentialité",
                 "copyright": "© BonaRes Repository. Tous droits réservés"
+            },
+            "upload": {
+                "heroSubtitle": "Partagez vos données de recherche avec le référentiel BonaRes."
+            },
+            "datasetAttributes": {
+                "name": "Nom",
+                "label": "Libellé",
+                "type": "Type",
+                "unit": "Unité",
+                "method": "Méthode",
+                "description": "Description"
             }
         }
     }
