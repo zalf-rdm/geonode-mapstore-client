@@ -23,6 +23,11 @@ import { getGeoNodeConfig } from '@js/utils/APIUtils';
 import { ResourceTypes } from '@js/utils/ResourceUtils';
 
 const DEFAULT_PLUGINS_CONFIG = [];
+const VIEWER_PLUGINS_BLOCKLIST = ['ZalfFooter'];
+
+function filterBlockedViewerPlugins(plugins = []) {
+    return (plugins || []).filter((plugin) => plugin && !VIEWER_PLUGINS_BLOCKLIST.includes(plugin.name));
+}
 
 function getPluginsConfiguration(name, pluginsConfig) {
     if (!pluginsConfig) {
@@ -75,7 +80,7 @@ function MapViewerRoute({
         return DEFAULT_PLUGINS_CONFIG;
     };
 
-    const pluginsConfig = selectPluginsConfig();
+    const pluginsConfig = filterBlockedViewerPlugins(selectPluginsConfig());
 
     return (<>
         <Viewer

@@ -9,13 +9,13 @@
  * the scoping ancestor (which IS a descendant of body.msgapi).    */
 
 /* Make container chain expandable so window scroll works */
-.gn-page-wrapper:has(.gn-viewer-layout),
-.gn-catalogue:has(.gn-viewer-layout) {
+.gn-page-wrapper:has(.gn-viewer-layout):not(:has(.gn-upload-container)):not(:has(.gn-create-dataset)),
+.gn-catalogue:has(.gn-viewer-layout):not(:has(.gn-upload-container)):not(:has(.gn-create-dataset)) {
     height: auto !important;
     overflow: visible !important;
 }
 
-.gn-catalogue:has(.gn-viewer-layout) #ms-container {
+.gn-catalogue:has(.gn-viewer-layout):not(:has(.gn-upload-container)):not(:has(.gn-create-dataset)) #ms-container {
     position: fixed !important;
     top: 0;
     left: 0;
@@ -23,8 +23,8 @@
     height: 100vh !important;
 }
 
-.gn-catalogue:has(.page-tabular-viewer.gn-viewer-layout) #ms-container,
-.gn-catalogue:has(.page-tabular-collection-viewer.gn-viewer-layout) #ms-container {
+.gn-catalogue:has(.page-tabular-viewer.gn-viewer-layout):not(:has(.gn-upload-container)):not(:has(.gn-create-dataset)) #ms-container,
+.gn-catalogue:has(.page-tabular-collection-viewer.gn-viewer-layout):not(:has(.gn-upload-container)):not(:has(.gn-create-dataset)) #ms-container {
     position: relative !important;
     top: auto !important;
     left: auto !important;
@@ -34,14 +34,14 @@
 
 /* Push the footer placeholder below the fixed viewer.
    position:relative + z-index ensures it paints above the fixed #ms-container. */
-.gn-catalogue:has(.gn-viewer-layout) .gn-footer-placeholder {
+.gn-catalogue:has(.gn-viewer-layout):not(:has(.gn-upload-container)):not(:has(.gn-create-dataset)) .gn-footer-placeholder {
     margin-top: 100vh;
     position: relative;
     z-index: 10;
 }
 
-.gn-catalogue:has(.page-tabular-viewer.gn-viewer-layout) .gn-footer-placeholder,
-.gn-catalogue:has(.page-tabular-collection-viewer.gn-viewer-layout) .gn-footer-placeholder {
+.gn-catalogue:has(.page-tabular-viewer.gn-viewer-layout):not(:has(.gn-upload-container)):not(:has(.gn-create-dataset)) .gn-footer-placeholder,
+.gn-catalogue:has(.page-tabular-collection-viewer.gn-viewer-layout):not(:has(.gn-upload-container)):not(:has(.gn-create-dataset)) .gn-footer-placeholder {
     margin-top: 0;
     z-index: auto;
 }

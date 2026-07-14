@@ -8,7 +8,9 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import axios from '@mapstore/framework/libs/ajax';
+import Message from '@mapstore/framework/components/I18N/Message';
 import { formatUsernameFallback } from '../../../../js/utils/SearchUtils';
+import { paramsSerializer } from '../../../../js/utils/APIUtils';
 import './datasetlanding.css';
 
 const ce = React.createElement;
@@ -131,6 +133,9 @@ function Icon({ name, className, size }) {
             ce('path', { key: 'p3', d: 'M14 4l-4 16' })
         ],
         chevron: [ce('path', { key: 'p1', d: 'M9 6l6 6-6 6' })],
+        folder: [
+            ce('path', { key: 'p1', d: 'M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V7z' })
+        ],
         dots: [
             ce('circle', { key: 'p1', cx: '12', cy: '5', r: '1.3', fill: 'currentColor', stroke: 'none' }),
             ce('circle', { key: 'p2', cx: '12', cy: '12', r: '1.3', fill: 'currentColor', stroke: 'none' }),
@@ -507,16 +512,18 @@ function subtypeLabel(st) {
     return map[st] || (st.charAt(0).toUpperCase() + st.slice(1));
 }
 
-function MapStatsBar({ layers }) {
+function MapStatsBar({ layers, isCollection }) {
     const total = layers.length;
     const vectorCount = layers.filter(l => l.datasetDetail && l.datasetDetail.subtype === 'vector').length;
     const rasterCount = layers.filter(l => l.datasetDetail && l.datasetDetail.subtype === 'raster').length;
+    const tableCount = layers.filter(l => l.datasetDetail && (l.datasetDetail.subtype === 'tabular' || l.datasetDetail.subtype === 'table')).length;
     const totalAttrs = layers.reduce((acc, l) => acc + ((l.datasetDetail && l.datasetDetail.attribute_set) ? l.datasetDetail.attribute_set.length : 0), 0);
+    const totalLabel = isCollection ? 'Tables' : 'Layers';
 
     return ce('div', { className: 'zalf-lp-stats-bar' },
         ce('div', { className: 'zalf-lp-stat-item' },
             ce('span', { className: 'zalf-lp-stat-value' }, total),
-            ce('span', { className: 'zalf-lp-stat-label' }, 'Layers')
+            ce('span', { className: 'zalf-lp-stat-label' }, totalLabel)
         ),
         vectorCount > 0 && ce('div', { className: 'zalf-lp-stat-item' },
             ce('span', { className: 'zalf-lp-stat-value' }, vectorCount),
@@ -525,6 +532,10 @@ function MapStatsBar({ layers }) {
         rasterCount > 0 && ce('div', { className: 'zalf-lp-stat-item' },
             ce('span', { className: 'zalf-lp-stat-value' }, rasterCount),
             ce('span', { className: 'zalf-lp-stat-label' }, 'Raster')
+        ),
+        !isCollection && tableCount > 0 && ce('div', { className: 'zalf-lp-stat-item' },
+            ce('span', { className: 'zalf-lp-stat-value' }, tableCount),
+            ce('span', { className: 'zalf-lp-stat-label' }, 'Tables')
         ),
         totalAttrs > 0 && ce('div', { className: 'zalf-lp-stat-item' },
             ce('span', { className: 'zalf-lp-stat-value' }, totalAttrs),
@@ -535,7 +546,7 @@ function MapStatsBar({ layers }) {
 
 function LayerCard({ layer }) {
     const ds = layer.datasetDetail || layer.dataset || {};
-    const title = ds.title || layer.dataset?.title || 'Untitled Layer';
+    const title = ds.title || layer.dataset?.title || layer.resourceTitle || 'Untitled Layer';
     const dspk = ds.pk || layer.dataset?.pk;
     const thumb = ds.thumbnail_url || null;
     const subtype = ds.subtype || null;
@@ -587,6 +598,145 @@ function LinkedResourceCard({ res }) {
     );
 }
 
+// ─── Attributes (dataset schema) ─────────────────────────────────────────────
+
+function cleanAttrType(t) {
+    if (!t) return null;
+    return String(t).replace(/^xsd:/, '');
+}
+
+function sortAttributes(attrs = []) {
+    return [...(attrs || [])].sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
+}
+
+function attrTypeCategory(t) {
+    const type = (cleanAttrType(t) || '').toLowerCase();
+    if (!type) return null;
+    if (type.startsWith('gml:') || type.includes('geometry') || type.includes('propertytype')) return 'geom';
+    if (['int', 'integer', 'long', 'short', 'byte'].includes(type)) return 'int';
+    if (['double', 'float', 'decimal', 'number'].includes(type)) return 'float';
+    if (['string', 'char', 'text'].includes(type)) return 'string';
+    if (type.includes('date') || type.includes('time')) return 'date';
+    if (type === 'boolean') return 'bool';
+    return null;
+}
+
+function AttrTypeBadge({ type, className }) {
+    const cat = attrTypeCategory(type);
+    return ce('span', {
+        className: (className || 'zalf-lp-attr-type') + (cat ? ' zalf-lp-attr-type--' + cat : '')
+    }, cleanAttrType(type) || '—');
+}
+
+function AttributeTable({ attributes }) {
+    const attrs = sortAttributes(attributes);
+    const hasLabel = attrs.some((a) => a.attribute_label && a.attribute_label !== a.attribute);
+    const hasDescription = attrs.some((a) => a.description && a.description !== a.attribute_label);
+    return ce('div', { className: 'zalf-lp-attr-table-wrap' },
+        ce('table', { className: 'zalf-lp-attr-table' },
+            ce('thead', null,
+                ce('tr', null,
+                    ce('th', null, ce(Message, { msgId: 'zalfTheme.datasetAttributes.name' })),
+                    hasLabel && ce('th', null, ce(Message, { msgId: 'zalfTheme.datasetAttributes.label' })),
+                    ce('th', null, ce(Message, { msgId: 'zalfTheme.datasetAttributes.type' })),
+                    ce('th', null, ce(Message, { msgId: 'zalfTheme.datasetAttributes.unit' })),
+                    ce('th', null, ce(Message, { msgId: 'zalfTheme.datasetAttributes.method' })),
+                    hasDescription && ce('th', null, ce(Message, { msgId: 'zalfTheme.datasetAttributes.description' }))
+                )
+            ),
+            ce('tbody', null,
+                ...attrs.map((a) => ce('tr', { key: a.pk || a.attribute },
+                    ce('td', { className: 'zalf-lp-attr-name' }, a.attribute),
+                    hasLabel && ce('td', null, a.attribute_label || '—'),
+                    ce('td', null, ce(AttrTypeBadge, { type: a.attribute_type })),
+                    ce('td', { className: 'zalf-lp-attr-unit' }, a.attribute_unit || '—'),
+                    ce('td', { className: 'zalf-lp-attr-desc' }, a.attribute_method || '—'),
+                    hasDescription && ce('td', { className: 'zalf-lp-attr-desc' }, a.description || '—')
+                ))
+            )
+        )
+    );
+}
+
+// ─── Map content tree (explorer view) ────────────────────────────────────────
+
+function TreeLayerNode({ layer, nodeId, expanded, onToggle }) {
+    const ds = layer.datasetDetail || layer.dataset || {};
+    const title = ds.title || layer.dataset?.title || layer.resourceTitle || 'Untitled Layer';
+    const subtype = ds.subtype || null;
+    const attrs = sortAttributes(ds.attribute_set || []);
+    const hasAttrs = attrs.length > 0;
+    const isTable = subtype === 'tabular' || subtype === 'table';
+
+    return ce('li', { className: 'zalf-lp-tree-node', role: 'treeitem', 'aria-expanded': hasAttrs ? expanded : undefined },
+        ce('div', { className: 'zalf-lp-tree-row' },
+            hasAttrs
+                ? ce('button', {
+                    className: 'zalf-lp-tree-chevron' + (expanded ? ' zalf-lp-tree-chevron--open' : ''),
+                    onClick: () => onToggle(nodeId),
+                    'aria-label': (expanded ? 'Collapse ' : 'Expand ') + title
+                }, ce(Icon, { name: 'chevron', className: 'zalf-lp-inline-icon' }))
+                : ce('span', { className: 'zalf-lp-tree-chevron zalf-lp-tree-chevron--none' }),
+            ce('span', { className: 'zalf-lp-tree-icon' }, ce(Icon, { name: isTable ? 'table' : 'layer', className: 'zalf-lp-inline-icon' })),
+            hasAttrs
+                ? ce('button', {
+                    className: 'zalf-lp-tree-title zalf-lp-tree-title--toggle',
+                    onClick: () => onToggle(nodeId),
+                    'aria-expanded': expanded
+                }, title)
+                : ce('span', { className: 'zalf-lp-tree-title' }, title),
+            subtype && ce(Badge, { label: subtypeLabel(subtype), variant: 'type' }),
+            hasAttrs && ce('span', { className: 'zalf-lp-tree-count' },
+                attrs.length + ' attribute' + (attrs.length === 1 ? '' : 's'))
+        ),
+        hasAttrs && expanded && ce('ul', { className: 'zalf-lp-tree-children zalf-lp-tree-children--attrs', role: 'group' },
+            ...attrs.map((a) => ce('li', { key: a.pk || a.attribute, className: 'zalf-lp-tree-attr', role: 'treeitem' },
+                ce('span', { className: 'zalf-lp-tree-attr-name' }, a.attribute),
+                a.attribute_label && a.attribute_label !== a.attribute
+                    ? ce('span', { className: 'zalf-lp-tree-attr-label' }, a.attribute_label)
+                    : null,
+                ce(AttrTypeBadge, { type: a.attribute_type, className: 'zalf-lp-tree-attr-type' })
+            ))
+        )
+    );
+}
+
+function MapContentTree({ rootTitle, layers, isCollection }) {
+    const [expanded, setExpanded] = useState({ root: true });
+    const toggle = (id) => setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
+    const rootOpen = !!expanded.root;
+    const childLabel = isCollection ? 'table' : 'layer';
+
+    return ce('ul', { className: 'zalf-lp-tree', role: 'tree', 'aria-label': isCollection ? 'Tables in this collection' : 'Map contents' },
+        ce('li', { className: 'zalf-lp-tree-node', role: 'treeitem', 'aria-expanded': rootOpen },
+            ce('div', { className: 'zalf-lp-tree-row zalf-lp-tree-row--root' },
+                ce('button', {
+                    className: 'zalf-lp-tree-chevron' + (rootOpen ? ' zalf-lp-tree-chevron--open' : ''),
+                    onClick: () => toggle('root'),
+                    'aria-label': (rootOpen ? 'Collapse ' : 'Expand ') + rootTitle
+                }, ce(Icon, { name: 'chevron', className: 'zalf-lp-inline-icon' })),
+                ce('span', { className: 'zalf-lp-tree-icon zalf-lp-tree-icon--folder' }, ce(Icon, { name: 'folder', className: 'zalf-lp-inline-icon' })),
+                ce('button', {
+                    className: 'zalf-lp-tree-title zalf-lp-tree-title--root zalf-lp-tree-title--toggle',
+                    onClick: () => toggle('root'),
+                    'aria-expanded': rootOpen
+                }, rootTitle),
+                ce('span', { className: 'zalf-lp-tree-count' },
+                    layers.length + ' ' + childLabel + (layers.length === 1 ? '' : 's'))
+            ),
+            rootOpen && ce('ul', { className: 'zalf-lp-tree-children', role: 'group' },
+                ...layers.map((layer, i) => ce(TreeLayerNode, {
+                    key: i,
+                    layer,
+                    nodeId: 'layer-' + i,
+                    expanded: !!expanded['layer-' + i],
+                    onToggle: toggle
+                }))
+            )
+        )
+    );
+}
+
 // ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function DatasetLandingPage() {
@@ -595,9 +745,16 @@ export default function DatasetLandingPage() {
     const [error, setError] = useState(null);
     const [mapLayers, setMapLayers] = useState(null);
     const [linkedResources, setLinkedResources] = useState(null);
+    const [attributes, setAttributes] = useState(null);
     const pk = extractPkFromHash();
 
     useEffect(() => {
+        setLoading(true);
+        setError(null);
+        setResource(null);
+        setMapLayers(null);
+        setLinkedResources(null);
+        setAttributes(null);
         if (!pk) { setError('No resource identifier found in URL.'); setLoading(false); return; }
         fetchResource(pk)
             .then((res) => { setResource(res); setLoading(false); })
@@ -611,17 +768,40 @@ export default function DatasetLandingPage() {
             .then(({ data }) => setLinkedResources(data))
             .catch(() => setLinkedResources({ linked_to: [], linked_by: [] }));
 
+        if (!resource.resource_type || resource.resource_type === 'dataset') {
+            axios.get('/api/v2/datasets/' + pk + '/')
+                .then(({ data }) => setAttributes((data.dataset && data.dataset.attribute_set) || []))
+                .catch(() => setAttributes([]));
+        }
+
         if (resource.resource_type === 'map') {
             axios.get('/api/v2/maps/' + pk + '/maplayers/')
                 .then(({ data }) => {
-                    const promises = data.map((layer) => {
+                    const dsPks = data.map((l) => l.dataset && l.dataset.pk).filter(Boolean);
+                    // the datasets API can serve an empty (untranslated) title;
+                    // the resources API reads the raw ResourceBase title instead
+                    const titlesPromise = dsPks.length
+                        ? axios.get('/api/v2/resources/', {
+                            params: {
+                                page_size: dsPks.length,
+                                'filter{pk.in}': dsPks
+                            },
+                            ...paramsSerializer()
+                        })
+                            .then(({ data: td }) => {
+                                const byPk = {};
+                                (td.resources || []).forEach((res) => { byPk[res.pk] = res.title; });
+                                return byPk;
+                            })
+                            .catch(() => ({}))
+                        : Promise.resolve({});
+                    return titlesPromise.then((titleByPk) => Promise.all(data.map((layer) => {
                         const dsPk = layer.dataset && layer.dataset.pk;
                         if (!dsPk) return Promise.resolve(layer);
                         return axios.get('/api/v2/datasets/' + dsPk + '/')
-                            .then(({ data: dsData }) => ({ ...layer, datasetDetail: dsData.dataset }))
-                            .catch(() => layer);
-                    });
-                    return Promise.all(promises);
+                            .then(({ data: dsData }) => ({ ...layer, datasetDetail: dsData.dataset, resourceTitle: titleByPk[dsPk] }))
+                            .catch(() => ({ ...layer, resourceTitle: titleByPk[dsPk] }));
+                    })));
                 })
                 .then((layers) => setMapLayers(layers))
                 .catch(() => setMapLayers([]));
@@ -852,13 +1032,27 @@ export default function DatasetLandingPage() {
                     ce(RelatedIdentifierList, { items: relatedIdentifiers })
                 ) : null,
 
-                // Map Layers (only for maps)
+                // Attributes (only for datasets)
+                isDataset && attributes && attributes.length > 0
+                    ? ce(Section, { title: 'Attributes', icon: 'table' },
+                        ce(AttributeTable, { attributes })
+                    ) : null,
+
+                // Map contents tree (only for maps / table collections)
                 r.resource_type === 'map' && mapLayers && mapLayers.length > 0
-                    ? ce(Section, { title: 'Layers in this Map', icon: 'map' },
-                        ce(MapStatsBar, { layers: mapLayers }),
-                        ce('div', { className: 'zalf-lp-layers-grid' },
-                            ...mapLayers.map((layer, i) => ce(LayerCard, { key: i, layer }))
-                        )
+                    ? ce(Section, {
+                        title: r.subtype === 'tabular-collection' ? 'Tables in this Collection' : 'Layers in this Map',
+                        icon: r.subtype === 'tabular-collection' ? 'table-collection' : 'map'
+                    },
+                        ce(MapStatsBar, {
+                            layers: mapLayers,
+                            isCollection: r.subtype === 'tabular-collection'
+                        }),
+                        ce(MapContentTree, {
+                            rootTitle: r.title,
+                            layers: mapLayers,
+                            isCollection: r.subtype === 'tabular-collection'
+                        })
                     ) : null,
 
                 // Linked Resources
