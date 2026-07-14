@@ -391,7 +391,7 @@ const ResourceDetails = ({ defaultOpen, ...props }) => {
     useEffect(() => {
         const resourcePk = props?.resource?.pk;
         if (!resourcePk || !defaultOpen || autoOpenedResource.current === resourcePk) {
-            return () => {};
+            return;
         }
         autoOpenedResource.current = resourcePk;
         const timeout = setTimeout(() => {
@@ -400,7 +400,7 @@ const ResourceDetails = ({ defaultOpen, ...props }) => {
             }
         }, 0);
         return () => clearTimeout(timeout);
-    }, [props?.resource?.pk, defaultOpen]);
+    }, [props?.resource?.pk, defaultOpen, props.show, props.onShow]);
     return props?.resource?.pk && props.show ? <ResourceDetailsPanel {...props}/> : null;
 };
 
@@ -497,7 +497,7 @@ export default createPlugin('ResourceDetails', {
                 const Component = component;
                 function handleClick() {
                     const isSameResource = selectedResource?.pk === resource?.pk;
-                    if (!selectedResource['@ms-detail'] || !isSameResource) {
+                    if (!selectedResource?.['@ms-detail'] || !isSameResource) {
                         onSelect(resource, resourcesGridId);
                         onShow(true, resourcesGridId);
                     } else {
