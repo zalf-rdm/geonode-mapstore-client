@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createPlugin } from '@mapstore/framework/utils/PluginsUtils';
 import { connect } from 'react-redux';
 import { createStructuredSelector, createSelector } from 'reselect';
@@ -289,6 +289,7 @@ function ResourceDetailsPanel({
     const [confirmModal, setConfirmModal] = useState(false);
     const editing = canEdit && editable;
     const isViewer = !resource?.['@ms-detail'];
+    const disableClickOut = resource?.resource_type === 'map';
 
     const {
         stickyTop,
@@ -324,8 +325,11 @@ function ResourceDetailsPanel({
     }, []);
 
     const node = useDetectClickOut({
-        extraNodes: ['.ms-popover-overlay'],
-        disabled: !closeOnClickOut || !show,
+        extraNodes: [
+            '.ms-popover-overlay',
+            '.ms-resource-details-toggle'
+        ],
+        disabled: disableClickOut || !closeOnClickOut || !show,
         onClickOut: () => {
             handleClose();
         }
@@ -383,11 +387,20 @@ ResourceDetailsPanel.contextTypes = {
 };
 
 const ResourceDetails = ({ defaultOpen, ...props }) => {
+    const autoOpenedResource = useRef(null);
     useEffect(() => {
-        if (props?.resource?.pk && defaultOpen) {
-            props.onShow(true);
+        const resourcePk = props?.resource?.pk;
+        if (!resourcePk || !defaultOpen || autoOpenedResource.current === resourcePk) {
+            return;
         }
-    }, [props?.resource?.pk, defaultOpen]);
+        autoOpenedResource.current = resourcePk;
+        const timeout = setTimeout(() => {
+            if (!props.show) {
+                props.onShow(true);
+            }
+        }, 0);
+        return () => clearTimeout(timeout);
+    }, [props?.resource?.pk, defaultOpen, props.show, props.onShow]);
     return props?.resource?.pk && props.show ? <ResourceDetailsPanel {...props}/> : null;
 };
 
@@ -411,15 +424,22 @@ export default createPlugin('ResourceDetails', {
     containers: {
         ActionNavbar: [{
             name: 'ResourceDetailsButton',
-            Component: connect((state) => ({resource: getResourceData(state)}), { onShow: setShowDetails })(({ component, resourcesGridId, onShow, resource }) => {
+            Component: connect(
+                (state) => ({
+                    resource: getResourceData(state),
+                    show: getShowDetails(state)
+                }),
+                { onShow: setShowDetails }
+            )(({ component, onShow, resource, show }) => {
                 if (!resource?.pk) return null;
 
                 const Component = component;
                 function handleClick() {
-                    onShow(true, resourcesGridId);
+                    onShow(!show);
                 }
                 return Component ? (
                     <Component
+                        className="ms-resource-details-toggle"
                         onClick={handleClick}
                         glyph="details"
                         square
@@ -466,22 +486,27 @@ export default createPlugin('ResourceDetails', {
             position: 2,
             Component: connect(
                 createStructuredSelector({
-                    selectedResource: getResourceData
+                    selectedResource: getResourceData,
+                    show: getShowDetails
                 }),
                 {
                     onSelect: requestResource,
                     onShow: setShowDetails
                 }
-            )(({ resourcesGridId, resource, onSelect, component, selectedResource, onShow }) => {
+            )(({ resourcesGridId, resource, onSelect, component, selectedResource, onShow, show }) => {
                 const Component = component;
                 function handleClick() {
-                    if (!selectedResource['@ms-detail'] || selectedResource?.pk !== resource?.pk) {
+                    const isSameResource = selectedResource?.pk === resource?.pk;
+                    if (!selectedResource?.['@ms-detail'] || !isSameResource) {
                         onSelect(resource, resourcesGridId);
+                        onShow(true, resourcesGridId);
+                    } else {
+                        onShow(!show, resourcesGridId);
                     }
-                    onShow(true, resourcesGridId);
                 }
                 return (
                     <Component
+                        className="ms-resource-details-toggle"
                         onClick={handleClick}
                         glyph="details"
                         square

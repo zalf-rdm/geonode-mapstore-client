@@ -1385,7 +1385,7 @@
           "headerNodeSelector": ".gn-main-header",
           "containerPosition": "header",
           "defaultOpen": true,
-          "closeOnClickOut": true
+          "closeOnClickOut": false
         }
       },
       {
@@ -2365,6 +2365,7 @@
         "cfg": {
           "headerNodeSelector": ".gn-main-header",
           "containerPosition": "header",
+          "defaultOpen": true,
           "closeOnClickOut": true
         }
       },
