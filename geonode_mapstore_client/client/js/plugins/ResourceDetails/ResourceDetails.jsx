@@ -326,7 +326,7 @@ function ResourceDetailsPanel({
     const node = useDetectClickOut({
         extraNodes: [
             '.ms-popover-overlay',
-            'button:has(.glyphicon.glyphicon-details)'
+            '.ms-resource-details-toggle'
         ],
         disabled: !closeOnClickOut || !show,
         onClickOut: () => {
@@ -438,6 +438,7 @@ export default createPlugin('ResourceDetails', {
                 }
                 return Component ? (
                     <Component
+                        className="ms-resource-details-toggle"
                         onClick={handleClick}
                         glyph="details"
                         square
@@ -504,6 +505,7 @@ export default createPlugin('ResourceDetails', {
                 }
                 return (
                     <Component
+                        className="ms-resource-details-toggle"
                         onClick={handleClick}
                         glyph="details"
                         square
