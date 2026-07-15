@@ -285,7 +285,7 @@ function downloadCitation(text, filename) {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    setTimeout(() => URL.revokeObjectURL(url), 100);
 }
 
 function DetailsCitation({ resource }) {
