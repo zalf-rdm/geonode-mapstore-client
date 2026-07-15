@@ -425,7 +425,8 @@
             "citation": "Citation",
             "citationFormat": "Citation Format",
             "copyCitation": "Copy citation",
-            "citationCopied": "Copied!"
+            "citationCopied": "Copied!",
+            "downloadCitation": "Download citation"
         }
     }
 }

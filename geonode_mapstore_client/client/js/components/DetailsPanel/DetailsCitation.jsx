@@ -126,17 +126,21 @@ function generateRIS(resource) {
     const year = getYear(resource);
     const publisher = getPublisher(resource);
 
-    const lines = ['TY  - DATA'];
+    const lines = ['TY  - DATASET'];
     lines.push(`TI  - ${sanitizeRisField(resource?.title)}`);
+    if (resource?.title_translated) {
+        lines.push(`T2  - ${sanitizeRisField(resource.title_translated)}`);
+    }
     authors.forEach(a => lines.push(`AU  - ${sanitizeRisField(formatAuthorName(a, 'firstFull'))}`));
     if (publisher) lines.push(`PB  - ${sanitizeRisField(publisher)}`);
     if (year) lines.push(`PY  - ${year}`);
+    if (resource?.edition) lines.push(`ET  - ${sanitizeRisField(resource.edition)}`);
     const doi = getRawDoi(resource);
     if (doi) lines.push(`DO  - ${doi}`);
     const url = getResourceUrl(resource);
     if (url) lines.push(`UR  - ${url}`);
-    lines.push('ER  -');
-    return lines.join('\n');
+    lines.push('ER  - ');
+    return lines.join('\r\n');
 }
 
 function generateAPA(resource) {
@@ -256,6 +260,34 @@ const generators = {
     ieee: generateIEEE
 };
 
+const FILE_EXTENSIONS = {
+    bibtex: 'bib',
+    ris: 'ris'
+};
+
+function getCitationFilename(resource, format) {
+    const authors = getSortedAuthors(resource);
+    const year = getYear(resource);
+    const firstAuthorLast = (authors[0]?.last_name || '').replace(/[^a-zA-Z0-9]/g, '');
+    const base = firstAuthorLast && year
+        ? `${firstAuthorLast}${year}`
+        : (resource?.uuid || String(resource?.pk || 'citation')).replace(/-/g, '').slice(0, 12);
+    const ext = FILE_EXTENSIONS[format] || 'txt';
+    return `${base}-${format}.${ext}`;
+}
+
+function downloadCitation(text, filename) {
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+}
+
 function DetailsCitation({ resource }) {
     const [activeFormat, setActiveFormat] = useState('apa');
     const [copied, setCopied] = useState(false);
@@ -274,6 +306,10 @@ function DetailsCitation({ resource }) {
         timeoutIdRef.current = setTimeout(() => {
             setCopied(false);
         }, 700);
+    };
+
+    const handleDownload = () => {
+        downloadCitation(citationText, getCitationFilename(resource, activeFormat));
     };
 
     return (
@@ -312,6 +348,15 @@ function DetailsCitation({ resource }) {
                             <FaIcon name={copied ? 'check' : 'copy'} />
                         </TooltipButton>
                     </CopyToClipboardCmp>
+                    <TooltipButton
+                        tooltipPosition="top"
+                        tooltipId="gnviewer.downloadCitation"
+                        variant="default"
+                        size="xs"
+                        onClick={handleDownload}
+                    >
+                        <FaIcon name="download" />
+                    </TooltipButton>
                 </div>
             </div>
             <pre className="gn-details-citation-code">{citationText}</pre>
