@@ -423,7 +423,8 @@
             "citation": "Zitierung",
             "citationFormat": "Zitierformat",
             "copyCitation": "Zitierung kopieren",
-            "citationCopied": "Kopiert!"
+            "citationCopied": "Kopiert!",
+            "downloadCitation": "Zitierung herunterladen"
         }
     }
 }
