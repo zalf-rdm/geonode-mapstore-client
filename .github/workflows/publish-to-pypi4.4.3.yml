@@ -38,7 +38,7 @@ jobs:
 
       - name: Add build metadata to version
         run: |
-          BASE_VERSION=$(cat VERSION)
+          BASE_VERSION=4.4.3
           POST_VERSION="${BASE_VERSION}.post${{ github.run_number }}"
           echo "$POST_VERSION" > VERSION
 
