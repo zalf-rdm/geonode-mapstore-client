@@ -6,7 +6,7 @@ name: "ZALF geonode-mapstore-client-v4.4.3+zalf00X (test)"
 on:
   # Triggers the workflow pull request events but only for the main branch
   pull_request:
-    branches: [ "geonode-mapstore-client-v4.4.3[+]zalf00X" ]
+    branches: [ "geonode-mapstore-client-v4.4.3\\+zalf00X" ]
     paths: 
       - "geonode_mapstore_client/client/**"
 

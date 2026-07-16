@@ -3,7 +3,7 @@ name: Publish Python package to PyPI
 on:
   push:
     branches:
-      - geonode-mapstore-client-v4.4.3[+]zalf00X
+      - geonode-mapstore-client-v4.4.3\+zalf00X
   workflow_dispatch:
 
 jobs:
