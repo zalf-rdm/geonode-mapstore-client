@@ -133,6 +133,7 @@ function Icon({ name, className, size }) {
             ce('path', { key: 'p3', d: 'M14 4l-4 16' })
         ],
         chevron: [ce('path', { key: 'p1', d: 'M9 6l6 6-6 6' })],
+        check: [ce('path', { key: 'p1', d: 'M20 6L9 17l-5-5' })],
         folder: [
             ce('path', { key: 'p1', d: 'M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V7z' })
         ],
@@ -294,68 +295,254 @@ function CopyMenu({ pk }) {
 }
 
 // ─── Citation card ────────────────────────────────────────────────────────────
+// Format generators ported from js/plugins/ResourceDetails/components/DetailsCitation.jsx
+// (the "APA ▾" citation widget used in the map/dataset viewer), adapted to the
+// resource fields available on this landing page's `r` object.
 
-const CITATION_STYLES = ['Chicago', 'APA', 'DataCite'];
+const CITATION_FORMATS = [
+    { key: 'apa', label: 'APA' },
+    { key: 'harvard', label: 'Harvard' },
+    { key: 'mla', label: 'MLA' },
+    { key: 'vancouver', label: 'Vancouver' },
+    { key: 'chicago', label: 'Chicago' },
+    { key: 'ieee', label: 'IEEE' },
+    { key: 'bibtex', label: 'BibTeX' },
+    { key: 'ris', label: 'RIS' }
+];
 
 function formatPersonName(person, style) {
     if (!person) return '';
-    const last  = (person.last_name  || '').trim();
+    const last = (person.last_name || '').trim();
     const first = (person.first_name || '').trim();
     const fallbackName = formatUsernameFallback(person.username);
     const initials = first.split(/\s+/).filter(Boolean).map(n => n[0] + '.').join(' ');
-    if (last && first) {
-        // Chicago full name: Weber, Marta  — APA/DataCite initials: Weber, M.
-        return style === 'Chicago' ? `${last}, ${first}` : `${last}, ${initials}`;
+    switch (style) {
+        case 'firstInitials': return last && first ? `${last}, ${initials}` : last || first || fallbackName || '';
+        case 'firstFull':     return last && first ? `${last}, ${first}` : last || first || fallbackName || '';
+        case 'fullNormal':    return last && first ? `${first} ${last}` : last || first || fallbackName || '';
+        default:              return last && first ? `${last}, ${first}` : last || first || fallbackName || '';
     }
-    return last || first || fallbackName || '';
 }
 
-function buildAuthorList(people, style) {
-    if (!Array.isArray(people) || people.length === 0) return null;
-    const names = people.map(p => formatPersonName(p, style)).filter(Boolean);
-    if (names.length === 0) return null;
-    if (names.length === 1) return names[0];
-    if (style === 'Chicago') {
-        // Chicago: Weber, Marta and Nowak, Anna
-        return names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1];
+function getCitationAuthors(r) {
+    const authors = Array.isArray(r.author) && r.author.length ? r.author : (r.owner ? [r.owner] : []);
+    return [...authors].sort((a, b) => {
+        if (a.order == null && b.order == null) return 0;
+        if (a.order == null) return 1;
+        if (b.order == null) return -1;
+        return a.order - b.order;
+    });
+}
+
+function getCitationPublisher(r) {
+    return r.attribution || 'Leibniz Centre for Agricultural Landscape Research (ZALF)';
+}
+
+function getCitationYear(r) {
+    const d = parseValidDate(r.date);
+    return d ? String(d.getFullYear()) : null;
+}
+
+function getRawDoi(r) {
+    if (!r.doi) return null;
+    return r.doi.replace(/^https?:\/\/(dx\.)?doi\.org\//, '');
+}
+
+function getCitationUrl(r) {
+    if (r.doi) return r.doi.startsWith('http') ? r.doi : 'https://doi.org/' + r.doi;
+    return window.location.origin + window.location.pathname + window.location.hash;
+}
+
+function formatAuthorList(authors, style, maxBeforeEtAl) {
+    if (authors.length === 0) return '';
+    if (maxBeforeEtAl && authors.length > maxBeforeEtAl) {
+        return formatPersonName(authors[0], style) + ' et al.';
     }
-    // APA / DataCite: Weber, M., & Nowak, A.
+    const names = authors.map(a => formatPersonName(a, style));
+    if (names.length === 1) return names[0];
     if (names.length === 2) return names[0] + ' & ' + names[1];
     return names.slice(0, -1).join(', ') + ', & ' + names[names.length - 1];
 }
 
-function buildCitation(r, style) {
-    const people = Array.isArray(r.author) && r.author.length ? r.author : (r.owner ? [r.owner] : []);
-    const authorList = buildAuthorList(people, style)
-        || formatPersonName(r.owner || {}, style)
-        || 'ZALF';
-    const year = (parseValidDate(r.date) || new Date()).getFullYear();
-    const title = r.title || 'Untitled Resource';
-    const institution = r.attribution || 'Leibniz Centre for Agricultural Landscape Research (ZALF)';
-    const doi = r.doi ? 'https://doi.org/' + r.doi : null;
-    const version = r.edition ? ' Version ' + r.edition + '.' : '';
-    const today = new Date().toISOString().split('T')[0];
-    const typeLabel = getResourceTypeLabel(r);
+function sanitizeRisField(value) {
+    return (value || '').replace(/[\r\n]+/g, ' ').trim();
+}
 
-    if (style === 'APA') {
-        const apaDoi = doi ? ' ' + doi : '';
-        return authorList + ' (' + year + '). ' + title + ' [' + typeLabel + '].' + version + ' ' + institution + '.' + apaDoi;
+function sanitizeBibTeXField(value) {
+    return (value || '').replace(/[{}\\]/g, '').trim();
+}
+
+function generateAPA(r) {
+    const authors = getCitationAuthors(r);
+    const year = getCitationYear(r);
+    const publisher = getCitationPublisher(r);
+    const link = getCitationUrl(r);
+
+    const authorStr = formatAuthorList(authors, 'firstInitials', 20);
+    const yearStr = year ? ` (${year}).` : '.';
+    const titleStr = r.title ? ` ${r.title}.` : '';
+    const publisherStr = publisher ? ` ${publisher}.` : '';
+    const linkStr = link ? ` ${link}` : '';
+    return `${authorStr}${yearStr}${titleStr}${publisherStr}${linkStr}`.trim();
+}
+
+function generateHarvard(r) {
+    const authors = getCitationAuthors(r);
+    const year = getCitationYear(r);
+    const publisher = getCitationPublisher(r);
+    const link = getCitationUrl(r);
+
+    const authorStr = formatAuthorList(authors, 'firstInitials', 0);
+    const yearStr = year ? ` ${year}.` : '.';
+    const titleStr = r.title ? ` ${r.title}.` : '';
+    const publisherStr = publisher ? ` ${publisher}.` : '';
+    const linkStr = link ? ` Available at: ${link}` : '';
+    return `${authorStr}${yearStr}${titleStr}${publisherStr}${linkStr}`.trim();
+}
+
+function generateMLA(r) {
+    const authors = getCitationAuthors(r);
+    const year = getCitationYear(r);
+    const publisher = getCitationPublisher(r);
+    const link = getCitationUrl(r);
+
+    let authorStr = '';
+    if (authors.length === 1) {
+        authorStr = formatPersonName(authors[0], 'firstFull') + '.';
+    } else if (authors.length === 2) {
+        authorStr = formatPersonName(authors[0], 'firstFull') + ', and ' + formatPersonName(authors[1], 'fullNormal') + '.';
+    } else if (authors.length > 2) {
+        authorStr = formatPersonName(authors[0], 'firstFull') + ', et al.';
     }
-    if (style === 'DataCite') {
-        const dcDoi = doi ? ' ' + doi : '';
-        return authorList + ' (' + year + '): ' + title + '.' + version + ' ' + institution + '.' + dcDoi;
+    const titleStr = r.title ? ` "${r.title}."` : '';
+    const publisherStr = publisher ? ` ${publisher},` : '';
+    const yearStr = year ? ` ${year}.` : '';
+    const linkStr = link ? ` ${link}.` : '';
+    return `${authorStr}${titleStr}${publisherStr}${yearStr}${linkStr}`.trim();
+}
+
+function generateVancouver(r) {
+    const authors = getCitationAuthors(r);
+    const year = getCitationYear(r);
+    const publisher = getCitationPublisher(r);
+    const link = getCitationUrl(r);
+
+    const authorStr = authors.length > 6
+        ? authors.slice(0, 6).map(a => formatPersonName(a, 'firstInitials')).join(', ') + ' et al.'
+        : authors.map(a => formatPersonName(a, 'firstInitials')).join(', ');
+    const yearStr = year ? ` ${year}.` : '.';
+    const titleStr = r.title ? ` ${r.title}.` : '';
+    const publisherStr = publisher ? ` ${publisher};` : '';
+    const linkStr = link ? ` Available from: ${link}` : '';
+    return `${authorStr}${yearStr}${titleStr}${publisherStr}${linkStr}`.trim();
+}
+
+function generateChicago(r) {
+    const authors = getCitationAuthors(r);
+    const year = getCitationYear(r);
+    const publisher = getCitationPublisher(r);
+    const link = getCitationUrl(r);
+
+    let authorStr = '';
+    if (authors.length === 1) {
+        authorStr = formatPersonName(authors[0], 'firstFull') + '.';
+    } else if (authors.length > 1) {
+        authorStr = formatPersonName(authors[0], 'firstFull');
+        const rest = authors.slice(1).map(a => formatPersonName(a, 'fullNormal'));
+        if (rest.length === 1) {
+            authorStr += ' and ' + rest[0] + '.';
+        } else {
+            authorStr += ', ' + rest.slice(0, -1).join(', ') + ', and ' + rest[rest.length - 1] + '.';
+        }
     }
-    // Chicago (default)
-    const chiDoi = doi ? ' ' + doi : '';
-    return authorList + '. (' + year + '). "' + title + '" [' + typeLabel + '].' + version
-        + ' ' + institution + '.' + chiDoi
-        + (doi ? ' Date Accessed: ' + today : '');
+    const titleStr = r.title ? ` "${r.title}."` : '';
+    const publisherStr = publisher ? ` ${publisher},` : '';
+    const yearStr = year ? ` ${year}.` : '';
+    const linkStr = link ? ` ${link}.` : '';
+    return `${authorStr}${titleStr}${publisherStr}${yearStr}${linkStr}`.trim();
+}
+
+function generateIEEE(r) {
+    const authors = getCitationAuthors(r);
+    const year = getCitationYear(r);
+    const publisher = getCitationPublisher(r);
+    const link = getCitationUrl(r);
+
+    const authorStr = authors.length > 6
+        ? authors.slice(0, 6).map(a => formatPersonName(a, 'firstInitials')).join(', ') + ' et al.,'
+        : authors.map(a => formatPersonName(a, 'firstInitials')).join(', ') + (authors.length ? ',' : '');
+    const titleStr = r.title ? ` "${r.title},"` : '';
+    const publisherStr = publisher ? ` ${publisher},` : '';
+    const yearStr = year ? ` ${year}.` : '';
+    const linkStr = link ? ` [Online]. Available: ${link}` : '';
+    return `${authorStr}${titleStr}${publisherStr}${yearStr}${linkStr}`.trim();
+}
+
+function generateBibTeX(r) {
+    const authors = getCitationAuthors(r);
+    const year = getCitationYear(r);
+    const publisher = getCitationPublisher(r);
+    const firstAuthorLast = (authors[0]?.last_name || '').replace(/[^a-zA-Z0-9]/g, '');
+    const key = firstAuthorLast && year
+        ? `${firstAuthorLast}${year}`
+        : (r.uuid || String(r.pk || 'unknown')).replace(/-/g, '').slice(0, 12);
+
+    const entries = [];
+    entries.push(`  title     = {${sanitizeBibTeXField(r.title)}}`);
+    if (authors.length > 0) {
+        entries.push(`  author    = {${authors.map(a => sanitizeBibTeXField(formatPersonName(a, 'firstFull'))).join(' and ')}}`);
+    }
+    if (publisher) entries.push(`  publisher = {${sanitizeBibTeXField(publisher)}}`);
+    if (year) entries.push(`  year      = {${year}}`);
+    const doi = getRawDoi(r);
+    if (doi) entries.push(`  doi       = {${doi}}`);
+    const url = getCitationUrl(r);
+    if (url) entries.push(`  url       = {${url}}`);
+    return `@misc{${key},\n${entries.join(',\n')}\n}`;
+}
+
+function generateRIS(r) {
+    const authors = getCitationAuthors(r);
+    const year = getCitationYear(r);
+    const publisher = getCitationPublisher(r);
+
+    const lines = ['TY  - DATA'];
+    lines.push(`TI  - ${sanitizeRisField(r.title)}`);
+    authors.forEach(a => lines.push(`AU  - ${sanitizeRisField(formatPersonName(a, 'firstFull'))}`));
+    if (publisher) lines.push(`PB  - ${sanitizeRisField(publisher)}`);
+    if (year) lines.push(`PY  - ${year}`);
+    const doi = getRawDoi(r);
+    if (doi) lines.push(`DO  - ${doi}`);
+    const url = getCitationUrl(r);
+    if (url) lines.push(`UR  - ${url}`);
+    lines.push('ER  -');
+    return lines.join('\n');
+}
+
+const CITATION_GENERATORS = {
+    apa: generateAPA,
+    harvard: generateHarvard,
+    mla: generateMLA,
+    vancouver: generateVancouver,
+    chicago: generateChicago,
+    ieee: generateIEEE,
+    bibtex: generateBibTeX,
+    ris: generateRIS
+};
+
+const CITATION_FILE_EXT = {
+    bibtex: 'bib',
+    ris: 'ris'
+};
+
+function buildCitation(r, formatKey) {
+    return (CITATION_GENERATORS[formatKey] || generateAPA)(r);
 }
 
 function CitationCard({ r }) {
-    const [style, setStyle] = useState('Chicago');
+    const [formatKey, setFormatKey] = useState('apa');
     const [copied, setCopied] = useState(false);
-    const citation = buildCitation(r, style);
+    const citation = buildCitation(r, formatKey);
 
     function copy() {
         if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -370,6 +557,20 @@ function CitationCard({ r }) {
         }
     }
 
+    function download() {
+        const ext = CITATION_FILE_EXT[formatKey] || 'txt';
+        const slug = (r.title || 'citation').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'citation';
+        const blob = new Blob([citation], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${slug}-${formatKey}.${ext}`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
     return ce('div', { className: 'zalf-lp-card zalf-lp-card--citation' },
         ce('h3', { className: 'zalf-lp-card-title' }, 'Citation'),
         ce('p', { className: 'zalf-lp-citation-note' },
@@ -377,23 +578,30 @@ function CitationCard({ r }) {
         ),
         ce('div', { className: 'zalf-lp-citation-style-row' },
             ce('span', { className: 'zalf-lp-citation-style-lbl' }, 'Style'),
-            ce('div', { className: 'zalf-lp-citation-tabs' },
-                ...CITATION_STYLES.map((s) =>
-                    ce('button', {
-                        key: s,
-                        className: 'zalf-lp-citation-tab' + (style === s ? ' zalf-lp-citation-tab--active' : ''),
-                        onClick: () => setStyle(s)
-                    }, s)
-                )
+            ce('select', {
+                className: 'zalf-lp-citation-select',
+                value: formatKey,
+                onChange: (e) => setFormatKey(e.target.value)
+            },
+                ...CITATION_FORMATS.map((f) => ce('option', { key: f.key, value: f.key }, f.label))
             )
         ),
         ce('div', { className: 'zalf-lp-citation-text' }, citation),
-        ce('button', {
-            className: 'zalf-lp-btn zalf-lp-btn--primary zalf-lp-btn--full zalf-lp-citation-copy',
-            onClick: copy
-        },
-        ce('span', { className: 'zalf-lp-btn-icon' }, ce(Icon, { name: copied ? 'copy' : 'quote', className: 'zalf-lp-inline-icon' })),
-        copied ? 'Copied!' : 'Copy Citation'
+        ce('div', { className: 'zalf-lp-citation-btn-row' },
+            ce('button', {
+                className: 'zalf-lp-btn zalf-lp-btn--primary zalf-lp-citation-copy',
+                onClick: copy
+            },
+            ce('span', { className: 'zalf-lp-btn-icon' }, ce(Icon, { name: copied ? 'check' : 'quote', className: 'zalf-lp-inline-icon' })),
+            copied ? 'Copied!' : 'Copy Citation'
+            ),
+            ce('button', {
+                className: 'zalf-lp-btn zalf-lp-btn--outline zalf-lp-citation-download',
+                onClick: download
+            },
+            ce('span', { className: 'zalf-lp-btn-icon' }, ce(Icon, { name: 'download', className: 'zalf-lp-inline-icon' })),
+            'Download'
+            )
         )
     );
 }

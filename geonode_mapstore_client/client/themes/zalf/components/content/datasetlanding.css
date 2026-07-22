@@ -934,59 +934,46 @@ a.zalf-lp-funder-name:hover {
   flex-shrink: 0;
 }
 
-.zalf-lp-citation-tabs {
-  display: flex;
-  gap: 0;
-  border: 1px solid var(--zalf-border);
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.zalf-lp-citation-tab {
-  padding: 0.28rem 0.65rem;
-  font-size: 0.775rem;
+.zalf-lp-citation-select {
+  flex: 1;
+  padding: 0.32rem 0.6rem;
+  font-size: 0.8rem;
   font-weight: 500;
-  background: var(--zalf-white);
-  color: var(--zalf-text-muted);
-  border: none;
-  cursor: pointer;
-  border-right: 1px solid var(--zalf-border);
-  transition: background 0.12s, color 0.12s;
-}
-
-.zalf-lp-citation-tab:last-child {
-  border-right: none;
-}
-
-.zalf-lp-citation-tab:hover {
-  background: var(--zalf-bg);
   color: var(--zalf-text);
+  background: var(--zalf-white);
+  border: 1px solid var(--zalf-border);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: border-color 0.12s;
 }
 
-.zalf-lp-citation-tab--active {
-  background: var(--zalf-green-nav);
-  color: #fff;
-}
-
-.zalf-lp-citation-tab--active:hover {
-  background: var(--zalf-green-dark);
-  color: #fff;
+.zalf-lp-citation-select:hover,
+.zalf-lp-citation-select:focus {
+  border-color: var(--zalf-green-mid);
+  outline: none;
 }
 
 .zalf-lp-citation-text {
   background: var(--zalf-bg);
   border: 1px solid var(--zalf-border);
   border-radius: 5px;
-  padding: 0.5rem 0.5rem;
+  padding: 0.65rem 0.75rem;
   font-size: 0.8rem;
   line-height: 1.6;
   color: var(--zalf-text);
   word-break: break-word;
+  white-space: pre-wrap;
   min-height: 4.5rem;
   font-family: 'SFMono-Regular', Consolas, monospace;
 }
 
-.zalf-lp-citation-copy {
+.zalf-lp-citation-btn-row {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.zalf-lp-citation-btn-row .zalf-lp-btn {
+  flex: 1;
   margin-top: 0;
 }
 
