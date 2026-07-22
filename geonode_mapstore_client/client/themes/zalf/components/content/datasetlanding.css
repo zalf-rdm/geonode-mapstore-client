@@ -518,12 +518,15 @@
 }
 
 /* ── Sidebar ──────────────────────────────────────────────── */
+/* Not sticky on purpose: the card stack here is regularly taller than the
+   viewport, and a sticky column that's also taller than the viewport either
+   clips under the navbar or needs its own nested scrollbar — both feel like
+   a second page glued to the first. Scrolling as a normal column keeps the
+   whole page a single scroll context. */
 .zalf-lp-sidebar {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  position: sticky;
-  top: 1rem;
 }
 
 .zalf-lp-card {
@@ -1489,10 +1492,6 @@ a.zalf-lp-tree-title:hover {
   .zalf-lp-body {
     grid-template-columns: 1fr;
     padding: 1.25rem;
-  }
-
-  .zalf-lp-sidebar {
-    position: static;
   }
 
   .zalf-lp-hero-card {
