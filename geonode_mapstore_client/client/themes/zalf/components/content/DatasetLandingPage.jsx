@@ -518,7 +518,7 @@ function MapStatsBar({ layers, isCollection }) {
     const rasterCount = layers.filter(l => l.datasetDetail && l.datasetDetail.subtype === 'raster').length;
     const tableCount = layers.filter(l => l.datasetDetail && (l.datasetDetail.subtype === 'tabular' || l.datasetDetail.subtype === 'table')).length;
     const totalAttrs = layers.reduce((acc, l) => acc + ((l.datasetDetail && l.datasetDetail.attribute_set) ? l.datasetDetail.attribute_set.length : 0), 0);
-    const totalLabel = isCollection ? 'Tables' : 'Layers';
+    const totalLabel = isCollection ? 'Tables' : 'Items';
 
     return ce('div', { className: 'zalf-lp-stats-bar' },
         ce('div', { className: 'zalf-lp-stat-item' },
@@ -540,6 +540,20 @@ function MapStatsBar({ layers, isCollection }) {
         totalAttrs > 0 && ce('div', { className: 'zalf-lp-stat-item' },
             ce('span', { className: 'zalf-lp-stat-value' }, totalAttrs),
             ce('span', { className: 'zalf-lp-stat-label' }, 'Attributes')
+        )
+    );
+}
+
+function MapContentsSkeleton() {
+    return ce('div', { className: 'zalf-lp-skeleton-block', 'aria-hidden': true },
+        ce('div', { className: 'zalf-lp-stats-bar zalf-lp-stats-bar--skeleton' },
+            ...[0, 1, 2, 3].map((i) => ce('div', { key: i, className: 'zalf-lp-stat-item' },
+                ce('span', { className: 'zalf-lp-skeleton-pill zalf-lp-skeleton-pill--value' }),
+                ce('span', { className: 'zalf-lp-skeleton-pill zalf-lp-skeleton-pill--label' })
+            ))
+        ),
+        ce('div', { className: 'zalf-lp-skeleton-tree' },
+            ...[0, 1, 2].map((i) => ce('div', { key: i, className: 'zalf-lp-skeleton-row' }))
         )
     );
 }
@@ -705,7 +719,7 @@ function MapContentTree({ rootTitle, layers, isCollection }) {
     const [expanded, setExpanded] = useState({ root: true });
     const toggle = (id) => setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
     const rootOpen = !!expanded.root;
-    const childLabel = isCollection ? 'table' : 'layer';
+    const childLabel = isCollection ? 'table' : 'item';
 
     return ce('ul', { className: 'zalf-lp-tree', role: 'tree', 'aria-label': isCollection ? 'Tables in this collection' : 'Map contents' },
         ce('li', { className: 'zalf-lp-tree-node', role: 'treeitem', 'aria-expanded': rootOpen },
@@ -744,6 +758,7 @@ export default function DatasetLandingPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [mapLayers, setMapLayers] = useState(null);
+    const [layersLoading, setLayersLoading] = useState(false);
     const [linkedResources, setLinkedResources] = useState(null);
     const [attributes, setAttributes] = useState(null);
     const pk = extractPkFromHash();
@@ -753,6 +768,7 @@ export default function DatasetLandingPage() {
         setError(null);
         setResource(null);
         setMapLayers(null);
+        setLayersLoading(false);
         setLinkedResources(null);
         setAttributes(null);
         if (!pk) { setError('No resource identifier found in URL.'); setLoading(false); return; }
@@ -775,11 +791,12 @@ export default function DatasetLandingPage() {
         }
 
         if (resource.resource_type === 'map') {
+            setLayersLoading(true);
             axios.get('/api/v2/maps/' + pk + '/maplayers/')
                 .then(({ data }) => {
                     const dsPks = data.map((l) => l.dataset && l.dataset.pk).filter(Boolean);
                     // the datasets API can serve an empty (untranslated) title;
-                    // the resources API reads the raw ResourceBase title instead
+                    // the resources API reads the raw ResourceBase title instead.
                     const titlesPromise = dsPks.length
                         ? axios.get('/api/v2/resources/', {
                             params: {
@@ -795,16 +812,35 @@ export default function DatasetLandingPage() {
                             })
                             .catch(() => ({}))
                         : Promise.resolve({});
-                    return titlesPromise.then((titleByPk) => Promise.all(data.map((layer) => {
-                        const dsPk = layer.dataset && layer.dataset.pk;
-                        if (!dsPk) return Promise.resolve(layer);
-                        return axios.get('/api/v2/datasets/' + dsPk + '/')
-                            .then(({ data: dsData }) => ({ ...layer, datasetDetail: dsData.dataset, resourceTitle: titleByPk[dsPk] }))
-                            .catch(() => ({ ...layer, resourceTitle: titleByPk[dsPk] }));
-                    })));
+                    // attribute_set is deferred by default on the datasets list endpoint;
+                    // ?include[]=attribute_set opts in and fetches subtype + attributes for
+                    // every layer's dataset in a single batched request instead of one per layer
+                    const detailsPromise = dsPks.length
+                        ? axios.get('/api/v2/datasets/', {
+                            params: {
+                                page_size: dsPks.length,
+                                'filter{pk.in}': dsPks,
+                                'include[]': 'attribute_set'
+                            },
+                            ...paramsSerializer()
+                        })
+                            .then(({ data: dd }) => {
+                                const byPk = {};
+                                (dd.datasets || []).forEach((ds) => { byPk[ds.pk] = ds; });
+                                return byPk;
+                            })
+                            .catch(() => ({}))
+                        : Promise.resolve({});
+                    return Promise.all([titlesPromise, detailsPromise]).then(([titleByPk, detailByPk]) =>
+                        data.map((layer) => {
+                            const dsPk = layer.dataset && layer.dataset.pk;
+                            if (!dsPk) return layer;
+                            return { ...layer, datasetDetail: detailByPk[dsPk], resourceTitle: titleByPk[dsPk] };
+                        })
+                    );
                 })
-                .then((layers) => setMapLayers(layers))
-                .catch(() => setMapLayers([]));
+                .then((layers) => { setMapLayers(layers); setLayersLoading(false); })
+                .catch(() => { setMapLayers([]); setLayersLoading(false); });
         }
     }, [resource]);
 
@@ -1039,20 +1075,26 @@ export default function DatasetLandingPage() {
                     ) : null,
 
                 // Map contents tree (only for maps / table collections)
-                r.resource_type === 'map' && mapLayers && mapLayers.length > 0
+                r.resource_type === 'map' && (layersLoading || (mapLayers && mapLayers.length > 0))
                     ? ce(Section, {
-                        title: r.subtype === 'tabular-collection' ? 'Tables in this Collection' : 'Layers in this Map',
+                        title: r.subtype === 'tabular-collection' ? 'Tables in this Collection' : 'Items in this Dataset',
                         icon: r.subtype === 'tabular-collection' ? 'table-collection' : 'map'
                     },
-                        ce(MapStatsBar, {
-                            layers: mapLayers,
-                            isCollection: r.subtype === 'tabular-collection'
-                        }),
-                        ce(MapContentTree, {
-                            rootTitle: r.title,
-                            layers: mapLayers,
-                            isCollection: r.subtype === 'tabular-collection'
-                        })
+                        layersLoading
+                            ? ce(MapContentsSkeleton)
+                            : [
+                                ce(MapStatsBar, {
+                                    key: 'stats',
+                                    layers: mapLayers,
+                                    isCollection: r.subtype === 'tabular-collection'
+                                }),
+                                ce(MapContentTree, {
+                                    key: 'tree',
+                                    rootTitle: r.title,
+                                    layers: mapLayers,
+                                    isCollection: r.subtype === 'tabular-collection'
+                                })
+                            ]
                     ) : null,
 
                 // Linked Resources
