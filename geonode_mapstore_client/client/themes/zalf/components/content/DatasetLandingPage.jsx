@@ -173,6 +173,20 @@ function extractPkFromHash() {
     return match ? match[1] : null;
 }
 
+function extractTypePrefixFromHash() {
+    const match = window.location.hash.match(/#\/landing\/([^/]+)\/[^/]+/);
+    return match ? match[1] : null;
+}
+
+// The landing routes share a component, but resource IDs are global in GeoNode.
+// Consequently the type segment is part of the resource identity: /dataset/6 must
+// not render a map whose global resource PK happens to be 6.
+function getExpectedTypePrefix(r) {
+    if (r.resource_type === 'map') return r.subtype === 'tabular-collection' ? 'tabular-collection' : 'map';
+    if (r.resource_type === 'document') return 'document';
+    return 'dataset';
+}
+
 function fetchResource(pk) {
     return axios.get('/api/v2/resources/' + pk + '/')
         .then(({ data }) => data.resource);
@@ -724,30 +738,15 @@ function pluralLabel(count, singular, plural) {
     return count === 1 ? singular : (plural || singular + 's');
 }
 
-function MapStatsBar({ layers, isCollection }) {
-    const total = layers.length;
-    const vectorCount = layers.filter(l => l.datasetDetail && l.datasetDetail.subtype === 'vector').length;
-    const rasterCount = layers.filter(l => l.datasetDetail && l.datasetDetail.subtype === 'raster').length;
-    const tableCount = layers.filter(l => l.datasetDetail && (l.datasetDetail.subtype === 'tabular' || l.datasetDetail.subtype === 'table')).length;
-    const totalAttrs = layers.reduce((acc, l) => acc + ((l.datasetDetail && l.datasetDetail.attribute_set) ? l.datasetDetail.attribute_set.length : 0), 0);
+function MapStatsBar({ items, isCollection }) {
+    const total = items.length;
+    const totalAttrs = items.reduce((acc, item) => acc + (item.attributes ? item.attributes.length : 0), 0);
     const totalLabel = isCollection ? pluralLabel(total, 'Table') : pluralLabel(total, 'Item');
 
     return ce('div', { className: 'zalf-lp-stats-bar' },
         ce('div', { className: 'zalf-lp-stat-item' },
             ce('span', { className: 'zalf-lp-stat-value' }, total),
             ce('span', { className: 'zalf-lp-stat-label' }, totalLabel)
-        ),
-        vectorCount > 0 && ce('div', { className: 'zalf-lp-stat-item' },
-            ce('span', { className: 'zalf-lp-stat-value' }, vectorCount),
-            ce('span', { className: 'zalf-lp-stat-label' }, pluralLabel(vectorCount, 'Vector'))
-        ),
-        rasterCount > 0 && ce('div', { className: 'zalf-lp-stat-item' },
-            ce('span', { className: 'zalf-lp-stat-value' }, rasterCount),
-            ce('span', { className: 'zalf-lp-stat-label' }, pluralLabel(rasterCount, 'Raster'))
-        ),
-        !isCollection && tableCount > 0 && ce('div', { className: 'zalf-lp-stat-item' },
-            ce('span', { className: 'zalf-lp-stat-value' }, tableCount),
-            ce('span', { className: 'zalf-lp-stat-label' }, pluralLabel(tableCount, 'Table'))
         ),
         totalAttrs > 0 && ce('div', { className: 'zalf-lp-stat-item' },
             ce('span', { className: 'zalf-lp-stat-value' }, totalAttrs),
@@ -886,13 +885,12 @@ function AttributeTable({ attributes }) {
 
 // ─── Map content tree (explorer view) ────────────────────────────────────────
 
-function TreeLayerNode({ layer, nodeId, expanded, onToggle }) {
-    const ds = layer.datasetDetail || layer.dataset || {};
-    const title = ds.title || layer.dataset?.title || layer.resourceTitle || 'Untitled Layer';
-    const subtype = ds.subtype || null;
-    const attrs = sortAttributes(ds.attribute_set || []);
+function TreeItemNode({ item, nodeId, expanded, onToggle }) {
+    const { title, subtype, badgeLabel, href } = item;
+    const attrs = item.attributes || [];
     const hasAttrs = attrs.length > 0;
     const isTable = subtype === 'tabular' || subtype === 'table';
+    const iconName = isTable ? 'table' : (item.isLinkedOnly ? 'description' : 'layer');
 
     return ce('li', { className: 'zalf-lp-tree-node', role: 'treeitem', 'aria-expanded': hasAttrs ? expanded : undefined },
         ce('div', { className: 'zalf-lp-tree-row' },
@@ -903,15 +901,17 @@ function TreeLayerNode({ layer, nodeId, expanded, onToggle }) {
                     'aria-label': (expanded ? 'Collapse ' : 'Expand ') + title
                 }, ce(Icon, { name: 'chevron', className: 'zalf-lp-inline-icon' }))
                 : ce('span', { className: 'zalf-lp-tree-chevron zalf-lp-tree-chevron--none' }),
-            ce('span', { className: 'zalf-lp-tree-icon' }, ce(Icon, { name: isTable ? 'table' : 'layer', className: 'zalf-lp-inline-icon' })),
-            hasAttrs
-                ? ce('button', {
-                    className: 'zalf-lp-tree-title zalf-lp-tree-title--toggle',
-                    onClick: () => onToggle(nodeId),
-                    'aria-expanded': expanded
-                }, title)
-                : ce('span', { className: 'zalf-lp-tree-title' }, title),
-            subtype && ce(Badge, { label: subtypeLabel(subtype), variant: 'type' }),
+            ce('span', { className: 'zalf-lp-tree-icon' }, ce(Icon, { name: iconName, className: 'zalf-lp-inline-icon' })),
+            href
+                ? ce('a', { className: 'zalf-lp-tree-title', href }, title)
+                : (hasAttrs
+                    ? ce('button', {
+                        className: 'zalf-lp-tree-title zalf-lp-tree-title--toggle',
+                        onClick: () => onToggle(nodeId),
+                        'aria-expanded': expanded
+                    }, title)
+                    : ce('span', { className: 'zalf-lp-tree-title' }, title)),
+            badgeLabel && ce(Badge, { label: badgeLabel, variant: 'type' }),
             hasAttrs && ce('span', { className: 'zalf-lp-tree-count' },
                 attrs.length + ' ' + pluralLabel(attrs.length, 'attribute'))
         ),
@@ -927,7 +927,7 @@ function TreeLayerNode({ layer, nodeId, expanded, onToggle }) {
     );
 }
 
-function MapContentTree({ rootTitle, layers, isCollection }) {
+function MapContentTree({ rootTitle, items, isCollection }) {
     const [expanded, setExpanded] = useState({ root: true });
     const toggle = (id) => setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
     const rootOpen = !!expanded.root;
@@ -948,14 +948,14 @@ function MapContentTree({ rootTitle, layers, isCollection }) {
                     'aria-expanded': rootOpen
                 }, rootTitle),
                 ce('span', { className: 'zalf-lp-tree-count' },
-                    layers.length + ' ' + pluralLabel(layers.length, childLabel))
+                    items.length + ' ' + pluralLabel(items.length, childLabel))
             ),
             rootOpen && ce('ul', { className: 'zalf-lp-tree-children', role: 'group' },
-                ...layers.map((layer, i) => ce(TreeLayerNode, {
-                    key: i,
-                    layer,
-                    nodeId: 'layer-' + i,
-                    expanded: !!expanded['layer-' + i],
+                ...items.map((item, i) => ce(TreeItemNode, {
+                    key: item.key || i,
+                    item,
+                    nodeId: 'item-' + i,
+                    expanded: !!expanded['item-' + i],
                     onToggle: toggle
                 }))
             )
@@ -990,7 +990,7 @@ export default function DatasetLandingPage() {
     }, [pk]);
 
     useEffect(() => {
-        if (!resource || !pk) return;
+        if (!resource || !pk || extractTypePrefixFromHash() !== getExpectedTypePrefix(resource)) return;
 
         axios.get('/api/v2/resources/' + pk + '/linked_resources/')
             .then(({ data }) => setLinkedResources(data))
@@ -1073,14 +1073,69 @@ export default function DatasetLandingPage() {
         );
     }
 
+    // A route is type-specific even though the component is shared. Do not turn a
+    // map into a dataset page merely because both paths contain the same global PK.
+    if (extractTypePrefixFromHash() !== getExpectedTypePrefix(resource)) {
+        return ce('div', { className: 'zalf-lp-shell' },
+            ce('div', { className: 'zalf-lp-state zalf-lp-state--error' },
+                ce('p', null, 'The requested ' + (extractTypePrefixFromHash() || 'resource') + ' does not exist.')
+            )
+        );
+    }
+
     const r = resource;
 
     // ── Derived values ──────────────────────────────────────────────────────
-    // 'internal' entries are auto-created per maplayer (geonode/maps/models.py) and are
-    // already reflected in the "Items in this Dataset" section above, so they're excluded
-    // here — same convention DetailsLinkedResources.jsx uses to split "linkedTo" vs "uses".
+    // 'internal' entries are auto-created per maplayer (geonode/maps/models.py) and would
+    // otherwise duplicate an entry already covered by mapLayers below — same convention
+    // DetailsLinkedResources.jsx uses to split "linkedTo" vs "uses".
     const externalLinkedTo = (linkedResources?.linked_to || []).filter((res) => !res.internal);
-    const externalLinkedBy = (linkedResources?.linked_by || []).filter((res) => !res.internal);
+    // linked_by is left unfiltered: an 'internal' entry here means another map uses this
+    // resource as an actual layer, which is exactly what "Used by" is meant to surface
+    // (e.g. on a dataset's page, which maps use it) — unlike linked_to, it's not a
+    // duplicate of anything shown elsewhere on this same page.
+    const externalLinkedBy = linkedResources?.linked_by || [];
+
+    // "Items in this Dataset" merges the map's real layers with any non-internal linked
+    // resources (e.g. supporting documents) not already represented as a layer, so the
+    // section reflects everything attached to the map, not just what renders in the viewer.
+    const mapLayerPks = new Set((mapLayers || []).map((l) => l.dataset && String(l.dataset.pk)).filter(Boolean));
+    const linkedOnlyItems = mapLayers ? externalLinkedTo.filter((res) => !mapLayerPks.has(String(res.pk))) : [];
+    const mapContentItems = mapLayers
+        ? [
+            ...mapLayers.map((layer) => {
+                const ds = layer.datasetDetail || layer.dataset || {};
+                const subtype = ds.subtype || null;
+                return {
+                    key: 'layer-' + (ds.pk || layer.dataset?.pk || layer.name),
+                    title: ds.title || layer.dataset?.title || layer.resourceTitle || 'Untitled Layer',
+                    subtype,
+                    badgeLabel: subtype ? subtypeLabel(subtype) : null,
+                    attributes: sortAttributes(ds.attribute_set || []),
+                    href: null,
+                    isLinkedOnly: false
+                };
+            }),
+            ...linkedOnlyItems.map((res) => {
+                const subtype = res.subtype || null;
+                return {
+                    key: 'linked-' + res.pk,
+                    title: res.title || 'Untitled',
+                    subtype,
+                    badgeLabel: subtype ? subtypeLabel(subtype) : (res.resource_type ? res.resource_type.charAt(0).toUpperCase() + res.resource_type.slice(1) : null),
+                    attributes: [],
+                    href: res.detail_url ? res.detail_url.replace('/catalogue/#/', '/catalogue/#/landing/') : null,
+                    isLinkedOnly: true
+                };
+            })
+        ]
+        : null;
+
+    // Show every direct relation in the dedicated section, including internal map-layer
+    // relations. The map contents tree provides the structural view; this section is the
+    // complete list of resources explicitly linked to the map.
+    const linkedToForSection = linkedResources?.linked_to || [];
+
     const typeLabel = getResourceTypeLabel(r);
     const viewerHref = getViewerHref(pk, r);
     const viewerBtnLabel = getViewerButtonLabel(r);
@@ -1292,7 +1347,9 @@ export default function DatasetLandingPage() {
                     ) : null,
 
                 // Map contents tree (only for maps / table collections)
-                r.resource_type === 'map' && (layersLoading || (mapLayers && mapLayers.length > 0))
+                // includes the map's real layers plus any non-internal linked resources
+                // (e.g. supporting documents) not already covered by a layer.
+                r.resource_type === 'map' && (layersLoading || (mapContentItems && mapContentItems.length > 0))
                     ? ce(Section, {
                         title: r.subtype === 'tabular-collection' ? 'Tables in this Collection' : 'Items in this Dataset',
                         icon: r.subtype === 'tabular-collection' ? 'table-collection' : 'map'
@@ -1302,28 +1359,23 @@ export default function DatasetLandingPage() {
                             : [
                                 ce(MapStatsBar, {
                                     key: 'stats',
-                                    layers: mapLayers,
+                                    items: mapContentItems,
                                     isCollection: r.subtype === 'tabular-collection'
                                 }),
                                 ce(MapContentTree, {
                                     key: 'tree',
                                     rootTitle: r.title,
-                                    layers: mapLayers,
+                                    items: mapContentItems,
                                     isCollection: r.subtype === 'tabular-collection'
                                 })
                             ]
                     ) : null,
 
                 // Linked Resources
-                // 'internal' linked_to/linked_by entries mirror the map's own maplayers
-                // (see geonode/maps/models.py: LinkedResource(..., internal=True) is created
-                // per maplayer), so they're already counted under "Items in this Dataset" above
-                // and must be excluded here to avoid listing the same datasets twice — matching
-                // the filter DetailsLinkedResources.jsx already applies for the same reason.
-                (externalLinkedTo.length > 0)
+                (linkedToForSection.length > 0)
                     ? ce(Section, { title: 'Linked Resources', icon: 'tag' },
                         ce('div', { className: 'zalf-lp-linked-grid' },
-                            ...externalLinkedTo.map((res, i) => ce(LinkedResourceCard, { key: i, res }))
+                            ...linkedToForSection.map((res, i) => ce(LinkedResourceCard, { key: i, res }))
                         )
                     ) : null,
 
