@@ -18,6 +18,22 @@ export function cmsRequest(url, method, body) {
     });
 }
 
+export function cmsGet(url) {
+    return fetch(url).then(async (response) => {
+        if (response.ok) return response.json();
+        let detail;
+        try { detail = await response.json(); } catch (e) { detail = null; }
+        return Promise.reject(detail || { detail: `Request failed (${response.status})` });
+    });
+}
+
+export function errorMessage(error, fallback = 'The request could not be completed. Please try again.') {
+    if (typeof error === 'string') return error;
+    if (error?.detail) return error.detail;
+    if (error?.message) return error.message;
+    return fallback;
+}
+
 export function buildFormData(fields, imageKey, imageFile) {
     const fd = new FormData();
     Object.entries(fields).forEach(([k, v]) => {

@@ -720,13 +720,17 @@ function subtypeLabel(st) {
     return map[st] || (st.charAt(0).toUpperCase() + st.slice(1));
 }
 
+function pluralLabel(count, singular, plural) {
+    return count === 1 ? singular : (plural || singular + 's');
+}
+
 function MapStatsBar({ layers, isCollection }) {
     const total = layers.length;
     const vectorCount = layers.filter(l => l.datasetDetail && l.datasetDetail.subtype === 'vector').length;
     const rasterCount = layers.filter(l => l.datasetDetail && l.datasetDetail.subtype === 'raster').length;
     const tableCount = layers.filter(l => l.datasetDetail && (l.datasetDetail.subtype === 'tabular' || l.datasetDetail.subtype === 'table')).length;
     const totalAttrs = layers.reduce((acc, l) => acc + ((l.datasetDetail && l.datasetDetail.attribute_set) ? l.datasetDetail.attribute_set.length : 0), 0);
-    const totalLabel = isCollection ? 'Tables' : 'Items';
+    const totalLabel = isCollection ? pluralLabel(total, 'Table') : pluralLabel(total, 'Item');
 
     return ce('div', { className: 'zalf-lp-stats-bar' },
         ce('div', { className: 'zalf-lp-stat-item' },
@@ -735,19 +739,19 @@ function MapStatsBar({ layers, isCollection }) {
         ),
         vectorCount > 0 && ce('div', { className: 'zalf-lp-stat-item' },
             ce('span', { className: 'zalf-lp-stat-value' }, vectorCount),
-            ce('span', { className: 'zalf-lp-stat-label' }, 'Vector')
+            ce('span', { className: 'zalf-lp-stat-label' }, pluralLabel(vectorCount, 'Vector'))
         ),
         rasterCount > 0 && ce('div', { className: 'zalf-lp-stat-item' },
             ce('span', { className: 'zalf-lp-stat-value' }, rasterCount),
-            ce('span', { className: 'zalf-lp-stat-label' }, 'Raster')
+            ce('span', { className: 'zalf-lp-stat-label' }, pluralLabel(rasterCount, 'Raster'))
         ),
         !isCollection && tableCount > 0 && ce('div', { className: 'zalf-lp-stat-item' },
             ce('span', { className: 'zalf-lp-stat-value' }, tableCount),
-            ce('span', { className: 'zalf-lp-stat-label' }, 'Tables')
+            ce('span', { className: 'zalf-lp-stat-label' }, pluralLabel(tableCount, 'Table'))
         ),
         totalAttrs > 0 && ce('div', { className: 'zalf-lp-stat-item' },
             ce('span', { className: 'zalf-lp-stat-value' }, totalAttrs),
-            ce('span', { className: 'zalf-lp-stat-label' }, 'Attributes')
+            ce('span', { className: 'zalf-lp-stat-label' }, pluralLabel(totalAttrs, 'Attribute'))
         )
     );
 }
@@ -909,7 +913,7 @@ function TreeLayerNode({ layer, nodeId, expanded, onToggle }) {
                 : ce('span', { className: 'zalf-lp-tree-title' }, title),
             subtype && ce(Badge, { label: subtypeLabel(subtype), variant: 'type' }),
             hasAttrs && ce('span', { className: 'zalf-lp-tree-count' },
-                attrs.length + ' attribute' + (attrs.length === 1 ? '' : 's'))
+                attrs.length + ' ' + pluralLabel(attrs.length, 'attribute'))
         ),
         hasAttrs && expanded && ce('ul', { className: 'zalf-lp-tree-children zalf-lp-tree-children--attrs', role: 'group' },
             ...attrs.map((a) => ce('li', { key: a.pk || a.attribute, className: 'zalf-lp-tree-attr', role: 'treeitem' },
@@ -944,7 +948,7 @@ function MapContentTree({ rootTitle, layers, isCollection }) {
                     'aria-expanded': rootOpen
                 }, rootTitle),
                 ce('span', { className: 'zalf-lp-tree-count' },
-                    layers.length + ' ' + childLabel + (layers.length === 1 ? '' : 's'))
+                    layers.length + ' ' + pluralLabel(layers.length, childLabel))
             ),
             rootOpen && ce('ul', { className: 'zalf-lp-tree-children', role: 'group' },
                 ...layers.map((layer, i) => ce(TreeLayerNode, {

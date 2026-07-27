@@ -1,6 +1,7 @@
 import React from 'react';
 import MarkdownEditor from './MarkdownEditor';
-import { cmsRequest, buildFormData } from '../cmsApi';
+import { cmsGet, cmsRequest, buildFormData, errorMessage } from '../cmsApi';
+import CmsModal from './CmsModal';
 
 const BASE = '/api/v2/cms/trainings/';
 
@@ -67,12 +68,8 @@ function Modal({ item, onClose, onSaved }) {
     const isScheduled = form.format === 'live' || form.format === 'workshop';
 
     return React.createElement(
-        'div',
-        { className: 'cms-modal-backdrop', onClick: e => e.target === e.currentTarget && onClose() },
-        React.createElement(
-            'div',
-            { className: 'cms-modal' },
-            React.createElement('h2', { className: 'cms-modal__title' }, isNew ? 'Add Training Resource' : 'Edit Training Resource'),
+        CmsModal,
+        { title: isNew ? 'Add Training Resource' : 'Edit Training Resource', onClose, saving },
             React.createElement(
                 'form',
                 { onSubmit: handleSubmit },
@@ -149,7 +146,7 @@ function Modal({ item, onClose, onSaved }) {
                     React.createElement(MarkdownEditor, { value: form.body_markdown, onChange: v => set('body_markdown', v) })
                 ),
 
-                error && React.createElement('p', { style: { color: 'red' } }, error),
+                error && React.createElement('p', { className: 'cms-editor__error', role: 'alert' }, error),
 
                 React.createElement(
                     'div',
@@ -157,7 +154,6 @@ function Modal({ item, onClose, onSaved }) {
                     React.createElement('button', { type: 'button', className: 'btn btn-default', onClick: onClose }, 'Cancel'),
                     React.createElement('button', { type: 'submit', className: 'btn btn-primary', disabled: saving }, saving ? 'Saving…' : 'Save')
                 )
-            )
         )
     );
 }
@@ -167,10 +163,14 @@ function TrainingResourceEditor() {
     const [loading, setLoading] = React.useState(true);
     const [editItem, setEditItem] = React.useState(null);
     const [showModal, setShowModal] = React.useState(false);
+    const [error, setError] = React.useState(null);
 
-    React.useEffect(() => {
-        fetch(BASE).then(r => r.json()).then(setItems).catch(() => {}).finally(() => setLoading(false));
+    const loadItems = React.useCallback(() => {
+        setLoading(true);
+        setError(null);
+        cmsGet(BASE).then(setItems).catch(err => setError(errorMessage(err))).finally(() => setLoading(false));
     }, []);
+    React.useEffect(() => { loadItems(); }, [loadItems]);
 
     function openNew() { setEditItem({ ...EMPTY }); setShowModal(true); }
     function openEdit(item) { setEditItem(item); setShowModal(true); }
@@ -182,12 +182,13 @@ function TrainingResourceEditor() {
 
     function handleDelete(id) {
         if (!window.confirm('Delete this training resource?')) return;
-        cmsRequest(`${BASE}${id}/`, 'DELETE').then(() => setItems(prev => prev.filter(i => i.id !== id)));
+        setError(null);
+        cmsRequest(`${BASE}${id}/`, 'DELETE').then(() => setItems(prev => prev.filter(i => i.id !== id))).catch(err => setError(errorMessage(err)));
     }
 
     function handleToggle(item) {
         cmsRequest(`${BASE}${item.id}/`, 'PATCH', { is_active: !item.is_active })
-            .then(saved => setItems(prev => prev.map(i => i.id === saved.id ? saved : i)));
+            .then(saved => setItems(prev => prev.map(i => i.id === saved.id ? saved : i))).catch(err => setError(errorMessage(err)));
     }
 
     if (loading) return React.createElement('p', null, 'Loading…');
@@ -200,6 +201,7 @@ function TrainingResourceEditor() {
         React.createElement('div', { className: 'cms-editor__toolbar' },
             React.createElement('button', { type: 'button', className: 'btn btn-primary', onClick: openNew }, '+ Add training')
         ),
+        error && React.createElement('div', { className: 'cms-editor__error', role: 'alert' }, error, ' ', React.createElement('button', { type: 'button', className: 'btn btn-link', onClick: loadItems }, 'Try again')),
         items.length === 0
             ? React.createElement('p', { className: 'cms-editor__empty' }, 'No training resources yet.')
             : React.createElement('ul', { className: 'cms-editor__list' },

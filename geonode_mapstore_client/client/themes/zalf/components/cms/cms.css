@@ -162,6 +162,15 @@
     border-radius: 8px;
 }
 
+.cms-editor__error {
+    margin: 0;
+    padding: 12px 16px;
+    color: #8f1d1d;
+    background: #fff1f1;
+    border: 1px solid rgba(180, 40, 40, 0.32);
+    border-radius: 6px;
+}
+
 .cms-editor__list {
     list-style: none;
     margin: 0;

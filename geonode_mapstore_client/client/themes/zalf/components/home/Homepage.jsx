@@ -74,9 +74,14 @@ function useCmsData() {
             fetch('/api/v2/cms/banners/').then(r => r.ok ? r.json() : []).catch(() => []),
             fetch('/api/v2/cms/trainings/').then(r => r.ok ? r.json() : []).catch(() => []),
         ]).then(([c, b, t]) => {
-            setCases(c);
-            setBanners(b);
-            setTrainings(t);
+            // Staff users receive inactive records too so the CMS can manage
+            // them. Public-facing pages must never render those records.
+            const activeOnly = (items) => Array.isArray(items)
+                ? items.filter((item) => item.is_active !== false)
+                : [];
+            setCases(activeOnly(c));
+            setBanners(activeOnly(b));
+            setTrainings(activeOnly(t));
         }).catch(() => {}).finally(() => setLoading(false));
     }, []);
 
