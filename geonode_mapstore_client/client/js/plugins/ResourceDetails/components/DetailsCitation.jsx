@@ -43,7 +43,7 @@ function formatAuthorName(person, style) {
 
 function getSortedAuthors(resource) {
     const authors = resource?.author;
-    if (!authors || authors.length === 0) return [];
+    if (!authors || authors.length === 0) return resource?.owner ? [resource.owner] : [];
     return [...authors].sort((a, b) => {
         if (a.order === null && b.order === null) return 0;
         if (a.order === null) return 1;
@@ -53,13 +53,9 @@ function getSortedAuthors(resource) {
 }
 
 function getPublisher(resource) {
-    const publishers = resource?.publisher;
-    if (!publishers || publishers.length === 0) return null;
-    const pub = publishers[0];
-    const fullName = [pub.first_name, pub.last_name].filter(Boolean).join(' ');
-    if (fullName) return fullName;
-    if (pub.department) return pub.department;
-    return pub.username || null;
+    // Keep viewer citations consistent with the ZALF landing page: the
+    // repository is the publisher, while people in `publisher` remain metadata.
+    return resource?.attribution || 'Leibniz Centre for Agricultural Landscape Research (ZALF)';
 }
 
 function getYear(resource) {
@@ -71,9 +67,14 @@ function getYear(resource) {
 
 function getResourceUrl(resource) {
     if (resource?.doi) return resource.doi.startsWith('http') ? resource.doi : `https://doi.org/${resource.doi}`;
-    if (resource?.uuid) return `${window.location.origin}/catalogue/#/uuid/${resource.uuid}`;
     const raw = resource?.detail_url || '';
-    return raw ? (raw.startsWith('http') ? raw : `${window.location.origin}${raw}`) : '';
+    const url = raw ? (raw.startsWith('http') ? raw : `${window.location.origin}${raw}`) : '';
+    if (!url) return '';
+    return url
+        .replace(/#\/map\/([^/]+)$/, '#/landing/map/$1')
+        .replace(/#\/dataset\/([^/]+)$/, '#/landing/dataset/$1')
+        .replace(/#\/document\/([^/]+)$/, '#/landing/document/$1')
+        .replace(/#\/tabular-collection\/([^/]+)$/, '#/landing/tabular-collection/$1');
 }
 
 function formatAuthorList(authors, style, maxBeforeEtAl) {
