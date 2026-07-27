@@ -523,6 +523,32 @@ body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header-plac
     color: var(--zalf-nav-highlight);
 }
 
+// The citation text is displayed in a <pre>. Let it wrap and grow with its
+// content instead of showing an unnecessary nested scrollbar in the viewer.
+.gn-details-citation .gn-details-citation-code {
+    height: auto;
+    max-height: none;
+    overflow: visible;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.gn-details-citation .gn-details-citation-title {
+    font-weight: 700;
+}
+
+// The viewer normally scrolls tab content internally. A citation format menu is
+// an overlay, though, so keep it outside that scrolling/clipping context.
+.gn-scrollable-tabs-container:has(.gn-details-citation) {
+    overflow: visible;
+}
+
+.gn-details-citation .dropdown-menu {
+    z-index: 10;
+}
+
+
 .zalf-navigation__link {
     color: var(--zalf-nav-text);
     text-decoration: none;
