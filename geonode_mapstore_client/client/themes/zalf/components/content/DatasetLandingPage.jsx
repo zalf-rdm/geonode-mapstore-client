@@ -1076,6 +1076,11 @@ export default function DatasetLandingPage() {
     const r = resource;
 
     // ── Derived values ──────────────────────────────────────────────────────
+    // 'internal' entries are auto-created per maplayer (geonode/maps/models.py) and are
+    // already reflected in the "Items in this Dataset" section above, so they're excluded
+    // here — same convention DetailsLinkedResources.jsx uses to split "linkedTo" vs "uses".
+    const externalLinkedTo = (linkedResources?.linked_to || []).filter((res) => !res.internal);
+    const externalLinkedBy = (linkedResources?.linked_by || []).filter((res) => !res.internal);
     const typeLabel = getResourceTypeLabel(r);
     const viewerHref = getViewerHref(pk, r);
     const viewerBtnLabel = getViewerButtonLabel(r);
@@ -1310,17 +1315,22 @@ export default function DatasetLandingPage() {
                     ) : null,
 
                 // Linked Resources
-                (linkedResources && linkedResources.linked_to && linkedResources.linked_to.length > 0)
+                // 'internal' linked_to/linked_by entries mirror the map's own maplayers
+                // (see geonode/maps/models.py: LinkedResource(..., internal=True) is created
+                // per maplayer), so they're already counted under "Items in this Dataset" above
+                // and must be excluded here to avoid listing the same datasets twice — matching
+                // the filter DetailsLinkedResources.jsx already applies for the same reason.
+                (externalLinkedTo.length > 0)
                     ? ce(Section, { title: 'Linked Resources', icon: 'tag' },
                         ce('div', { className: 'zalf-lp-linked-grid' },
-                            ...linkedResources.linked_to.map((res, i) => ce(LinkedResourceCard, { key: i, res }))
+                            ...externalLinkedTo.map((res, i) => ce(LinkedResourceCard, { key: i, res }))
                         )
                     ) : null,
 
-                (linkedResources && linkedResources.linked_by && linkedResources.linked_by.length > 0)
+                (externalLinkedBy.length > 0)
                     ? ce(Section, { title: 'Used by', icon: 'link' },
                         ce('div', { className: 'zalf-lp-linked-grid' },
-                            ...linkedResources.linked_by.map((res, i) => ce(LinkedResourceCard, { key: i, res }))
+                            ...externalLinkedBy.map((res, i) => ce(LinkedResourceCard, { key: i, res }))
                         )
                     ) : null
             ),
