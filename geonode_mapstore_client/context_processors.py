@@ -15,6 +15,27 @@ from geonode.upload.utils import get_max_upload_size, get_max_upload_parallelism
 from geonode.utils import get_supported_datasets_file_types
 
 
+# Resolver used when geonode.zalf is not installed (plain upstream GeoNode).
+_DEFAULT_DOI_RESOLVER = "https://doi.org"
+
+
+def _get_doi_resolver_base_url():
+    """
+    Base URL DOIs resolve at, derived from ``ZALF_DATACITE_BASE_URL``.
+
+    DOIs minted against the DataCite *test* API do not resolve at doi.org, so the frontend
+    cannot hardcode it (#95).  The derivation already exists server-side; this only exposes
+    it.  Guarded the same way as ``get_doi_prefixes_for_user`` below, so the client package
+    keeps working on a GeoNode without ``geonode.zalf``.
+    """
+    try:
+        from geonode.zalf.api.datacite import doi_resolver_base_url
+
+        return doi_resolver_base_url()
+    except ImportError:
+        return _DEFAULT_DOI_RESOLVER
+
+
 def _get_datacite_settings(request):
     """
     Return DataCite publishing info for the current user, embedded directly
@@ -24,10 +45,21 @@ def _get_datacite_settings(request):
     (group managers only) are derived from group membership — no DataCite API
     call.  ``prefixes`` are fetched from the DataCite API and cached per
     account — they are only fetched when the user can publish.
+
+    ``resolver_base_url`` is included for *every* caller, signed in or not: landing pages
+    are public, and anonymous readers are precisely the ones following DOI links.  Returning
+    it only on the authenticated branch would leave the reported bug in place for them.
     """
+    resolver_base_url = _get_doi_resolver_base_url()
+
     user = getattr(request, "user", None)
     if user is None or not user.is_authenticated:
-        return {"can_approve": False, "can_publish": False, "prefixes": []}
+        return {
+            "can_approve": False,
+            "can_publish": False,
+            "prefixes": [],
+            "resolver_base_url": resolver_base_url,
+        }
 
     can_approve = user.can_approve_data_collection()
     can_publish = user.can_publish_data_collection()
@@ -41,7 +73,12 @@ def _get_datacite_settings(request):
         except ImportError:
             prefixes = []
 
-    return {"can_approve": can_approve, "can_publish": can_publish, "prefixes": prefixes}
+    return {
+        "can_approve": can_approve,
+        "can_publish": can_publish,
+        "prefixes": prefixes,
+        "resolver_base_url": resolver_base_url,
+    }
 
 
 def resource_urls(request):

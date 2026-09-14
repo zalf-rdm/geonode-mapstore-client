@@ -72,7 +72,7 @@
         let catalogPagePath = geoNodeSettings.CATALOG_PAGE_PATH;
         let isPublishedOptionEnabled = geoNodeSettings.RESOURCE_PUBLISHING || false;
         let isApprovedOptionEnabled = geoNodeSettings.ADMIN_MODERATE_UPLOADS || false;
-        let datacite = geoNodeSettings.DATACITE || { can_approve: false, can_publish: false, prefixes: [] };
+        let datacite = geoNodeSettings.DATACITE || { can_approve: false, can_publish: false, prefixes: [], resolver_base_url: 'https://doi.org' };
         let customFilters = geoNodeSettings.CUSTOM_FILTERS || {
             "my-resources": {
                 "filter{owner.pk}": "{get(state('user'), 'pk')}"

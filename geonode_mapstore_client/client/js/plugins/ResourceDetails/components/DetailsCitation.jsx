@@ -11,6 +11,7 @@ import CopyToClipboardCmp from 'react-copy-to-clipboard';
 import { Dropdown, MenuItem, Glyphicon } from 'react-bootstrap';
 import Button from '@mapstore/framework/components/layout/Button';
 import { formatUsernameFallback } from '@js/utils/SearchUtils';
+import { doiToUrl } from '@js/utils/DoiUtils';
 import Message from '@mapstore/framework/components/I18N/Message';
 import tooltip from '@mapstore/framework/components/misc/enhancers/tooltip';
 
@@ -66,7 +67,7 @@ function getYear(resource) {
 }
 
 function getResourceUrl(resource) {
-    if (resource?.doi) return resource.doi.startsWith('http') ? resource.doi : `https://doi.org/${resource.doi}`;
+    if (resource?.doi) return doiToUrl(resource.doi);
     const raw = resource?.detail_url || '';
     const url = raw ? (raw.startsWith('http') ? raw : `${window.location.origin}${raw}`) : '';
     if (!url) return '';
