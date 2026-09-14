@@ -77,11 +77,28 @@ const formatAuthorCitation = (person = {}) => {
     return [person.last_name, initial].filter(Boolean).join(', ');
 };
 
+// same ordering as the citation (DetailsCitation getSortedAuthors): by `order`, unset last
+const sortAuthors = (authors) => [...authors].sort((a, b) => {
+    const aOrder = a?.order ?? null;
+    const bOrder = b?.order ?? null;
+    if (aOrder === null && bOrder === null) return 0;
+    if (aOrder === null) return 1;
+    if (bOrder === null) return -1;
+    return aOrder - bOrder;
+});
+
+// Cards show the first author (+ "et al."), never the owner (data steward who uploaded it).
+// Without authors the value stays empty so the card falls back to its noDataLabelId.
+const formatCardAuthors = (authors) => {
+    const names = sortAuthors(authors).map(formatAuthorCitation).filter(Boolean);
+    if (!names.length) return '';
+    return names.length > 1 ? `${names[0]} et al.` : names[0];
+};
+
 const resolveVirtualPaths = (resource) => {
     if (!resource) return resource;
     const authors = Array.isArray(resource.author) ? resource.author : [];
-    const authorDisplay = authors.map(formatAuthorCitation).filter(Boolean).join('; ')
-        || formatAuthorCitation(resource.owner);
+    const authorDisplay = formatCardAuthors(authors);
     return {
         ...resource,
         author: authorDisplay || resource.author,
