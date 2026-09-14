@@ -10,34 +10,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import axios from '@mapstore/framework/libs/ajax';
 import Message from '@mapstore/framework/components/I18N/Message';
 import { formatUsernameFallback } from '../../../../js/utils/SearchUtils';
+import { getOrcidId, getOrcidUrl } from '../../../../js/utils/OrcidUtils';
 import { paramsSerializer } from '../../../../js/utils/APIUtils';
 import './datasetlanding.css';
 
 const ce = React.createElement;
-
-// ORCID iD form, e.g. 0000-0002-1825-0097 (last character may be X).
-const ORCID_ID_PATTERN = /^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/;
-
-// The official ORCID mark, collected from the GeoNode side into the shared static root.
-// ORCID's display guidelines require the official icon beside the iD, so reference the
-// vendored file rather than redrawing it.
-const ORCID_ICON_SRC = '/static/geonode/img/orcid_id.svg';
-
-/** The ORCID iD itself, preferring the dedicated field over the username. */
-function personOrcidId(person) {
-    if (!person) return null;
-    if (person.orcid_identifier) return person.orcid_identifier;
-    // An ORCID-only deployment names the account after the iD; only accept the username
-    // when it really looks like one, so ordinary usernames are never taken for iDs.
-    return ORCID_ID_PATTERN.test(person.username || '') ? person.username : null;
-}
-
-/** Resolvable record URL. Prefers the server-built value so sandbox deployments work. */
-function personOrcidUrl(person) {
-    if (person && person.orcid_url) return person.orcid_url;
-    const id = personOrcidId(person);
-    return id ? 'https://orcid.org/' + id : null;
-}
 
 /**
  * A person's real name, or null when the profile carries none.
@@ -52,14 +29,19 @@ function personDisplayName(person) {
     const explicit = person.full_name
         || [person.first_name, person.last_name].filter(Boolean).join(' ');
     if (explicit) return explicit;
-    if (personOrcidId(person)) return null;
+    if (getOrcidId(person)) return null;
     return formatUsernameFallback(person.username) || null;
 }
 
+// The official ORCID mark, collected from the GeoNode side into the shared static root.
+// ORCID's display guidelines require the official icon beside the iD, so reference the
+// vendored file rather than redrawing it.
+const ORCID_ICON_SRC = '/static/geonode/img/orcid_id.svg';
+
 /** Official icon + hyperlinked iD, per the ORCID display guidelines. */
 function OrcidId({ person, compact }) {
-    const id = personOrcidId(person);
-    const href = personOrcidUrl(person);
+    const id = getOrcidId(person);
+    const href = getOrcidUrl(person);
     if (!id || !href) return null;
     const linkProps = {
         className: 'zalf-lp-orcid' + (compact ? ' zalf-lp-orcid--compact' : ''),
@@ -396,7 +378,7 @@ function formatPersonName(person, style) {
     const first = (person.first_name || '').trim();
     // Never the mangled username: an ORCID iD run through formatUsernameFallback()
     // becomes "0000 0002 1825 0097", which would be copied into papers as an author.
-    const fallbackName = personOrcidId(person) || formatUsernameFallback(person.username);
+    const fallbackName = getOrcidId(person) || formatUsernameFallback(person.username);
     const initials = first.split(/\s+/).filter(Boolean).map(n => n[0] + '.').join(' ');
     switch (style) {
         case 'firstInitials': return last && first ? `${last}, ${initials}` : last || first || fallbackName || '';
@@ -729,7 +711,7 @@ function TextBlock({ text }) {
 function PersonChip({ person }) {
     if (!person) return null;
     const name = personDisplayName(person);
-    const orcidId = personOrcidId(person);
+    const orcidId = getOrcidId(person);
     const href = person.username ? `/people/profile/${person.username}` : null;
     // With no name at all the iD *is* the identity -- better than a placeholder, and far
     // better than the iD mangled into a pseudo-name.
@@ -1230,7 +1212,7 @@ export default function DatasetLandingPage() {
         : [];
     const regions = (r.regions || []).map((rg) => rg.name).filter(Boolean);
     const ownerRealName = personDisplayName(r.owner);
-    const ownerName = ownerRealName || personOrcidId(r.owner) || '—';
+    const ownerName = ownerRealName || getOrcidId(r.owner) || '—';
     const ownerHref = r.owner?.username ? '/people/profile/' + r.owner.username : null;
     const license = r.license?.name_long || r.license?.name || r.license?.identifier || null;
     const licenseUrl = r.license?.url || null;
