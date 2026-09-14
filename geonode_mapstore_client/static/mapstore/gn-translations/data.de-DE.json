@@ -209,6 +209,7 @@
             "viewInfo": "Informationen anzeigen",
             "backToDataset": "< Zurück zum Datensatz",
             "goBackTo": "< Geh zurück zu { resourceName }",
+            "backToLandingPage": "< Zurück zur Landingpage",
             "uploadImage": "Klicken Sie hier, um ein Bild hochzuladen",
             "save": "Speichern",
             "sync": "Synchronisieren",

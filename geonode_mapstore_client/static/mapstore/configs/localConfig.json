@@ -551,6 +551,13 @@
             {
               "type": "link",
               "size": "md",
+              "href": "{context.getLandingPageUrl(state('gnResourceData'))}",
+              "labelId": "gnviewer.backToLandingPage",
+              "disableIf": "{state('isNewResource') || !context.getLandingPageUrl(state('gnResourceData'))}"
+            },
+            {
+              "type": "link",
+              "size": "md",
               "href": "#/all",
               "labelId": "gnviewer.allResources"
             },
@@ -892,6 +899,13 @@
             {
               "type": "link",
               "size": "md",
+              "href": "{context.getLandingPageUrl(state('gnResourceData'))}",
+              "labelId": "gnviewer.backToLandingPage",
+              "disableIf": "{state('isNewResource') || !context.getLandingPageUrl(state('gnResourceData'))}"
+            },
+            {
+              "type": "link",
+              "size": "md",
               "href": "#/all",
               "labelId": "gnviewer.allResources"
             },
@@ -1222,6 +1236,13 @@
         "cfg": {
           "containerPosition": "header",
           "leftMenuItems": [
+            {
+              "type": "link",
+              "size": "md",
+              "href": "{context.getLandingPageUrl(state('gnResourceData'))}",
+              "labelId": "gnviewer.backToLandingPage",
+              "disableIf": "{state('isNewResource') || !context.getLandingPageUrl(state('gnResourceData'))}"
+            },
             {
               "type": "plugin",
               "size": "md",
@@ -2229,6 +2250,13 @@
           "containerPosition": "header",
           "leftMenuItems": [
             {
+              "type": "link",
+              "size": "md",
+              "href": "{context.getLandingPageUrl(state('gnResourceData'))}",
+              "labelId": "gnviewer.backToLandingPage",
+              "disableIf": "{state('isNewResource') || !context.getLandingPageUrl(state('gnResourceData'))}"
+            },
+            {
               "type": "plugin",
               "size": "md",
               "name": "ResourceDetailsButton"
@@ -3206,6 +3234,13 @@
         "cfg": {
           "containerPosition": "header",
           "leftMenuItems": [
+            {
+              "type": "link",
+              "size": "md",
+              "href": "{context.getLandingPageUrl(state('gnResourceData'))}",
+              "labelId": "gnviewer.backToLandingPage",
+              "disableIf": "{state('isNewResource') || !context.getLandingPageUrl(state('gnResourceData'))}"
+            },
             {
               "type": "plugin",
               "size": "md",
