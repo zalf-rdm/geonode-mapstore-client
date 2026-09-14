@@ -784,6 +784,46 @@ a.zalf-lp-person-name:hover {
   text-decoration: underline;
 }
 
+/* Stacks the name and the ORCID iD inside a person chip. */
+.zalf-lp-person-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+  min-width: 0;
+}
+
+/* ── ORCID iD ─────────────────────────────────────────────── */
+/* Official icon + hyperlinked iD, per the ORCID display guidelines. */
+.zalf-lp-orcid {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  text-decoration: none;
+  color: var(--zalf-text-muted, #5b6770);
+  white-space: nowrap;
+}
+
+.zalf-lp-orcid:hover .zalf-lp-orcid-id {
+  color: var(--zalf-green-nav);
+  text-decoration: underline;
+}
+
+.zalf-lp-orcid-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.zalf-lp-orcid-id {
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Inline next to the owner in the hero line rather than stacked. */
+.zalf-lp-orcid--compact {
+  margin-left: 0.35rem;
+}
+
 /* ── Funders ──────────────────────────────────────────────── */
 .zalf-lp-funders {
   display: flex;

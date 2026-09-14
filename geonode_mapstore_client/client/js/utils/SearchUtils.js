@@ -10,10 +10,17 @@ import url from 'url';
 import castArray from 'lodash/castArray';
 import omit from 'lodash/omit';
 import uuid from 'uuid/v1';
+import { isOrcidId } from '@js/utils/OrcidUtils';
 
 export function formatUsernameFallback(username) {
     if (!username) {
         return '';
+    }
+    // An ORCID-only deployment names accounts after the iD. Splitting on hyphens and
+    // title-casing would turn "0000-0002-1825-0097" into "0000 0002 1825 0097", i.e. an
+    // identifier reshaped to look like a person's name (#702). Pass iDs through intact.
+    if (isOrcidId(username)) {
+        return String(username);
     }
     return String(username)
         .split(/[._\-\s]+/)
@@ -59,8 +66,11 @@ export function getUserName(user) {
     if (user?.full_name) {
         return user.full_name;
     }
-    if (user?.first_name && user?.last_name) {
-        return `${user.first_name} ${user.last_name}`;
+    // Either name alone is still a name; requiring both sent one-name profiles to the
+    // username fallback.
+    const name = [user?.first_name, user?.last_name].filter(Boolean).join(' ').trim();
+    if (name) {
+        return name;
     }
     return formatUsernameFallback(user?.username);
 }

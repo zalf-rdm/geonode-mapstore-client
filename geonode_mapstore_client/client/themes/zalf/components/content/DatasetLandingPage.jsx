@@ -10,10 +10,58 @@ import React, { useEffect, useRef, useState } from 'react';
 import axios from '@mapstore/framework/libs/ajax';
 import Message from '@mapstore/framework/components/I18N/Message';
 import { formatUsernameFallback } from '../../../../js/utils/SearchUtils';
+import { getOrcidId, getOrcidUrl } from '../../../../js/utils/OrcidUtils';
 import { paramsSerializer } from '../../../../js/utils/APIUtils';
 import './datasetlanding.css';
 
 const ce = React.createElement;
+
+/**
+ * A person's real name, or null when the profile carries none.
+ *
+ * Returning null matters: an ORCID login's username *is* the bare iD, and
+ * formatUsernameFallback() splits on hyphens and title-cases, so "0000-0002-1825-0097"
+ * came out as "0000 0002 1825 0097" and was rendered as though it were a person's
+ * name (#702). Callers fall back to the iD itself instead.
+ */
+function personDisplayName(person) {
+    if (!person) return null;
+    const explicit = person.full_name
+        || [person.first_name, person.last_name].filter(Boolean).join(' ');
+    if (explicit) return explicit;
+    if (getOrcidId(person)) return null;
+    return formatUsernameFallback(person.username) || null;
+}
+
+// The official ORCID mark, collected from the GeoNode side into the shared static root.
+// ORCID's display guidelines require the official icon beside the iD, so reference the
+// vendored file rather than redrawing it.
+const ORCID_ICON_SRC = '/static/geonode/img/orcid_id.svg';
+
+/** Official icon + hyperlinked iD, per the ORCID display guidelines. */
+function OrcidId({ person, compact }) {
+    const id = getOrcidId(person);
+    const href = getOrcidUrl(person);
+    if (!id || !href) return null;
+    const linkProps = {
+        className: 'zalf-lp-orcid' + (compact ? ' zalf-lp-orcid--compact' : ''),
+        href,
+        target: '_blank',
+        rel: 'noopener noreferrer',
+        title: 'ORCID iD ' + id
+    };
+    const iconProps = {
+        className: 'zalf-lp-orcid-icon',
+        src: ORCID_ICON_SRC,
+        alt: 'ORCID iD icon',
+        width: 14,
+        height: 14
+    };
+    return ce('a', linkProps,
+        ce('img', iconProps),
+        ce('span', { className: 'zalf-lp-orcid-id' }, id)
+    );
+}
 
 function parseValidDate(dateStr) {
     if (!dateStr) return null;
@@ -328,7 +376,9 @@ function formatPersonName(person, style) {
     if (!person) return '';
     const last = (person.last_name || '').trim();
     const first = (person.first_name || '').trim();
-    const fallbackName = formatUsernameFallback(person.username);
+    // Never the mangled username: an ORCID iD run through formatUsernameFallback()
+    // becomes "0000 0002 1825 0097", which would be copied into papers as an author.
+    const fallbackName = getOrcidId(person) || formatUsernameFallback(person.username);
     const initials = first.split(/\s+/).filter(Boolean).map(n => n[0] + '.').join(' ');
     switch (style) {
         case 'firstInitials': return last && first ? `${last}, ${initials}` : last || first || fallbackName || '';
@@ -660,13 +710,22 @@ function TextBlock({ text }) {
 
 function PersonChip({ person }) {
     if (!person) return null;
-    const name = person.full_name || [person.first_name, person.last_name].filter(Boolean).join(' ') || formatUsernameFallback(person.username) || '—';
+    const name = personDisplayName(person);
+    const orcidId = getOrcidId(person);
     const href = person.username ? `/people/profile/${person.username}` : null;
+    // With no name at all the iD *is* the identity -- better than a placeholder, and far
+    // better than the iD mangled into a pseudo-name.
+    const label = name || orcidId || '—';
     return ce('div', { className: 'zalf-lp-person' },
-        ce('div', { className: 'zalf-lp-person-avatar' }, name.charAt(0).toUpperCase()),
-        href
-            ? ce('a', { className: 'zalf-lp-person-name', href }, name)
-            : ce('span', { className: 'zalf-lp-person-name' }, name)
+        ce('div', { className: 'zalf-lp-person-avatar' }, label.charAt(0).toUpperCase()),
+        ce('div', { className: 'zalf-lp-person-body' },
+            href
+                ? ce('a', { className: 'zalf-lp-person-name', href }, label)
+                : ce('span', { className: 'zalf-lp-person-name' }, label),
+            // Only alongside a real name: when the iD is already the label, linking it
+            // again would just repeat it.
+            name && ce(OrcidId, { person: person, compact: true })
+        )
     );
 }
 
@@ -1152,9 +1211,8 @@ export default function DatasetLandingPage() {
         ? [r.category.gn_description || r.category.identifier].filter(Boolean)
         : [];
     const regions = (r.regions || []).map((rg) => rg.name).filter(Boolean);
-    const ownerName = r.owner
-        ? (r.owner.full_name || [r.owner.first_name, r.owner.last_name].filter(Boolean).join(' ') || formatUsernameFallback(r.owner.username) || '—')
-        : '—';
+    const ownerRealName = personDisplayName(r.owner);
+    const ownerName = ownerRealName || getOrcidId(r.owner) || '—';
     const ownerHref = r.owner?.username ? '/people/profile/' + r.owner.username : null;
     const license = r.license?.name_long || r.license?.name || r.license?.identifier || null;
     const licenseUrl = r.license?.url || null;
@@ -1232,7 +1290,8 @@ export default function DatasetLandingPage() {
                                 : ownerName && ce('span', null,
                                     ce(Icon, { name: 'user', className: 'zalf-lp-meta-inline-icon' }),
                                     'Published by ',
-                                    ownerHref ? ce('a', { href: ownerHref }, ownerName) : ownerName
+                                    ownerHref ? ce('a', { href: ownerHref }, ownerName) : ownerName,
+                                    ownerRealName && ce(OrcidId, { person: r.owner, compact: true })
                                 ),
                             pubDate && ce('span', { className: 'zalf-lp-hero-date' },
                                 ce(Icon, { name: 'calendar', className: 'zalf-lp-meta-inline-icon' }),
