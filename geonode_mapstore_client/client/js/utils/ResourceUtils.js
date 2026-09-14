@@ -512,6 +512,21 @@ export const getMetadataDetailUrl = (resource) => {
     return '';
 };
 
+/**
+ * Returns the ZALF landing page url of a resource (eg: `#/landing/map/1`)
+ * or an empty string when the resource type has no landing page
+ * @param {object} resource geonode resource
+ * @return {string}
+ */
+export const getLandingPageUrl = (resource) => {
+    if (resource) {
+        const { formatDetailUrl = () => '' } = getResourceTypesInfo()[resource?.resource_type] || {};
+        const detailUrl = formatDetailUrl(resource) || '';
+        return detailUrl.includes('#/landing/') ? detailUrl : '';
+    }
+    return '';
+};
+
 export const getResourceStatuses = (resource, userInfo) => {
     const { executions = [] } = resource || {};
     const isApproved = resource?.is_approved;

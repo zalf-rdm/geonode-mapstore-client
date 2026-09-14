@@ -38,7 +38,8 @@ import {
     canManageResourceOptions,
     canManageResourceSettings,
     canAccessPermissions,
-    formatResourceLinkUrl
+    formatResourceLinkUrl,
+    getLandingPageUrl
 } from '../ResourceUtils';
 
 describe('Test Resource Utils', () => {
@@ -302,6 +303,26 @@ describe('Test Resource Utils', () => {
         const layers = toMapStoreMapConfig(resource, { map: { layers: [] } }).map.layers;
         expect(layers.find(({ id }) => id === '03').title).toBe('English Title');
         expect(layers.find(({ id }) => id === '04').title).toBe('Stored Title');
+    });
+    describe('getLandingPageUrl', () => {
+        beforeEach(() => {
+            global.__DEVTOOLS__ = false;
+        });
+        afterEach(() => {
+            delete global.__DEVTOOLS__;
+        });
+        it('should return the landing page url of resources with a landing page', () => {
+            expect(getLandingPageUrl({ pk: 1, resource_type: 'dataset', detail_url: '/catalogue/#/dataset/1' })).toBe('/catalogue/#/landing/dataset/1');
+            expect(getLandingPageUrl({ pk: 2, resource_type: 'dataset', subtype: 'tabular', detail_url: '/catalogue/#/tabular/2' })).toBe('/catalogue/#/landing/dataset/2');
+            expect(getLandingPageUrl({ pk: 3, resource_type: 'map', detail_url: '/catalogue/#/map/3' })).toBe('/catalogue/#/landing/map/3');
+            expect(getLandingPageUrl({ pk: 4, resource_type: 'map', subtype: 'tabular-collection', detail_url: '/catalogue/#/tabular-collection/4' })).toBe('/catalogue/#/landing/tabular-collection/4');
+            expect(getLandingPageUrl({ pk: 5, resource_type: 'document', detail_url: '/catalogue/#/document/5' })).toBe('/catalogue/#/landing/document/5');
+        });
+        it('should return an empty string when there is no landing page', () => {
+            expect(getLandingPageUrl()).toBe('');
+            expect(getLandingPageUrl({ pk: 6, resource_type: 'geostory', detail_url: '/catalogue/#/geostory/6' })).toBe('');
+            expect(getLandingPageUrl({ pk: 7, resource_type: 'dataset' })).toBe('');
+        });
     });
     it('should transform a resource to a mapstore map config, with featureInfo', () => {
         const resource = {
