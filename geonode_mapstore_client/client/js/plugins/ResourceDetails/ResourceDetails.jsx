@@ -232,7 +232,11 @@ function ResourceDetailsPanel({
             "id": "assets",
             "labelId": "gnviewer.assets",
             "items": "{get(state('gnResourceData'), 'assets')}",
-            "disableIf": "{not resourceHasPermission(state('gnResourceData'), 'change_resourcebase')}"
+            // Hidden for maps: DetailsAssets is an upload/download/delete UI, and a map has
+            // no assets of its own — they belong to the datasets and documents it aggregates
+            // — so an editor opening a map got file-management controls over nothing (#97).
+            // resource_type is "map" for tabular-collection maps too, so they are covered.
+            "disableIf": "{not resourceHasPermission(state('gnResourceData'), 'change_resourcebase') || get(state('gnResourceData'), 'resource_type') === 'map'}"
         },
         {
             "type": "data",
