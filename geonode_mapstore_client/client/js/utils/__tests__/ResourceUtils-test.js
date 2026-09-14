@@ -276,6 +276,33 @@ describe('Test Resource Utils', () => {
             }
         );
     });
+    it('should use the dataset title as layer title when transforming a resource to a mapstore map config', () => {
+        const resource = {
+            maplayers: [
+                {
+                    pk: 10,
+                    extra_params: { msId: '03' },
+                    dataset: { pk: 1, title: 'English Title' }
+                },
+                {
+                    pk: 11,
+                    extra_params: { msId: '04' },
+                    dataset: { pk: 2 }
+                }
+            ],
+            data: {
+                map: {
+                    layers: [
+                        { id: '03', type: 'wms', name: 'geonode:layer_upload_name', title: 'layer_upload_name' },
+                        { id: '04', type: 'wms', name: 'geonode:other_layer', title: 'Stored Title' }
+                    ]
+                }
+            }
+        };
+        const layers = toMapStoreMapConfig(resource, { map: { layers: [] } }).map.layers;
+        expect(layers.find(({ id }) => id === '03').title).toBe('English Title');
+        expect(layers.find(({ id }) => id === '04').title).toBe('Stored Title');
+    });
     it('should transform a resource to a mapstore map config, with featureInfo', () => {
         const resource = {
             maplayers: [
