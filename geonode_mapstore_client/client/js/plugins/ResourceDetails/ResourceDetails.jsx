@@ -293,7 +293,6 @@ function ResourceDetailsPanel({
     const [confirmModal, setConfirmModal] = useState(false);
     const editing = canEdit && editable;
     const isViewer = !resource?.['@ms-detail'];
-    const disableClickOut = resource?.resource_type === 'map';
 
     const {
         stickyTop,
@@ -333,7 +332,7 @@ function ResourceDetailsPanel({
             '.ms-popover-overlay',
             '.ms-resource-details-toggle'
         ],
-        disabled: disableClickOut || !closeOnClickOut || !show,
+        disabled: !closeOnClickOut || !show,
         onClickOut: () => {
             handleClose();
         }
