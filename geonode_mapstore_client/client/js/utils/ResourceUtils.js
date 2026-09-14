@@ -709,6 +709,8 @@ export function toMapStoreMapConfig(resource, baseConfig) {
             if (mapLayer) {
                 return {
                     ...layer,
+                    // show the current dataset title instead of the one stored when the layer was added
+                    ...(mapLayer.dataset?.title && { title: mapLayer.dataset.title }),
                     ...(layer.type === 'wms' && {
                         style: mapLayer.current_style || layer.style || ''
                     }),
