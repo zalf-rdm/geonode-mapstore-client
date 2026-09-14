@@ -162,3 +162,58 @@ class ExtensionFeatureTestCase(TestCase):
         self.assertIsNotNone(map_plugin_data)
         self.assertIn("bundle", map_plugin_data)
         self.assertTrue(map_plugin_data["bundle"].endswith("MapPlugin/index.js"))
+
+
+class DataciteResolverBaseUrlTests(TestCase):
+    """
+    The DOI resolver base must follow ZALF_DATACITE_BASE_URL (#95).
+
+    DOIs minted against the DataCite test API resolve at handle.test.datacite.org, not
+    doi.org, so the frontend cannot hardcode a resolver — it reads this value out of the
+    page config.
+    """
+
+    def _context(self, authenticated=False):
+        from django.contrib.auth import get_user_model
+        from django.contrib.auth.models import AnonymousUser
+        from django.test.client import RequestFactory
+
+        from .context_processors import _get_datacite_settings
+
+        request = RequestFactory().get("/")
+        if authenticated:
+            user, _ = get_user_model().objects.get_or_create(username="datacite_resolver_user")
+            request.user = user
+        else:
+            request.user = AnonymousUser()
+        return _get_datacite_settings(request)
+
+    @override_settings(ZALF_DATACITE_BASE_URL="https://api.datacite.org/")
+    def test_production_api_yields_doi_org(self):
+        self.assertEqual("https://doi.org", self._context()["resolver_base_url"])
+
+    @override_settings(ZALF_DATACITE_BASE_URL="https://api.test.datacite.org/")
+    def test_test_api_yields_the_test_handle(self):
+        """The reported bug: on the test API, doi.org links are dead."""
+        self.assertEqual("https://handle.test.datacite.org", self._context()["resolver_base_url"])
+
+    @override_settings(ZALF_DATACITE_BASE_URL="https://api.test.datacite.org/")
+    def test_anonymous_callers_get_the_resolver_too(self):
+        """
+        Landing pages are public, and anonymous readers are the ones following DOI links.
+        _get_datacite_settings early-returns for them, so the resolver has to be on that
+        branch as well or the fix does nothing for the audience that matters.
+        """
+        anonymous = self._context(authenticated=False)
+        self.assertEqual("https://handle.test.datacite.org", anonymous["resolver_base_url"])
+        # the permission flags must keep their safe defaults
+        self.assertFalse(anonymous["can_approve"])
+        self.assertFalse(anonymous["can_publish"])
+        self.assertEqual([], anonymous["prefixes"])
+
+    @override_settings(ZALF_DATACITE_BASE_URL="https://api.test.datacite.org/")
+    def test_authenticated_callers_get_the_resolver_too(self):
+        self.assertEqual(
+            "https://handle.test.datacite.org",
+            self._context(authenticated=True)["resolver_base_url"],
+        )

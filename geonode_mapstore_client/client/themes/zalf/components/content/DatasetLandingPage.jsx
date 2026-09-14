@@ -11,6 +11,7 @@ import axios from '@mapstore/framework/libs/ajax';
 import Message from '@mapstore/framework/components/I18N/Message';
 import { formatUsernameFallback } from '../../../../js/utils/SearchUtils';
 import { getOrcidId, getOrcidUrl } from '../../../../js/utils/OrcidUtils';
+import { bareDoi, doiToUrl } from '../../../../js/utils/DoiUtils';
 import { paramsSerializer } from '../../../../js/utils/APIUtils';
 import './datasetlanding.css';
 
@@ -408,12 +409,14 @@ function getCitationYear(r) {
 }
 
 function getRawDoi(r) {
-    if (!r.doi) return null;
-    return r.doi.replace(/^https?:\/\/(dx\.)?doi\.org\//, '');
+    // bareDoi strips any known resolver, not just doi.org: a DOI minted against the
+    // DataCite test API is stored as handle.test.datacite.org/... and would otherwise be
+    // displayed with the resolver still attached.
+    return bareDoi(r.doi);
 }
 
 function getCitationUrl(r) {
-    if (r.doi) return r.doi.startsWith('http') ? r.doi : 'https://doi.org/' + r.doi;
+    if (r.doi) return doiToUrl(r.doi);
     return window.location.origin + window.location.pathname + window.location.hash;
 }
 
@@ -773,7 +776,7 @@ function RelatedIdentifierList({ items }) {
             const rel = ri.relation_type?.label || ri.relation_type || '';
             const isDoi = type === 'DOI';
             const isUrl = type === 'URL' || id.startsWith('http');
-            const href = isDoi ? 'https://doi.org/' + id : (isUrl ? id : null);
+            const href = isDoi ? doiToUrl(id) : (isUrl ? id : null);
             return ce('li', { key: i, className: 'zalf-lp-related-item' },
                 rel && ce('span', { className: 'zalf-lp-related-rel' }, rel),
                 href
@@ -1216,7 +1219,7 @@ export default function DatasetLandingPage() {
     const ownerHref = r.owner?.username ? '/people/profile/' + r.owner.username : null;
     const license = r.license?.name_long || r.license?.name || r.license?.identifier || null;
     const licenseUrl = r.license?.url || null;
-    const doiUrl = r.doi ? 'https://doi.org/' + r.doi : null;
+    const doiUrl = doiToUrl(r.doi);
     const pubDate = formatDateSafe(r.date, { year: 'numeric', month: 'long', day: 'numeric' });
     const tempStart = formatDateSafe(r.temporal_extent_start, { year: 'numeric', month: 'short' });
     const tempEnd = formatDateSafe(r.temporal_extent_end, { year: 'numeric', month: 'short' });
