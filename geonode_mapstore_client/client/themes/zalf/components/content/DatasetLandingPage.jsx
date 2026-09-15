@@ -13,9 +13,36 @@ import { formatUsernameFallback } from '../../../../js/utils/SearchUtils';
 import { getOrcidId, getOrcidUrl } from '../../../../js/utils/OrcidUtils';
 import { bareDoi, doiToUrl } from '../../../../js/utils/DoiUtils';
 import { paramsSerializer } from '../../../../js/utils/APIUtils';
+import Portal from '@mapstore/framework/components/misc/Portal';
+import ResizableModal from '@mapstore/framework/components/misc/ResizableModal';
 import './datasetlanding.css';
 
 const ce = React.createElement;
+
+const METADATA_EMBED_PROPS = encodeURIComponent(JSON.stringify({ capitalizeTitle: true }));
+
+/**
+ * Same overlay as "View Metadata" in the viewers (js/plugins/MetadataEditor/MetadataViewer.jsx):
+ * the read-only metadata record embedded in a dialog, instead of opening the
+ * metadata editor (zalf-rdm/geonode#748).
+ */
+function MetadataViewerDialog({ pk, show, onClose }) {
+    return ce(Portal, null,
+        ce(ResizableModal, {
+            title: ce(Message, { msgId: 'gnviewer.viewMetadata' }),
+            show,
+            size: 'lg',
+            clickOutEnabled: false,
+            modalClassName: 'gn-simple-dialog',
+            onClose
+        },
+        show && ce('iframe', {
+            title: 'Metadata',
+            style: { border: 'none', position: 'absolute', width: '100%', height: '100%' },
+            src: '/metadata/' + pk + '/embed?props=' + METADATA_EMBED_PROPS
+        }))
+    );
+}
 
 /**
  * A person's real name, or null when the profile carries none.
@@ -1035,6 +1062,7 @@ export default function DatasetLandingPage() {
     const [layersLoading, setLayersLoading] = useState(false);
     const [linkedResources, setLinkedResources] = useState(null);
     const [attributes, setAttributes] = useState(null);
+    const [showMetadata, setShowMetadata] = useState(false);
     const pk = extractPkFromHash();
 
     useEffect(() => {
@@ -1201,7 +1229,14 @@ export default function DatasetLandingPage() {
     const typeLabel = getResourceTypeLabel(r);
     const viewerHref = getViewerHref(pk, r);
     const viewerBtnLabel = getViewerButtonLabel(r);
-    const metadataHref = '#/metadata/' + pk;
+    // A plain click opens the read-only metadata overlay; a modified click (new tab/window)
+    // follows the link to the full read-only metadata page. Neither opens the editor.
+    const metadataHref = '/metadata/' + pk;
+    const openMetadata = (event) => {
+        if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        event.preventDefault();
+        setShowMetadata(true);
+    };
     const backHref = '#/';
 
     const canDownload = (r.perms || []).includes('download_resourcebase');
@@ -1315,7 +1350,7 @@ export default function DatasetLandingPage() {
                             ce('a', { className: 'zalf-lp-btn zalf-lp-btn--primary', href: viewerHref },
                                 ce('span', { className: 'zalf-lp-btn-icon' }, ce(Icon, { name: 'map', className: 'zalf-lp-inline-icon' })), viewerBtnLabel
                             ),
-                            ce('a', { className: 'zalf-lp-btn zalf-lp-btn--outline', href: metadataHref },
+                            ce('a', { className: 'zalf-lp-btn zalf-lp-btn--outline', href: metadataHref, onClick: openMetadata },
                                 ce('span', { className: 'zalf-lp-btn-icon' }, ce(Icon, { name: 'external', className: 'zalf-lp-inline-icon' })),
                                 'View Full Metadata'
                             )
@@ -1492,10 +1527,12 @@ export default function DatasetLandingPage() {
                         : ce('span', { className: 'zalf-lp-btn zalf-lp-btn--disabled zalf-lp-btn--full' },
                             ce('span', { className: 'zalf-lp-btn-icon' }, ce(Icon, { name: 'download', className: 'zalf-lp-inline-icon' })), 'Download (login required)'
                         ),
-                    ce('a', { className: 'zalf-lp-btn zalf-lp-btn--ghost zalf-lp-btn--full', href: metadataHref },
+                    ce('a', { className: 'zalf-lp-btn zalf-lp-btn--ghost zalf-lp-btn--full', href: metadataHref, onClick: openMetadata },
                         ce('span', { className: 'zalf-lp-btn-icon' }, ce(Icon, { name: 'description', className: 'zalf-lp-inline-icon' })),
                         'Full Metadata Record'
-                    )
+                    ),
+                    // rendered through a portal, shared by both metadata buttons
+                    ce(MetadataViewerDialog, { pk, show: showMetadata, onClose: () => setShowMetadata(false) })
                 ),
 
                 // Citation card
