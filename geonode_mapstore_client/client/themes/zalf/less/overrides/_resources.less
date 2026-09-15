@@ -91,6 +91,16 @@
         min-height: calc(100vh - 132px);
     }
 
+    // Metadata editor: its form (.gn-metadata/.rjsf) is absolute with height:100% and scrolls
+    // internally, so give the layout a real viewport height and keep it in flow; the footer
+    // placeholder then follows below instead of scrolling over the form (zalf-rdm/geonode#746).
+    .page-metadata-viewer.gn-viewer-layout {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        height: calc(100vh - var(--zalf-nav-height)) !important;
+    }
+
     // Upload pages: gn-upload-container uses position:absolute by default.
     // gn-create-dataset gets position:absolute from the ._absolute utility class.
     // Override both so they participate in the flex column instead of covering

@@ -23,8 +23,11 @@
     height: 100vh !important;
 }
 
+/* Tabular viewers and the metadata editor (zalf-rdm/geonode#746) are long pages:
+   keep them in the document flow so the footer follows instead of covering them. */
 .gn-catalogue:has(.page-tabular-viewer.gn-viewer-layout):not(:has(.gn-upload-container)):not(:has(.gn-create-dataset)) #ms-container,
-.gn-catalogue:has(.page-tabular-collection-viewer.gn-viewer-layout):not(:has(.gn-upload-container)):not(:has(.gn-create-dataset)) #ms-container {
+.gn-catalogue:has(.page-tabular-collection-viewer.gn-viewer-layout):not(:has(.gn-upload-container)):not(:has(.gn-create-dataset)) #ms-container,
+.gn-catalogue:has(.page-metadata-viewer.gn-viewer-layout):not(:has(.gn-upload-container)):not(:has(.gn-create-dataset)) #ms-container {
     position: relative !important;
     top: auto !important;
     left: auto !important;
@@ -41,7 +44,8 @@
 }
 
 .gn-catalogue:has(.page-tabular-viewer.gn-viewer-layout):not(:has(.gn-upload-container)):not(:has(.gn-create-dataset)) .gn-footer-placeholder,
-.gn-catalogue:has(.page-tabular-collection-viewer.gn-viewer-layout):not(:has(.gn-upload-container)):not(:has(.gn-create-dataset)) .gn-footer-placeholder {
+.gn-catalogue:has(.page-tabular-collection-viewer.gn-viewer-layout):not(:has(.gn-upload-container)):not(:has(.gn-create-dataset)) .gn-footer-placeholder,
+.gn-catalogue:has(.page-metadata-viewer.gn-viewer-layout):not(:has(.gn-upload-container)):not(:has(.gn-create-dataset)) .gn-footer-placeholder {
     margin-top: 0;
     z-index: auto;
 }
