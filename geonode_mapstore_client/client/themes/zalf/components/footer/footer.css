@@ -15,6 +15,16 @@
     overflow: visible !important;
 }
 
+/* GeoNode makes .gn-catalogue absolute on viewer pages. With height:auto the .gn-page-wrapper
+   then collapses to 0px, and MapStore renders tooltips into that wrapper (".ms2 > div"):
+   left/right placed tooltips (e.g. metadata editor help icons) are clamped above the page.
+   Keep the catalogue in flow so the wrapper spans the page (zalf-rdm/geonode#747). */
+.gn-catalogue:has(.gn-viewer-layout):not(:has(.gn-upload-container)):not(:has(.gn-create-dataset)) {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+}
+
 .gn-catalogue:has(.gn-viewer-layout):not(:has(.gn-upload-container)):not(:has(.gn-create-dataset)) #ms-container {
     position: fixed !important;
     top: 0;
