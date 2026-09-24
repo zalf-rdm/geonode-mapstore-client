@@ -2,7 +2,8 @@ import expect from 'expect';
 import {
     getProjectLabels,
     getRegionLabels,
-    getResearchDomainLabels
+    getResearchDomainLabels,
+    parseSupplementalInformation
 } from '../ZalfLandingPageUtils';
 
 describe('ZALF landing-page metadata helpers', () => {
@@ -41,6 +42,21 @@ describe('ZALF landing-page metadata helpers', () => {
             'BonaRes - DiControl',
             'Legacy project',
             'Project supplied as text'
+        ]);
+    });
+
+    it('splits supplemental information into label and value rows', () => {
+        expect(parseSupplementalInformation(
+            'Submission reference: 202606051868\nResearch question: What is the background?'
+        )).toEqual([
+            { label: 'Submission reference', value: '202606051868' },
+            { label: 'Research question', value: 'What is the background?' }
+        ]);
+    });
+
+    it('keeps supplemental values containing colons intact', () => {
+        expect(parseSupplementalInformation('Source: https://example.org/data')).toEqual([
+            { label: 'Source', value: 'https://example.org/data' }
         ]);
     });
 

@@ -428,6 +428,45 @@
   white-space: pre-line;
 }
 
+/* Supplemental metadata rows mirror the separators used by related identifiers. */
+.zalf-lp-supplemental-list {
+  margin: 0;
+}
+
+.zalf-lp-supplemental-item {
+  display: grid;
+  grid-template-columns: minmax(175px, 0.35fr) minmax(0, 1fr);
+  gap: 1rem;
+  align-items: baseline;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--zalf-border);
+}
+
+.zalf-lp-supplemental-item:first-child {
+  padding-top: 0.25rem;
+}
+
+.zalf-lp-supplemental-item:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.zalf-lp-supplemental-label {
+  color: var(--zalf-text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.zalf-lp-supplemental-value {
+  min-width: 0;
+  margin: 0;
+  color: var(--zalf-text);
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
 /* Temporal Coverage bar */
 .zalf-lp-temporal-bar {
   display: flex;
@@ -1578,5 +1617,10 @@ a.zalf-lp-tree-title:hover {
 
   .zalf-lp-card-title {
     font-size: 1rem;
+  }
+
+  .zalf-lp-supplemental-item {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
   }
 }
