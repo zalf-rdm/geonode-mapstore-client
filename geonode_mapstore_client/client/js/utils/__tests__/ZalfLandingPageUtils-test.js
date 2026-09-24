@@ -1,5 +1,6 @@
 import expect from 'expect';
 import {
+    getProjectLabels,
     getRegionLabels,
     getResearchDomainLabels
 } from '../ZalfLandingPageUtils';
@@ -25,6 +26,21 @@ describe('ZALF landing-page metadata helpers', () => {
             'Crop Production',
             'Plant Nutrition',
             'Agricultural Engineering'
+        ]);
+    });
+
+    it('uses the display name for each related project', () => {
+        expect(getProjectLabels({
+            related_projects: [
+                { display_name: 'BonaRes - DiControl', label: 'DiControl' },
+                { label: 'Legacy project' },
+                'Project supplied as text',
+                null
+            ]
+        })).toEqual([
+            'BonaRes - DiControl',
+            'Legacy project',
+            'Project supplied as text'
         ]);
     });
 

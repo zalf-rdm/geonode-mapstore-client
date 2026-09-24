@@ -17,6 +17,15 @@ export function getResearchDomainLabels(resource = {}) {
         ], []);
 }
 
+/** Return display labels for the projects already related to the resource. */
+export function getProjectLabels(resource = {}) {
+    return (resource.related_projects || [])
+        .map((project) => typeof project === 'string'
+            ? project
+            : project && (project.display_name || project.label))
+        .filter(Boolean);
+}
+
 /** Prefer the complete geographic hierarchy and retain legacy-region fallback. */
 export function getRegionLabels(resource = {}) {
     const geoKeywords = (resource.geo_keywords || [])

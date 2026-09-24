@@ -14,6 +14,7 @@ import { getOrcidId, getOrcidUrl } from '../../../../js/utils/OrcidUtils';
 import { bareDoi, doiToUrl } from '../../../../js/utils/DoiUtils';
 import { paramsSerializer } from '../../../../js/utils/APIUtils';
 import {
+    getProjectLabels,
     getRegionLabels,
     getResearchDomainLabels
 } from '../../../../js/utils/ZalfLandingPageUtils';
@@ -1253,6 +1254,7 @@ export default function DatasetLandingPage() {
         ? [r.category.gn_description || r.category.identifier].filter(Boolean)
         : [];
     const researchDomains = getResearchDomainLabels(r);
+    const projects = getProjectLabels(r);
     const regions = getRegionLabels(r);
     const ownerRealName = personDisplayName(r.owner);
     const ownerName = ownerRealName || getOrcidId(r.owner) || '—';
@@ -1542,6 +1544,17 @@ export default function DatasetLandingPage() {
 
                 // Citation card
                 ce(CitationCard, { r }),
+
+                // Projects
+                projects.length > 0 ? ce('div', { className: 'zalf-lp-card' },
+                    ce(CardTitle, { title: 'Projects', icon: 'folder' }),
+                    ce('div', { className: 'zalf-lp-badge-cloud' },
+                        ...projects.map((project, index) => ce(Badge, {
+                            key: 'project-' + index + '-' + project,
+                            label: project
+                        }))
+                    )
+                ) : null,
 
                 // Keywords & Categories
                 (keywords.length > 0 || categories.length > 0) ? ce('div', { className: 'zalf-lp-card' },
