@@ -13,6 +13,10 @@ import { formatUsernameFallback } from '../../../../js/utils/SearchUtils';
 import { getOrcidId, getOrcidUrl } from '../../../../js/utils/OrcidUtils';
 import { bareDoi, doiToUrl } from '../../../../js/utils/DoiUtils';
 import { paramsSerializer } from '../../../../js/utils/APIUtils';
+import {
+    getRegionLabels,
+    getResearchDomainLabels
+} from '../../../../js/utils/ZalfLandingPageUtils';
 import Portal from '@mapstore/framework/components/misc/Portal';
 import ResizableModal from '@mapstore/framework/components/misc/ResizableModal';
 import './datasetlanding.css';
@@ -1248,7 +1252,8 @@ export default function DatasetLandingPage() {
     const categories = r.category
         ? [r.category.gn_description || r.category.identifier].filter(Boolean)
         : [];
-    const regions = (r.regions || []).map((rg) => rg.name).filter(Boolean);
+    const researchDomains = getResearchDomainLabels(r);
+    const regions = getRegionLabels(r);
     const ownerRealName = personDisplayName(r.owner);
     const ownerName = ownerRealName || getOrcidId(r.owner) || '—';
     const ownerHref = r.owner?.username ? '/people/profile/' + r.owner.username : null;
@@ -1550,11 +1555,25 @@ export default function DatasetLandingPage() {
                     )
                 ) : null,
 
+                // Research Domains
+                researchDomains.length > 0 ? ce('div', { className: 'zalf-lp-card' },
+                    ce(CardTitle, { title: 'Research Domains', icon: 'globe' }),
+                    ce('div', { className: 'zalf-lp-badge-cloud' },
+                        ...researchDomains.map((domain) => ce(Badge, {
+                            key: 'domain-' + domain,
+                            label: domain
+                        }))
+                    )
+                ) : null,
+
                 // Regions
                 regions.length > 0 ? ce('div', { className: 'zalf-lp-card' },
                     ce(CardTitle, { title: 'Regions', icon: 'pin' }),
                     ce('div', { className: 'zalf-lp-badge-cloud' },
-                        ...regions.map((rg) => ce(Badge, { key: rg, label: rg }))
+                        ...regions.map((rg, index) => ce(Badge, {
+                            key: 'region-' + index + '-' + rg,
+                            label: rg
+                        }))
                     )
                 ) : null
             )
