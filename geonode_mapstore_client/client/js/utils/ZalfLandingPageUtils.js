@@ -17,6 +17,34 @@ export function getResearchDomainLabels(resource = {}) {
         ], []);
 }
 
+/** Return display labels for the projects already related to the resource. */
+export function getProjectLabels(resource = {}) {
+    return (resource.related_projects || [])
+        .map((project) => typeof project === 'string'
+            ? project
+            : project && (project.display_name || project.label))
+        .filter(Boolean);
+}
+
+/** Split supplemental metadata into readable label/value rows. */
+export function parseSupplementalInformation(text = '') {
+    return String(text)
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .map((line) => {
+            const separator = line.indexOf(':');
+            if (separator < 0) {
+                return { label: '', value: line };
+            }
+            return {
+                label: line.slice(0, separator).trim(),
+                value: line.slice(separator + 1).trim()
+            };
+        })
+        .filter((item) => item.value);
+}
+
 /** Prefer the complete geographic hierarchy and retain legacy-region fallback. */
 export function getRegionLabels(resource = {}) {
     const geoKeywords = (resource.geo_keywords || [])

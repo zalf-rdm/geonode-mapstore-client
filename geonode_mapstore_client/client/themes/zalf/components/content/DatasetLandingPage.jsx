@@ -14,8 +14,10 @@ import { getOrcidId, getOrcidUrl } from '../../../../js/utils/OrcidUtils';
 import { bareDoi, doiToUrl } from '../../../../js/utils/DoiUtils';
 import { paramsSerializer } from '../../../../js/utils/APIUtils';
 import {
+    getProjectLabels,
     getRegionLabels,
-    getResearchDomainLabels
+    getResearchDomainLabels,
+    parseSupplementalInformation
 } from '../../../../js/utils/ZalfLandingPageUtils';
 import Portal from '@mapstore/framework/components/misc/Portal';
 import ResizableModal from '@mapstore/framework/components/misc/ResizableModal';
@@ -742,6 +744,20 @@ function TextBlock({ text }) {
     return ce('p', { className: 'zalf-lp-text' }, text);
 }
 
+function SupplementalInformationList({ text }) {
+    const items = parseSupplementalInformation(text);
+    if (!items.length) return null;
+    return ce('dl', { className: 'zalf-lp-supplemental-list' },
+        ...items.map((item, index) => ce('div', {
+            className: 'zalf-lp-supplemental-item',
+            key: index
+        },
+        item.label && ce('dt', { className: 'zalf-lp-supplemental-label' }, item.label),
+        ce('dd', { className: 'zalf-lp-supplemental-value' }, item.value)
+        ))
+    );
+}
+
 function PersonChip({ person }) {
     if (!person) return null;
     const name = personDisplayName(person);
@@ -1253,6 +1269,7 @@ export default function DatasetLandingPage() {
         ? [r.category.gn_description || r.category.identifier].filter(Boolean)
         : [];
     const researchDomains = getResearchDomainLabels(r);
+    const projects = getProjectLabels(r);
     const regions = getRegionLabels(r);
     const ownerRealName = personDisplayName(r.owner);
     const ownerName = ownerRealName || getOrcidId(r.owner) || '—';
@@ -1276,7 +1293,11 @@ export default function DatasetLandingPage() {
 
     // Normalise: raw_* fields strip placeholder text GeoNode inserts
     const abstract = (r.raw_abstract && r.raw_abstract !== 'No abstract provided') ? r.raw_abstract : null;
-    const supplemental = (r.raw_supplemental_information && r.raw_supplemental_information !== 'No information provided') ? r.raw_supplemental_information : null;
+    const supplemental = (r.supplemental_information && r.supplemental_information !== 'No information provided')
+        ? r.supplemental_information
+        : ((r.raw_supplemental_information && r.raw_supplemental_information !== 'No information provided')
+            ? r.raw_supplemental_information
+            : null);
     const purpose = (r.raw_purpose && r.raw_purpose !== 'None') ? r.raw_purpose : r.purpose || null;
     const dataQuality = (r.raw_data_quality_statement && r.raw_data_quality_statement !== 'None') ? r.raw_data_quality_statement : r.data_quality_statement || null;
     const dataLineage = r.data_lineage || null;
@@ -1434,7 +1455,7 @@ export default function DatasetLandingPage() {
 
                 // Supplemental
                 supplemental ? ce(Section, { title: 'Supplemental Information', icon: 'description' },
-                    ce(TextBlock, { text: supplemental })
+                    ce(SupplementalInformationList, { text: supplemental })
                 ) : null,
 
                 // Related Identifiers
@@ -1542,6 +1563,17 @@ export default function DatasetLandingPage() {
 
                 // Citation card
                 ce(CitationCard, { r }),
+
+                // Projects
+                projects.length > 0 ? ce('div', { className: 'zalf-lp-card' },
+                    ce(CardTitle, { title: 'Projects', icon: 'folder' }),
+                    ce('div', { className: 'zalf-lp-badge-cloud' },
+                        ...projects.map((project, index) => ce(Badge, {
+                            key: 'project-' + index + '-' + project,
+                            label: project
+                        }))
+                    )
+                ) : null,
 
                 // Keywords & Categories
                 (keywords.length > 0 || categories.length > 0) ? ce('div', { className: 'zalf-lp-card' },
