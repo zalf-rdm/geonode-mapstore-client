@@ -64,11 +64,13 @@ function getDistributor(resource) {
     const distributors = resource?.distributor;
     if (!distributors || distributors.length === 0) return null;
     const dist = distributors[0];
-    const fullName = [dist.first_name, dist.last_name].filter(Boolean).join(' ');
+    const fullName = (dist.full_name || '').trim() || [dist.first_name, dist.last_name].filter(Boolean).join(' ');
     if (fullName) return fullName;
-    if (dist.organization) return dist.organization;
-    if (dist.department) return dist.department;
-    return dist.username || null;
+    // the profile serializer embeds the organization as an object; older forks store a plain name
+    const organization = typeof dist.organization === 'string'
+        ? dist.organization
+        : dist.organization?.organization;
+    return organization || dist.department || dist.username || null;
 }
 
 function getYear(resource) {
