@@ -285,8 +285,11 @@ export const setFavoriteResource = (pk, favorite) => {
 export const getResourceByPk = (pk) => {
     return axios.get(parseDevHostname(`${endpoints[RESOURCES]}/${pk}`), {
         params: {
-            api_preset: API_PRESET.VIEWER_COMMON
-        }
+            api_preset: API_PRESET.VIEWER_COMMON,
+            // not part of the viewer preset, but needed for the citation (distributor)
+            include: ['distributor']
+        },
+        ...paramsSerializer()
     })
         .then(({ data }) => data.resource);
 };
@@ -332,7 +335,9 @@ export const getResourceByUuid = (uuid) => {
 export const getDatasetByPk = (pk) => {
     return axios.get(parseDevHostname(`${endpoints[DATASETS]}/${pk}`), {
         params: {
-            api_preset: [API_PRESET.VIEWER_COMMON, API_PRESET.DATASET]
+            api_preset: [API_PRESET.VIEWER_COMMON, API_PRESET.DATASET],
+            // not part of the viewer preset, but needed for the citation (distributor)
+            include: ['distributor']
         },
         ...paramsSerializer()
     })
