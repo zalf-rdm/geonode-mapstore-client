@@ -59,6 +59,19 @@ function getPublisher(resource) {
     return resource?.attribution || 'Leibniz Centre for Agricultural Landscape Research (ZALF)';
 }
 
+function getDistributor(resource) {
+    const distributors = resource?.distributor;
+    if (!distributors || distributors.length === 0) return null;
+    const dist = distributors[0];
+    const fullName = (dist.full_name || '').trim() || [dist.first_name, dist.last_name].filter(Boolean).join(' ');
+    if (fullName) return fullName;
+    // the profile serializer embeds the organization as an object; older forks store a plain name
+    const organization = typeof dist.organization === 'string'
+        ? dist.organization
+        : dist.organization?.organization;
+    return organization || dist.department || dist.username || null;
+}
+
 function getYear(resource) {
     const dateStr = resource?.date_issued || resource?.date;
     if (!dateStr) return null;
@@ -106,6 +119,7 @@ function generateBibTeX(resource) {
     const authors = getSortedAuthors(resource);
     const year = getYear(resource);
     const publisher = getPublisher(resource);
+    const distributor = getDistributor(resource);
     const firstAuthorLast = (authors[0]?.last_name || '').replace(/[^a-zA-Z0-9]/g, '');
     const key = firstAuthorLast && year
         ? `${firstAuthorLast}${year}`
@@ -117,6 +131,8 @@ function generateBibTeX(resource) {
         entries.push(`  author    = {${authors.map(a => sanitizeBibTeXField(formatAuthorName(a, 'firstFull'))).join(' and ')}}`);
     }
     if (publisher) entries.push(`  publisher = {${sanitizeBibTeXField(publisher)}}`);
+    // BibTeX has no distributor field; @misc carries it as a note
+    if (distributor) entries.push(`  note      = {Distributed by ${sanitizeBibTeXField(distributor)}}`);
     if (year) entries.push(`  year      = {${year}}`);
     const doi = getRawDoi(resource);
     if (doi) entries.push(`  doi       = {${doi}}`);
@@ -129,11 +145,14 @@ function generateRIS(resource) {
     const authors = getSortedAuthors(resource);
     const year = getYear(resource);
     const publisher = getPublisher(resource);
+    const distributor = getDistributor(resource);
 
     const lines = ['TY  - DATA'];
     lines.push(`TI  - ${sanitizeRisField(resource?.title)}`);
     authors.forEach(a => lines.push(`AU  - ${sanitizeRisField(formatAuthorName(a, 'firstFull'))}`));
     if (publisher) lines.push(`PB  - ${sanitizeRisField(publisher)}`);
+    // DP (database/data provider) is the RIS tag reference managers show as the distributor
+    if (distributor) lines.push(`DP  - ${sanitizeRisField(distributor)}`);
     if (year) lines.push(`PY  - ${year}`);
     const doi = getRawDoi(resource);
     if (doi) lines.push(`DO  - ${doi}`);
