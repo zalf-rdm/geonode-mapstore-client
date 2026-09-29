@@ -1,10 +1,10 @@
 import expect from 'expect';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import TestUtils, { act } from 'react-dom/test-utils';
+import { act } from 'react-dom/test-utils';
 import ZalfFiltersForm from '../../../themes/zalf/components/ZalfFiltersForm';
 
-describe('ZALF catalogue search and filters', () => {
+describe('ZALF catalogue filters', () => {
     beforeEach(() => {
         document.body.innerHTML = '<div id="container"></div>';
     });
@@ -14,48 +14,33 @@ describe('ZALF catalogue search and filters', () => {
         document.body.innerHTML = '';
     });
 
-    it('starts collapsed and submits the persistent search field', () => {
-        let submittedQuery;
+    it('starts open and does not duplicate the global search', () => {
         act(() => {
             ReactDOM.render(
                 <ZalfFiltersForm
-                    fields={[{ type: 'search' }]}
+                    fields={[{ type: 'search' }, { id: 'category', type: 'select' }]}
                     query={{}}
-                    onChange={(query) => { submittedQuery = query; }}
                 />,
                 document.getElementById('container')
             );
         });
 
         const panel = document.querySelector('.zalf-filter-panel');
-        const input = document.querySelector('input[type="search"]');
-        const form = document.querySelector('.zalf-catalogue-search');
-        expect(panel.classList.contains('zalf-filter-panel--closed')).toBe(true);
-        expect(input).toExist();
-        expect(document.querySelector('.zalf-catalogue-search__submit .fa')).toBe(null);
-
-        act(() => {
-            TestUtils.Simulate.change(input, { target: { value: ' crop ' } });
-        });
-        act(() => {
-            TestUtils.Simulate.submit(form);
-        });
-        expect(submittedQuery).toEqual({ q: 'crop' });
+        expect(panel.classList.contains('zalf-filter-panel--open')).toBe(true);
+        expect(document.querySelector('.zalf-filter-panel-body')).toExist();
+        expect(document.querySelector('input[type="search"]')).toBe(null);
+        expect(document.querySelector('.zalf-catalogue-search__submit')).toBe(null);
     });
 
-    it('opens the detailed filters without duplicating search', () => {
+    it('hides the detailed filters when controlled as collapsed', () => {
         act(() => {
             ReactDOM.render(
-                <ZalfFiltersForm fields={[{ type: 'search' }]} query={{}} />,
+                <ZalfFiltersForm fields={[]} query={{}} expanded={false} />,
                 document.getElementById('container')
             );
         });
 
-        const toggle = document.querySelector('.zalf-filter-panel-toggle');
-        TestUtils.Simulate.click(toggle);
-
-        expect(toggle.getAttribute('aria-expanded')).toBe('true');
-        expect(document.querySelector('.zalf-filter-panel-body')).toExist();
-        expect(document.querySelectorAll('input[type="search"]').length).toBe(1);
+        expect(document.querySelector('.zalf-filter-panel--closed')).toExist();
+        expect(document.querySelector('.zalf-filter-panel-body')).toBe(null);
     });
 });
