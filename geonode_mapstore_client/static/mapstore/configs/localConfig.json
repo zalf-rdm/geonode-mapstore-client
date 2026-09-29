@@ -4020,6 +4020,7 @@
           "headerNodeSelector": ".zalf-navigation-shell",
           "footerNodeSelector": "",
           "queryPage": true,
+          "defaultCardLayoutStyle": "list",
           "order": {
             "defaultLabelId": "resourcesCatalog.orderBy",
             "options": [
@@ -4083,14 +4084,14 @@
                 "icon": {
                   "glyph": "eye-open"
                 },
-                "noDataLabelId": "resourcesCatalog.emptyNA"
+                "hideIfEmpty": true
               },
               {
                 "path": "download_count",
                 "icon": {
                   "glyph": "download"
                 },
-                "noDataLabelId": "resourcesCatalog.emptyNA"
+                "hideIfEmpty": true
               }
             ],
             "grid": [
@@ -4124,7 +4125,7 @@
                 "icon": {
                   "glyph": "eye-open"
                 },
-                "noDataLabelId": "resourcesCatalog.emptyNA",
+                "hideIfEmpty": true,
                 "target": "footer"
               },
               {
@@ -4132,7 +4133,7 @@
                 "icon": {
                   "glyph": "download"
                 },
-                "noDataLabelId": "resourcesCatalog.emptyNA",
+                "hideIfEmpty": true,
                 "target": "footer"
               }
             ]
@@ -4217,16 +4218,14 @@
             },
             {
               "type": "select",
-              "facet": "user"
+              "facet": "user",
+              "include": [
+                "author"
+              ]
             },
             {
               "type": "select",
               "facet": "group"
-            },
-            {
-              "type": "accordion",
-              "style": "facet",
-              "facet": "thesaurus"
             },
             {
               "type": "date-range",

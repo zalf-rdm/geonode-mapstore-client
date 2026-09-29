@@ -5,15 +5,22 @@
  * Uses React.createElement — themes/ is outside babel-loader include.
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CoreFiltersForm from '@mapstore/framework/plugins/ResourcesCatalog/components/FiltersForm';
 
 const ce = React.createElement;
 
-const MOBILE_BREAKPOINT = 768;
+const SIDEBAR_BREAKPOINT = 1100;
 
 export default function ZalfFiltersForm(props) {
-    const [expanded, setExpanded] = useState(() => window.innerWidth > MOBILE_BREAKPOINT);
+    const [expanded, setExpanded] = useState(() => window.innerWidth > SIDEBAR_BREAKPOINT);
+
+    useEffect(() => {
+        const mediaQuery = window.matchMedia(`(min-width: ${SIDEBAR_BREAKPOINT + 1}px)`);
+        const handleBreakpointChange = ({ matches }) => setExpanded(matches);
+        mediaQuery.addEventListener('change', handleBreakpointChange);
+        return () => mediaQuery.removeEventListener('change', handleBreakpointChange);
+    }, []);
     const panelClassName = 'zalf-filter-panel'
         + (expanded ? ' zalf-filter-panel--open' : ' zalf-filter-panel--closed');
 
@@ -24,15 +31,15 @@ export default function ZalfFiltersForm(props) {
             onClick: () => setExpanded(v => !v),
             'aria-expanded': expanded
         },
-            ce('span', { className: 'zalf-filter-panel-toggle-icon fa fa-filter', 'aria-hidden': 'true' }),
-            ce('span', { className: 'zalf-filter-panel-toggle-copy' },
-                ce('span', { className: 'zalf-filter-panel-toggle-label' }, 'Filters'),
-                ce('span', { className: 'zalf-filter-panel-toggle-description' }, 'Refine catalogue results')
-            ),
-            ce('span', {
-                className: 'fa fa-chevron-down zalf-filter-panel-caret',
-                'aria-hidden': 'true'
-            })
+        ce('span', { className: 'zalf-filter-panel-toggle-icon fa fa-filter', 'aria-hidden': 'true' }),
+        ce('span', { className: 'zalf-filter-panel-toggle-copy' },
+            ce('span', { className: 'zalf-filter-panel-toggle-label' }, 'Filters'),
+            ce('span', { className: 'zalf-filter-panel-toggle-description' }, 'Refine catalogue results')
+        ),
+        ce('span', {
+            className: 'fa fa-chevron-down zalf-filter-panel-caret',
+            'aria-hidden': 'true'
+        })
         ),
         expanded
             ? ce('div', { className: 'zalf-filter-panel-body' },
