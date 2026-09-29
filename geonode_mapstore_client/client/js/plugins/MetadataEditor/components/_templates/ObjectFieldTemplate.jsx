@@ -9,6 +9,7 @@
 
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import isEmpty from 'lodash/isEmpty';
 import Button from '@mapstore/framework/components/layout/Button';
 import { Glyphicon } from 'react-bootstrap';
 
@@ -71,7 +72,8 @@ function RootMetadata({
     uiSchema,
     properties,
     errorSchema,
-    formContext
+    formContext,
+    formData
 }, context) {
     const {
         title: metadataTitle,
@@ -86,6 +88,8 @@ function RootMetadata({
         const _uiSchema = uiSchema?.[property?.name] || {};
         const options = _uiSchema?.['ui:options'] || {};
         if ((_uiSchema?.['ui:widget'] || options.widget) === 'hidden'
+            // e.g. the attribute table: the schema is shared by all resource types, but only datasets have attributes
+            || (options['geonode-ui:hideIfEmpty'] && isEmpty(formData?.[property.name]))
             || !title.toLowerCase().includes((filterText || '').toLowerCase())) {
             return acc;
         }
