@@ -17,4 +17,8 @@ describe('APIUtils', () => {
     it('should keep the url if the hostname is not localhost', () => {
         expect(parseDevHostname('https://hostname/path')).toBe('https://hostname/path');
     });
+    it('should keep the url when the devtools build flag is not defined', () => {
+        delete window.__DEVTOOLS__;
+        expect(parseDevHostname('http://localhost:8081/path')).toBe('http://localhost:8081/path');
+    });
 });

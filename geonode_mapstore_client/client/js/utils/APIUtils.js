@@ -71,7 +71,7 @@ const getGeoNodeTargetHostname = () => {
 * @return {string} correct url for localhost
 */
 export const parseDevHostname = (requestUrl) => {
-    if (__DEVTOOLS__) {
+    if (typeof __DEVTOOLS__ !== 'undefined' && __DEVTOOLS__) {
         if (requestUrl.includes('localhost')
         || (getGeoNodeTargetHostname() && requestUrl.includes(getGeoNodeTargetHostname()))) {
             const parsedUrl = url.parse(requestUrl, true);
