@@ -1,7 +1,7 @@
 import expect from 'expect';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import TestUtils from 'react-dom/test-utils';
+import TestUtils, { act } from 'react-dom/test-utils';
 import ZalfFiltersForm from '../../../themes/zalf/components/ZalfFiltersForm';
 
 describe('ZALF catalogue search and filters', () => {
@@ -16,14 +16,16 @@ describe('ZALF catalogue search and filters', () => {
 
     it('starts collapsed and submits the persistent search field', () => {
         let submittedQuery;
-        ReactDOM.render(
-            <ZalfFiltersForm
-                fields={[{ type: 'search' }]}
-                query={{}}
-                onChange={(query) => { submittedQuery = query; }}
-            />,
-            document.getElementById('container')
-        );
+        act(() => {
+            ReactDOM.render(
+                <ZalfFiltersForm
+                    fields={[{ type: 'search' }]}
+                    query={{}}
+                    onChange={(query) => { submittedQuery = query; }}
+                />,
+                document.getElementById('container')
+            );
+        });
 
         const panel = document.querySelector('.zalf-filter-panel');
         const input = document.querySelector('input[type="search"]');
@@ -32,16 +34,22 @@ describe('ZALF catalogue search and filters', () => {
         expect(input).toExist();
         expect(document.querySelector('.zalf-catalogue-search__submit .fa')).toBe(null);
 
-        TestUtils.Simulate.change(input, { target: { value: ' crop ' } });
-        TestUtils.Simulate.submit(form);
+        act(() => {
+            TestUtils.Simulate.change(input, { target: { value: ' crop ' } });
+        });
+        act(() => {
+            TestUtils.Simulate.submit(form);
+        });
         expect(submittedQuery).toEqual({ q: 'crop' });
     });
 
     it('opens the detailed filters without duplicating search', () => {
-        ReactDOM.render(
-            <ZalfFiltersForm fields={[{ type: 'search' }]} query={{}} />,
-            document.getElementById('container')
-        );
+        act(() => {
+            ReactDOM.render(
+                <ZalfFiltersForm fields={[{ type: 'search' }]} query={{}} />,
+                document.getElementById('container')
+            );
+        });
 
         const toggle = document.querySelector('.zalf-filter-panel-toggle');
         TestUtils.Simulate.click(toggle);

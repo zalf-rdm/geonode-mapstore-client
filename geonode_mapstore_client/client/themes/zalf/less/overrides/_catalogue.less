@@ -27,7 +27,7 @@
     --zc-radius-lg: 14px;
     --zc-shadow-card: 0 1px 2px rgba(24, 39, 29, .06);
     --zc-shadow-hover: 0 3px 10px rgba(24, 39, 29, .1);
-    --zc-filter-width: 272px;
+    --zc-filter-width: 304px;
     --zc-content-width: 1380px; // max-width of sidebar + content combined
     --zc-hero-bg: url('../../../../../static/img/bg_dataset_landing_topo.png');
 
@@ -75,7 +75,7 @@
         position: relative;
         background: var(--zc-surface-alt);
         grid-template-columns:
-            minmax(0px, calc((100% - var(--zc-content-width)) / 2)) minmax(0, 1fr) minmax(0px, calc((100% - var(--zc-content-width)) / 2));
+            24px minmax(0, 1fr) 24px;
         grid-template-rows: auto auto auto auto;
         align-items: start;
     }
@@ -83,7 +83,7 @@
     // The search/filter toolbar stays above results in both states.
     &:has(.zalf-filter-panel--open) .gn-components:has(.ms-resources-grid) {
         grid-template-columns:
-            minmax(0px, calc((100% - var(--zc-content-width)) / 2)) var(--zc-filter-width) minmax(0, 1fr) minmax(0px, calc((100% - var(--zc-content-width)) / 2));
+            24px var(--zc-filter-width) minmax(0, 1fr) 24px;
         grid-template-rows: auto auto auto auto;
     }
 
@@ -91,7 +91,7 @@
     // empty sidebar column that narrows the result list.
     &:has(.zalf-filter-panel--closed) .gn-components:has(.ms-resources-grid) {
         grid-template-columns:
-            minmax(0px, calc((100% - var(--zc-content-width)) / 2)) minmax(0, 1fr) minmax(0px, calc((100% - var(--zc-content-width)) / 2));
+            24px minmax(0, 1fr) 24px;
         grid-template-rows: auto auto auto auto;
     }
 
@@ -136,7 +136,7 @@
     .gn-components .zalf-catalogue-search {
         grid-column: 2;
         grid-row: 2;
-        margin: 22px 24px 0;
+        margin: 22px 0 0;
     }
 
     &:has(.zalf-filter-panel--open) .gn-components .zalf-catalogue-search {
@@ -146,7 +146,7 @@
     &:has(.zalf-filter-panel--open) .gn-components .zalf-filter-panel-body {
         grid-column: 2;
         grid-row: 3;
-        margin: 14px 12px 24px 24px;
+        margin: 14px 12px 24px 0;
     }
 
     // ── Row 3: resource results ──────────────────────────────
@@ -161,6 +161,7 @@
 
     &:has(.zalf-filter-panel--open) .gn-components .ms-resources-container {
         grid-column: 3;
+        padding-top: 0;
     }
 
     // ── Footer: cols 1 / -1 = full viewport width ─────────────
@@ -183,7 +184,7 @@
     }
 
     .ms-resources-container>div {
-        padding: 0 24px;
+        padding: 0;
     }
 }
 
@@ -602,7 +603,7 @@
         grid-template-columns: minmax(0, 1fr) auto auto;
         align-items: stretch;
         gap: 10px;
-        width: 100%;
+        width: auto;
         padding: 0;
     }
 
@@ -705,6 +706,208 @@
         border: 1px solid var(--zc-border);
         border-radius: 12px;
         background: var(--zc-surface-alt);
+    }
+
+    // ── Temporal histogram and date range ─────────────────────
+    .zalf-date-filter {
+        min-width: 0;
+        margin: 2px 0 4px;
+        padding: 14px 0 0;
+        border: 0;
+        border-top: 1px solid var(--zc-border);
+
+        legend {
+            width: auto;
+            margin: 0 0 12px;
+            padding: 0;
+            border: 0;
+            color: var(--zc-text-secondary);
+            font-size: .82rem;
+            font-weight: 700;
+        }
+    }
+
+    .zalf-date-histogram {
+        display: flex;
+        align-items: flex-end;
+        gap: 2px;
+        height: 76px;
+        padding: 0 2px;
+
+        &.is-loading {
+            opacity: .45;
+        }
+    }
+
+    .zalf-date-histogram__bar {
+        flex: 1 1 0;
+        min-width: 2px;
+        height: var(--zalf-date-count);
+        padding: 0;
+        border: 0;
+        border-radius: 2px 2px 0 0;
+        background: var(--zc-accent);
+        opacity: .9;
+        cursor: pointer;
+        transition: opacity 120ms ease, transform 120ms ease;
+
+        &:hover,
+        &:focus {
+            opacity: 1;
+            transform: scaleY(1.04);
+            transform-origin: bottom;
+            outline: 2px solid rgba(78, 156, 24, .3);
+            outline-offset: 1px;
+        }
+    }
+
+    .zalf-date-range {
+        position: relative;
+        height: 22px;
+        margin-top: 8px;
+
+        input[type="range"] {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 22px;
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            pointer-events: none;
+            appearance: none;
+
+            &::-webkit-slider-thumb {
+                width: 16px;
+                height: 16px;
+                border: 2px solid var(--zc-surface-alt);
+                border-radius: 50%;
+                background: var(--zc-accent);
+                box-shadow: 0 0 0 1px var(--zc-accent);
+                pointer-events: auto;
+                cursor: grab;
+                appearance: none;
+            }
+
+            &::-moz-range-thumb {
+                width: 16px;
+                height: 16px;
+                border: 2px solid var(--zc-surface-alt);
+                border-radius: 50%;
+                background: var(--zc-accent);
+                box-shadow: 0 0 0 1px var(--zc-accent);
+                pointer-events: auto;
+                cursor: grab;
+            }
+        }
+    }
+
+    .zalf-date-range__track {
+        position: absolute;
+        top: 10px;
+        right: 0;
+        left: 0;
+        height: 3px;
+        border-radius: 999px;
+        background: var(--zc-accent);
+    }
+
+    .zalf-date-filter__years {
+        display: flex;
+        justify-content: space-between;
+        margin-top: -1px;
+        color: var(--zc-text-secondary);
+        font-size: .75rem;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .zalf-date-filter__presets {
+        display: grid;
+        gap: 2px;
+        margin: 10px 0;
+
+        button {
+            min-height: 30px;
+            padding: 4px 8px;
+            border: 0;
+            border-radius: 7px;
+            background: transparent;
+            color: var(--zc-text-secondary);
+            font-size: .8rem;
+            text-align: left;
+
+            &::before {
+                content: "";
+                display: inline-block;
+                width: 13px;
+                height: 13px;
+                margin-right: 8px;
+                border: 1px solid var(--zc-border-strong);
+                border-radius: 50%;
+                vertical-align: -2px;
+            }
+
+            &:hover,
+            &:focus,
+            &[aria-pressed="true"] {
+                background: var(--zc-accent-light);
+                color: var(--zc-accent);
+                outline: 0;
+            }
+
+            &[aria-pressed="true"]::before {
+                border-color: var(--zc-accent);
+                background: var(--zc-accent);
+                box-shadow: inset 0 0 0 3px var(--zc-surface-alt);
+            }
+        }
+    }
+
+    .zalf-date-filter__custom {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 8px;
+
+        label {
+            min-width: 0;
+            margin: 0;
+            color: var(--zc-text-secondary);
+            font-size: .72rem;
+
+            span {
+                display: block;
+                margin-bottom: 4px;
+            }
+        }
+
+        input {
+            width: 100%;
+            min-width: 0;
+            height: 36px;
+            padding: 0 7px;
+            border: 1px solid var(--zc-border);
+            border-radius: 7px;
+            background: var(--zc-surface);
+            color: var(--zc-text);
+            font-size: .72rem;
+        }
+    }
+
+    .zalf-date-filter__apply {
+        grid-column: 1 / -1;
+        min-height: 36px;
+        border: 1px solid var(--zc-accent);
+        border-radius: 8px;
+        background: var(--zc-accent);
+        color: #fff;
+        font-size: .8rem;
+        font-weight: 700;
+
+        &:disabled {
+            border-color: var(--zc-border);
+            background: var(--zc-border);
+            color: var(--zc-text-muted);
+        }
     }
 
     // ── Filter accordion groups ────────────────────────────────
@@ -961,7 +1164,19 @@
 .gn-catalogue {
 
     .ms-resources-container-grid>li {
-        padding: 6px;
+        width: calc(25% - .375rem);
+        padding: 4px;
+    }
+
+    .ms-resources-container-grid {
+        width: calc(100% + 8px);
+        margin-right: -4px;
+        margin-left: -4px;
+        gap: 8px;
+    }
+
+    &:has(.zalf-filter-panel--open) .ms-resources-container-grid {
+        padding-top: 10px;
     }
 
     .ms-resource-card-type-grid {
@@ -1654,9 +1869,9 @@
     }
 }
 
-@container resources-container (width < 1100px) {
+@container resources-container (width < 900px) {
     .gn-catalogue .ms-resources-container-grid>li {
-        width: calc(50% - 0.75rem);
+        width: calc(50% - .25rem);
     }
 }
 
@@ -1664,6 +1879,21 @@
     .gn-catalogue .ms-resources-container-grid>li {
         width: 100%;
         padding: 4px 0;
+    }
+}
+
+@media (min-width: 1428px) {
+    .gn-catalogue {
+        .gn-components:has(.ms-resources-grid),
+        &:has(.zalf-filter-panel--closed) .gn-components:has(.ms-resources-grid) {
+            grid-template-columns:
+                calc((100% - var(--zc-content-width)) / 2) minmax(0, 1fr) calc((100% - var(--zc-content-width)) / 2);
+        }
+
+        &:has(.zalf-filter-panel--open) .gn-components:has(.ms-resources-grid) {
+            grid-template-columns:
+                calc((100% - var(--zc-content-width)) / 2) var(--zc-filter-width) minmax(0, 1fr) calc((100% - var(--zc-content-width)) / 2);
+        }
     }
 }
 
@@ -1678,7 +1908,7 @@
 // slot the filter panel between them using grid-row.
 // ─────────────────────────────────────────────────────────────
 
-@media (max-width: 1100px) {
+@media (max-width: 1280px) {
 
     .gn-catalogue {
 
@@ -1721,13 +1951,13 @@
         &:has(.zalf-filter-panel--open) .gn-components .zalf-catalogue-search {
             grid-column: 1 !important;
             grid-row: 2 !important;
-            margin: 18px 16px 0 !important;
+            margin: 18px 24px 0 !important;
         }
 
         &:has(.zalf-filter-panel--open) .gn-components .zalf-filter-panel-body {
             grid-column: 1 !important;
             grid-row: 3 !important;
-            margin: 14px 16px 0 !important;
+            margin: 14px 24px 0 !important;
         }
 
         // Row 4: cards / resources container
@@ -1806,7 +2036,7 @@
         }
 
         .ms-resources-container>div {
-            padding: 0 12px;
+            padding: 0 24px;
         }
 
         .ms-resources-container {
@@ -1911,6 +2141,12 @@
 
 @media (max-width: 600px) {
     .gn-catalogue {
+        .ms-resources-container-grid {
+            width: 100%;
+            margin-right: 0;
+            margin-left: 0;
+        }
+
         .zalf-catalogue-search {
             grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
         }
@@ -1923,6 +2159,16 @@
         .zalf-filter-panel-toggle {
             width: 100%;
             min-width: 0;
+        }
+    }
+}
+
+@media (max-width: 360px) {
+    .gn-catalogue .zalf-date-filter__custom {
+        grid-template-columns: minmax(0, 1fr);
+
+        .zalf-date-filter__apply {
+            grid-column: 1;
         }
     }
 }

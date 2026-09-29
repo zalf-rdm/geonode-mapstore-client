@@ -6,7 +6,8 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import CoreFiltersForm from '@mapstore/framework/plugins/ResourcesCatalog/components/FiltersForm';
+import FilterItems from '@mapstore/framework/plugins/ResourcesCatalog/components/FilterItems';
+import ZalfDateHistogramFilter from './ZalfDateHistogramFilter';
 
 const ce = React.createElement;
 
@@ -59,7 +60,28 @@ export default function ZalfFiltersForm(props) {
         ),
         expanded
             ? ce('div', { id: 'zalf-catalogue-filter-drawer', className: 'zalf-filter-panel-body' },
-                ce(CoreFiltersForm, { ...props, fields: filterFields })
+                ce('div', { className: 'ms-filters-form' },
+                    ce('form', { className: '_padding-lr-md' },
+                        filterFields.map((field, index) => field.type === 'date-range'
+                            ? ce(ZalfDateHistogramFilter, {
+                                key: field.uuid || field.id || `date-${index}`,
+                                query,
+                                filterKey: field.filterKey,
+                                onChange
+                            })
+                            : ce(FilterItems, {
+                                key: field.uuid || field.id || `field-${index}`,
+                                id: props.id,
+                                items: [field],
+                                values: query,
+                                onChange,
+                                extentProps: props.extentProps,
+                                timeDebounce: props.timeDebounce,
+                                root: true
+                            })
+                        )
+                    )
+                )
             )
             : null
     );
