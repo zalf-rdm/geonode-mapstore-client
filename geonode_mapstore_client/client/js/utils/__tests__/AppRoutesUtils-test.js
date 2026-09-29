@@ -57,12 +57,15 @@ describe('Test App Routes Utils', () => {
     it('test catalogue routes', () => {
         const [
             metadataRoute,
+            metadataViewRoute,
             datasetLandingRoute,
             mapLandingRoute,
             documentLandingRoute,
             tabularCollectionLandingRoute,
             datasetSubtypeRoute,
             datasetRoute,
+            tabularRoute,
+            tabularCollectionRoute,
             datasetEditDataRoute,
             datasetEditLayerSettingsRoute,
             mapRoute,
@@ -78,6 +81,8 @@ describe('Test App Routes Utils', () => {
         ] = routeUtils.CATALOGUE_ROUTES;
         expect(metadataRoute.path).toEqual(['/metadata/:pk']);
         expect(metadataRoute.name).toEqual('metadata');
+        expect(metadataViewRoute.path).toEqual(['/metadata-view/:pk']);
+        expect(metadataViewRoute.name).toEqual('metadata_view');
         expect(datasetLandingRoute.path).toEqual(['/landing/dataset/:pk']);
         expect(datasetLandingRoute.name).toEqual('dataset_landing');
         expect(mapLandingRoute.path).toEqual(['/landing/map/:pk']);
@@ -90,6 +95,10 @@ describe('Test App Routes Utils', () => {
         expect(datasetSubtypeRoute.name).toEqual('dataset_viewer');
         expect(datasetRoute.path).toEqual(['/dataset/:pk']);
         expect(datasetRoute.name).toEqual('dataset_viewer');
+        expect(tabularRoute.path).toEqual(['/tabular/:pk']);
+        expect(tabularRoute.name).toEqual('tabular_viewer');
+        expect(tabularCollectionRoute.path).toEqual(['/tabular-collection/:pk']);
+        expect(tabularCollectionRoute.name).toEqual('tabular-collection_viewer');
         expect(datasetEditDataRoute.path).toEqual(['/dataset/:pk/edit/data']);
         expect(datasetEditDataRoute.name).toEqual('dataset_edit_data_viewer');
         expect(datasetEditLayerSettingsRoute.path).toEqual(['/dataset/:pk/edit/settings']);

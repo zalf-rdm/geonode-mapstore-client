@@ -16,9 +16,19 @@ from .admin import ExtensionAdminForm
 from .models import Extension
 from unittest import mock  # noqa: F401
 
+from .views import metadata
+
 # Define temporary directories for testing to avoid affecting the real media/static roots
 TEST_MEDIA_ROOT = os.path.join(settings.PROJECT_ROOT, "test_media")
 TEST_STATIC_ROOT = os.path.join(settings.PROJECT_ROOT, "test_static")
+
+
+class MetadataViewRoutingTestCase(TestCase):
+    def test_standalone_metadata_redirects_to_react_read_view(self):
+        request = mock.Mock()
+        response = metadata(request, "80")
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/catalogue/#/metadata-view/80")
 
 
 @override_settings(

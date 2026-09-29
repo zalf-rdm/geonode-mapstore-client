@@ -47,7 +47,7 @@ export const TABULAR_ROUTES = [
         component: appRouteComponentTypes.VIEWER,
         shouldNotRequestResources: true
     }
-]
+];
 
 export const TABULARCOLLECTION_ROUTES = [
     {
@@ -61,7 +61,7 @@ export const TABULARCOLLECTION_ROUTES = [
         component: appRouteComponentTypes.VIEWER,
         shouldNotRequestResources: true
     }
-]
+];
 
 export const DASHBOARD_ROUTES = [{
     name: 'dashboard_embed',
@@ -99,6 +99,11 @@ export const CATALOGUE_ROUTES = [
         name: 'metadata',
         path: ['/metadata/:pk'],
         component: appRouteComponentTypes.VIEWER
+    },
+    {
+        name: 'metadata_view',
+        path: ['/metadata-view/:pk'],
+        component: appRouteComponentTypes.COMPONENTS
     },
     {
         name: 'dataset_landing',
