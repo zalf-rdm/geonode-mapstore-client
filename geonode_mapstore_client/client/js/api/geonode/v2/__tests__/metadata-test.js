@@ -9,7 +9,11 @@
 import expect from 'expect';
 import MockAdapter from 'axios-mock-adapter';
 import axios from '@mapstore/framework/libs/ajax';
-import { getMetadataSchema, getMetadataByPk } from '@js/api/geonode/v2/metadata';
+import {
+    clearMetadataSchemaCache,
+    getMetadataSchema,
+    getMetadataByPk
+} from '@js/api/geonode/v2/metadata';
 
 let mockAxios;
 
@@ -43,6 +47,7 @@ const testSchema = {
 describe('GeoNode v2 metadata api', () => {
     beforeEach(done => {
         global.__DEVTOOLS__ = true;
+        clearMetadataSchemaCache();
         mockAxios = new MockAdapter(axios);
         setTimeout(done);
     });
@@ -76,11 +81,34 @@ describe('GeoNode v2 metadata api', () => {
     });
 
     it('should return cached schema on subsequent calls (getMetadataSchema)', (done) => {
+        mockAxios.onGet(/\/api\/v2\/metadata\/schema/).replyOnce(200, testSchema);
+
         getMetadataSchema()
+            .then(() => getMetadataSchema())
             .then(({ schema }) => {
                 try {
                     expect(schema).toEqual(testSchema);
-                    expect(mockAxios.history.get.filter(r => /schema/.test(r.url)).length).toBe(0);
+                    expect(mockAxios.history.get.filter(r => /schema/.test(r.url)).length).toBe(1);
+                    done();
+                } catch (e) {
+                    done(e);
+                }
+            })
+            .catch(done);
+    });
+
+    it('should retry the schema request after a failed response', (done) => {
+        mockAxios.onGet(/\/api\/v2\/metadata\/schema/)
+            .replyOnce(500)
+            .onGet(/\/api\/v2\/metadata\/schema/)
+            .reply(200, testSchema);
+
+        getMetadataSchema()
+            .catch(() => getMetadataSchema())
+            .then(({ schema }) => {
+                try {
+                    expect(schema).toEqual(testSchema);
+                    expect(mockAxios.history.get.filter(r => /schema/.test(r.url)).length).toBe(2);
                     done();
                 } catch (e) {
                     done(e);
@@ -92,6 +120,7 @@ describe('GeoNode v2 metadata api', () => {
     it('should not pre-populate array fields with empty items when minItems >= 1 (getMetadataByPk)', (done) => {
         const pk = 1;
 
+        mockAxios.onGet(/\/api\/v2\/metadata\/schema/).reply(200, testSchema);
         mockAxios.onGet(/\/api\/v2\/metadata\/instance\/1/).reply(200, {
             title: 'Test Resource',
             keywords: {}
