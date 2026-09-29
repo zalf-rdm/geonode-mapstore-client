@@ -36,6 +36,49 @@
             const debounceTime = 300;
             const scrollOffset = 200;
             const pageSize = 10;
+            // Keep this list aligned with RESOURCE_SEARCH_FIELDS in the v2 API client.
+            const resourceSearchFields = [
+                'title',
+                'title_translated',
+                'subtitle',
+                'abstract',
+                'abstract_translated',
+                'purpose',
+                'method_description',
+                'series_information',
+                'table_of_content',
+                'technical_info',
+                'other_description',
+                'supplemental_information',
+                'alternate',
+                'edition',
+                'doi',
+                'uuid',
+                'keywords__name',
+                'tkeywords__alt_label',
+                'tkeywords__keyword__label',
+                'geo_keywords__name',
+                'geo_keywords__gid',
+                'research_domains__name',
+                'regions__name',
+                'related_projects__display_name',
+                'related_projects__label',
+                'related_projects__description',
+                'fundings__award_title',
+                'fundings__award_number',
+                'fundings__organization__organization',
+                'fundings__organization__abbreviation',
+                'fundings__organization__ror',
+                'contacts__first_name',
+                'contacts__last_name',
+                'contacts__orcid_identifier',
+                'contacts__organization__organization',
+                'contacts__organization__abbreviation',
+                'category__gn_description',
+                'category__identifier',
+                'related_identifier__related_identifier',
+                'related_identifier__description'
+            ];
             const searchInput = document.querySelector('#{{ search_bar_id }} input');
             const suggestionsPanel = document.querySelector('#{{ search_bar_id }} .gn-suggestions');
             const suggestionsPanelList = document.querySelector('#{{ search_bar_id }} .gn-suggestions .list-group');
@@ -100,7 +143,7 @@
                 const splitHash = hash.split('?') || [];
                 const queryHash = splitHash[1] || '';
                 const params = queryHash.split('&');
-                var newParams = q ? ['q=' + q] : []; 
+                var newParams = q ? ['q=' + encodeURIComponent(q)] : [];
                 for (var i = 0; i < params.length; i++) {
                     if (params[i] && params[i].indexOf('q=') !== 0) {
                         newParams.push(params[i]);
@@ -109,32 +152,28 @@
 
                 const newQueryHash = newParams.join('&');
                 const pathname = splitHash[0].replace('#', '');
-                const gnCatalogueNode = document.getElementById('#gn-catalogue');
                 const catalogPagePath = window.__GEONODE_CONFIG__
                     && window.__GEONODE_CONFIG__.localConfig
                     && window.__GEONODE_CONFIG__.localConfig.geoNodeSettings
                     && window.__GEONODE_CONFIG__.localConfig.geoNodeSettings.catalogPagePath;
                 const defaultCatalogPath = '/catalogue/';
                 const baseCatalogPath = catalogPagePath ? catalogPagePath : defaultCatalogPath;
-                const isCatalogPage = window.location.pathname === baseCatalogPath
+                const isCatalogPage = window.location.pathname === baseCatalogPath;
                 {% block searchbar_search_href %}
-                    if (queryHash !== newQueryHash) {
-                        // if MapStoreAPI are available we are in the catalog
-                        if (isCatalogPage && window.MapStoreAPI && window.MapStoreAPI.triggerAction) {
-                            // the location change will modify the internal mapstore routing after the #
-                            // without changing the browser path
-                            window.MapStoreAPI.triggerAction({
-                                type: '@@router/LOCATION_CHANGE',
-                                payload: {
-                                    location: {
-                                        pathname: !!gnCatalogueNode ? pathname : '/',
-                                        search: '?' + newQueryHash,
-                                        hash: ''
-                                    },
-                                    action: 'PUSH',
-                                    isFirstRendering: false
-                                }
-                            })
+                    if (queryHash !== newQueryHash || pathname !== '/') {
+                        if (isCatalogPage) {
+                            // Drive catalogue navigation through the browser history. Dispatching
+                            // LOCATION_CHANGE directly can be overwritten by the previous landing
+                            // route and repeat its stale query on the next search.
+                            const targetHash = '#/' + (newQueryHash ? '?' + newQueryHash : '');
+                            window.location.hash = targetHash;
+                            if (pathname !== '/') {
+                                // A landing route retains the catalogue's previous Redux query even
+                                // though it is absent from the visible hash. Reloading after setting
+                                // the target hash initializes the catalogue from the new URL and
+                                // prevents that stale state from winning the routing race.
+                                window.location.reload();
+                            }
                         } else {
                             // we need to redirect to catalog page
                             // if we are in a page different from catalog
@@ -157,9 +196,11 @@
                     {% block searchbar_url_suggestion %}
                     const url = '/api/v2/resources' +
                     '?page=' + options.page +
-                    '&search=' + options.value +
-                    '&search_fields=title' +
-                    '&search_fields=abstract' +
+                    '&page_size=' + options.pageSize +
+                    '&search=' + encodeURIComponent(options.value) +
+                    resourceSearchFields.map(function(field) {
+                        return '&search_fields=' + encodeURIComponent(field);
+                    }).join('') +
                     '&filter{metadata_only}=false';
                     {% endblock %}
                     request = $.ajax({
