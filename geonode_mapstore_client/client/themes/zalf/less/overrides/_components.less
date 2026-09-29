@@ -637,32 +637,35 @@ body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header-plac
 }
 
 @media (min-width: 1101px) {
-    .zalf-navigation__content:focus-within {
+    // Expand only when the search itself owns focus. Using focus-within on the
+    // whole navigation content made every link and utility button activate the
+    // search layout as a side effect.
+    .zalf-navigation__content:has(.zalf-navigation__search-slot:focus-within) {
         gap: 0;
     }
 
-    .zalf-navigation__content:focus-within .zalf-navigation__primary,
-    .zalf-navigation__content:focus-within .zalf-navigation__utilities-slot {
+    .zalf-navigation__content:has(.zalf-navigation__search-slot:focus-within) .zalf-navigation__primary,
+    .zalf-navigation__content:has(.zalf-navigation__search-slot:focus-within) .zalf-navigation__utilities-slot {
         opacity: 0;
         pointer-events: none;
     }
 
-    .zalf-navigation__content:focus-within .zalf-navigation__primary {
+    .zalf-navigation__content:has(.zalf-navigation__search-slot:focus-within) .zalf-navigation__primary {
         flex: 0 1 0;
         overflow: hidden;
     }
 
-    .zalf-navigation__content:focus-within .zalf-navigation__tools {
+    .zalf-navigation__content:has(.zalf-navigation__search-slot:focus-within) .zalf-navigation__tools {
         flex: 1 1 auto;
         gap: 0;
     }
 
-    .zalf-navigation__content:focus-within .zalf-navigation__search-slot {
+    .zalf-navigation__content:has(.zalf-navigation__search-slot:focus-within) .zalf-navigation__search-slot {
         flex: 1 1 280px;
         width: 280px;
     }
 
-    .zalf-navigation__content:focus-within .zalf-navigation__utilities-slot {
+    .zalf-navigation__content:has(.zalf-navigation__search-slot:focus-within) .zalf-navigation__utilities-slot {
         flex: 0 1 0;
         width: 0;
         max-width: 0;
