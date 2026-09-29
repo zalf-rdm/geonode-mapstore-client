@@ -82,11 +82,6 @@ const getIntersectedResourceId = (event) => event?.intersectedFeatures
     ?.find(({ id }) => id === 'zalf-map-search-results')
     ?.features?.[0]?.properties?.resourceId;
 
-const SpatialBadge = ({ quality }) => ce('span', {
-    className: `zalf-map-search__spatial-badge zalf-map-search__spatial-badge--${quality.key}`,
-    title: quality.label
-}, quality.label);
-
 const ResultItem = ({ resource, active, onActivate }) => {
     const id = String(resource.id || resource.pk);
     const title = resource.name || resource.title || 'Untitled resource';
@@ -102,8 +97,7 @@ const ResultItem = ({ resource, active, onActivate }) => {
         onBlur: () => onActivate(null)
     },
     ce('div', { className: 'zalf-map-search__result-heading' },
-        ce('span', { className: 'zalf-map-search__resource-type' }, resource.subtype || resource.resource_type || 'resource'),
-        ce(SpatialBadge, { quality })
+        ce('span', { className: 'zalf-map-search__resource-type' }, resource.subtype || resource.resource_type || 'resource')
     ),
     viewerUrl
         ? ce('a', { className: 'zalf-map-search__result-title', href: viewerUrl }, title)
@@ -133,16 +127,13 @@ export default function ZalfMapSearch({
     const appliedExtent = query.extent;
     const [viewportExtent, setViewportExtent] = useState(appliedExtent);
     const [candidateExtent, setCandidateExtent] = useState(appliedExtent);
-    const [selectionSource, setSelectionSource] = useState(appliedExtent ? 'applied' : 'viewport');
     const [drawing, setDrawing] = useState(false);
     const [activeResourceId, setActiveResourceId] = useState(null);
     const [spatialResources, setSpatialResources] = useState([]);
-    const [spatialTotal, setSpatialTotal] = useState(0);
     const [mapLoading, setMapLoading] = useState(false);
     const [mapError, setMapError] = useState(false);
     const [mobileView, setMobileView] = useState('map');
     const loadResourcesRef = useRef(loadResources);
-    const ignoredProgrammaticMoves = useRef(0);
     loadResourcesRef.current = loadResources;
 
     const requestQuery = useMemo(() => omit(query, ['page', 'catalogue_view']), [JSON.stringify(query)]);
@@ -164,13 +155,11 @@ export default function ZalfMapSearch({
             .then((response = {}) => {
                 if (mounted) {
                     setSpatialResources(response.resources || []);
-                    setSpatialTotal(response.total || 0);
                 }
             })
             .catch(() => {
                 if (mounted) {
                     setSpatialResources([]);
-                    setSpatialTotal(0);
                     setMapError(true);
                 }
             })
@@ -181,9 +170,7 @@ export default function ZalfMapSearch({
     }, [JSON.stringify(requestQuery), monitoredState]);
 
     useEffect(() => {
-        ignoredProgrammaticMoves.current = appliedExtent ? 2 : 0;
-        setCandidateExtent(appliedExtent || viewportExtent);
-        setSelectionSource(appliedExtent ? 'applied' : 'viewport');
+        setCandidateExtent(appliedExtent);
     }, [appliedExtent]);
 
     const handleMapViewChanges = useCallback((center, zoom, bbox) => {
@@ -192,26 +179,30 @@ export default function ZalfMapSearch({
         }
         const nextExtent = boundsToExtentString(bbox.bounds, bbox.crs);
         setViewportExtent(nextExtent);
-        if (ignoredProgrammaticMoves.current > 0) {
-            ignoredProgrammaticMoves.current -= 1;
-            return;
-        }
-        setCandidateExtent((current) => selectionSource === 'draw' ? current : nextExtent);
-        if (selectionSource !== 'draw') {
-            setSelectionSource('viewport');
-        }
-    }, [selectionSource]);
-
-    const handleDrawnExtent = useCallback((extent) => {
-        setCandidateExtent(formatExtent(extent));
-        setSelectionSource('draw');
-        setDrawing(false);
     }, []);
 
-    const useCurrentView = () => {
-        setCandidateExtent(viewportExtent);
-        setSelectionSource('viewport');
+    const handleDrawnExtent = useCallback((extent) => {
+        const nextExtent = formatExtent(extent);
+        setCandidateExtent(nextExtent);
         setDrawing(false);
+        if (isSearchableExtent(nextExtent)) {
+            onApplyExtent(nextExtent);
+        }
+    }, [onApplyExtent]);
+
+    const useCurrentView = () => {
+        if (!isSearchableExtent(viewportExtent)) {
+            return;
+        }
+        setCandidateExtent(viewportExtent);
+        setDrawing(false);
+        onApplyExtent(viewportExtent);
+    };
+
+    const clearArea = () => {
+        setCandidateExtent(undefined);
+        setDrawing(false);
+        onClearExtent();
     };
 
     const mappableResources = useMemo(() => getMappableResources(spatialResources), [spatialResources]);
@@ -227,8 +218,7 @@ export default function ZalfMapSearch({
     const selectedFeature = candidateExtent && candidateIsValid
         ? { ...getFeatureFromExtent(candidateExtent), id: 'search-area', style: selectionStyle }
         : null;
-    const candidateChanged = !!candidateExtent && candidateExtent !== appliedExtent;
-    const omittedSpatialCount = Math.max(0, spatialResources.length - mappableResources.length);
+    const viewportIsValid = isSearchableExtent(viewportExtent);
 
     const handleMapClick = (event) => {
         const resourceId = getIntersectedResourceId(event);
@@ -258,18 +248,6 @@ export default function ZalfMapSearch({
         }, ce('span', { className: 'fa fa-list', 'aria-hidden': 'true' }), ` Results (${totalResources})`)
     ),
     ce('aside', { className: 'zalf-map-search__results', 'aria-label': 'Catalogue results' },
-        ce('header', { className: 'zalf-map-search__results-header' },
-            ce('div', null,
-                ce('strong', null, `${totalResources} result${totalResources === 1 ? '' : 's'}`),
-                ce('span', null, `${mappableResources.length} shown on this map`)
-            ),
-            omittedSpatialCount
-                ? ce('p', null, `${omittedSpatialCount} result${omittedSpatialCount === 1 ? '' : 's'} without a reliable bounding box`)
-                : null,
-            spatialTotal > MAP_RESULT_LIMIT
-                ? ce('p', { className: 'zalf-map-search__notice' }, `Map limited to the first ${MAP_RESULT_LIMIT} results. Refine your filters for complete coverage.`)
-                : null
-        ),
         ce('ul', { className: 'zalf-map-search__result-list' },
             ...(loading && !enrichedResources.length
                 ? [ce('li', { key: 'loading', className: 'zalf-map-search__loading' }, 'Loading results…')]
@@ -283,82 +261,76 @@ export default function ZalfMapSearch({
         footer
     ),
     ce('div', { className: 'zalf-map-search__map-column' },
-        ce('div', { className: 'zalf-map-search__map-toolbar' },
-            ce('div', { className: 'zalf-map-search__map-tools', role: 'group', 'aria-label': 'Choose search area' },
-                ce('button', {
-                    type: 'button',
-                    className: drawing ? 'is-active' : '',
-                    'aria-pressed': drawing,
-                    onClick: () => setDrawing(!drawing)
-                }, ce('span', { className: 'fa fa-object-group', 'aria-hidden': 'true' }), drawing ? ' Cancel drawing' : ' Draw rectangle'),
-                ce('button', { type: 'button', onClick: useCurrentView },
-                    ce('span', { className: 'fa fa-arrows-alt', 'aria-hidden': 'true' }), ' Use map view')
-            ),
-            ce('div', { className: 'zalf-map-search__apply-tools' },
-                appliedExtent
-                    ? ce('button', { type: 'button', className: 'zalf-map-search__clear', onClick: onClearExtent }, 'Clear area')
-                    : null,
-                ce('button', {
-                    type: 'button',
-                    className: 'zalf-map-search__apply',
-                    disabled: !candidateIsValid || (!candidateChanged && !!appliedExtent),
-                    onClick: () => onApplyExtent(candidateExtent)
-                }, 'Search this area')
-            )
-        ),
-        ce('div', { className: 'zalf-map-search__status', 'aria-live': 'polite' },
-            drawing
-                ? 'Drag on the map to draw a rectangle.'
-                : !candidateExtent
-                    ? 'Move the map or draw a rectangle, then apply the area.'
-                    : !candidateIsValid
-                        ? 'Zoom in or draw an area no wider than 180° before searching.'
-                        : candidateChanged
-                            ? (appliedExtent || selectionSource === 'draw'
-                                ? 'Area ready. Apply it to update the results.'
-                                : 'Current map view is ready to search.')
-                            : appliedExtent
-                                ? 'Results intersect the recorded bounding box shown on the map.'
-                                : 'Current map view is ready to search.'
-        ),
-        ce('div', { className: 'zalf-map-search__map', role: 'region', 'aria-label': 'Interactive catalogue search map' },
-            ce(MapComponent, {
-                id: 'zalf-catalogue-map-search',
-                mapType: 'openlayers',
-                map: {
-                    registerHooks: false,
-                    projection: 'EPSG:3857',
-                    center: { x: 10, y: 25, crs: 'EPSG:4326' },
-                    zoom: 3
-                },
-                styleMap: { position: 'absolute', width: '100%', height: '100%' },
-                eventHandlers: {
-                    onMapViewChanges: handleMapViewChanges,
-                    onClick: handleMapClick,
-                    onMouseMove: (event) => setActiveResourceId(getIntersectedResourceId(event) || null)
-                },
-                layers: [
-                    {
-                        type: 'osm', title: 'OpenStreetMap', name: 'mapnik', source: 'osm',
-                        group: 'background', visibility: true
-                    },
-                    { id: 'zalf-map-search-results', type: 'vector', features: resultFeatures },
-                    ...(selectedFeature
-                        ? [{ id: 'zalf-map-search-area', type: 'vector', features: [selectedFeature] }]
-                        : [])
-                ]
+        ce('div', {
+            className: `zalf-map-search__map${drawing ? ' is-drawing' : ''}`,
+            role: 'region',
+            'aria-label': 'Interactive catalogue search map'
+        },
+        ce(MapComponent, {
+            id: 'zalf-catalogue-map-search',
+            mapType: 'openlayers',
+            map: {
+                registerHooks: false,
+                projection: 'EPSG:3857',
+                center: { x: 10, y: 25, crs: 'EPSG:4326' },
+                zoom: 3
             },
-            appliedExtent ? ce(ZoomTo, { extent: appliedExtent, nearest: false }) : null,
-            ce(ZalfMapExtentSelector, { active: drawing, onSelect: handleDrawnExtent })
-            ),
-            (mapLoading || mapError)
-                ? ce('div', { className: 'zalf-map-search__map-message', role: mapError ? 'alert' : 'status' },
-                    mapError ? 'Map coverage could not be loaded. The result list is still available.' : 'Loading map coverage…')
-                : null,
-            ce('div', { className: 'zalf-map-search__legend' },
-                ce('span', null, ce('i', { className: 'zalf-map-search__legend-box' }), ' Recorded bounding boxes'),
-                ce('span', null, 'Map shapes are approximate, not exact footprints.')
-            )
+            styleMap: { position: 'absolute', width: '100%', height: '100%' },
+            eventHandlers: {
+                onMapViewChanges: handleMapViewChanges,
+                onClick: handleMapClick,
+                onMouseMove: (event) => setActiveResourceId(getIntersectedResourceId(event) || null)
+            },
+            layers: [
+                {
+                    type: 'osm', title: 'OpenStreetMap', name: 'mapnik', source: 'osm',
+                    group: 'background', visibility: true
+                },
+                { id: 'zalf-map-search-results', type: 'vector', features: resultFeatures },
+                ...(selectedFeature
+                    ? [{ id: 'zalf-map-search-area', type: 'vector', features: [selectedFeature] }]
+                    : [])
+            ]
+        },
+        appliedExtent ? ce(ZoomTo, { extent: appliedExtent, nearest: false }) : null,
+        ce(ZalfMapExtentSelector, { active: drawing, onSelect: handleDrawnExtent })
+        ),
+        ce('div', { className: 'zalf-map-search__floating-tools', role: 'group', 'aria-label': 'Choose search area' },
+            ce('button', {
+                type: 'button',
+                disabled: !appliedExtent,
+                title: 'Clear search area',
+                'aria-label': 'Clear search area',
+                onClick: clearArea
+            },
+            ce('span', { className: 'fa fa-eraser', 'aria-hidden': 'true' }),
+            ce('span', { className: 'zalf-map-search__tool-label' }, ' Clear area')),
+            ce('button', {
+                type: 'button',
+                className: drawing ? 'is-active' : '',
+                title: drawing ? 'Cancel drawing' : 'Draw rectangle and search',
+                'aria-label': drawing ? 'Cancel drawing' : 'Draw rectangle and search',
+                'aria-pressed': drawing,
+                onClick: () => setDrawing(!drawing)
+            },
+            ce('span', { className: 'fa fa-object-group', 'aria-hidden': 'true' }),
+            ce('span', { className: 'zalf-map-search__tool-label' }, drawing ? ' Cancel drawing' : ' Draw rectangle')),
+            ce('button', {
+                type: 'button',
+                disabled: !viewportIsValid,
+                title: viewportIsValid ? 'Search this map view' : 'Zoom in before searching this map view',
+                'aria-label': viewportIsValid ? 'Search this map view' : 'Zoom in before searching this map view',
+                onClick: useCurrentView
+            },
+            ce('span', { className: 'fa fa-arrows-alt', 'aria-hidden': 'true' }),
+            ce('span', { className: 'zalf-map-search__tool-label' }, ' Use map view'))
+        ),
+        ce('span', { className: 'sr-only', 'aria-live': 'polite' },
+            drawing ? 'Drawing mode active. Drag on the map to select and search an area.' : ''),
+        (mapLoading || mapError)
+            ? ce('div', { className: 'zalf-map-search__map-message', role: mapError ? 'alert' : 'status' },
+                mapError ? 'Map coverage could not be loaded. The result list is still available.' : 'Loading map coverage…')
+            : null
         )
     ));
 }

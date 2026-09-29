@@ -55,7 +55,19 @@ describe('ZALF catalogue map search', () => {
                 expect(calls[0].catalogue_view).toBe(undefined);
                 expect(calls[0].include).toEqual(MAP_FIELDS);
                 expect(applied).toEqual([]);
-                expect(document.body.textContent).toContain('Approximate bounding box');
+                expect(document.body.textContent).toContain('Soil dataset');
+                expect(document.body.textContent).toNotContain('Approximate bounding box');
+                expect(document.body.textContent).toNotContain('Location metadata only');
+                expect(document.body.textContent).toNotContain('Recorded bounding boxes');
+                expect(document.body.textContent).toNotContain('shown on this map');
+                expect(document.body.textContent).toNotContain('without a reliable bounding box');
+                expect(document.querySelector('.zalf-map-search__floating-tools').parentElement.className)
+                    .toBe('zalf-map-search__map');
+                act(() => {
+                    document.querySelector('[aria-label="Search this map view"]')
+                        .dispatchEvent(new MouseEvent('click', { bubbles: true }));
+                });
+                expect(applied.length).toBe(1);
                 done();
             } catch (error) {
                 done(error);
