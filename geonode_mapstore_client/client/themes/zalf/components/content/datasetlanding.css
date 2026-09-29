@@ -90,7 +90,8 @@
 .zalf-lp-breadcrumb {
   background: rgba(255, 255, 255, 0.92);
   border-bottom: 1px solid var(--zalf-border);
-  padding: 0.85rem 2rem;
+  min-height: 42px;
+  padding: 0.55rem clamp(1rem, 3vw, 2.5rem);
   font-size: 0.8rem;
   display: flex;
   align-items: center;
@@ -132,7 +133,7 @@
 
 .zalf-lp-hero-band {
   position: relative;
-  padding: 2rem 2rem 2.5rem;
+  padding: clamp(1rem, 2.2vw, 2rem) clamp(1rem, 3vw, 2.5rem);
   background:
     linear-gradient(90deg, rgba(198, 223, 142, 0.72) 0%, rgba(186, 231, 214, 0.4) 34%, rgba(130, 193, 229, 0.52) 100%),
     url('../../../../../static/img/bg_dataset_landing_topo.png') center center / cover no-repeat;
@@ -140,26 +141,26 @@
 }
 
 .zalf-lp-hero-inner {
-  max-width: 1180px;
+  width: min(100%, 1500px);
   margin: 0 auto;
 }
 
 .zalf-lp-hero-card {
-  display: flex;
-  gap: 2rem;
+  display: grid;
+  grid-template-columns: minmax(180px, 240px) minmax(0, 1fr);
+  gap: clamp(1rem, 2vw, 1.75rem);
   align-items: stretch;
   background: rgba(255, 255, 255, 0.96);
   border: 1px solid rgba(255, 255, 255, 0.7);
   border-radius: 18px;
-  padding: 1.15rem;
+  padding: clamp(0.85rem, 1.5vw, 1.25rem);
   box-shadow: 0 18px 40px rgba(31, 57, 46, 0.18);
   backdrop-filter: blur(10px);
 }
 
 .zalf-lp-hero-thumb {
-  flex-shrink: 0;
-  width: 310px;
-  min-height: 260px;
+  width: 100%;
+  min-height: 190px;
   border-radius: 14px;
   overflow: hidden;
   border: 1px solid var(--zalf-border);
@@ -1572,38 +1573,44 @@ a.zalf-lp-tree-title:hover {
     grid-template-columns: 1fr;
     padding: 1.25rem;
   }
-
-  .zalf-lp-hero-card {
-    flex-direction: column;
-  }
-
-  .zalf-lp-hero-thumb {
-    width: 100%;
-    min-height: 220px;
-  }
-
-  .zalf-lp-title {
-    font-size: 1.75rem;
-    font-family: var(--zalf-font-sans, 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif);
-  }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 680px) {
   .zalf-lp-hero-band {
-    padding: 1.25rem 1rem 1.5rem;
+    padding: 0.75rem;
   }
 
   .zalf-lp-breadcrumb {
-    padding: 0.6rem 1rem;
-  }
-
-  .zalf-lp-body {
-    padding: 1rem;
+    padding-inline: 0.85rem;
   }
 
   .zalf-lp-hero-card {
-    padding: 0.9rem;
-    gap: 1rem;
+    grid-template-columns: 88px minmax(0, 1fr);
+    gap: 0.8rem;
+    padding: 0.75rem;
+    border-radius: 12px;
+  }
+
+  .zalf-lp-hero-thumb {
+    min-height: 88px;
+    height: 88px;
+    border-radius: 9px;
+  }
+
+  .zalf-lp-hero-thumb-icon {
+    width: 2.8rem;
+    height: 2.8rem;
+  }
+
+  .zalf-lp-title {
+    font-size: clamp(1.15rem, 5vw, 1.4rem);
+  }
+
+}
+
+@media (max-width: 600px) {
+  .zalf-lp-body {
+    padding: 1rem;
   }
 
   .zalf-lp-section,
@@ -1622,5 +1629,24 @@ a.zalf-lp-tree-title:hover {
   .zalf-lp-supplemental-item {
     grid-template-columns: 1fr;
     gap: 0.25rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .zalf-lp-hero-card {
+    grid-template-columns: 70px minmax(0, 1fr);
+  }
+
+  .zalf-lp-hero-thumb {
+    min-height: 70px;
+    height: 70px;
+  }
+
+  .zalf-lp-title-alt {
+    display: none;
+  }
+
+  .zalf-lp-btn {
+    flex: 1 1 auto;
   }
 }
