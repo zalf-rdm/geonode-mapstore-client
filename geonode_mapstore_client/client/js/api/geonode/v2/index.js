@@ -43,6 +43,52 @@ import {
 
 export const getEndpoints = cGetEndpoints;
 
+// Keep this list aligned with resourceSearchFields in snippets/search_bar.html.
+// These are public, discovery-oriented metadata fields; private contact details
+// such as email addresses are deliberately excluded.
+export const RESOURCE_SEARCH_FIELDS = [
+    'title',
+    'title_translated',
+    'subtitle',
+    'abstract',
+    'abstract_translated',
+    'purpose',
+    'method_description',
+    'series_information',
+    'table_of_content',
+    'technical_info',
+    'other_description',
+    'supplemental_information',
+    'alternate',
+    'edition',
+    'doi',
+    'uuid',
+    'keywords__name',
+    'tkeywords__alt_label',
+    'tkeywords__keyword__label',
+    'geo_keywords__name',
+    'geo_keywords__gid',
+    'research_domains__name',
+    'regions__name',
+    'related_projects__display_name',
+    'related_projects__label',
+    'related_projects__description',
+    'fundings__award_title',
+    'fundings__award_number',
+    'fundings__organization__organization',
+    'fundings__organization__abbreviation',
+    'fundings__organization__ror',
+    'contacts__first_name',
+    'contacts__last_name',
+    'contacts__orcid_identifier',
+    'contacts__organization__organization',
+    'contacts__organization__abbreviation',
+    'category__gn_description',
+    'category__identifier',
+    'related_identifier__related_identifier',
+    'related_identifier__description'
+];
+
 /**
  * Actions for GeoNode save workflow
  * @module api/geonode/v2
@@ -62,7 +108,7 @@ export const getResources = ({
         ...getQueryParams({...params, f}, customFilters),
         ...(q && {
             search: q,
-            search_fields: ['title', 'abstract']
+            search_fields: RESOURCE_SEARCH_FIELDS
         }),
         ...(sort && { sort: isArray(sort) ? sort : [ sort ]}),
         page,
@@ -103,7 +149,7 @@ export const getMaps = ({
                     ...params,
                     ...(q && {
                         search: q,
-                        search_fields: ['title', 'abstract']
+                        search_fields: RESOURCE_SEARCH_FIELDS
                     }),
                     ...(sort && { sort: isArray(sort) ? sort : [ sort ]}),
                     page,
@@ -139,7 +185,7 @@ export const getDatasets = ({
                     'filter{metadata_only}': false,
                     ...(q && {
                         search: q,
-                        search_fields: ['title', 'abstract']
+                        search_fields: RESOURCE_SEARCH_FIELDS
                     }),
                     ...(sort && { sort: isArray(sort) ? sort : [ sort ]}),
                     page,
@@ -172,7 +218,7 @@ export const getDocumentsByDocType = (docType = 'image', {
                     ...params,
                     ...(q && {
                         search: q,
-                        search_fields: ['title', 'abstract']
+                        search_fields: RESOURCE_SEARCH_FIELDS
                     }),
                     ...(sort && { sort: isArray(sort) ? sort : [ sort ]}),
                     'filter{subtype}': [docType],
@@ -341,7 +387,7 @@ export const getGeoApps = ({
                     ...params,
                     ...(q && {
                         search: q,
-                        search_fields: ['title', 'abstract']
+                        search_fields: RESOURCE_SEARCH_FIELDS
                     }),
                     ...(sort && { sort: isArray(sort) ? sort : [ sort ]}),
                     page,
