@@ -1,8 +1,8 @@
 /**
  * CUSTOM PATH: themes/zalf/plugins/ZalfResourcesFiltersFormPlugin.jsx
  * REASON: Replaces the core ResourcesFiltersForm plugin with a ZALF version
- * that uses ZalfFiltersForm (collapsible toggle header) and always renders
- * the panel as a static sidebar (no floating overlay, no toolbar toggle).
+ * that uses ZalfFiltersForm as a static, Redux-controlled sidebar without a
+ * floating overlay or duplicate catalogue search.
  *
  * Adapted from MapStore2 ResourcesFiltersForm — only the FiltersForm component
  * and the createPlugin registration differ.
@@ -19,7 +19,8 @@ import ZalfFiltersForm from '../components/ZalfFiltersForm';
 import {
     getAvailableResourceTypes,
     getMonitoredStateSelector,
-    getRouterLocation
+    getRouterLocation,
+    getShowFiltersForm
 } from '@mapstore/framework/plugins/ResourcesCatalog/selectors/resources';
 import { searchResources } from '@mapstore/framework/plugins/ResourcesCatalog/actions/resources';
 import useParsePluginConfigExpressions from '@mapstore/framework/plugins/ResourcesCatalog/hooks/useParsePluginConfigExpressions';
@@ -43,6 +44,7 @@ function ZalfResourcesFiltersForm({
     fields: fieldsProp = [],
     monitoredState,
     location,
+    showFiltersForm,
     targetSelector,
     user,
     availableResourceTypes
@@ -82,6 +84,7 @@ function ZalfResourcesFiltersForm({
                 id,
                 extentProps: parsedConfig.extent,
                 fields,
+                expanded: showFiltersForm,
                 query: updatedQuery,
                 defaultQuery,
                 onChange: (params) => onSearch({ params }, resourcesGridId),
@@ -100,6 +103,7 @@ const Connected = connect(
     createStructuredSelector({
         user: userSelector,
         location: getRouterLocation,
+        showFiltersForm: getShowFiltersForm,
         monitoredState: getMonitoredStateSelector,
         availableResourceTypes: getAvailableResourceTypes
     }),

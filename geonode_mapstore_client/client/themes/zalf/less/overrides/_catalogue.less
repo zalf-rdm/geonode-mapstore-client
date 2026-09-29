@@ -266,6 +266,76 @@
         margin-top: 0;
     }
 
+    // Keep all result controls on the same visual row. The filter control is
+    // supplied through ResourcesMenu's extensible menu slot, then ordered
+    // immediately after the Order by dropdown.
+    .ms-resources-menu>.ms-flex-box>.ms-flex-fill {
+        order: 0;
+    }
+
+    .ms-resources-menu>.ms-flex-box>.square-button-md {
+        order: 1;
+    }
+
+    .ms-resources-menu>.ms-flex-box>.dropdown {
+        order: 2;
+    }
+
+    .ms-resources-menu .ms-menu-list,
+    .ms-resources-menu [containerclass="ms-menu-list"] {
+        order: 3;
+        margin-left: 0;
+    }
+
+    .zalf-filter-toolbar-item {
+        display: flex;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .zalf-filter-toolbar-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        min-width: 112px;
+        height: 46px;
+        padding: 0 16px;
+        border: 1px solid var(--zc-border);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.92);
+        color: var(--zc-text-secondary);
+        font-family: var(--zalf-font-sans);
+        font-size: .92rem;
+        font-weight: 700;
+        box-shadow: var(--zc-shadow-card);
+        transition: background 140ms ease, border-color 140ms ease, color 140ms ease, box-shadow 140ms ease;
+
+        &:hover,
+        &:focus {
+            border-color: var(--zc-accent);
+            background: #ffffff;
+            color: var(--zc-accent);
+            box-shadow: var(--zc-shadow-hover);
+        }
+
+        &[aria-expanded="true"] {
+            border-color: #46505a;
+            background: #46505a;
+            color: #ffffff;
+        }
+
+        .zalf-filter-panel-caret {
+            font-size: .72rem;
+            transition: transform 180ms ease;
+        }
+
+        &[aria-expanded="true"] .zalf-filter-panel-caret {
+            transform: rotate(180deg);
+        }
+    }
+
     .ms-resources-menu>.ms-flex-box>.ms-flex-fill .ms-text {
         display: inline-flex;
         align-items: center;
@@ -361,10 +431,6 @@
 
     .ms-resources-menu .dropdown.open>.dropdown-toggle::after {
         transform: rotate(180deg);
-    }
-
-    .ms-resources-menu .ms-menu-list {
-        margin-left: auto;
     }
 
     // Sort dropdown menu
@@ -597,7 +663,8 @@
         display: none !important;
     }
 
-    // ── Search-first toolbar ───────────────────────────────────
+    // ── Legacy catalogue search styles (component removed in favour of the
+    // global navbar search; retained temporarily for downstream compatibility)
     .zalf-catalogue-search {
         display: grid;
         grid-template-columns: minmax(0, 1fr) auto auto;
@@ -1411,6 +1478,14 @@
         }
     }
 
+    // In the desktop two-column layout, align the first dataset title with
+    // the first filter label (Category) instead of the filter card border.
+    @media (min-width: 1281px) {
+        &:has(.zalf-filter-panel--open) .ms-resources-container-list {
+            margin-top: 13px;
+        }
+    }
+
     // Hide the table header (not relevant in stacked layout)
     .ms-resources-list-header {
         display: none;
@@ -2160,15 +2235,49 @@
             width: 100%;
             min-width: 0;
         }
+
+        .ms-resources-menu .dropdown>.dropdown-toggle {
+            min-width: 120px;
+            padding-right: 12px;
+            padding-left: 12px;
+        }
+
+        .zalf-filter-toolbar-toggle {
+            min-width: 92px;
+            padding-right: 10px;
+            padding-left: 10px;
+            gap: 7px;
+        }
     }
 }
 
 @media (max-width: 360px) {
-    .gn-catalogue .zalf-date-filter__custom {
-        grid-template-columns: minmax(0, 1fr);
+    .gn-catalogue {
+        .ms-resources-menu>.ms-flex-box {
+            gap: 6px;
+        }
 
-        .zalf-date-filter__apply {
-            grid-column: 1;
+        .ms-resources-menu .dropdown>.dropdown-toggle {
+            min-width: 110px;
+            width: 110px;
+            max-width: 110px;
+        }
+
+        .zalf-filter-toolbar-toggle {
+            min-width: 94px;
+            width: 94px;
+            max-width: 94px;
+            padding-right: 6px;
+            padding-left: 6px;
+            gap: 5px;
+        }
+
+        .zalf-date-filter__custom {
+            grid-template-columns: minmax(0, 1fr);
+
+            .zalf-date-filter__apply {
+                grid-column: 1;
+            }
         }
     }
 }
