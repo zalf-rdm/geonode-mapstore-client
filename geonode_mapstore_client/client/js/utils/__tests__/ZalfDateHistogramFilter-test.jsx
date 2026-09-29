@@ -39,6 +39,7 @@ describe('ZALF catalogue date histogram filter', () => {
         });
 
         setTimeout(() => {
+            expect(document.querySelector('.zalf-date-filter legend').textContent).toBe('Publication date');
             const bars = document.querySelectorAll('.zalf-date-histogram__bar');
             expect(bars.length).toBe(3);
             expect(bars[1].getAttribute('aria-label')).toBe('2021: 0 resources');
