@@ -114,7 +114,7 @@ export default function ZalfDateHistogramFilter({ query = {}, filterKey = 'date'
     };
 
     return ce('fieldset', { className: 'zalf-date-filter' },
-        ce('legend', null, 'Date'),
+        ce('legend', null, 'Publication date'),
         ce('div', {
             className: `zalf-date-histogram${loading ? ' is-loading' : ''}`,
             'aria-label': loading ? 'Loading yearly resource distribution' : 'Resources by year'
