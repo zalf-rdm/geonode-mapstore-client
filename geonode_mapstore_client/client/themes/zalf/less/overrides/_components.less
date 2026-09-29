@@ -175,9 +175,10 @@ body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header-plac
 }
 
 .zalf-navigation__inner {
-    max-width: 1280px;
+    width: calc(100% - 48px);
+    max-width: 1380px;
     margin: 0 auto;
-    padding: 0 24px;
+    padding: 0;
     min-height: 78px;
     display: flex;
     align-items: center;
@@ -187,7 +188,7 @@ body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header-plac
 .zalf-navigation__brand {
     display: inline-flex;
     align-items: flex-start;
-    justify-content: center;
+    justify-content: flex-start;
     min-width: 168px;
     text-decoration: none;
 }
@@ -200,19 +201,22 @@ body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header-plac
 }
 
 .zalf-navigation__content {
+    position: relative;
     display: flex;
     align-items: center;
     flex: 1 1 auto;
     gap: 24px;
     min-width: 0;
+    transition: gap 260ms ease;
 }
 
 .zalf-navigation__primary {
     display: flex;
     align-items: center;
     gap: 12px;
-    flex: 1 1 auto;
+    flex: 1 1 0;
     min-width: 0;
+    transition: flex-grow 260ms ease, opacity 160ms ease;
 }
 
 .zalf-navigation__dropdown {
@@ -296,13 +300,16 @@ body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header-plac
     justify-content: flex-end;
     flex: 0 0 auto;
     gap: 16px;
+    min-width: 0;
+    transition: flex-grow 260ms ease, gap 260ms ease;
 }
 
 .zalf-navigation__search-slot {
-    flex: 0 0 280px;
+    flex: 0 1 280px;
     width: 280px;
     min-width: 0;
     overflow: hidden;
+    transition: flex-grow 260ms ease, flex-basis 260ms ease, width 260ms ease;
 }
 
 .zalf-navigation__utilities-slot {
@@ -310,6 +317,8 @@ body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header-plac
     align-items: center;
     flex-shrink: 1;
     min-width: 0;
+    max-width: 320px;
+    transition: flex-basis 260ms ease, width 260ms ease, max-width 260ms ease, opacity 160ms ease;
 }
 
 .zalf-navigation__utilities-slot .gn-brand-navbar-right-menu-container {
@@ -329,6 +338,7 @@ body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header-plac
 
 .zalf-navigation__search-slot .gn-search-bar {
     position: relative;
+    visibility: visible !important;
     background: transparent !important;
     border: 0 !important;
     box-shadow: none !important;
@@ -361,6 +371,20 @@ body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header-plac
     border: 0 !important;
     box-shadow: none !important;
     border-radius: 0 !important;
+}
+
+// Keep the input first and present the magnifier as the explicit action at
+// the right edge, where users expect a submit control.
+.zalf-navigation__search-slot .gn-search-bar .form-control {
+    order: 1;
+}
+
+.zalf-navigation__search-slot .gn-search-bar .input-group-append {
+    order: 2;
+}
+
+.zalf-navigation__search-slot .gn-search-bar .input-group-prepend {
+    order: 3;
 }
 
 .zalf-navigation__search-slot .gn-search-bar .form-control {
@@ -612,10 +636,44 @@ body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header-plac
     border-radius: 999px;
 }
 
+@media (min-width: 1101px) {
+    .zalf-navigation__content:focus-within {
+        gap: 0;
+    }
+
+    .zalf-navigation__content:focus-within .zalf-navigation__primary,
+    .zalf-navigation__content:focus-within .zalf-navigation__utilities-slot {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .zalf-navigation__content:focus-within .zalf-navigation__primary {
+        flex: 0 1 0;
+        overflow: hidden;
+    }
+
+    .zalf-navigation__content:focus-within .zalf-navigation__tools {
+        flex: 1 1 auto;
+        gap: 0;
+    }
+
+    .zalf-navigation__content:focus-within .zalf-navigation__search-slot {
+        flex: 1 1 280px;
+        width: 280px;
+    }
+
+    .zalf-navigation__content:focus-within .zalf-navigation__utilities-slot {
+        flex: 0 1 0;
+        width: 0;
+        max-width: 0;
+        overflow: hidden;
+    }
+}
+
 @media (max-width: 1100px) {
     .zalf-navigation__inner {
         min-height: 72px;
-        padding: 0 16px;
+        padding: 0;
         flex-wrap: wrap;
     }
 
@@ -663,6 +721,10 @@ body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header-plac
     .zalf-navigation__utilities-slot,
     .zalf-navigation__utilities-slot .gn-brand-navbar-right-menu-container {
         width: 100%;
+    }
+
+    .zalf-navigation__search-slot {
+        flex: 0 0 auto;
     }
 
     .zalf-navigation__utilities-slot .gn-brand-navbar-right-menu-container {
