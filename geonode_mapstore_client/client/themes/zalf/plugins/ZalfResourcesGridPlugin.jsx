@@ -45,6 +45,7 @@ import useParsePluginConfigExpressions from '@mapstore/framework/plugins/Resourc
 import useCardLayoutStyle from '@mapstore/framework/plugins/ResourcesCatalog/hooks/useCardLayoutStyle';
 import useLocalStorage from '@mapstore/framework/plugins/ResourcesCatalog/hooks/useLocalStorage';
 import ZalfResourcesContainer from '../components/ZalfResourcesContainer';
+import ZalfMapSearch from '../components/ZalfMapSearch';
 import Button from '@mapstore/framework/components/layout/Button';
 import TargetSelectorPortal from '@mapstore/framework/plugins/ResourcesCatalog/components/TargetSelectorPortal';
 import PaginationCustom from '@mapstore/framework/plugins/ResourcesCatalog/components/PaginationCustom';
@@ -201,7 +202,7 @@ function ZalfResourcesGridContainer({
         defaultCardLayoutStyle: defaultCardLayoutStyleProp
     });
 
-    const { stickyTop, stickyBottom } = useResourcePanelWrapper({
+    useResourcePanelWrapper({
         headerNodeSelector,
         navbarNodeSelector,
         footerNodeSelector,
@@ -242,6 +243,27 @@ function ZalfResourcesGridContainer({
     // Resources are pre-processed here to resolve virtual paths (author, catalogue_summary)
     // without modifying MapStore2's ResourcesUtils.js.
     const processedResources = resources.map(resolveVirtualPaths);
+    const mapSearchActive = query.catalogue_view === 'map';
+    useEffect(() => {
+        if (mapSearchActive && showFiltersForm) {
+            onSetShowFiltersForm(false, id);
+        }
+    }, [mapSearchActive]);
+    const MapSearchToolbarButton = () => ce('li', { className: 'zalf-filter-toolbar-item' },
+        ce('button', {
+            type: 'button',
+            className: `zalf-filter-toolbar-toggle zalf-map-search-toolbar-toggle${mapSearchActive ? ' is-active' : ''}`,
+            onClick: () => {
+                if (!mapSearchActive && showFiltersForm) {
+                    onSetShowFiltersForm(false, id);
+                }
+                handleUpdate({ catalogue_view: mapSearchActive ? undefined : 'map', page: undefined });
+            },
+            'aria-pressed': mapSearchActive
+        },
+        ce('span', { className: 'fa fa-map-o', 'aria-hidden': 'true' }),
+        ce('span', null, mapSearchActive ? 'List view' : 'Map Search'))
+    );
     const FilterToolbarButton = () => ce('li', { className: 'zalf-filter-toolbar-item' },
         ce('button', {
             type: 'button',
@@ -258,37 +280,62 @@ function ZalfResourcesGridContainer({
         }))
     );
 
+    const resultsFooter = ce(FlexBox, {
+        classNames: [`ms-${theme}-colors`, '_padding-tb-sm', 'ms-resources-grid-footer'],
+        centerChildren: true
+    },
+    error
+        ? ce(Button, { variant: 'primary', href: '#/' }, ce(Glyphicon, { glyph: 'refresh' }))
+        : (!loading || !!totalResources) && ce(PaginationCustom, {
+            items: Math.ceil(totalResources / pageSize),
+            activePage: page,
+            onSelect: (value) => handleUpdate({ page: value })
+        })
+    );
+
     return ce(TargetSelectorPortal, { targetSelector },
         ce('div', {
-            className: `ms-resources-grid${panel ? ' _panel' : ''}${hideWithNoResults && !resources.length ? ' _hidden' : ''}`,
+            className: `ms-resources-grid${panel ? ' _panel' : ''}${hideWithNoResults && !resources.length ? ' _hidden' : ''}`
 
         },
-            ce(ResourcesMenu, {
-                key: columnsId,
-                theme,
-                titleId,
-                resourcesGridId: id,
-                menuItemsLeft,
-                menuItems: [
-                    ...parsedConfig.menuItems,
-                    ...menuItemsRight,
-                    { name: 'zalf-filter-toggle', Component: FilterToolbarButton }
-                ],
-                orderConfig: parsedConfig.order,
+        ce(ResourcesMenu, {
+            key: columnsId,
+            theme,
+            titleId,
+            resourcesGridId: id,
+            menuItemsLeft,
+            menuItems: [
+                ...parsedConfig.menuItems,
+                ...menuItemsRight,
+                { name: 'zalf-map-search-toggle', Component: MapSearchToolbarButton },
+                { name: 'zalf-filter-toggle', Component: FilterToolbarButton }
+            ],
+            orderConfig: parsedConfig.order,
+            totalResources,
+            loading,
+            cardLayoutStyle,
+            setCardLayoutStyle,
+            hideCardLayoutButton,
+            query,
+            metadata,
+            columns,
+            setColumns: (newColumns) => setMetadataColumns({ ...metadataColumns, [columnsId]: newColumns }),
+            formatHref,
+            target: defaultTarget,
+            resourcesFoundMsgId
+        }),
+        mapSearchActive
+            ? ce(ZalfMapSearch, {
+                resources: processedResources,
                 totalResources,
                 loading,
-                cardLayoutStyle,
-                setCardLayoutStyle,
-                hideCardLayoutButton,
                 query,
-                metadata,
-                columns,
-                setColumns: (newColumns) => setMetadataColumns({ ...metadataColumns, [columnsId]: newColumns }),
-                formatHref,
-                target: defaultTarget,
-                resourcesFoundMsgId
-            }),
-            ce(ZalfResourcesContainer, {
+                monitoredState,
+                footer: resultsFooter,
+                onApplyExtent: (extent) => handleUpdate({ extent, page: undefined }),
+                onClearExtent: () => handleUpdate({ extent: undefined, page: undefined })
+            })
+            : ce(ZalfResourcesContainer, {
                 id,
                 theme,
                 resources: processedResources,
@@ -300,18 +347,7 @@ function ZalfResourcesGridContainer({
                 columns,
                 metadata,
                 target: defaultTarget,
-                footer: ce(FlexBox, {
-                    classNames: [`ms-${theme}-colors`, '_padding-tb-sm', 'ms-resources-grid-footer'],
-                    centerChildren: true
-                },
-                    error
-                        ? ce(Button, { variant: 'primary', href: '#/' }, ce(Glyphicon, { glyph: 'refresh' }))
-                        : (!loading || !!totalResources) && ce(PaginationCustom, {
-                            items: Math.ceil(totalResources / pageSize),
-                            activePage: page,
-                            onSelect: (value) => handleUpdate({ page: value })
-                        })
-                ),
+                footer: resultsFooter,
                 user,
                 cardOptions,
                 cardButtons,

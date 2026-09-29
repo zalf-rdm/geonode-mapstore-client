@@ -112,6 +112,7 @@ export const getResources = ({
     f,
     customFilters = [],
     config,
+    include = CATALOGUE_CARD_FIELDS,
     ...params
 }) => {
     const _params = {
@@ -125,7 +126,7 @@ export const getResources = ({
         page_size: pageSize,
         'filter{metadata_only}': false, // exclude resources such as services
         api_preset: API_PRESET.CATALOGS,
-        include: CATALOGUE_CARD_FIELDS
+        include
     };
     return axios.get(getEndpointUrl(RESOURCES), {
         params: _params,

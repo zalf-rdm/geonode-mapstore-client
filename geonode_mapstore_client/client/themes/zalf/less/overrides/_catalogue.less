@@ -2283,6 +2283,524 @@
 }
 
 // ─────────────────────────────────────────────────────────────
+// 15. Dedicated catalogue map search (issue #147)
+// ─────────────────────────────────────────────────────────────
+
+.gn-catalogue {
+    .zalf-map-search-toolbar-toggle.is-active,
+    .zalf-map-search-toolbar-toggle[aria-pressed="true"] {
+        border-color: var(--zc-accent);
+        background: var(--zc-accent);
+        color: #fff;
+    }
+
+    // Map search owns the complete results row. The filter drawer shares this
+    // grid cell as an overlay instead of becoming a permanent third column.
+    &:has(.zalf-map-search) .gn-components:has(.ms-resources-grid),
+    &:has(.zalf-map-search):has(.zalf-filter-panel--open) .gn-components:has(.ms-resources-grid) {
+        grid-template-columns: 24px minmax(0, 1fr) 24px !important;
+        grid-template-rows: auto auto auto auto !important;
+    }
+
+    &:has(.zalf-map-search) .gn-components .zalf-catalogue-search,
+    &:has(.zalf-map-search):has(.zalf-filter-panel--open) .gn-components .zalf-catalogue-search {
+        grid-column: 2 !important;
+        grid-row: 2 !important;
+    }
+
+    .zalf-map-search {
+        grid-column: 2;
+        grid-row: 3;
+        display: grid;
+        grid-template-columns: minmax(340px, 410px) minmax(0, 1fr);
+        width: 100%;
+        max-width: var(--zc-content-width);
+        min-height: 650px;
+        height: calc(100vh - 250px);
+        margin: 16px auto 28px;
+        overflow: hidden;
+        border: 1px solid var(--zc-border);
+        border-radius: var(--zc-radius-lg);
+        background: var(--zc-surface);
+        box-shadow: 0 8px 28px rgba(24, 39, 29, .09);
+    }
+
+    &:has(.zalf-map-search) .zalf-filter-panel-body {
+        grid-column: 2 !important;
+        grid-row: 3 !important;
+        position: relative;
+        z-index: 12;
+        width: var(--zc-filter-width);
+        max-height: calc(100vh - 280px);
+        margin: 28px 0 0 14px !important;
+        overflow: auto;
+        border-radius: var(--zc-radius-md);
+        box-shadow: 0 12px 34px rgba(17, 35, 26, .2);
+    }
+
+    &:has(.zalf-map-search) .gn-components:has(.ms-resources-grid)>.ms-footer {
+        grid-column: 1 / -1 !important;
+        grid-row: 4 !important;
+    }
+
+    .zalf-map-search__mobile-switch {
+        display: none;
+    }
+
+    .zalf-map-search__results {
+        display: flex;
+        min-width: 0;
+        min-height: 0;
+        flex-direction: column;
+        border-right: 1px solid var(--zc-border);
+        background: #fff;
+    }
+
+    .zalf-map-search__results-header {
+        flex: 0 0 auto;
+        padding: 18px 18px 14px;
+        border-bottom: 1px solid var(--zc-border);
+        background: #fbfcfb;
+
+        >div {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        strong {
+            color: var(--zc-text);
+            font-size: 1.05rem;
+        }
+
+        span,
+        p {
+            color: var(--zc-text-secondary);
+            font-size: .78rem;
+        }
+
+        p {
+            margin: 7px 0 0;
+        }
+
+        .zalf-map-search__notice {
+            padding: 8px 10px;
+            border-radius: var(--zc-radius-sm);
+            background: #fff5d8;
+            color: #684f08;
+            line-height: 1.35;
+        }
+    }
+
+    .zalf-map-search__result-list {
+        flex: 1 1 auto;
+        min-height: 0;
+        margin: 0;
+        padding: 8px;
+        overflow: auto;
+        list-style: none;
+    }
+
+    .zalf-map-search__result {
+        position: relative;
+        margin: 0 0 7px;
+        padding: 14px;
+        border: 1px solid transparent;
+        border-radius: var(--zc-radius-md);
+        background: #fff;
+        transition: border-color 130ms ease, background 130ms ease, box-shadow 130ms ease;
+
+        &:hover,
+        &:focus-within,
+        &.is-active {
+            border-color: #8fc8a5;
+            background: #f5fbf7;
+            box-shadow: 0 2px 8px rgba(24, 39, 29, .08);
+        }
+    }
+
+    .zalf-map-search__result-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 7px;
+    }
+
+    .zalf-map-search__resource-type {
+        color: var(--zc-text-muted);
+        font-size: .7rem;
+        font-weight: 700;
+        letter-spacing: .055em;
+        text-transform: uppercase;
+    }
+
+    .zalf-map-search__spatial-badge {
+        max-width: 68%;
+        padding: 3px 7px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #e7f5ec;
+        color: #235c39;
+        font-size: .68rem;
+        font-weight: 700;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        &--metadata,
+        &--suspect,
+        &--global {
+            background: #fff3d6;
+            color: #6a510b;
+        }
+
+        &--missing,
+        &--invalid {
+            background: #eef0f2;
+            color: #59636e;
+        }
+    }
+
+    .zalf-map-search__result-title {
+        display: -webkit-box;
+        overflow: hidden;
+        color: #154f31;
+        font-size: .98rem;
+        font-weight: 700;
+        line-height: 1.35;
+        text-decoration: none;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+
+        &:hover,
+        &:focus {
+            color: var(--zc-accent-hover);
+            text-decoration: underline;
+        }
+    }
+
+    .zalf-map-search__result-summary {
+        display: -webkit-box;
+        margin: 7px 0 0;
+        overflow: hidden;
+        color: var(--zc-text-secondary);
+        font-size: .78rem;
+        line-height: 1.45;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+    }
+
+    .zalf-map-search__places {
+        margin: 8px 0 0;
+        overflow: hidden;
+        color: #725b18;
+        font-size: .74rem;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .zalf-map-search__loading {
+        padding: 28px 16px;
+        color: var(--zc-text-secondary);
+        text-align: center;
+    }
+
+    .zalf-map-search__results>.ms-resources-grid-footer {
+        flex: 0 0 auto;
+        min-height: 54px;
+        border-top: 1px solid var(--zc-border);
+        background: #fff !important;
+    }
+
+    .zalf-map-search__map-column {
+        display: grid;
+        min-width: 0;
+        min-height: 0;
+        grid-template-rows: auto auto minmax(0, 1fr);
+        background: #eef3ef;
+    }
+
+    .zalf-map-search__map-toolbar {
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--zc-border);
+        background: rgba(255, 255, 255, .96);
+    }
+
+    .zalf-map-search__map-tools,
+    .zalf-map-search__apply-tools {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .zalf-map-search__map-toolbar button,
+    .zalf-map-search__mobile-switch button {
+        min-height: 38px;
+        padding: 8px 12px;
+        border: 1px solid var(--zc-border-strong);
+        border-radius: 9px;
+        background: #fff;
+        color: var(--zc-text-secondary);
+        font-size: .8rem;
+        font-weight: 700;
+
+        &:hover,
+        &:focus,
+        &.is-active {
+            border-color: var(--zc-accent);
+            color: var(--zc-accent);
+        }
+
+        &:disabled {
+            cursor: not-allowed;
+            opacity: .5;
+        }
+    }
+
+    .zalf-map-search__map-toolbar .zalf-map-search__apply {
+        border-color: var(--zc-accent);
+        background: var(--zc-accent);
+        color: #fff;
+
+        &:hover,
+        &:focus {
+            background: var(--zc-accent-hover);
+            color: #fff;
+        }
+    }
+
+    .zalf-map-search__map-toolbar .zalf-map-search__clear {
+        border-color: transparent;
+        background: transparent;
+    }
+
+    .zalf-map-search__status {
+        min-height: 34px;
+        padding: 8px 14px;
+        border-bottom: 1px solid rgba(201, 209, 217, .75);
+        background: #f8faf8;
+        color: var(--zc-text-secondary);
+        font-size: .76rem;
+    }
+
+    .zalf-map-search__map {
+        position: relative;
+        min-width: 0;
+        min-height: 0;
+
+        >#zalf-catalogue-map-search {
+            position: absolute;
+            inset: 0;
+        }
+    }
+
+    .zalf-map-search__map-message,
+    .zalf-map-search__legend {
+        position: absolute;
+        z-index: 3;
+        border: 1px solid rgba(201, 209, 217, .92);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, .94);
+        box-shadow: 0 2px 10px rgba(24, 39, 29, .12);
+        color: var(--zc-text-secondary);
+        font-size: .72rem;
+    }
+
+    .zalf-map-search__map-message {
+        top: 12px;
+        left: 50%;
+        padding: 8px 12px;
+        transform: translateX(-50%);
+    }
+
+    .zalf-map-search__legend {
+        right: 12px;
+        bottom: 12px;
+        display: flex;
+        max-width: 290px;
+        flex-direction: column;
+        gap: 4px;
+        padding: 9px 11px;
+    }
+
+    .zalf-map-search__legend-box {
+        display: inline-block;
+        width: 17px;
+        height: 11px;
+        margin-right: 5px;
+        border: 2px solid #256d46;
+        background: rgba(109, 187, 139, .22);
+        vertical-align: -1px;
+    }
+}
+
+@media (max-width: 980px) and (min-width: 769px) {
+    .gn-catalogue {
+        .zalf-map-search {
+            grid-template-columns: minmax(300px, 36%) minmax(0, 1fr);
+            margin-right: 18px;
+            margin-left: 18px;
+            width: calc(100% - 36px);
+        }
+
+        .zalf-map-search__map-toolbar {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .zalf-map-search__apply-tools {
+            justify-content: flex-end;
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .gn-catalogue {
+        &:has(.zalf-map-search) .gn-components:has(.ms-resources-grid),
+        &:has(.zalf-map-search):has(.zalf-filter-panel--open) .gn-components:has(.ms-resources-grid) {
+            grid-template-columns: minmax(0, 1fr) !important;
+            grid-template-rows: auto auto auto auto auto !important;
+        }
+
+        &:has(.zalf-map-search) .gn-components .zalf-catalogue-search,
+        &:has(.zalf-map-search):has(.zalf-filter-panel--open) .gn-components .zalf-catalogue-search {
+            grid-column: 1 !important;
+            grid-row: 2 !important;
+        }
+
+        .zalf-map-search {
+            grid-column: 1 !important;
+            grid-row: 4 !important;
+            display: grid;
+            width: auto;
+            height: auto;
+            min-height: 0;
+            margin: 14px 14px 24px;
+            grid-template-columns: minmax(0, 1fr);
+            grid-template-rows: auto minmax(0, 1fr);
+        }
+
+        &:has(.zalf-map-search) .zalf-filter-panel-body {
+            grid-column: 1 !important;
+            grid-row: 3 !important;
+            width: auto;
+            max-height: none;
+            margin: 12px 14px 0 !important;
+            overflow: visible;
+            box-shadow: var(--zc-shadow-card);
+        }
+
+        .zalf-map-search__mobile-switch {
+            display: grid;
+            padding: 8px;
+            border-bottom: 1px solid var(--zc-border);
+            grid-column: 1;
+            grid-row: 1;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+
+            button.is-active {
+                background: var(--zc-accent);
+                color: #fff;
+            }
+        }
+
+        .zalf-map-search__results,
+        .zalf-map-search__map-column {
+            grid-column: 1;
+            grid-row: 2;
+            min-height: 62vh;
+            border-right: 0;
+        }
+
+        .zalf-map-search[data-mobile-view="map"] .zalf-map-search__results,
+        .zalf-map-search[data-mobile-view="results"] .zalf-map-search__map-column {
+            display: none;
+        }
+
+        .zalf-map-search__result-list {
+            max-height: 58vh;
+        }
+
+        .zalf-map-search__map-toolbar {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .zalf-map-search__map-tools,
+        .zalf-map-search__apply-tools {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .zalf-map-search__map-toolbar button {
+            width: 100%;
+        }
+
+        .zalf-map-search__map {
+            min-height: 52vh;
+        }
+
+        &:has(.zalf-map-search) .gn-components:has(.ms-resources-grid)>.ms-footer {
+            grid-row: 5 !important;
+        }
+    }
+}
+
+@media (max-width: 600px) {
+    .gn-catalogue {
+        .ms-resources-menu>.ms-flex-box {
+            flex-wrap: wrap;
+        }
+
+        .ms-resources-menu>.ms-flex-box>.ms-flex-fill {
+            width: 100%;
+            flex: 1 0 100%;
+        }
+
+        .zalf-map-search-toolbar-toggle,
+        .zalf-filter-toolbar-toggle {
+            width: auto;
+            min-width: 104px;
+            max-width: none;
+        }
+
+        .zalf-map-search__results-header>div {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 3px;
+        }
+    }
+}
+
+@media (max-width: 360px) {
+    .gn-catalogue {
+        .zalf-map-search-toolbar-toggle,
+        .zalf-filter-toolbar-toggle {
+            width: auto;
+            min-width: 98px;
+            max-width: none;
+        }
+
+        .zalf-map-search {
+            margin-right: 8px;
+            margin-left: 8px;
+        }
+
+        .zalf-map-search__map-tools,
+        .zalf-map-search__apply-tools {
+            grid-template-columns: minmax(0, 1fr);
+        }
+    }
+}
+
+// ─────────────────────────────────────────────────────────────
 // FilterByExtent — override inline styles from MapStore2 core
 // The core component uses inline height/position; !important wins.
 // ─────────────────────────────────────────────────────────────

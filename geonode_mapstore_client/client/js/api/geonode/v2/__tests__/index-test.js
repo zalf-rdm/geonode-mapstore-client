@@ -119,4 +119,20 @@ describe('GeoNode v2 api', () => {
 
         getResources({ q: 'soil' });
     });
+    it('should allow a map-specific payload without forwarding UI state', (done) => {
+        const include = [...CATALOGUE_CARD_FIELDS, 'extent', 'geo_keywords'];
+        mockAxios.onGet(/\/api\/v2\/resources/)
+            .reply((config) => {
+                try {
+                    expect(config.params.include).toEqual(include);
+                    expect(config.params.catalogue_view).toBe(undefined);
+                } catch (e) {
+                    done(e);
+                }
+                done();
+                return [200, { total: 0, links: {}, resources: [] }];
+            });
+
+        getResources({ q: 'soil', catalogue_view: 'map', include });
+    });
 });

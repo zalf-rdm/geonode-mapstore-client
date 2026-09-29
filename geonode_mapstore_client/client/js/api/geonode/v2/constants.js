@@ -106,7 +106,7 @@ export const getQueryParams = (params, customFilters) => {
         .filter(({ id }) => castArray(params?.f ?? []).indexOf(id) !== -1)
         .reduce((acc, filter) => mergeCustomQuery(acc, filter.query || {}), {}) || {};
     return {
-        ...mergeCustomQuery(omit(params, "f"), customQuery)
+        // catalogue_view is client-side UI state (list/map), not an API filter
+        ...mergeCustomQuery(omit(params, ["f", "catalogue_view"]), customQuery)
     };
 };
-
