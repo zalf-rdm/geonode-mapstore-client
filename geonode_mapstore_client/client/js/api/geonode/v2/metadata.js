@@ -21,6 +21,8 @@ import validator from '@rjsf/validator-ajv8';
 
 const uiKeys = (entry) => Object.keys(entry).filter(propertyKey => propertyKey.indexOf('ui:') === 0);
 
+let metadataSchemaPromise;
+
 const parseUiSchema = (properties) => {
     return Object.keys(properties).reduce((acc, key) => {
         const entry = properties[key];
@@ -47,14 +49,25 @@ const parseUiSchema = (properties) => {
 };
 
 export const getMetadataSchema = () => {
-    return axios.get(getEndpointUrl(METADATA, '/schema/'))
-        .then(({ data }) => {
-            const schema = data;
-            return {
-                schema: schema,
-                uiSchema: parseUiSchema(schema?.properties || {})
-            };
-        });
+    if (!metadataSchemaPromise) {
+        metadataSchemaPromise = axios.get(getEndpointUrl(METADATA, '/schema/'))
+            .then(({ data }) => {
+                const schema = data;
+                return {
+                    schema: schema,
+                    uiSchema: parseUiSchema(schema?.properties || {})
+                };
+            })
+            .catch((error) => {
+                metadataSchemaPromise = undefined;
+                throw error;
+            });
+    }
+    return metadataSchemaPromise;
+};
+
+export const clearMetadataSchemaCache = () => {
+    metadataSchemaPromise = undefined;
 };
 
 const removeNullValueRecursive = (metadata = {}, schema = {}) => {
