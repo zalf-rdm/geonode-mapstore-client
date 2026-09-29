@@ -10,7 +10,7 @@
 // ─────────────────────────────────────────────────────────────
 
 .gn-catalogue {
-    --zc-hero-height: 144px;
+    --zc-hero-height: 112px;
     --zc-surface: #ffffff;
     --zc-surface-alt: #f7f8fa;
     --zc-surface-hover: #f0f4f8;
@@ -25,9 +25,9 @@
     --zc-radius-sm: 6px;
     --zc-radius-md: 10px;
     --zc-radius-lg: 14px;
-    --zc-shadow-card: 0 1px 3px rgba(0, 0, 0, .08), 0 4px 12px rgba(0, 0, 0, .05);
-    --zc-shadow-hover: 0 4px 12px rgba(0, 0, 0, .12), 0 8px 24px rgba(0, 0, 0, .08);
-    --zc-filter-width: 280px;
+    --zc-shadow-card: 0 1px 2px rgba(24, 39, 29, .06);
+    --zc-shadow-hover: 0 3px 10px rgba(24, 39, 29, .1);
+    --zc-filter-width: 304px;
     --zc-content-width: 1380px; // max-width of sidebar + content combined
     --zc-hero-bg: url('../../../../../static/img/bg_dataset_landing_topo.png');
 
@@ -65,7 +65,7 @@
     // catalogue view — never on landing pages, upload, viewer, etc., which
     // all render into the same .gn-components but without ResourcesGrid.
     //
-    // 4-column grid: [gutter-L] [sidebar] [content] [gutter-R]
+    // 3-column grid: [gutter-L] [content] [gutter-R]
     // Gutters collapse to 0 on narrow viewports.
     // Footer spans 1/-1 = always full viewport width.
     // ─────────────────────────────────────────────────────────
@@ -74,41 +74,100 @@
         width: 100%;
         position: relative;
         background: var(--zc-surface-alt);
-        // Default: gutter | sidebar | content | gutter
         grid-template-columns:
-            minmax(0px, calc((100% - var(--zc-content-width)) / 2)) var(--zc-filter-width) 1fr minmax(0px, calc((100% - var(--zc-content-width)) / 2));
-        grid-template-rows: auto auto;
+            24px minmax(0, 1fr) 24px;
+        grid-template-rows: auto auto auto auto;
         align-items: start;
     }
 
-    // When filter open: keep the same sidebar width
+    // The search/filter toolbar stays above results in both states.
     &:has(.zalf-filter-panel--open) .gn-components:has(.ms-resources-grid) {
         grid-template-columns:
-            minmax(0px, calc((100% - var(--zc-content-width)) / 2)) var(--zc-filter-width) 1fr minmax(0px, calc((100% - var(--zc-content-width)) / 2));
+            24px var(--zc-filter-width) minmax(0, 1fr) 24px;
+        grid-template-rows: auto auto auto auto;
     }
 
-    // ── Col 2: filter panel (sidebar) ────────────────────────
-    .gn-components:has(.ms-resources-grid)>.ms-resources-panel-wrapper {
+    // A collapsed filter becomes a compact in-flow row. It must not leave an
+    // empty sidebar column that narrows the result list.
+    &:has(.zalf-filter-panel--closed) .gn-components:has(.ms-resources-grid) {
+        grid-template-columns:
+            24px minmax(0, 1fr) 24px;
+        grid-template-rows: auto auto auto auto;
+    }
+
+    &:has(.zalf-filter-panel--closed) .gn-components>.ms-resources-grid {
+        display: contents !important;
+    }
+
+    &:has(.zalf-filter-panel--closed) .gn-components .ms-resources-menu {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        width: 100% !important;
+        margin: 0 !important;
+    }
+
+    &:has(.zalf-filter-panel--closed) .gn-components .ms-resources-container {
         grid-column: 2;
-        grid-row: 1;
-        padding-top: calc(var(--zc-hero-height) + 12px);
-        padding-bottom: 24px;
+        grid-row: 3;
     }
 
-    // ── Col 3: resource grid (main content) ──────────────────
+    &:has(.zalf-filter-panel--closed) .gn-components:has(.ms-resources-grid)>.ms-footer {
+        grid-column: 1 / -1;
+        grid-row: 4;
+    }
+
+    // Dissolve the core filter wrappers. The toolbar can then span the result
+    // width while the expanded drawer occupies the left column independently.
+    .gn-components:has(.ms-resources-grid)>.ms-resources-panel-wrapper {
+        display: contents !important;
+    }
+
+    // Dissolve the core wrapper so hero and results can occupy separate grid
+    // rows. This keeps the filter below the hero without guessing its height.
     .gn-components>.ms-resources-grid {
-        grid-column: 3;
+        display: contents !important;
+    }
+
+    .gn-components .ms-resources-menu {
+        grid-column: 1 / -1;
         grid-row: 1;
+    }
+
+    .gn-components .zalf-catalogue-search {
+        grid-column: 2;
+        grid-row: 2;
+        margin: 22px 0 0;
+    }
+
+    &:has(.zalf-filter-panel--open) .gn-components .zalf-catalogue-search {
+        grid-column: 2 / 4;
+    }
+
+    &:has(.zalf-filter-panel--open) .gn-components .zalf-filter-panel-body {
+        grid-column: 2;
+        grid-row: 3;
+        margin: 14px 12px 24px 0;
+    }
+
+    // ── Row 3: resource results ──────────────────────────────
+    .gn-components .ms-resources-container {
+        grid-column: 2;
+        grid-row: 3;
         min-width: 0;
         min-height: calc(100vh - 78px);
         background: transparent;
+        padding-top: 12px;
+    }
+
+    &:has(.zalf-filter-panel--open) .gn-components .ms-resources-container {
+        grid-column: 3;
         padding-top: 0;
     }
 
     // ── Footer: cols 1 / -1 = full viewport width ─────────────
     .gn-components:has(.ms-resources-grid)>.ms-footer {
         grid-column: 1 / -1;
-        grid-row: 2;
+        grid-row: 4;
     }
 
     // Cancel core's auto margin-left — grid handles column spacing
@@ -125,7 +184,7 @@
     }
 
     .ms-resources-container>div {
-        padding: 0 24px;
+        padding: 0;
     }
 }
 
@@ -138,12 +197,8 @@
     .ms-resources-menu {
         border-bottom: 1px solid rgba(199, 216, 225, 0.9);
         padding: 16px 0 16px !important;
-        // Break out of the grid col to fill the full viewport width.
-        // col-3 starts at: gutter + sidebar. Gutter = max(0, (100vw - content-width) / 2).
-        // The menu is now a direct child of ms-resources-grid (no inner 24px padding offset).
-        // ~"" escapes the expression so LESS passes it as raw CSS (max() is reserved by LESS).
-        margin: ~"0 0 18px calc(-1 * (max(0px, (100vw - var(--zc-content-width)) / 2) + var(--zc-filter-width)))";
-        width: 100vw;
+        margin: 0;
+        width: 100%;
         top: var(--ms-menu-sticky-top, 0);
         z-index: 1;
         overflow: visible;
@@ -151,6 +206,7 @@
         box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.55);
         backdrop-filter: blur(8px);
         min-height: var(--zc-hero-height);
+        box-sizing: border-box;
         justify-content: flex-start;
         border-radius: 0;
     }
@@ -194,7 +250,7 @@
     }
 
     .ms-resources-menu>.ms-text {
-        font-size: clamp(2rem, 4vw, 3rem) !important;
+        font-size: clamp(1.85rem, 3vw, 2.5rem) !important;
         font-weight: 700;
         color: #132238;
         letter-spacing: -0.02em;
@@ -235,7 +291,7 @@
         color: var(--zc-text-secondary);
         padding: 11px 14px;
         font-size: 0.88rem;
-        box-shadow: 0 8px 20px rgba(31, 57, 46, 0.08);
+        box-shadow: var(--zc-shadow-card);
         transition: background 120ms, border-color 120ms, color 120ms, box-shadow 120ms, transform 120ms;
 
         &:hover,
@@ -243,8 +299,7 @@
             background: #ffffff;
             border-color: var(--zc-accent);
             color: var(--zc-accent);
-            transform: translateY(-1px);
-            box-shadow: 0 10px 24px rgba(31, 57, 46, 0.12);
+            box-shadow: var(--zc-shadow-hover);
         }
     }
 
@@ -273,6 +328,10 @@
 
     // Sort dropdown toggle
     .ms-resources-menu .dropdown>.dropdown-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
         border: 1px solid rgba(210, 223, 228, 0.95);
         border-radius: 14px;
         background: rgba(255, 255, 255, 0.92);
@@ -281,15 +340,27 @@
         padding: 12px 18px;
         min-width: 150px;
         text-align: left;
-        box-shadow: 0 8px 20px rgba(31, 57, 46, 0.08);
+        box-shadow: var(--zc-shadow-card);
         transition: border-color 120ms, background 120ms, box-shadow 120ms;
+
+        &::after {
+            content: "\f078";
+            font-family: FontAwesome;
+            font-size: .72rem;
+            color: var(--zc-text-muted);
+            transition: transform 140ms ease;
+        }
 
         &:hover,
         &:focus {
             border-color: var(--zc-accent);
             background: #ffffff;
-            box-shadow: 0 10px 24px rgba(31, 57, 46, 0.12);
+            box-shadow: var(--zc-shadow-hover);
         }
+    }
+
+    .ms-resources-menu .dropdown.open>.dropdown-toggle::after {
+        transform: rotate(180deg);
     }
 
     .ms-resources-menu .ms-menu-list {
@@ -303,7 +374,7 @@
         box-shadow: var(--zc-shadow-hover);
         padding: 6px 0;
         min-width: 180px;
-        background: var(--zc-surface);
+        background: var(--zc-surface-alt);
         z-index: 30;
 
         >li>a {
@@ -334,7 +405,7 @@
         font-size: 0.92rem;
         font-weight: 700;
         padding: 12px 18px;
-        box-shadow: 0 8px 20px rgba(31, 57, 46, 0.08);
+        box-shadow: var(--zc-shadow-card);
 
         &:hover,
         &:focus {
@@ -479,6 +550,7 @@
 
     // ── Filter form: natural height inside the sticky wrapper ─
     .ms-resources-filter {
+        display: contents !important;
         width: 100% !important;
         max-width: 100% !important;
         height: auto !important;
@@ -489,14 +561,15 @@
     }
 
     .zalf-filter-panel {
-        background: var(--zc-surface);
-        min-height: 100%;
-        border: 1px solid var(--zc-border);
-        border-radius: 24px;
-        box-shadow: 0 18px 40px rgba(15, 31, 54, 0.08);
-        overflow: hidden;
-        width: calc(100% - 24px);
-        margin: 12px 12px 12px;
+        display: contents;
+        background: var(--zc-surface-alt);
+        min-height: auto;
+        border: 0;
+        border-radius: 12px;
+        box-shadow: none;
+        overflow: visible;
+        width: 100%;
+        margin: 0;
     }
 
     .zalf-filter-panel .ol-viewport,
@@ -515,6 +588,8 @@
 
     .zalf-filter-panel--closed {
         min-height: auto;
+        width: 100%;
+        margin: 0;
     }
 
     // ── Hide core FiltersForm header — ZalfFiltersForm has its own toggle ──
@@ -522,64 +597,101 @@
         display: none !important;
     }
 
-    // ── Collapsible toggle header ──────────────────────────────
+    // ── Search-first toolbar ───────────────────────────────────
+    .zalf-catalogue-search {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto auto;
+        align-items: stretch;
+        gap: 10px;
+        width: auto;
+        padding: 0;
+    }
+
+    .zalf-catalogue-search__field {
+        position: relative;
+        display: flex;
+        align-items: center;
+        min-width: 0;
+        margin: 0;
+
+        >.fa {
+            position: absolute;
+            left: 16px;
+            z-index: 1;
+            color: var(--zc-text-muted);
+            pointer-events: none;
+        }
+
+        >input {
+            width: 100%;
+            height: 48px;
+            padding: 0 16px 0 44px;
+            border: 1px solid var(--zc-border);
+            border-radius: 12px;
+            background: var(--zc-surface);
+            color: var(--zc-text);
+            font: inherit;
+            box-shadow: var(--zc-shadow-card);
+            transition: border-color 140ms ease, box-shadow 140ms ease;
+
+            &:focus {
+                border-color: var(--zc-accent);
+                box-shadow: 0 0 0 3px rgba(78, 156, 24, .15);
+                outline: 0;
+            }
+        }
+    }
+
+    .zalf-catalogue-search__submit,
     .zalf-filter-panel-toggle {
         display: flex;
         align-items: center;
+        justify-content: center;
         gap: 12px;
-        width: 100%;
-        padding: 16px;
-        background: #ffffff;
-        border: none;
-        cursor: pointer;
+        min-width: 112px;
+        height: 48px;
+        padding: 0 18px;
+        border: 1px solid var(--zc-border);
+        border-radius: 12px;
         font-family: var(--zalf-font-sans);
-        text-align: left;
-        transition: all 0.2s ease;
+        font-size: .92rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+    }
 
-        &:hover {
-            background: #f5f7fa;
+    .zalf-catalogue-search__submit {
+        background: var(--zc-accent);
+        border-color: var(--zc-accent);
+        color: #fff;
+
+        &:hover,
+        &:focus {
+            background: #367f1b;
+            border-color: #367f1b;
+            color: #fff;
+        }
+    }
+
+    .zalf-filter-panel-toggle {
+        background: var(--zc-surface-alt);
+        color: var(--zc-text-secondary);
+
+        &:hover,
+        &:focus {
+            background: var(--zc-accent-light);
+            border-color: var(--zc-accent);
+            color: var(--zc-accent);
         }
 
-        .zalf-filter-panel-toggle-icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 32px;
-            height: 32px;
-            flex: 0 0 32px;
-            border-radius: 12px;
-            background: #eef8e5;
-            color: #75b72a;
-            font-size: 0.95rem;
-        }
-
-        .zalf-filter-panel-toggle-copy {
-            display: flex;
-            flex-direction: column;
-            min-width: 0;
-        }
-
-        .zalf-filter-panel-toggle-label {
-            font-size: 1rem;
-            font-weight: 800;
-            line-height: 1.2;
-            color: #1f2b3d;
-            letter-spacing: 0;
-            text-transform: none;
-        }
-
-        .zalf-filter-panel-toggle-description {
-            margin-top: 0.15rem;
-            font-size: 0.82rem;
-            font-weight: 400;
-            line-height: 1.35;
-            color: #7b8aa0;
+        &[aria-expanded="true"] {
+            background: #46505a;
+            border-color: #46505a;
+            color: #fff;
         }
 
         .zalf-filter-panel-caret {
-            margin-left: auto;
             font-size: 0.875rem;
-            color: #7b8aa0;
             transition: transform 0.3s ease;
         }
     }
@@ -588,18 +700,214 @@
         transform: rotate(180deg);
     }
 
-    .zalf-filter-panel--open .zalf-filter-panel-toggle {
-        border-bottom: 1px solid #edf2f7;
-        border-radius: 24px 24px 0 0;
-        background: #ffffff;
-    }
-
-    .zalf-filter-panel--closed .zalf-filter-panel-toggle {
-        border-radius: 24px;
-    }
-
     .zalf-filter-panel-body {
-        padding: 0 0 12px;
+        margin-top: 14px;
+        padding: 16px 18px 18px;
+        border: 1px solid var(--zc-border);
+        border-radius: 12px;
+        background: var(--zc-surface-alt);
+    }
+
+    // ── Temporal histogram and date range ─────────────────────
+    .zalf-date-filter {
+        min-width: 0;
+        margin: 2px 0 4px;
+        padding: 14px 0 0;
+        border: 0;
+        border-top: 1px solid var(--zc-border);
+
+        legend {
+            width: auto;
+            margin: 0 0 12px;
+            padding: 0;
+            border: 0;
+            color: var(--zc-text-secondary);
+            font-size: .82rem;
+            font-weight: 700;
+        }
+    }
+
+    .zalf-date-histogram {
+        display: flex;
+        align-items: flex-end;
+        gap: 2px;
+        height: 76px;
+        padding: 0 2px;
+
+        &.is-loading {
+            opacity: .45;
+        }
+    }
+
+    .zalf-date-histogram__bar {
+        flex: 1 1 0;
+        min-width: 2px;
+        height: var(--zalf-date-count);
+        padding: 0;
+        border: 0;
+        border-radius: 2px 2px 0 0;
+        background: var(--zc-accent);
+        opacity: .9;
+        cursor: pointer;
+        transition: opacity 120ms ease, transform 120ms ease;
+
+        &:hover,
+        &:focus {
+            opacity: 1;
+            transform: scaleY(1.04);
+            transform-origin: bottom;
+            outline: 2px solid rgba(78, 156, 24, .3);
+            outline-offset: 1px;
+        }
+    }
+
+    .zalf-date-range {
+        position: relative;
+        height: 22px;
+        margin-top: 8px;
+
+        input[type="range"] {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 22px;
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            pointer-events: none;
+            appearance: none;
+
+            &::-webkit-slider-thumb {
+                width: 16px;
+                height: 16px;
+                border: 2px solid var(--zc-surface-alt);
+                border-radius: 50%;
+                background: var(--zc-accent);
+                box-shadow: 0 0 0 1px var(--zc-accent);
+                pointer-events: auto;
+                cursor: grab;
+                appearance: none;
+            }
+
+            &::-moz-range-thumb {
+                width: 16px;
+                height: 16px;
+                border: 2px solid var(--zc-surface-alt);
+                border-radius: 50%;
+                background: var(--zc-accent);
+                box-shadow: 0 0 0 1px var(--zc-accent);
+                pointer-events: auto;
+                cursor: grab;
+            }
+        }
+    }
+
+    .zalf-date-range__track {
+        position: absolute;
+        top: 10px;
+        right: 0;
+        left: 0;
+        height: 3px;
+        border-radius: 999px;
+        background: var(--zc-accent);
+    }
+
+    .zalf-date-filter__years {
+        display: flex;
+        justify-content: space-between;
+        margin-top: -1px;
+        color: var(--zc-text-secondary);
+        font-size: .75rem;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .zalf-date-filter__presets {
+        display: grid;
+        gap: 2px;
+        margin: 10px 0;
+
+        button {
+            min-height: 30px;
+            padding: 4px 8px;
+            border: 0;
+            border-radius: 7px;
+            background: transparent;
+            color: var(--zc-text-secondary);
+            font-size: .8rem;
+            text-align: left;
+
+            &::before {
+                content: "";
+                display: inline-block;
+                width: 13px;
+                height: 13px;
+                margin-right: 8px;
+                border: 1px solid var(--zc-border-strong);
+                border-radius: 50%;
+                vertical-align: -2px;
+            }
+
+            &:hover,
+            &:focus,
+            &[aria-pressed="true"] {
+                background: var(--zc-accent-light);
+                color: var(--zc-accent);
+                outline: 0;
+            }
+
+            &[aria-pressed="true"]::before {
+                border-color: var(--zc-accent);
+                background: var(--zc-accent);
+                box-shadow: inset 0 0 0 3px var(--zc-surface-alt);
+            }
+        }
+    }
+
+    .zalf-date-filter__custom {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 8px;
+
+        label {
+            min-width: 0;
+            margin: 0;
+            color: var(--zc-text-secondary);
+            font-size: .72rem;
+
+            span {
+                display: block;
+                margin-bottom: 4px;
+            }
+        }
+
+        input {
+            width: 100%;
+            min-width: 0;
+            height: 36px;
+            padding: 0 7px;
+            border: 1px solid var(--zc-border);
+            border-radius: 7px;
+            background: var(--zc-surface);
+            color: var(--zc-text);
+            font-size: .72rem;
+        }
+    }
+
+    .zalf-date-filter__apply {
+        grid-column: 1 / -1;
+        min-height: 36px;
+        border: 1px solid var(--zc-accent);
+        border-radius: 8px;
+        background: var(--zc-accent);
+        color: #fff;
+        font-size: .8rem;
+        font-weight: 700;
+
+        &:disabled {
+            border-color: var(--zc-border);
+            background: var(--zc-border);
+            color: var(--zc-text-muted);
+        }
     }
 
     // ── Filter accordion groups ────────────────────────────────
@@ -763,7 +1071,18 @@
     }
 
     .zalf-filter-panel .ms-filters-form form {
-        padding-top: 8px;
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr);
+        align-items: start;
+        gap: 14px 18px;
+        padding: 0 !important;
+
+        >* {
+            min-width: 0;
+            margin-bottom: 0;
+        }
+
+        > :last-child { grid-column: 1; }
     }
 
     .zalf-filter-panel .ms-filters-form .ms-filter-by {
@@ -845,28 +1164,44 @@
 .gn-catalogue {
 
     .ms-resources-container-grid>li {
-        padding: 6px;
+        width: calc(25% - .375rem);
+        padding: 4px;
+    }
+
+    .ms-resources-container-grid {
+        width: calc(100% + 8px);
+        margin-right: -4px;
+        margin-left: -4px;
+        gap: 8px;
+    }
+
+    &:has(.zalf-filter-panel--open) .ms-resources-container-grid {
+        padding-top: 10px;
     }
 
     .ms-resource-card-type-grid {
         background: var(--zc-surface);
         border: 1px solid rgba(222, 228, 233, 0.95);
         border-radius: 16px;
-        box-shadow: 0 8px 22px rgba(31, 57, 46, 0.08);
-        transition: box-shadow 160ms ease, border-color 160ms ease, transform 120ms ease;
-        overflow: hidden;
+        box-shadow: var(--zc-shadow-card);
+        transition: box-shadow 160ms ease, border-color 160ms ease, background 160ms ease;
+        overflow: visible;
+        position: relative;
         padding: 0;
         cursor: pointer;
 
         &:hover {
-            box-shadow: 0 14px 32px rgba(31, 57, 46, 0.14);
+            box-shadow: var(--zc-shadow-hover);
             border-color: var(--zc-accent);
-            transform: translateY(-1px);
         }
 
         &._active {
             border-color: var(--zc-accent);
             box-shadow: 0 0 0 2px rgba(78, 156, 24, 0.22), var(--zc-shadow-hover);
+        }
+
+        &:has(.ms-resource-card-action-buttons .dropdown.open) {
+            z-index: 20;
         }
     }
 
@@ -876,6 +1211,7 @@
         object-fit: cover;
         width: 100%;
         border-bottom: 1px solid var(--zc-border);
+        border-radius: 15px 15px 0 0;
     }
 
     // Icon placeholder when no thumbnail
@@ -883,6 +1219,7 @@
         height: 104px;
         background: var(--zc-surface-alt);
         border-bottom: 1px solid var(--zc-border);
+        border-radius: 15px 15px 0 0;
     }
 
     // Card body padding
@@ -897,6 +1234,11 @@
         font-weight: 700;
         color: var(--zc-text);
         line-height: 1.3;
+        display: -webkit-box !important;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        white-space: normal !important;
+        overflow: hidden;
 
         a {
             color: var(--zc-text);
@@ -973,13 +1315,17 @@
     // Action overlay
     .ms-resource-card-type-grid .ms-resource-card-action-buttons {
         .dropdown-toggle {
-            background: rgba(255, 255, 255, 0.92);
+            width: 44px;
+            min-width: 44px;
+            height: 44px;
+            min-height: 44px;
+            background: var(--zc-surface-alt) !important;
             border: 1px solid rgba(210, 223, 228, 0.95);
             border-radius: 12px;
             padding: 6px 8px;
             color: var(--zc-text-secondary);
             backdrop-filter: blur(4px);
-            box-shadow: 0 8px 18px rgba(31, 57, 46, 0.08);
+            box-shadow: none;
 
             &:hover {
                 border-color: var(--zc-accent);
@@ -1039,23 +1385,28 @@
     // Full-width rows separated by hairlines
     .ms-resources-container-list {
         padding: 0;
-        overflow: hidden; // prevent any child from escaping the list width
+        overflow: visible;
 
         >li {
             width: 100% !important;
             max-width: 100% !important;
             margin: 0 !important;
             padding: 0;
-            overflow: hidden;
-            border-bottom: 1px solid var(--zc-border);
+            overflow: visible;
+            position: relative;
+            border-bottom: 0;
             transition: background 120ms;
 
             &:first-child {
-                border-top: 1px solid var(--zc-border);
+                border-top: 0;
             }
 
             &:hover {
                 background: transparent;
+            }
+
+            &:has(.ms-resource-card-action-buttons .dropdown.open) {
+                z-index: 20;
             }
         }
     }
@@ -1066,34 +1417,35 @@
     }
 
     .ms-resource-card-type-list {
-        border: 1px solid rgba(222, 228, 233, 0.95);
-        border-left: 3px solid var(--zc-accent);
-        border-radius: 18px;
-        box-shadow: 0 8px 22px rgba(31, 57, 46, 0.08);
-        background: var(--zc-surface);
-        padding: 18px 24px;
-        margin: 10px 0;
-        transition: box-shadow 160ms ease, border-color 160ms ease, transform 120ms ease;
+        border: 0;
+        border-bottom: 1px solid var(--zc-border);
+        border-radius: 0;
+        box-shadow: none;
+        background: transparent;
+        padding: 18px 12px;
+        margin: 0;
+        transition: background 140ms ease, border-color 140ms ease;
+        overflow: visible;
 
         &:hover {
-            box-shadow: 0 14px 32px rgba(31, 57, 46, 0.14);
-            border-color: var(--zc-accent);
-            transform: translateY(-1px);
+            box-shadow: none;
+            border-color: var(--zc-border-strong);
+            background: rgba(255, 255, 255, 0.58);
         }
 
         // ── Left: resource type icon ──────────────────────────
         .ms-resource-card-limit:first-child {
-            width: 64px;
-            min-width: 64px;
-            height: 64px;
+            width: 48px;
+            min-width: 48px;
+            height: 48px;
             align-items: center;
             justify-content: center;
             margin-right: 18px;
-            border-radius: 16px;
-            background: linear-gradient(180deg, #f0f8eb 0%, #e5f1e9 100%);
+            border-radius: 12px;
+            background: rgba(232, 245, 225, 0.8);
             color: var(--zc-accent);
-            font-size: 1.45rem;
-            box-shadow: inset 0 0 0 1px rgba(78, 156, 24, 0.08);
+            font-size: 1.15rem;
+            box-shadow: none;
         }
 
         // ── Middle: Zenodo-style stacked layout ───────────────
@@ -1157,7 +1509,7 @@
         .ms-resource-card-body>.ms-flex-fill.ms-flex-box._flex._flex-center-v>.ms-text:first-child {
             font-size: 1.12rem !important;
             font-weight: 700 !important;
-            color: var(--zc-accent) !important;
+            color: #347c20 !important;
             line-height: 1.35;
             margin-bottom: 3px;
 
@@ -1216,9 +1568,7 @@
         }
 
         // ── Stats: share the last row ─────────────────────────
-        // Result:
-        //   🕐 June 18th, 2026
-        //   👁 N/A   ⬇ N/A
+        // Counts with no value are removed by the configured hideIfEmpty rule.
         .ms-resource-card-body>.ms-flex-fill.ms-flex-box._flex._flex-center-v>.ms-text:has(.glyphicon-eye-open),
         .ms-resource-card-body>.ms-flex-fill.ms-flex-box._flex._flex-center-v>.ms-text:has(.glyphicon-download) {
             flex: 0 0 auto !important;
@@ -1253,7 +1603,7 @@
         padding: 0;
         align-items: flex-start !important;
         min-width: 0;
-        overflow: hidden;
+        overflow: visible;
     }
 
     .ms-resource-card-type-list .ms-resource-card-body>.ms-flex-fill.ms-flex-box._flex._flex-center-v {
@@ -1263,12 +1613,16 @@
     // Action buttons dropdown
     .ms-resource-card-type-list .ms-resource-card-action-buttons {
         .dropdown-toggle {
-            background: rgba(255, 255, 255, 0.92);
+            width: 44px;
+            min-width: 44px;
+            height: 44px;
+            min-height: 44px;
+            background: var(--zc-surface-alt) !important;
             border: 1px solid rgba(210, 223, 228, 0.95);
             border-radius: 12px;
             padding: 8px 10px;
             color: var(--zc-text-secondary);
-            box-shadow: 0 8px 18px rgba(31, 57, 46, 0.08);
+            box-shadow: none;
 
             &:hover {
                 border-color: var(--zc-accent);
@@ -1444,9 +1798,80 @@
 // 11. Grid — responsive column breakpoints (cards)
 // ─────────────────────────────────────────────────────────────
 
-@container resources-container (width < 1100px) {
+.gn-catalogue {
+    .zalf-catalogue-skeleton {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        width: 100%;
+        min-height: 116px;
+        padding: 20px 12px;
+        border-bottom: 1px solid var(--zc-border);
+        background: transparent;
+    }
+
+    .zalf-catalogue-skeleton__icon,
+    .zalf-catalogue-skeleton__line {
+        display: block;
+        background: linear-gradient(90deg, #e6eaed 20%, #f4f6f7 38%, #e6eaed 58%);
+        background-size: 200% 100%;
+        animation: zalf-catalogue-shimmer 1.4s ease-in-out infinite;
+    }
+
+    .zalf-catalogue-skeleton__icon {
+        width: 48px;
+        min-width: 48px;
+        height: 48px;
+        border-radius: 12px;
+    }
+
+    .zalf-catalogue-skeleton__content {
+        display: flex;
+        flex: 1 1 auto;
+        min-width: 0;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .zalf-catalogue-skeleton__line {
+        width: 88%;
+        height: 10px;
+        border-radius: 999px;
+    }
+
+    .zalf-catalogue-skeleton__line--title {
+        width: 58%;
+        height: 14px;
+    }
+
+    .zalf-catalogue-skeleton__line--short {
+        width: 34%;
+    }
+
+    .zalf-catalogue-skeleton--grid {
+        min-height: 250px;
+        flex-direction: column;
+        border: 1px solid var(--zc-border);
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.72);
+    }
+}
+
+@keyframes zalf-catalogue-shimmer {
+    0% { background-position: 100% 0; }
+    100% { background-position: -100% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .gn-catalogue .zalf-catalogue-skeleton__icon,
+    .gn-catalogue .zalf-catalogue-skeleton__line {
+        animation: none;
+    }
+}
+
+@container resources-container (width < 900px) {
     .gn-catalogue .ms-resources-container-grid>li {
-        width: calc(50% - 0.75rem);
+        width: calc(50% - .25rem);
     }
 }
 
@@ -1454,6 +1879,21 @@
     .gn-catalogue .ms-resources-container-grid>li {
         width: 100%;
         padding: 4px 0;
+    }
+}
+
+@media (min-width: 1428px) {
+    .gn-catalogue {
+        .gn-components:has(.ms-resources-grid),
+        &:has(.zalf-filter-panel--closed) .gn-components:has(.ms-resources-grid) {
+            grid-template-columns:
+                calc((100% - var(--zc-content-width)) / 2) minmax(0, 1fr) calc((100% - var(--zc-content-width)) / 2);
+        }
+
+        &:has(.zalf-filter-panel--open) .gn-components:has(.ms-resources-grid) {
+            grid-template-columns:
+                calc((100% - var(--zc-content-width)) / 2) var(--zc-filter-width) minmax(0, 1fr) calc((100% - var(--zc-content-width)) / 2);
+        }
     }
 }
 
@@ -1468,7 +1908,7 @@
 // slot the filter panel between them using grid-row.
 // ─────────────────────────────────────────────────────────────
 
-@media (max-width: 768px) {
+@media (max-width: 1280px) {
 
     .gn-catalogue {
 
@@ -1476,7 +1916,7 @@
         .gn-components:has(.ms-resources-grid),
         &:has(.zalf-filter-panel--open) .gn-components:has(.ms-resources-grid) {
             grid-template-columns: 1fr !important;
-            grid-template-rows: auto auto auto auto !important;
+            grid-template-rows: auto auto auto auto auto !important;
             row-gap: 0 !important;
         }
 
@@ -1494,12 +1934,9 @@
             z-index: 1 !important;
         }
 
-        // Row 2: filter panel — in-flow, full width
+        // Core wrappers are dissolved; toolbar and drawer are direct grid items.
         .gn-components:has(.ms-resources-grid)>.ms-resources-panel-wrapper {
-            grid-column: 1 !important;
-            grid-row: 2 !important;
-            padding-top: 0 !important;
-            padding-bottom: 0 !important;
+            display: contents !important;
         }
 
         .gn-components>.ms-resources-panel-wrapper {
@@ -1510,16 +1947,29 @@
             visibility: visible !important;
         }
 
-        // Row 3: cards / resources container
-        .gn-components .ms-resources-container {
+        .gn-components .zalf-catalogue-search,
+        &:has(.zalf-filter-panel--open) .gn-components .zalf-catalogue-search {
             grid-column: 1 !important;
-            grid-row: 3 !important;
+            grid-row: 2 !important;
+            margin: 18px 24px 0 !important;
         }
 
-        // Row 4: footer
-        .gn-components:has(.ms-resources-grid)>.ms-footer {
+        &:has(.zalf-filter-panel--open) .gn-components .zalf-filter-panel-body {
+            grid-column: 1 !important;
+            grid-row: 3 !important;
+            margin: 14px 24px 0 !important;
+        }
+
+        // Row 4: cards / resources container
+        .gn-components .ms-resources-container {
             grid-column: 1 !important;
             grid-row: 4 !important;
+        }
+
+        // Row 5: footer
+        .gn-components:has(.ms-resources-grid)>.ms-footer {
+            grid-column: 1 !important;
+            grid-row: 5 !important;
         }
 
         .ms-resources-filter {
@@ -1535,7 +1985,7 @@
             border-left: none !important;
             border-right: none !important;
             border-top: none !important;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+            box-shadow: none !important;
         }
 
         .zalf-filter-panel--closed {
@@ -1543,9 +1993,27 @@
         }
 
         .zalf-filter-panel--closed .zalf-filter-panel-toggle {
-            width: 100%;
-            padding: 14px 16px;
-            border-radius: 0;
+            width: auto;
+            height: 48px;
+            padding: 0 16px;
+            border-radius: 12px;
+        }
+
+        .zalf-filter-panel-body .ms-filters-form form {
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            align-items: start;
+            gap: 12px 18px;
+            padding: 16px 20px 4px !important;
+        }
+
+        .zalf-filter-panel-body .ms-filters-form form > * {
+            min-width: 0;
+            margin-bottom: 0;
+        }
+
+        .zalf-filter-panel-body .ms-filters-form form > :last-child {
+            grid-column: span 2;
         }
 
         // Content layout tweaks
@@ -1568,7 +2036,7 @@
         }
 
         .ms-resources-container>div {
-            padding: 0 12px;
+            padding: 0 24px;
         }
 
         .ms-resources-container {
@@ -1586,7 +2054,7 @@
             flex-wrap: nowrap;
             padding: 14px 12px;
             gap: 10px;
-            overflow: hidden; // contain any overflow at card level
+            overflow: visible;
 
             // Icon column: smaller on mobile, fixed gap to text
             .ms-resource-card-limit:first-child {
@@ -1601,7 +2069,7 @@
             // Metadata column: must have min-width 0 to shrink below content size
             .ms-resource-card-body {
                 min-width: 0;
-                overflow: hidden;
+                overflow: visible;
                 flex: 1 1 0%;
             }
 
@@ -1619,11 +2087,13 @@
                 min-width: 0;
             }
 
-            // Title: single line with ellipsis
+            // Preserve enough of long scientific titles to identify records.
             .ms-resource-card-body>.ms-flex-fill.ms-flex-box._flex._flex-center-v>.ms-text:first-child {
                 overflow: hidden !important;
-                text-overflow: ellipsis !important;
-                white-space: nowrap !important;
+                display: -webkit-box !important;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                white-space: normal !important;
                 font-size: 1rem !important;
             }
 
@@ -1637,9 +2107,9 @@
 
             // Actions column: fixed, no shrink
             .ms-resource-card-limit:last-child {
-                flex: 0 0 36px;
-                min-width: 36px;
-                width: 36px;
+                flex: 0 0 44px;
+                min-width: 44px;
+                width: 44px;
             }
         }
 
@@ -1647,6 +2117,58 @@
         .zalf-filter-panel .leaflet-container,
         .zalf-filter-panel .ms-map-layout {
             width: 72% !important;
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .gn-catalogue {
+        .zalf-filter-panel-body .ms-filters-form form {
+            grid-template-columns: minmax(0, 1fr);
+            padding: 0 !important;
+        }
+
+        .zalf-filter-panel-body .ms-filters-form form > :last-child {
+            grid-column: 1;
+        }
+
+        .ms-resource-card-type-list {
+            padding-left: 8px;
+            padding-right: 8px;
+        }
+    }
+}
+
+@media (max-width: 600px) {
+    .gn-catalogue {
+        .ms-resources-container-grid {
+            width: 100%;
+            margin-right: 0;
+            margin-left: 0;
+        }
+
+        .zalf-catalogue-search {
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        }
+
+        .zalf-catalogue-search__field {
+            grid-column: 1 / -1;
+        }
+
+        .zalf-catalogue-search__submit,
+        .zalf-filter-panel-toggle {
+            width: 100%;
+            min-width: 0;
+        }
+    }
+}
+
+@media (max-width: 360px) {
+    .gn-catalogue .zalf-date-filter__custom {
+        grid-template-columns: minmax(0, 1fr);
+
+        .zalf-date-filter__apply {
+            grid-column: 1;
         }
     }
 }
