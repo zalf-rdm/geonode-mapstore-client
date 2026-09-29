@@ -1,5 +1,6 @@
 import expect from 'expect';
 import {
+    buildContactPeople,
     buildMetadataSections,
     getLandingUrl,
     getResourceIconName,
@@ -23,12 +24,17 @@ describe('ZALF metadata view utilities', () => {
         const sections = buildMetadataSections({
             title: 'Dataset',
             empty: '',
+            other_description: JSON.stringify({ submission: { reference_number: '42' }, dataset: { title: 'Dataset' } }),
             contacts: { owner: { label: 'Ada' } },
-            attribute_set: [{ attribute: 'temperature' }]
+            attribute_set: [{ attribute: 'temperature' }, { attribute: 'precipitation' }],
+            category: { id: 'farming', label: 'Farming' },
+            license: { id: 'cc-by', label: 'CC BY' },
+            keywords: ['soil', 'water']
         }, {
             properties: {
                 title: { title: 'Title', type: 'string' },
                 empty: { title: 'Empty', type: 'string' },
+                other_description: { title: 'Other description', type: 'string' },
                 contacts: { title: 'Contacts', type: 'object' },
                 attribute_set: {
                     title: 'Attributes',
@@ -38,7 +44,35 @@ describe('ZALF metadata view utilities', () => {
             }
         });
         expect(sections.map(({ title }) => title)).toEqual(['People', 'General', 'Attributes']);
-        expect(sections[1].fields.map(({ key }) => key)).toEqual(['title']);
+        expect(sections[0].itemCount).toBe(1);
+        expect(sections[0].itemLabel).toBe('person');
+        expect(sections[1].fields.map(({ key }) => key)).toEqual(['title', 'category', 'license', 'keywords']);
+        expect(sections[1].fields.map(({ wide }) => wide)).toEqual([false, false, false, false]);
+        expect(sections[2].itemCount).toBe(2);
+        expect(sections[2].itemLabel).toBe('attributes');
+    });
+
+    it('enriches and de-duplicates contact people from the resource API', () => {
+        const people = buildContactPeople({
+            owner: { id: '1', label: 'admin' },
+            contact_roles: [
+                { role: 'pointOfContact', users: [{ id: '1', label: 'admin' }] },
+                { role: 'author', users: [{ id: '2', label: 'Ada' }] }
+            ]
+        }, {
+            owner: { pk: 1, username: 'admin', email: 'admin@example.org' },
+            author: [{ pk: 2, full_name: 'Ada Lovelace', email: 'ada@example.org', orcid_identifier: '0000-0001' }]
+        }, {
+            oneOf: [
+                { 'const': 'pointOfContact', title: 'Point of contact' },
+                { 'const': 'author', title: 'Author' }
+            ]
+        });
+
+        expect(people.length).toBe(2);
+        expect(people[0].roles).toEqual(['Owner', 'Point of contact']);
+        expect(people[1].label).toBe('Ada Lovelace');
+        expect(people[1].email).toBe('ada@example.org');
     });
 
     it('uses schema labels and hides nested editor-only properties', () => {

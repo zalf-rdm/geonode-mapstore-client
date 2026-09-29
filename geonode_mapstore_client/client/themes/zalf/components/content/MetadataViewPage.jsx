@@ -9,6 +9,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from '@mapstore/framework/libs/ajax';
 import {
+    buildContactPeople,
     buildMetadataSections,
     getLandingUrl,
     getResourceIconName,
@@ -82,6 +83,10 @@ function parseJsonValue(value) {
     } catch (error) {
         return null;
     }
+}
+
+function scrollToMetadataSection(id) {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function PrimitiveValue({ value, schema }) {
@@ -158,29 +163,40 @@ function AttributeTable({ value, schema }) {
     );
 }
 
-function ContactsValue({ value, schema }) {
+function ContactsValue({ value, schema, resource }) {
     const roleSchema = schema?.properties?.contact_roles?.items?.properties?.role || {};
-    const roles = [
-        value?.owner?.label && { role: 'Owner', users: [value.owner] },
-        ...(value?.contact_roles || []).map((entry) => ({
-            role: getSchemaOptionLabel(roleSchema, entry.role),
-            users: entry.users || []
-        }))
-    ].filter((entry) => entry && entry.users.some((user) => isMetadataValuePresent(user?.label)));
+    const people = buildContactPeople(value, resource, roleSchema);
     return ce('div', { className: 'zalf-mv-contacts' },
-        ...roles.map((entry, index) => ce('div', { className: 'zalf-mv-contact-role', key: `${entry.role}-${index}` },
-            ce('div', { className: 'zalf-mv-contact-role-label' }, entry.role),
-            ce('ul', null, ...entry.users.filter((user) => isMetadataValuePresent(user?.label)).map((user, userIndex) =>
-                ce('li', { key: user.id || userIndex }, user.label)
-            ))
-        ))
+        ...people.map((person, index) => {
+            const orcid = person.orcid_url || person.orcid_identifier || person.orcid;
+            const orcidUrl = orcid && (/^https?:/i.test(orcid) ? orcid : `https://orcid.org/${orcid}`);
+            const organization = typeof person.organization === 'object'
+                ? person.organization?.organization
+                : person.organization;
+            const ror = typeof person.organization === 'object' ? person.organization?.ror : person.ror;
+            return ce('article', { className: 'zalf-mv-person', key: person.pk || person.id || index },
+                ce('div', { className: 'zalf-mv-person-name' }, person.label),
+                ce('ul', { className: 'zalf-mv-person-roles', 'aria-label': 'Roles' },
+                    ...person.roles.map((role) => ce('li', { key: role }, role))
+                ),
+                ce('div', { className: 'zalf-mv-person-details' },
+                    person.email && ce('a', { href: `mailto:${person.email}` }, person.email),
+                    orcidUrl && ce('a', { href: orcidUrl, target: '_blank', rel: 'noopener noreferrer' },
+                        'ORCID', ce(Icon, { name: 'external', size: '.72rem' })),
+                    organization && (ror
+                        ? ce('a', { href: ror, target: '_blank', rel: 'noopener noreferrer' },
+                            organization, ce(Icon, { name: 'external', size: '.72rem' }))
+                        : ce('span', null, organization))
+                )
+            );
+        })
     );
 }
 
-function Value({ value, schema = {}, fieldKey = '', compact = false }) {
+function Value({ value, schema = {}, fieldKey = '', compact = false, resource }) {
     if (!isMetadataValuePresent(value)) return null;
     if (fieldKey === 'contacts' && typeof value === 'object') {
-        return ce(ContactsValue, { value, schema });
+        return ce(ContactsValue, { value, schema, resource });
     }
     if (fieldKey === 'attribute_set' && Array.isArray(value)) {
         return ce(AttributeTable, { value, schema });
@@ -198,7 +214,7 @@ function Value({ value, schema = {}, fieldKey = '', compact = false }) {
     return ce(PrimitiveValue, { value, schema });
 }
 
-function MetadataField({ field }) {
+function MetadataField({ field, resource }) {
     return ce('div', {
         className: `zalf-mv-field${field.wide ? ' zalf-mv-field--wide' : ''}`,
         'data-field': field.key
@@ -206,18 +222,18 @@ function MetadataField({ field }) {
     ce('div', { className: 'zalf-mv-field-label' }, field.label),
     field.schema?.description && ce('div', { className: 'zalf-mv-field-description' }, field.schema.description),
     ce('div', { className: 'zalf-mv-field-value' }, ce(Value, {
-        value: field.value, schema: field.schema, fieldKey: field.key
+        value: field.value, schema: field.schema, fieldKey: field.key, resource
     })));
 }
 
-function MetadataSection({ section }) {
+function MetadataSection({ section, resource }) {
     return ce('section', { id: `metadata-section-${section.id}`, className: 'zalf-mv-section' },
         ce('header', { className: 'zalf-mv-section-header' },
             ce('h2', null, section.title),
-            ce('span', null, `${section.fields.length} ${section.fields.length === 1 ? 'field' : 'fields'}`)
+            ce('span', null, `${section.itemCount} ${section.itemLabel}`)
         ),
         ce('div', { className: 'zalf-mv-fields' },
-            ...section.fields.map((field) => ce(MetadataField, { key: field.key, field }))
+            ...section.fields.map((field) => ce(MetadataField, { key: field.key, field, resource }))
         )
     );
 }
@@ -269,7 +285,7 @@ export default function MetadataViewPage() {
     }
 
     const { resource } = state;
-    const sections = buildMetadataSections(state.metadata, state.schema);
+    const sections = buildMetadataSections(state.metadata, state.schema, resource);
     const iconName = getResourceIconName(resource);
 
     return ce('main', { className: 'zalf-mv-page' },
@@ -295,8 +311,11 @@ export default function MetadataViewPage() {
                     ce('div', { className: 'zalf-mv-hero-actions' },
                         ce('a', { className: 'zalf-mv-button zalf-mv-button--primary', href: getLandingUrl(resource) },
                             ce(Icon, { name: 'back' }), 'Back to resource'),
-                        ce('a', { className: 'zalf-mv-button', href: '#metadata-sections' },
-                            ce(Icon, { name: 'metadata' }), 'Browse sections')
+                        ce('button', {
+                            className: 'zalf-mv-button', type: 'button',
+                            onClick: () => scrollToMetadataSection('metadata-sections')
+                        },
+                        ce(Icon, { name: 'metadata' }), 'Browse sections')
                     )
                 )
             )
@@ -306,15 +325,16 @@ export default function MetadataViewPage() {
                 ce('div', { className: 'zalf-mv-sidebar-inner' },
                     ce('div', { className: 'zalf-mv-sidebar-title' }, 'On this page'),
                     ce('nav', { className: 'zalf-mv-section-nav', 'aria-label': 'Metadata sections' },
-                        ...sections.map((section) => ce('a', {
-                            key: section.id, href: `#metadata-section-${section.id}`
-                        }, ce('span', null, section.title), ce('small', null, section.fields.length)))
+                        ...sections.map((section) => ce('button', {
+                            key: section.id, type: 'button',
+                            onClick: () => scrollToMetadataSection(`metadata-section-${section.id}`)
+                        }, ce('span', null, section.title), ce('small', null, section.itemCount)))
                     )
                 )
             ),
             ce('div', { className: 'zalf-mv-content' },
                 sections.length
-                    ? sections.map((section) => ce(MetadataSection, { key: section.id, section }))
+                    ? sections.map((section) => ce(MetadataSection, { key: section.id, section, resource }))
                     : ce('div', { className: 'zalf-mv-state' }, 'No metadata values are available.')
             )
         )
