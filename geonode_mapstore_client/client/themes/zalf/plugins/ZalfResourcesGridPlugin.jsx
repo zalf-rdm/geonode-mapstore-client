@@ -27,8 +27,18 @@ import { Glyphicon } from 'react-bootstrap';
 import { createPlugin } from '@mapstore/framework/utils/PluginsUtils';
 import { userSelector } from '@mapstore/framework/selectors/security';
 import {
+    getCurrentPage,
+    getCurrentParams,
+    getIsFirstRequest,
     getMonitoredStateSelector,
-    getRouterLocation
+    getResources,
+    getResourcesError,
+    getResourcesLoading,
+    getRouterLocation,
+    getSearch,
+    getSelectedResource,
+    getShowFiltersForm,
+    getTotalResources
 } from '@mapstore/framework/plugins/ResourcesCatalog/selectors/resources';
 import useQueryResourcesByLocation from '@mapstore/framework/plugins/ResourcesCatalog/hooks/useQueryResourcesByLocation';
 import useParsePluginConfigExpressions from '@mapstore/framework/plugins/ResourcesCatalog/hooks/useParsePluginConfigExpressions';
@@ -49,20 +59,10 @@ import {
     loadingResources,
     resetSearchResources,
     setResourceTypes,
+    setShowFiltersForm,
     updateResources,
     updateResourcesMetadata
 } from '@mapstore/framework/plugins/ResourcesCatalog/actions/resources';
-import {
-    getResourcesLoading,
-    getResourcesError,
-    getIsFirstRequest,
-    getTotalResources,
-    getCurrentPage,
-    getSearch,
-    getCurrentParams,
-    getResources,
-    getSelectedResource
-} from '@mapstore/framework/plugins/ResourcesCatalog/selectors/resources';
 import resourcesEpics from '@mapstore/framework/plugins/ResourcesCatalog/epics/resources';
 import resourcesReducer from '@mapstore/framework/plugins/ResourcesCatalog/reducers/resources';
 import { formatUsernameFallback } from '@js/utils/SearchUtils';
@@ -169,7 +169,9 @@ function ZalfResourcesGridContainer({
     hideThumbnail,
     openInNewTab,
     resourcesFoundMsgId,
-    availableResourceTypes
+    availableResourceTypes,
+    showFiltersForm,
+    onSetShowFiltersForm
 }, context) {
 
     const { query } = url.parse(location.search, true);
@@ -240,6 +242,21 @@ function ZalfResourcesGridContainer({
     // Resources are pre-processed here to resolve virtual paths (author, catalogue_summary)
     // without modifying MapStore2's ResourcesUtils.js.
     const processedResources = resources.map(resolveVirtualPaths);
+    const FilterToolbarButton = () => ce('li', { className: 'zalf-filter-toolbar-item' },
+        ce('button', {
+            type: 'button',
+            className: 'zalf-filter-toolbar-toggle',
+            onClick: () => onSetShowFiltersForm(!showFiltersForm, id),
+            'aria-expanded': showFiltersForm,
+            'aria-controls': 'zalf-catalogue-filter-drawer'
+        },
+        ce('span', { className: 'fa fa-filter', 'aria-hidden': 'true' }),
+        ce('span', null, 'Filters'),
+        ce('span', {
+            className: 'fa fa-chevron-down zalf-filter-panel-caret',
+            'aria-hidden': 'true'
+        }))
+    );
 
     return ce(TargetSelectorPortal, { targetSelector },
         ce('div', {
@@ -252,7 +269,11 @@ function ZalfResourcesGridContainer({
                 titleId,
                 resourcesGridId: id,
                 menuItemsLeft,
-                menuItems: [...parsedConfig.menuItems, ...menuItemsRight],
+                menuItems: [
+                    ...parsedConfig.menuItems,
+                    ...menuItemsRight,
+                    { name: 'zalf-filter-toggle', Component: FilterToolbarButton }
+                ],
                 orderConfig: parsedConfig.order,
                 totalResources,
                 loading,
@@ -418,14 +439,16 @@ const ZalfResourcesGridPlugin = connect(
         isFirstRequest: getIsFirstRequest,
         page: getCurrentPage,
         search: getSearch,
-        storedParams: getCurrentParams
+        storedParams: getCurrentParams,
+        showFiltersForm: getShowFiltersForm
     }),
     {
         setLoading: loadingResources,
         setResources: updateResources,
         setResourcesMetadata: updateResourcesMetadata,
         onResetSearch: resetSearchResources,
-        onSetResourceTypes: setResourceTypes
+        onSetResourceTypes: setResourceTypes,
+        onSetShowFiltersForm: setShowFiltersForm
     }
 )(ZalfResourcesGrid);
 
