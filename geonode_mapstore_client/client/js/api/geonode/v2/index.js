@@ -89,6 +89,16 @@ export const RESOURCE_SEARCH_FIELDS = [
     'related_identifier__description'
 ];
 
+// fields read by the catalogue cards on top of the catalog_list preset;
+// the details panel fetches the full resource on selection
+export const CATALOGUE_CARD_FIELDS = [
+    'author',
+    'group',
+    'abstract',
+    'embed_url',
+    'sourcetype'
+];
+
 /**
  * Actions for GeoNode save workflow
  * @module api/geonode/v2
@@ -114,8 +124,8 @@ export const getResources = ({
         page,
         page_size: pageSize,
         'filter{metadata_only}': false, // exclude resources such as services
-        api_preset: [API_PRESET.CATALOGS, API_PRESET.VIEWER_COMMON],
-        'include[]': 'author'
+        api_preset: API_PRESET.CATALOGS,
+        include: CATALOGUE_CARD_FIELDS
     };
     return axios.get(getEndpointUrl(RESOURCES), {
         params: _params,

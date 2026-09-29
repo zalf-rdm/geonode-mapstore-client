@@ -10,6 +10,7 @@ import expect from 'expect';
 import MockAdapter from 'axios-mock-adapter';
 import axios from '@mapstore/framework/libs/ajax';
 import {
+    CATALOGUE_CARD_FIELDS,
     createMap,
     getResources,
     RESOURCE_SEARCH_FIELDS,
@@ -95,5 +96,27 @@ describe('GeoNode v2 api', () => {
             });
 
         getResources({ q: 'Wenbin' });
+    });
+    it('should request only the catalogue card fields (getResources)', (done) => {
+        mockAxios.onGet(/\/api\/v2\/resources/)
+            .reply((config) => {
+                try {
+                    expect(config.params.api_preset).toBe('catalog_list');
+                    expect(config.params.include).toEqual(CATALOGUE_CARD_FIELDS);
+                    const query = decodeURIComponent(config.paramsSerializer.serialize(config.params));
+                    CATALOGUE_CARD_FIELDS.forEach((field) => expect(query).toContain(`include[]=${field}`));
+                    expect(query).toNotContain('viewer_common');
+                } catch (e) {
+                    done(e);
+                }
+                done();
+                return [200, {
+                    total: 0,
+                    links: {},
+                    resources: []
+                }];
+            });
+
+        getResources({ q: 'soil' });
     });
 });
