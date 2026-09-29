@@ -1269,7 +1269,7 @@ export default function DatasetLandingPage() {
     const viewerBtnLabel = getViewerButtonLabel(r);
     // A plain click opens the read-only metadata overlay; a modified click (new tab/window)
     // follows the link to the full read-only metadata page. Neither opens the editor.
-    const metadataHref = '/metadata/' + pk;
+    const metadataHref = '#/metadata-view/' + pk;
     const openMetadata = (event) => {
         if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
         event.preventDefault();

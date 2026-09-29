@@ -5,7 +5,7 @@ import os
 from dateutil import parser
 from django.conf import settings
 from django.core.cache import cache
-from django.http import Http404  # noqa: F401
+from django.http import Http404, HttpResponseRedirect  # noqa: F401
 from django.shortcuts import render
 from django.templatetags.static import static  # noqa: F401
 from django.urls import reverse
@@ -58,6 +58,11 @@ def _parse_schema_instance(instance, schema):
 
 
 def metadata(request, pk, template="geonode-mapstore-client/metadata.html"):
+
+    # The standalone read-only experience belongs to the ZALF React theme.
+    # Keep the server-rendered template only for the editor's iframe preview.
+    if template == "geonode-mapstore-client/metadata.html":
+        return HttpResponseRedirect(f"/catalogue/#/metadata-view/{pk}")
 
     from geonode.base.models import ResourceBase
     from geonode.metadata.manager import metadata_manager

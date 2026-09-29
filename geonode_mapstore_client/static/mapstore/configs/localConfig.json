@@ -4511,6 +4511,17 @@
         "name": "ZalfFooter"
       }
     ],
+    "metadata_view": [
+      {
+        "name": "ZalfNavigation"
+      },
+      {
+        "name": "ZalfMetadataView"
+      },
+      {
+        "name": "ZalfFooter"
+      }
+    ],
     "upload_dataset": [
       {
         "name": "ZalfNavigation"
