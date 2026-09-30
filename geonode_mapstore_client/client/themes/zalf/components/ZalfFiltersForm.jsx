@@ -12,7 +12,13 @@ import ZalfDateHistogramFilter from './ZalfDateHistogramFilter';
 const ce = React.createElement;
 
 export default function ZalfFiltersForm(props) {
-    const { fields = [], onChange = () => {}, query = {}, expanded = true } = props;
+    const {
+        fields = [],
+        onChange = () => {},
+        onClose = () => {},
+        query = {},
+        expanded = true
+    } = props;
 
     const filterFields = fields.filter((field) => field.type !== 'search');
     const panelClassName = 'zalf-filter-panel'
@@ -20,29 +26,46 @@ export default function ZalfFiltersForm(props) {
 
     return ce('div', { className: panelClassName },
         expanded
-            ? ce('div', { id: 'zalf-catalogue-filter-drawer', className: 'zalf-filter-panel-body' },
-                ce('div', { className: 'ms-filters-form' },
-                    ce('form', { className: '_padding-lr-md' },
-                        filterFields.map((field, index) => field.type === 'date-range'
-                            ? ce(ZalfDateHistogramFilter, {
-                                key: field.uuid || field.id || `date-${index}`,
-                                query,
-                                filterKey: field.filterKey,
-                                onChange
-                            })
-                            : ce(FilterItems, {
-                                key: field.uuid || field.id || `field-${index}`,
-                                id: props.id,
-                                items: [field],
-                                values: query,
-                                onChange,
-                                extentProps: props.extentProps,
-                                timeDebounce: props.timeDebounce,
-                                root: true
-                            })
-                        )
+            ? ce('div', {
+                id: 'zalf-catalogue-filter-drawer',
+                className: 'zalf-filter-panel-body',
+                'aria-labelledby': 'zalf-catalogue-filter-title'
+            },
+            ce('div', { className: 'zalf-filter-panel-header' },
+                ce('div', null,
+                    ce('h2', { id: 'zalf-catalogue-filter-title' }, 'Refine results'),
+                    ce('p', null, 'Combine filters to narrow the catalogue.')
+                ),
+                ce('button', {
+                    type: 'button',
+                    className: 'zalf-filter-panel-close',
+                    onClick: onClose,
+                    'aria-label': 'Close filters',
+                    title: 'Close filters'
+                }, ce('span', { 'aria-hidden': 'true' }, '\u00d7'))
+            ),
+            ce('div', { className: 'ms-filters-form' },
+                ce('form', { className: '_padding-lr-md' },
+                    filterFields.map((field, index) => field.type === 'date-range'
+                        ? ce(ZalfDateHistogramFilter, {
+                            key: field.uuid || field.id || `date-${index}`,
+                            query,
+                            filterKey: field.filterKey,
+                            onChange
+                        })
+                        : ce(FilterItems, {
+                            key: field.uuid || field.id || `field-${index}`,
+                            id: props.id,
+                            items: [field],
+                            values: query,
+                            onChange,
+                            extentProps: props.extentProps,
+                            timeDebounce: props.timeDebounce,
+                            root: true
+                        })
                     )
                 )
+            )
             )
             : null
     );
