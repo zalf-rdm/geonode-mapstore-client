@@ -43,4 +43,23 @@ describe('ZALF catalogue filters', () => {
         expect(document.querySelector('.zalf-filter-panel--closed')).toExist();
         expect(document.querySelector('.zalf-filter-panel-body')).toBe(null);
     });
+
+    it('offers an accessible close control that collapses through its owner', () => {
+        let closeCalls = 0;
+        act(() => {
+            ReactDOM.render(
+                <ZalfFiltersForm
+                    fields={[]}
+                    query={{}}
+                    onClose={() => { closeCalls += 1; }}
+                />,
+                document.getElementById('container')
+            );
+        });
+
+        const closeButton = document.querySelector('.zalf-filter-panel-close');
+        expect(closeButton.getAttribute('aria-label')).toBe('Close filters');
+        act(() => closeButton.click());
+        expect(closeCalls).toBe(1);
+    });
 });
