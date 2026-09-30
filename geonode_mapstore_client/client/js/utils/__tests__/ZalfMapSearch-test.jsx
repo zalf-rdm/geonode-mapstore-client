@@ -61,6 +61,8 @@ describe('ZALF catalogue map search', () => {
                 expect(calls[0].include).toEqual(MAP_FIELDS);
                 expect(applied).toEqual([]);
                 expect(document.body.textContent).toContain('Soil dataset');
+                expect(document.body.textContent).toContain('Choose an area to search');
+                expect(document.body.textContent).toContain('Green numbered markers');
                 expect(document.body.textContent).toContain('View');
                 expect(document.querySelector('.zalf-map-search__view').getAttribute('href'))
                     .toBe('/catalogue/soil-dataset');

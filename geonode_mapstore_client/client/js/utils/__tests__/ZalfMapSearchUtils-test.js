@@ -1,6 +1,7 @@
 import expect from 'expect';
 import {
     formatExtent,
+    getAvailabilityClusters,
     getAdministrativeBoundary,
     getMappableResources,
     getResourceFeature,
@@ -60,5 +61,20 @@ describe('ZALF catalogue map search utilities', () => {
         expect(getSpatialQuality(resource).key).toBe('administrative');
         expect(getMappableResources([resource]).map(({ id }) => id)).toEqual([3]);
         expect(getResourceFeature(resource).geometry).toEqual(municipality.geometry);
+    });
+
+    it('clusters resource availability without treating anchors as observation points', () => {
+        const resources = [
+            { id: 1, extent: { coords: [10, 50, 11, 51] } },
+            { id: 2, extent: { coords: [11, 51, 12, 52] } },
+            { id: 3, extent: { coords: [-70, -20, -69, -19] } }
+        ];
+
+        const clusters = getAvailabilityClusters(resources, 3);
+
+        expect(clusters.length).toBe(2);
+        expect(clusters.map(({ properties }) => properties.count).sort()).toEqual([1, 2]);
+        expect(clusters.find(({ properties }) => properties.count === 2).properties.meaning)
+            .toBe('Catalogue data availability');
     });
 });

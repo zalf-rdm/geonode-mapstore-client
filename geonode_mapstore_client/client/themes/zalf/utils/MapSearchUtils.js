@@ -119,3 +119,66 @@ export const getResourceFeature = (resource = {}) => {
     }
     return null;
 };
+
+const visitCoordinates = (coordinates, visitor) => {
+    if (!Array.isArray(coordinates)) {
+        return;
+    }
+    if (coordinates.length >= 2 && coordinates.slice(0, 2).every(Number.isFinite)) {
+        visitor(coordinates);
+        return;
+    }
+    coordinates.forEach((coordinate) => visitCoordinates(coordinate, visitor));
+};
+
+export const getFeatureAnchor = (feature) => {
+    const bounds = [Infinity, Infinity, -Infinity, -Infinity];
+    visitCoordinates(feature?.geometry?.coordinates, ([x, y]) => {
+        bounds[0] = Math.min(bounds[0], x);
+        bounds[1] = Math.min(bounds[1], y);
+        bounds[2] = Math.max(bounds[2], x);
+        bounds[3] = Math.max(bounds[3], y);
+    });
+    return bounds.every(Number.isFinite)
+        ? [(bounds[0] + bounds[2]) / 2, (bounds[1] + bounds[3]) / 2]
+        : null;
+};
+
+/**
+ * Build zoom-dependent availability indicators from trusted resource shapes.
+ * The anchors are a discovery aid, not observation locations: the original
+ * bbox or administrative boundary remains the spatial source of truth.
+ */
+export const getAvailabilityClusters = (resources = [], zoom = 3) => {
+    const normalizedZoom = Number.isFinite(zoom) ? Math.max(1, zoom) : 3;
+    const cellSize = 360 * 60 / (256 * Math.pow(2, normalizedZoom));
+    const clusters = new Map();
+
+    resources.forEach((resource) => {
+        const feature = getResourceFeature(resource);
+        const anchor = getFeatureAnchor(feature);
+        if (!anchor) {
+            return;
+        }
+        const key = `${Math.floor((anchor[0] + 180) / cellSize)}:${Math.floor((anchor[1] + 90) / cellSize)}`;
+        const cluster = clusters.get(key) || { coordinates: [0, 0], resourceIds: [] };
+        cluster.coordinates[0] += anchor[0];
+        cluster.coordinates[1] += anchor[1];
+        cluster.resourceIds.push(String(resource.id || resource.pk));
+        clusters.set(key, cluster);
+    });
+
+    return Array.from(clusters.values()).map((cluster, index) => ({
+        type: 'Feature',
+        id: `catalogue-availability-${index}`,
+        geometry: {
+            type: 'Point',
+            coordinates: cluster.coordinates.map((value) => value / cluster.resourceIds.length)
+        },
+        properties: {
+            count: cluster.resourceIds.length,
+            resourceIds: cluster.resourceIds,
+            meaning: 'Catalogue data availability'
+        }
+    }));
+};
