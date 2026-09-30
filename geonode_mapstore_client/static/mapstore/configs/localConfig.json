@@ -4222,6 +4222,10 @@
             },
             {
               "type": "select",
+              "facet": "funding"
+            },
+            {
+              "type": "select",
               "facet": "user",
               "include": [
                 "author"
