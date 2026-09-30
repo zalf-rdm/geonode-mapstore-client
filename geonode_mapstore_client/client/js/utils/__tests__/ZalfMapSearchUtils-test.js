@@ -1,7 +1,9 @@
 import expect from 'expect';
 import {
     formatExtent,
+    getAdministrativeBoundary,
     getMappableResources,
+    getResourceFeature,
     getSpatialQuality,
     isSearchableExtent,
     parseExtent
@@ -37,5 +39,26 @@ describe('ZALF catalogue map search utilities', () => {
             { id: 3, geo_keywords: [{ name: 'Germany' }] }
         ];
         expect(getMappableResources(resources).map(({ id }) => id)).toEqual([1]);
+    });
+
+    it('uses the deepest verified GADM boundary for administrative resources', () => {
+        const brazil = {
+            source: 'GADM', level: 0, gid: 'BRA',
+            geometry: { type: 'MultiPolygon', coordinates: [[[[-74, -34], [-34, -34], [-34, 6], [-74, 6], [-74, -34]]]] }
+        };
+        const municipality = {
+            source: 'GADM', level: 2, gid: 'BRA.17.101_2',
+            geometry: { type: 'MultiPolygon', coordinates: [[[[-41, -9], [-40, -9], [-40, -8], [-41, -8], [-41, -9]]]] }
+        };
+        const resource = {
+            id: 3,
+            extent: { coords: [-1, -1, 0, 0] },
+            geo_keywords: [brazil, municipality]
+        };
+
+        expect(getAdministrativeBoundary(resource).gid).toBe('BRA.17.101_2');
+        expect(getSpatialQuality(resource).key).toBe('administrative');
+        expect(getMappableResources([resource]).map(({ id }) => id)).toEqual([3]);
+        expect(getResourceFeature(resource).geometry).toEqual(municipality.geometry);
     });
 });

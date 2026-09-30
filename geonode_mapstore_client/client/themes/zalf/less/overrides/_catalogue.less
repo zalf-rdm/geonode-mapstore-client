@@ -2377,26 +2377,29 @@
         flex: 1 1 auto;
         min-height: 0;
         margin: 0;
-        padding: 8px;
+        padding: 6px 14px;
         overflow: auto;
         list-style: none;
     }
 
     .zalf-map-search__result {
         position: relative;
-        margin: 0 0 7px;
-        padding: 14px;
-        border: 1px solid transparent;
-        border-radius: var(--zc-radius-md);
+        margin: 0;
+        padding: 15px 6px;
+        border: 0;
+        border-bottom: 1px solid var(--zc-border);
         background: #fff;
-        transition: border-color 130ms ease, background 130ms ease, box-shadow 130ms ease;
+        transition: background 130ms ease, box-shadow 130ms ease;
+
+        &:last-child {
+            border-bottom: 0;
+        }
 
         &:hover,
         &:focus-within,
         &.is-active {
-            border-color: #8fc8a5;
             background: #f5fbf7;
-            box-shadow: 0 2px 8px rgba(24, 39, 29, .08);
+            box-shadow: inset 3px 0 0 #8fc8a5;
         }
     }
 
@@ -2452,6 +2455,34 @@
         font-size: .74rem;
         text-overflow: ellipsis;
         white-space: nowrap;
+    }
+
+    .zalf-map-search__result-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 10px;
+    }
+
+    .zalf-map-search__view {
+        display: inline-flex;
+        min-height: 44px;
+        align-items: center;
+        gap: 7px;
+        padding: 6px 10px;
+        border: 1px solid var(--zc-accent);
+        border-radius: 8px;
+        color: var(--zc-accent);
+        font-size: .78rem;
+        font-weight: 700;
+        line-height: 1;
+        text-decoration: none;
+
+        &:hover,
+        &:focus {
+            background: var(--zc-accent);
+            color: #fff;
+            text-decoration: none;
+        }
     }
 
     .zalf-map-search__loading {

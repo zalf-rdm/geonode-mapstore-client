@@ -18,6 +18,7 @@ import ZalfMapExtentSelector from './ZalfMapExtentSelector';
 import {
     formatExtent,
     getMappableResources,
+    getResourceFeature,
     getSpatialQuality,
     isSearchableExtent
 } from '../utils/MapSearchUtils';
@@ -45,6 +46,15 @@ const activeResultStyle = {
     weight: 3
 };
 
+const administrativeResultStyle = {
+    color: '#725b18',
+    opacity: 0.92,
+    fillColor: '#f2c94c',
+    fillOpacity: 0.14,
+    weight: 2,
+    dashArray: [6, 4]
+};
+
 const selectionStyle = {
     color: '#163f2b',
     opacity: 1,
@@ -67,16 +77,25 @@ const joinSpatialMetadata = (resources, spatialResources) => {
 
 const buildResourceFeatures = (resources, activeResourceId) => resources.map((resource) => {
     const id = String(resource.id || resource.pk);
+    const feature = getResourceFeature(resource);
+    const quality = getSpatialQuality(resource);
+    if (!feature) {
+        return null;
+    }
     return {
-        ...getFeatureFromExtent(formatExtent(resource.extent)),
+        ...feature,
         id: `catalogue-resource-${id}`,
         properties: {
             resourceId: id,
             title: resource.name || resource.title
         },
-        style: id === String(activeResourceId) ? activeResultStyle : resultStyle
+        style: id === String(activeResourceId)
+            ? activeResultStyle
+            : quality.key === 'administrative'
+                ? administrativeResultStyle
+                : resultStyle
     };
-});
+}).filter(Boolean);
 
 const getIntersectedResourceId = (event) => event?.intersectedFeatures
     ?.find(({ id }) => id === 'zalf-map-search-results')
@@ -108,6 +127,11 @@ const ResultItem = ({ resource, active, onActivate }) => {
             ce('span', { className: 'fa fa-map-marker', 'aria-hidden': 'true' }),
             ' ', resource.geo_keywords.map(({ name }) => name).filter(Boolean).join(' · ')
         )
+        : null,
+    viewerUrl
+        ? ce('div', { className: 'zalf-map-search__result-actions' },
+            ce('a', { className: 'zalf-map-search__view', href: viewerUrl },
+                'View', ce('span', { className: 'fa fa-arrow-right', 'aria-hidden': 'true' })))
         : null
     );
 };

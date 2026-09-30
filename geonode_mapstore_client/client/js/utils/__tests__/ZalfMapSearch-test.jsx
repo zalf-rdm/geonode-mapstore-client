@@ -31,7 +31,12 @@ describe('ZALF catalogue map search', () => {
             calls.push(params);
             return Promise.resolve({
                 total: 1,
-                resources: [{ id: 7, name: 'Soil dataset', extent: { coords: [11, 51, 12, 52] } }]
+                resources: [{
+                    id: 7,
+                    name: 'Soil dataset',
+                    detail_url: '/catalogue/soil-dataset',
+                    extent: { coords: [11, 51, 12, 52] }
+                }]
             });
         };
 
@@ -56,6 +61,9 @@ describe('ZALF catalogue map search', () => {
                 expect(calls[0].include).toEqual(MAP_FIELDS);
                 expect(applied).toEqual([]);
                 expect(document.body.textContent).toContain('Soil dataset');
+                expect(document.body.textContent).toContain('View');
+                expect(document.querySelector('.zalf-map-search__view').getAttribute('href'))
+                    .toBe('/catalogue/soil-dataset');
                 expect(document.body.textContent).toNotContain('Approximate bounding box');
                 expect(document.body.textContent).toNotContain('Location metadata only');
                 expect(document.body.textContent).toNotContain('Recorded bounding boxes');
