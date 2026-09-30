@@ -17,7 +17,9 @@ import { CATALOGUE_CARD_FIELDS } from '@js/api/geonode/v2';
 import ZalfMapExtentSelector from './ZalfMapExtentSelector';
 import {
     formatExtent,
+    getAvailabilityClusters,
     getMappableResources,
+    getResourceFeature,
     getSpatialQuality,
     isSearchableExtent
 } from '../utils/MapSearchUtils';
@@ -45,6 +47,15 @@ const activeResultStyle = {
     weight: 3
 };
 
+const administrativeResultStyle = {
+    color: '#725b18',
+    opacity: 0.92,
+    fillColor: '#f2c94c',
+    fillOpacity: 0.14,
+    weight: 2,
+    dashArray: [6, 4]
+};
+
 const selectionStyle = {
     color: '#163f2b',
     opacity: 1,
@@ -52,6 +63,32 @@ const selectionStyle = {
     fillOpacity: 0.1,
     weight: 2.5,
     dashArray: [7, 5]
+};
+
+const getAvailabilityStyle = (count) => {
+    const radius = Math.min(18, 9 + Math.log2(Math.max(1, count)) * 2);
+    return [
+        {
+            radius,
+            color: '#fff',
+            opacity: 1,
+            fillColor: '#256d46',
+            fillOpacity: 0.94,
+            weight: 2,
+            zIndex: 1000
+        },
+        {
+            label: String(count),
+            font: '700 12px Arial',
+            fontSize: 12,
+            offsetY: 1,
+            color: '#163f2b',
+            weight: 3,
+            fillColor: '#fff',
+            fillOpacity: 1,
+            zIndex: 1001
+        }
+    ];
 };
 
 const joinSpatialMetadata = (resources, spatialResources) => {
@@ -67,16 +104,25 @@ const joinSpatialMetadata = (resources, spatialResources) => {
 
 const buildResourceFeatures = (resources, activeResourceId) => resources.map((resource) => {
     const id = String(resource.id || resource.pk);
+    const feature = getResourceFeature(resource);
+    const quality = getSpatialQuality(resource);
+    if (!feature) {
+        return null;
+    }
     return {
-        ...getFeatureFromExtent(formatExtent(resource.extent)),
+        ...feature,
         id: `catalogue-resource-${id}`,
         properties: {
             resourceId: id,
             title: resource.name || resource.title
         },
-        style: id === String(activeResourceId) ? activeResultStyle : resultStyle
+        style: id === String(activeResourceId)
+            ? activeResultStyle
+            : quality.key === 'administrative'
+                ? administrativeResultStyle
+                : resultStyle
     };
-});
+}).filter(Boolean);
 
 const getIntersectedResourceId = (event) => event?.intersectedFeatures
     ?.find(({ id }) => id === 'zalf-map-search-results')
@@ -108,6 +154,11 @@ const ResultItem = ({ resource, active, onActivate }) => {
             ce('span', { className: 'fa fa-map-marker', 'aria-hidden': 'true' }),
             ' ', resource.geo_keywords.map(({ name }) => name).filter(Boolean).join(' · ')
         )
+        : null,
+    viewerUrl
+        ? ce('div', { className: 'zalf-map-search__result-actions' },
+            ce('a', { className: 'zalf-map-search__view', href: viewerUrl },
+                'View', ce('span', { className: 'fa fa-arrow-right', 'aria-hidden': 'true' })))
         : null
     );
 };
@@ -133,6 +184,7 @@ export default function ZalfMapSearch({
     const [mapLoading, setMapLoading] = useState(false);
     const [mapError, setMapError] = useState(false);
     const [mobileView, setMobileView] = useState('map');
+    const [mapZoom, setMapZoom] = useState(3);
     const loadResourcesRef = useRef(loadResources);
     loadResourcesRef.current = loadResources;
 
@@ -174,6 +226,9 @@ export default function ZalfMapSearch({
     }, [appliedExtent]);
 
     const handleMapViewChanges = useCallback((center, zoom, bbox) => {
+        if (Number.isFinite(zoom)) {
+            setMapZoom(zoom);
+        }
         if (!bbox?.bounds) {
             return;
         }
@@ -213,6 +268,14 @@ export default function ZalfMapSearch({
     const resultFeatures = useMemo(
         () => buildResourceFeatures(mappableResources, activeResourceId),
         [mappableResources, activeResourceId]
+    );
+    const availabilityFeatures = useMemo(
+        () => getAvailabilityClusters(mappableResources, mapZoom)
+            .map((feature) => ({
+                ...feature,
+                style: getAvailabilityStyle(feature.properties.count)
+            })),
+        [mappableResources, mapZoom]
     );
     const candidateIsValid = isSearchableExtent(candidateExtent);
     const selectedFeature = candidateExtent && candidateIsValid
@@ -287,6 +350,7 @@ export default function ZalfMapSearch({
                     group: 'background', visibility: true
                 },
                 { id: 'zalf-map-search-results', type: 'vector', features: resultFeatures },
+                { id: 'zalf-map-search-availability', type: 'vector', features: availabilityFeatures },
                 ...(selectedFeature
                     ? [{ id: 'zalf-map-search-area', type: 'vector', features: [selectedFeature] }]
                     : [])
@@ -295,6 +359,14 @@ export default function ZalfMapSearch({
         appliedExtent ? ce(ZoomTo, { extent: appliedExtent, nearest: false }) : null,
         ce(ZalfMapExtentSelector, { active: drawing, onSelect: handleDrawnExtent })
         ),
+        !appliedExtent && !mapLoading
+            ? ce('div', { className: 'zalf-map-search__map-guide', role: 'note' },
+                ce('span', { className: 'fa fa-map-marker', 'aria-hidden': 'true' }),
+                ce('div', null,
+                    ce('strong', null, 'Choose an area to search'),
+                    ce('span', null, 'Draw a rectangle or click “Use map view” to filter the catalogue.'),
+                    ce('small', null, 'Green numbered markers show where catalogue data is available.')))
+            : null,
         ce('div', { className: 'zalf-map-search__floating-tools', role: 'group', 'aria-label': 'Choose search area' },
             ce('button', {
                 type: 'button',
