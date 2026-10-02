@@ -14,7 +14,7 @@ import './footer.css';
 
 const quickLinks = [
     { href: '/about', labelId: 'zalfTheme.footer.about' },
-    { href: '/upload', labelId: 'zalfTheme.footer.upload' },
+    { href: '/upload/', labelId: 'zalfTheme.footer.upload' },
     { href: '/ogc_and_api', labelId: 'zalfTheme.footer.ogcServicesApi' },
     {
         href: 'https://www.zalf.de/en/struktur/cdp/fdm/Pages/default.aspx',
