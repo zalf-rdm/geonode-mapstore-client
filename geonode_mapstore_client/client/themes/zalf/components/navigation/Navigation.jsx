@@ -12,7 +12,7 @@ import { getMessageById } from '@mapstore/framework/utils/LocaleUtils';
 import logoZalfWhite from '../../../../../static/img/logo_zalf_white_half.png';
 
 const navigationItems = [
-    { href: '/catalogue', labelId: 'zalfTheme.nav.allData' },
+    { href: '/catalogue/', labelId: 'zalfTheme.nav.allData' },
     {
         key: 'topics',
         labelId: 'zalfTheme.nav.topics',
@@ -40,7 +40,7 @@ const navigationItems = [
             { href: 'https://dqkit.bonares.de/', labelId: 'zalfTheme.nav.dqKit', external: true }
         ]
     },
-    { href: '/upload', labelId: 'zalfTheme.nav.upload' },
+    { href: '/upload/', labelId: 'zalfTheme.nav.upload' },
     {
         key: 'about',
         labelId: 'zalfTheme.nav.about',
