@@ -9,9 +9,12 @@
 import expect from 'expect';
 import MockAdapter from 'axios-mock-adapter';
 import axios from '@mapstore/framework/libs/ajax';
+import Rx from 'rxjs';
+import { ActionsObservable } from 'redux-observable';
 import { testEpic } from '@mapstore/framework/epics/__tests__/epicTestUtils';
 import {
     gnViewerSetNewResourceThumbnail,
+    gnViewerRequestResourceConfig,
     closeInfoPanelOnMapClick,
     closeDatasetCatalogPanel,
     gnZoomToFitBounds,
@@ -19,9 +22,12 @@ import {
 } from '@js/epics/gnresource';
 import {
     setResourceThumbnail,
+    requestResourceConfig,
+    LOADING_RESOURCE_CONFIG,
     UPDATE_RESOURCE_PROPERTIES,
     UPDATE_SINGLE_RESOURCE
 } from '@js/actions/gnresource';
+import { ResourceTypes } from '@js/utils/ResourceUtils';
 import { clickOnMap, changeMapView, ZOOM_TO_EXTENT } from '@mapstore/framework/actions/map';
 import { SET_CONTROL_PROPERTY, setControlProperty } from '@mapstore/framework/actions/controls';
 import {
@@ -42,6 +48,82 @@ describe('gnresource epics', () => {
         delete global.__DEVTOOLS__;
         mockAxios.restore();
         setTimeout(done);
+    });
+
+    it('requests compact permissions and dataset metadata concurrently', (done) => {
+        const pk = 1;
+        let resolvePermissions;
+        let permissionsResolved = false;
+        let datasetStartedBeforePermissions = false;
+        let completed = false;
+        let timeout;
+        const actionSubject = new Rx.Subject();
+        const actions$ = new ActionsObservable(actionSubject);
+        const state = {
+            router: { location: { search: '' } },
+            security: { user: { username: 'test' } },
+            gnresource: {}
+        };
+        const mapConfig = {
+            map: {
+                center: { x: 0, y: 0, crs: 'EPSG:4326' },
+                zoom: 1,
+                layers: []
+            }
+        };
+        const dataset = {
+            pk,
+            resource_type: ResourceTypes.DATASET,
+            subtype: 'vector',
+            alternate: 'geonode:test_layer',
+            title: 'Test layer',
+            perms: ['view_resourcebase'],
+            links: [{
+                link_type: 'OGC:WMS',
+                url: 'http://localhost/geoserver/ows'
+            }]
+        };
+
+        mockAxios.onGet(/resources\/1\/permissions/).reply(() => new Promise((resolve) => {
+            resolvePermissions = () => {
+                permissionsResolved = true;
+                resolve([200, { users: [], groups: [], organizations: [] }]);
+            };
+        }));
+        mockAxios.onGet(/datasets\/1/).reply(() => {
+            datasetStartedBeforePermissions = !permissionsResolved;
+            resolvePermissions();
+            return [200, { dataset }];
+        });
+        mockAxios.onGet('/static/mapstore/configs/map.json').reply(200, mapConfig);
+
+        const subscription = gnViewerRequestResourceConfig(actions$, { getState: () => state })
+            .subscribe((action) => {
+                if (action.type === LOADING_RESOURCE_CONFIG && action.loading === false && !completed) {
+                    completed = true;
+                    clearTimeout(timeout);
+                    subscription.unsubscribe();
+                    try {
+                        expect(datasetStartedBeforePermissions).toBe(true);
+                        expect(mockAxios.history.get.some(({ url }) => /resources\/1\/permissions/.test(url))).toBe(true);
+                        expect(mockAxios.history.get.some(({ url }) => /datasets\/1/.test(url))).toBe(true);
+                        done();
+                    } catch (error) {
+                        done(error);
+                    }
+                }
+            });
+        timeout = setTimeout(() => {
+            if (!completed) {
+                subscription.unsubscribe();
+                done(new Error('Resource loading did not complete; requests may still be sequential.'));
+            }
+        }, 2000);
+
+        actionSubject.next(requestResourceConfig(ResourceTypes.DATASET, pk, {
+            page: 'dataset_viewer',
+            params: { subtype: 'vector' }
+        }));
     });
 
     it('should apply new resource thumbnail', (done) => {
