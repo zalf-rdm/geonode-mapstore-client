@@ -1,7 +1,8 @@
 const path = require('path');
 const fs = require('fs');
-const envConfig = fs.existsSync(path.join(__dirname, '.env'))
-    ? require('dotenv').config().parsed
+const envPath = path.join(__dirname, '.env');
+const envConfig = fs.existsSync(envPath)
+    ? require('dotenv').config({ path: envPath }).parsed || {}
     : {};
 
 module.exports = (devServerDefault, projectConfig) => {
@@ -9,10 +10,12 @@ module.exports = (devServerDefault, projectConfig) => {
     const appDirectory = projectConfig.appDirectory;
     const devServerHost = envConfig.DEV_SERVER_HOSTNAME || 'localhost';
     const proxyTargetHost = envConfig.DEV_TARGET_GEONODE_HOST || 'localhost:8000';
+    const uploadToolTargetHost = envConfig.DEV_TARGET_UPLOAD_TOOL_HOST || 'localhost:8001';
     const protocol = envConfig.DEV_SERVER_PROTOCOL || 'http';
     const devServerPort = envConfig.DEV_SERVER_PORT || 8082;
 
     const proxyTargetURL = `${protocol}://${proxyTargetHost}`;
+    const uploadToolTargetURL = `${protocol}://${uploadToolTargetHost}`;
 
     return {
         clientLogLevel: 'debug',
@@ -47,6 +50,19 @@ module.exports = (devServerDefault, projectConfig) => {
             });
         },
         proxy: [
+            {
+                // Keep the browser on the Repository origin while Django receives
+                // the path shape it serves behind the public /upload prefix.
+                context: pathname => pathname === '/upload' || pathname.startsWith('/upload/'),
+                target: uploadToolTargetURL,
+                headers: {
+                    Host: uploadToolTargetHost,
+                    Referer: `${protocol}://${devServerHost}:${devServerPort}/upload/`
+                },
+                pathRewrite: {
+                    '^/upload': ''
+                }
+            },
             {
                 context: [
                     '**',
