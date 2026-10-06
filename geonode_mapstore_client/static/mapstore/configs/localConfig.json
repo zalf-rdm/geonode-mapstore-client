@@ -4239,6 +4239,10 @@
               "type": "date-range",
               "filterKey": "date",
               "labelId": "gnviewer.dateFilter"
+            },
+            {
+              "labelId": "gnviewer.extent",
+              "type": "extent"
             }
           ]
         }
