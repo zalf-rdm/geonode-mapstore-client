@@ -244,17 +244,25 @@ function ZalfResourcesGridContainer({
     // without modifying MapStore2's ResourcesUtils.js.
     const processedResources = resources.map(resolveVirtualPaths);
     const mapSearchActive = query.catalogue_view === 'map';
+    useEffect(() => {
+        if (mapSearchActive && showFiltersForm) {
+            onSetShowFiltersForm(false, id);
+        }
+    }, [mapSearchActive]);
     const MapSearchToolbarButton = () => ce('li', { className: 'zalf-filter-toolbar-item' },
         ce('button', {
             type: 'button',
             className: `zalf-filter-toolbar-toggle zalf-map-search-toolbar-toggle${mapSearchActive ? ' is-active' : ''}`,
             onClick: () => {
+                if (!mapSearchActive && showFiltersForm) {
+                    onSetShowFiltersForm(false, id);
+                }
                 handleUpdate({ catalogue_view: mapSearchActive ? undefined : 'map', page: undefined });
             },
             'aria-pressed': mapSearchActive
         },
         ce('span', { className: 'fa fa-map-o', 'aria-hidden': 'true' }),
-        ce('span', null, mapSearchActive ? 'List view' : 'Search by map'))
+        ce('span', null, mapSearchActive ? 'List view' : 'Map Search'))
     );
     const FilterToolbarButton = () => ce('li', { className: 'zalf-filter-toolbar-item' },
         ce('button', {
@@ -299,15 +307,15 @@ function ZalfResourcesGridContainer({
             menuItems: [
                 ...parsedConfig.menuItems,
                 ...menuItemsRight,
-                { name: 'zalf-filter-toggle', Component: FilterToolbarButton },
-                { name: 'zalf-map-search-toggle', Component: MapSearchToolbarButton }
+                { name: 'zalf-map-search-toggle', Component: MapSearchToolbarButton },
+                { name: 'zalf-filter-toggle', Component: FilterToolbarButton }
             ],
             orderConfig: parsedConfig.order,
             totalResources,
             loading,
             cardLayoutStyle,
             setCardLayoutStyle,
-            hideCardLayoutButton: hideCardLayoutButton || mapSearchActive,
+            hideCardLayoutButton,
             query,
             metadata,
             columns,
