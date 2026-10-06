@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
@@ -41,7 +41,36 @@ const ConnectedPluginsContainer = connect(
 
 const DEFAULT_PLUGINS_CONFIG = [];
 
-function getPluginsConfiguration(name, pluginsConfig) {
+// These tools are not required to request a dataset or render its first map.
+// Load them shortly after the resource configuration so their chunks do not
+// compete with metadata and initial WMS requests on a cold visit.
+export const DATASET_VIEWER_DEFERRED_PLUGINS = [
+    'SaveAs',
+    'Save',
+    'DeleteResource',
+    'DownloadResource',
+    'Measure',
+    'Print',
+    'PrintScale',
+    'PrintGraticule',
+    'PrintAuthor',
+    'PrintCopyright',
+    'Timeline',
+    'Playback',
+    'IsoDownload',
+    'DublinCoreDownload',
+    'DataCiteDownload',
+    'LayerDownload',
+    'AddLayer',
+    'FilterLayer',
+    'QueryPanel',
+    'Locate',
+    'ExecutionTracker'
+];
+
+const DATASET_VIEWER_DEFERRED_PLUGINS_SET = new Set(DATASET_VIEWER_DEFERRED_PLUGINS);
+
+export function getPluginsConfiguration(name, pluginsConfig) {
     if (!pluginsConfig) {
         return DEFAULT_PLUGINS_CONFIG;
     }
@@ -54,6 +83,20 @@ function getPluginsConfiguration(name, pluginsConfig) {
     }
     return pluginsConfig[name] || DEFAULT_PLUGINS_CONFIG;
 }
+
+export function getInitialPluginsConfiguration(name, pluginsConfig, loadDeferredPlugins) {
+    const configuration = getPluginsConfiguration(name, pluginsConfig);
+    if (name !== 'dataset_viewer' || loadDeferredPlugins) {
+        return configuration;
+    }
+    return configuration.filter((plugin) => {
+        const pluginName = typeof plugin === 'string' ? plugin : plugin?.name;
+        return !DATASET_VIEWER_DEFERRED_PLUGINS_SET.has(pluginName);
+    });
+}
+
+export const canRequestResource = (name, pluginLoading) =>
+    name === 'dataset_viewer' || !pluginLoading;
 
 function ViewerRoute({
     name,
@@ -73,7 +116,9 @@ function ViewerRoute({
 }) {
 
     const { pk } = match.params || {};
-    const pluginsConfig = getPluginsConfiguration(name, propPluginsConfig);
+    const shouldDeferPlugins = name === 'dataset_viewer' && pk !== 'new';
+    const [loadDeferredPlugins, setLoadDeferredPlugins] = useState(!shouldDeferPlugins);
+    const pluginsConfig = getInitialPluginsConfiguration(name, propPluginsConfig, loadDeferredPlugins);
     const pluginsCfgLength = pluginsConfig?.length;
 
     const { plugins: loadedPlugins, pending } = useModulePlugins({
@@ -93,7 +138,7 @@ function ViewerRoute({
 
     const pluginLoading = prevPluginsLength !== null && prevPluginsLength !== pluginsCfgLength ? false : pending;
     useEffect(() => {
-        if (!pluginLoading && pk !== requestedPk) {
+        if (canRequestResource(name, pluginLoading) && pk !== requestedPk) {
             viewer.current.requestedPk = pk;
             if (pk === 'new') {
                 onCreate(resourceType, {
@@ -106,9 +151,17 @@ function ViewerRoute({
                 });
             }
         }
-    }, [pluginLoading, pk]);
+    }, [name, pluginLoading, pk, resourceType]);
 
-    const loading = loadingConfig || pluginLoading;
+    useEffect(() => {
+        let timeout;
+        if (shouldDeferPlugins && !loadDeferredPlugins && String(resource?.pk) === String(pk)) {
+            timeout = setTimeout(() => setLoadDeferredPlugins(true), 1000);
+        }
+        return () => clearTimeout(timeout);
+    }, [loadDeferredPlugins, pk, resource?.pk, shouldDeferPlugins]);
+
+    const loading = loadingConfig || (!loadDeferredPlugins && pluginLoading);
     const parsedPlugins = useMemo(() => ({ ...loadedPlugins, ...getPlugins(plugins) }), [loadedPlugins]);
     const Loader = loaderComponent;
     const pageName = name === 'tabular-collection_viewer'

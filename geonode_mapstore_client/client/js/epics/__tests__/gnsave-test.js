@@ -9,6 +9,8 @@
 import expect from 'expect';
 import MockAdapter from 'axios-mock-adapter';
 import axios from '@mapstore/framework/libs/ajax';
+import Rx from 'rxjs';
+import { ActionsObservable } from 'redux-observable';
 import { testEpic } from '@mapstore/framework/epics/__tests__/epicTestUtils';
 import {
     SAVING_RESOURCE,
@@ -240,6 +242,45 @@ describe('gnsave epics', () => {
             }
         },
         {layers: {flat: [{name: "testLayer", id: "test_id", perms: ['download_resourcebase']}], selected: ["test_id"]}});
+    });
+
+    it('test gnSetDatasetsPermissions reuses permissions supplied by MAP_CONFIG_LOADED', (done) => {
+        const actionSubject = new Rx.Subject();
+        const actions$ = new ActionsObservable(actionSubject);
+        const emittedActions = [];
+        const subscription = gnSetDatasetsPermissions(actions$, {
+            getState: () => ({
+                layers: {
+                    flat: [{name: "testLayer", id: "test_id", perms: ['download_resourcebase']}],
+                    selected: ["test_id"]
+                }
+            })
+        }).subscribe((action) => emittedActions.push(action));
+
+        actionSubject.next(configureMap({
+            map: {
+                layers: [{
+                    name: "testLayer",
+                    id: "test_id",
+                    extendedParams: {pk: "1"},
+                    perms: ['download_resourcebase']
+                }]
+            }
+        }));
+
+        setTimeout(() => {
+            subscription.unsubscribe();
+            try {
+                expect(emittedActions).toEqual([]);
+                expect(mockAxios.history.get.some(({url: requestUrl = ''}) =>
+                    requestUrl.includes('filter%7Balternate%7D')
+                    || requestUrl.includes('filter{alternate}')
+                )).toBe(false);
+                done();
+            } catch (error) {
+                done(error);
+            }
+        }, 20);
     });
 
     it('test gnSetDatasetsPermissions trigger updateNode for ADD_LAYER', (done) => {

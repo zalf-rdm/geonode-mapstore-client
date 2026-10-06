@@ -531,6 +531,19 @@ export const gnViewerRequestResourceConfig = (action$, store) =>
             const { query = {} } = url.parse(searchSelector(state), true) || {};
             const resourceData = getResourceData(state);
             const isSamePreviousResource = !resourceData?.['@ms-detail'] && resourceData?.pk === action.pk;
+            const permissionsObservable = !isSamePreviousResource && !!isLoggedIn(state)
+                ? Observable.defer(() => getCompactPermissionsByPk(action.pk))
+                    .map((compactPermissions) => setResourceCompactPermissions(compactPermissions))
+                    .catch(() => Observable.empty())
+                : Observable.empty();
+            const resourceConfigObservable = resourceObservable(action.pk, {
+                ...action.options,
+                isSamePreviousResource,
+                resourceData,
+                selectedLayer: isSamePreviousResource && {...getInitialDatasetLayer(state), style: getInitialDatasetLayerStyle(state)},
+                params: {...action?.options?.params, query},
+                action$
+            });
             return Observable.concat(
                 Observable.of(
                     ...getResetActions(state, isSamePreviousResource),
@@ -538,25 +551,7 @@ export const gnViewerRequestResourceConfig = (action$, store) =>
                     setResourceType(action.resourceType),
                     setResourcePathParameters(action?.options?.params)
                 ),
-                ...((!isSamePreviousResource && !!isLoggedIn(state))
-                    ? [
-                        Observable.defer(() => getCompactPermissionsByPk(action.pk))
-                            .switchMap((compactPermissions) => {
-                                return Observable.of(setResourceCompactPermissions(compactPermissions));
-                            })
-                            .catch(() => {
-                                return Observable.empty();
-                            })
-                    ]
-                    : []),
-                resourceObservable(action.pk, {
-                    ...action.options,
-                    isSamePreviousResource,
-                    resourceData,
-                    selectedLayer: isSamePreviousResource && {...getInitialDatasetLayer(state), style: getInitialDatasetLayerStyle(state)},
-                    params: {...action?.options?.params, query},
-                    action$
-                }),
+                Observable.merge(permissionsObservable, resourceConfigObservable),
                 Observable.of(
                     loadingResourceConfig(false)
                 )
