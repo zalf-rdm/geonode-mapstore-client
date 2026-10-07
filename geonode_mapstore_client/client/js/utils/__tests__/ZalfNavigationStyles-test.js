@@ -8,4 +8,10 @@ describe('ZALF navigation search expansion styles', () => {
         );
         expect(stylesheet).toNotContain('.zalf-navigation__content:focus-within');
     });
+
+    it('compacts search and navigation at intermediate desktop widths', () => {
+        expect(stylesheet).toContain('@media (min-width: 1200px) and (max-width: 1439px)');
+        expect(stylesheet).toContain('flex-basis: clamp(160px, 14vw, 190px)');
+        expect(stylesheet).toContain('@media (max-width: 1199px)');
+    });
 });
