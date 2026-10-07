@@ -83,8 +83,10 @@ module.exports = (devServerDefault, projectConfig) => {
                 ],
                 target: proxyTargetURL,
                 headers: {
-                    Host: proxyTargetHost,
-                    Referer: `${proxyTargetURL}/`
+                    // GeoNode also uses the browser-facing origin when it
+                    // constructs OIDC callbacks during local development.
+                    Host: `${devServerHost}:${devServerPort}`,
+                    Referer: `${protocol}://${devServerHost}:${devServerPort}/`
                 }
             },
             {
