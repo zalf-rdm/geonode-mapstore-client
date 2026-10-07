@@ -12,33 +12,42 @@
 }
 
 .zalf-faq__hero {
-    padding: 88px 0 44px;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    padding: 56px 24px 48px;
 }
 
-.zalf-faq__eyebrow {
-    display: inline-block;
-    margin-bottom: 12px;
-    color: #5b7a2f;
-    font-size: 0.92rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+.zalf-faq__hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+        linear-gradient(90deg, rgba(198, 223, 142, 0.82) 0%, rgba(186, 231, 214, 0.5) 34%, rgba(130, 193, 229, 0.62) 100%),
+        url('../../../../../static/img/bg_dataset_landing_topo.png') center center / cover no-repeat;
+}
+
+.zalf-faq__hero .zalf-faq__container {
+    width: min(960px, 100%);
 }
 
 .zalf-faq__title {
-    margin: 0;
-    max-width: 14ch;
-    font-size: clamp(2.8rem, 5vw, 5rem);
-    line-height: 0.96;
-    color: #163026;
+    max-width: none;
+    margin: 0 0 12px;
+    color: #132238;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
 }
 
 .zalf-faq__lead {
-    margin: 20px 0 0;
-    max-width: 68ch;
-    font-size: 1.08rem;
-    line-height: 1.7;
-    color: #4f655d;
+    max-width: 640px;
+    margin: 0;
+    color: rgba(19, 34, 56, 0.72);
+    font-size: 1.05rem;
+    line-height: 1.55;
 }
 
 .zalf-faq__section {
@@ -99,7 +108,7 @@
     }
 
     .zalf-faq__hero {
-        padding: 64px 0 28px;
+        padding: 40px 20px 32px;
     }
 
     .zalf-faq__grid {
