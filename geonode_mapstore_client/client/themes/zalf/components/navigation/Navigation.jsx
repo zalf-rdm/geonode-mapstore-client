@@ -9,7 +9,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Message from '@mapstore/framework/components/I18N/Message';
 import { getMessageById } from '@mapstore/framework/utils/LocaleUtils';
-import logoBonaRes from '../../../../../static/img/bonares-logo.png';
+import logoBonaRes from '../../../../../static/img/bonares-logo-white.png';
 
 const navigationItems = [
     { href: '/catalogue/', labelId: 'zalfTheme.nav.allData' },
