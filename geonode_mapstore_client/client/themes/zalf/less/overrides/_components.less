@@ -636,7 +636,7 @@ body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header-plac
     border-radius: 999px;
 }
 
-@media (min-width: 1101px) {
+@media (min-width: 1200px) {
     // Expand only when the search itself owns focus. Using focus-within on the
     // whole navigation content made every link and utility button activate the
     // search layout as a side effect.
@@ -673,7 +673,10 @@ body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header-plac
     }
 }
 
-@media (max-width: 1100px) {
+// Keep the complete desktop navigation only where all primary and account
+// actions have enough room. Below this width the mobile menu is clearer than
+// allowing intrinsically-sized links to collide.
+@media (max-width: 1199px) {
     .zalf-navigation__inner {
         min-height: 72px;
         padding: 0;
@@ -738,5 +741,50 @@ body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header-plac
     .zalf-navigation__link {
         width: 100%;
         text-align: left;
+    }
+}
+
+// At intermediate desktop widths retain the full navigation, but compact its
+// spacing and search field. The explanatory ORCID link remains available from
+// the login flow and returns once the full-width layout has enough room.
+@media (min-width: 1200px) and (max-width: 1439px) {
+    .zalf-navigation__inner {
+        gap: 12px;
+    }
+
+    .zalf-navigation__brand {
+        min-width: 120px;
+    }
+
+    .zalf-navigation__brand-logo {
+        max-width: 132px;
+    }
+
+    .zalf-navigation__content {
+        gap: 12px;
+    }
+
+    .zalf-navigation__primary {
+        gap: 4px;
+    }
+
+    .zalf-navigation__link {
+        padding-right: 8px;
+        padding-left: 8px;
+        font-size: 0.88rem;
+    }
+
+    .zalf-navigation__tools,
+    .zalf-navigation__utilities-slot .gn-brand-navbar-right-menu-container {
+        gap: 8px;
+    }
+
+    .zalf-navigation__search-slot {
+        flex-basis: clamp(160px, 14vw, 190px);
+        width: clamp(160px, 14vw, 190px);
+    }
+
+    .zalf-navigation__utilities-slot a[title="Why do we use ORCID?"] {
+        display: none;
     }
 }
