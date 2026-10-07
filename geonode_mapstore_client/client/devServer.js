@@ -56,7 +56,10 @@ module.exports = (devServerDefault, projectConfig) => {
                 context: pathname => pathname === '/upload' || pathname.startsWith('/upload/'),
                 target: uploadToolTargetURL,
                 headers: {
-                    Host: uploadToolTargetHost,
+                    // Preserve the browser-facing Repository origin so OIDC
+                    // callbacks return through this proxy instead of exposing
+                    // the Upload Tool's internal development port.
+                    Host: `${devServerHost}:${devServerPort}`,
                     Referer: `${protocol}://${devServerHost}:${devServerPort}/upload/`
                 },
                 pathRewrite: {
