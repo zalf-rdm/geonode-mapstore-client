@@ -22,10 +22,7 @@ import {
     getRouterLocation,
     getShowFiltersForm
 } from '@mapstore/framework/plugins/ResourcesCatalog/selectors/resources';
-import {
-    searchResources,
-    setShowFiltersForm
-} from '@mapstore/framework/plugins/ResourcesCatalog/actions/resources';
+import { searchResources } from '@mapstore/framework/plugins/ResourcesCatalog/actions/resources';
 import useParsePluginConfigExpressions from '@mapstore/framework/plugins/ResourcesCatalog/hooks/useParsePluginConfigExpressions';
 import useFilterFacets from '@mapstore/framework/plugins/ResourcesCatalog/hooks/useFilterFacets';
 import ResourcesPanelWrapper from '@mapstore/framework/plugins/ResourcesCatalog/components/ResourcesPanelWrapper';
@@ -50,8 +47,7 @@ function ZalfResourcesFiltersForm({
     showFiltersForm,
     targetSelector,
     user,
-    availableResourceTypes,
-    onClose
+    availableResourceTypes
 }, context) {
 
     const { query } = url.parse(location.search, true);
@@ -93,7 +89,7 @@ function ZalfResourcesFiltersForm({
                 defaultQuery,
                 onChange: (params) => onSearch({ params }, resourcesGridId),
                 onClear: () => onSearch({ clear: true }, resourcesGridId),
-                onClose: () => onClose(resourcesGridId)
+                onClose: () => {}
             })
         )
     );
@@ -111,10 +107,7 @@ const Connected = connect(
         monitoredState: getMonitoredStateSelector,
         availableResourceTypes: getAvailableResourceTypes
     }),
-    {
-        onSearch: searchResources,
-        onClose: setShowFiltersForm.bind(null, false)
-    }
+    { onSearch: searchResources }
 )(ZalfResourcesFiltersForm);
 
 export default createPlugin('ResourcesFiltersForm', {
