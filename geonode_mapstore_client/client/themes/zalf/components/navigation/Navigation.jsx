@@ -9,7 +9,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Message from '@mapstore/framework/components/I18N/Message';
 import { getMessageById } from '@mapstore/framework/utils/LocaleUtils';
-import logoZalfWhite from '../../../../../static/img/logo_zalf_white_half.png';
+import logoBonaRes from '../../../../../static/img/bonares-logo.png';
 
 const navigationItems = [
     { href: '/catalogue/', labelId: 'zalfTheme.nav.allData' },
@@ -250,8 +250,8 @@ function Navigation({ messages }) {
                     { className: 'zalf-navigation__brand', href: '/' },
                     React.createElement('img', {
                         className: 'zalf-navigation__brand-logo',
-                        src: logoZalfWhite,
-                        alt: 'ZALF'
+                        src: logoBonaRes,
+                        alt: 'BonaRes'
                     })
                 ),
                 React.createElement(
