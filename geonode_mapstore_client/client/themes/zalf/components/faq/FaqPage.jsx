@@ -70,7 +70,6 @@ function FaqPage() {
             React.createElement(
                 'div',
                 { className: 'zalf-faq__container' },
-                React.createElement('span', { className: 'zalf-faq__eyebrow' }, 'Support'),
                 React.createElement('h1', { className: 'zalf-faq__title' }, 'Frequently Asked Questions'),
                 React.createElement(
                     'p',
