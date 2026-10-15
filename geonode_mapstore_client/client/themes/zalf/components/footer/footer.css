@@ -60,6 +60,24 @@
     z-index: auto;
 }
 
+/* Metadata editor (zalf-rdm/geonode#810): a full-height tool page. The catalogue is exactly
+   the viewport and does not scroll; only the editor's section list and sections scroll
+   (see _resources.less). No footer here, it would make the page scroll again. */
+.gn-catalogue:has(.page-metadata-viewer.gn-viewer-layout):not(:has(.gn-upload-container)):not(:has(.gn-create-dataset)) {
+    height: 100vh !important;
+    height: 100dvh !important;
+    overflow: hidden !important;
+}
+
+.gn-catalogue:has(.page-metadata-viewer.gn-viewer-layout):not(:has(.gn-upload-container)):not(:has(.gn-create-dataset)) #ms-container {
+    flex: 1 1 auto;
+    min-height: 0 !important;
+}
+
+.gn-catalogue:has(.page-metadata-viewer.gn-viewer-layout):not(:has(.gn-upload-container)):not(:has(.gn-create-dataset)) .gn-footer-placeholder {
+    display: none !important;
+}
+
 /* GeoNode's broad rule hides .gn-footer-placeholder with display:none.
    Show it when our portal has put content inside it.
    Covers both catalogue and homepage (both are hidden via custom_theme.html). */

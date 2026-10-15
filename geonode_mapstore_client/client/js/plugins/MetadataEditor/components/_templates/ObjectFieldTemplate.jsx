@@ -38,7 +38,8 @@ function MetadataGroupList({
     expanded: expandedProp,
     capitalizeTitle
 }) {
-    const [_expanded, setExpanded] = useState(false);
+    // ZALF: the overview starts expanded so all fields are visible on entering the editor (zalf-rdm/geonode#810)
+    const [_expanded, setExpanded] = useState(true);
     const groupError = group.some(property => property.error);
     const expanded = expandedProp === undefined ? _expanded : expandedProp;
     return (

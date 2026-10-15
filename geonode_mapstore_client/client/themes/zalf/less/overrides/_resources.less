@@ -91,14 +91,26 @@
         min-height: calc(100vh - 132px);
     }
 
-    // Metadata editor: its form (.gn-metadata/.rjsf) is absolute with height:100% and scrolls
-    // internally, so give the layout a real viewport height and keep it in flow; the footer
-    // placeholder then follows below instead of scrolling over the form (zalf-rdm/geonode#746).
+    // Metadata editor: the page itself must not scroll, only the section list and the
+    // sections do (zalf-rdm/geonode#810). .gn-catalogue is exactly the viewport (footer.css),
+    // the router and the layout fill what is left below the sticky ZALF navigation, so the
+    // Save / Go back / View Metadata row stays visible and the last field is never cut off,
+    // whatever height the navigation has (no fixed calc(100vh - 78px) any more).
     .page-metadata-viewer.gn-viewer-layout {
         position: relative !important;
         top: auto !important;
         left: auto !important;
-        height: calc(100vh - var(--zalf-nav-height)) !important;
+        height: 100% !important;
+    }
+
+    .app-router:has(.page-metadata-viewer.gn-viewer-layout) {
+        min-height: 0;
+    }
+
+    // scrolling at the end of a list must not spill over to the page
+    .page-metadata-viewer .gn-metadata-list,
+    .page-metadata-viewer .gn-metadata-groups {
+        overscroll-behavior: contain;
     }
 
     // Upload pages: gn-upload-container uses position:absolute by default.
