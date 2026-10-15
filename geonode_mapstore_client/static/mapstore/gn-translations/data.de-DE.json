@@ -46,7 +46,10 @@
                 "description": "Wählen Sie die zu publizierenden Datensätze für die Datensammlung {title}",
                 "selectDoiPrefix": "Wählen Sie einen DOI-Präfix",
                 "skipDoiPrefix": "Ohne DOI publizieren",
-                "publish": "Datenpublikation starten"
+                "publish": "Datenpublikation starten",
+                "selectAll": "Alle auswählen",
+                "deselectAll": "Alle abwählen",
+                "selectedCount": "{selected} von {total} ausgewählt"
             }
         },
         "gnhome": {

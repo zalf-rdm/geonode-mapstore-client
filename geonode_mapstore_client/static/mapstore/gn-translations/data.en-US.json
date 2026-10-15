@@ -46,7 +46,10 @@
                 "description": "Select the data to publish along with this collection {title}",
                 "selectDoiPrefix": "Choose a DOI prefix",
                 "skipDoiPrefix": "Publish without registering a DOI",
-                "publish": "Start data publication"
+                "publish": "Start data publication",
+                "selectAll": "Select all",
+                "deselectAll": "Deselect all",
+                "selectedCount": "{selected} of {total} selected"
             }
         },
         "gnhome": {

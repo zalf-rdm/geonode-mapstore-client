@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { connect } from 'react-redux';
 import { FormGroup, Checkbox, FormControl, ControlLabel, Glyphicon, MenuItem } from 'react-bootstrap';
 import { createStructuredSelector } from 'reselect';
@@ -70,6 +70,23 @@ const PublishDataCollectionComponent = ({
             [name]: checked
         }));
     }, []);
+
+    // "Select all" / "Deselect all" (zalf-rdm/geonode#826)
+    const candidatePks = Object.keys(doiResourceCandidatesUnique);
+    const selectedCount = candidatePks.filter(itemPk => checkedItems[itemPk]).length;
+    const allSelected = candidatePks.length > 0 && selectedCount === candidatePks.length;
+    const someSelected = selectedCount > 0 && !allSelected;
+    const toggleSelectAll = () => setCheckedItems(prev => ({
+        ...prev,
+        ...candidatePks.reduce((acc, itemPk) => ({ ...acc, [itemPk]: !allSelected }), {})
+    }));
+    // a partial selection shows the "select all" box as indeterminate
+    const selectAllRef = useRef(null);
+    useEffect(() => {
+        if (selectAllRef.current) {
+            selectAllRef.current.indeterminate = someSelected;
+        }
+    }, [someSelected, open]);
 
     // DOI prefixes are embedded in the page by the Django context processor.
     const { prefixes: doiPrefixes, loading: prefixesLoading } = useDatacitePrefixes();
@@ -152,21 +169,34 @@ const PublishDataCollectionComponent = ({
                     { publishError && <div className="alert alert-danger" role="alert" style={{ marginTop: 8 }}>{publishError}</div> }
 
                     <FormGroup className="mb-3">
-                        {
-                            Object.values(doiResourceCandidatesUnique).map(resource =>
-                                <Checkbox
-                                    // checked={enabled}
-                                    type="switch"
-                                    key={resource.pk}
-                                    name={resource.pk}
-                                    checked={!!checkedItems[resource.pk]}
-                                    // id="gn-filter-by-extent-switch"
-                                    onChange={handleSelectionChange}
-                                >
-                                    {resource.title + " (" + resource.source + ")"}
-                                </Checkbox>
-                            )
+                        { candidatePks.length > 0 &&
+                            <Checkbox
+                                inputRef={ref => { selectAllRef.current = ref; }}
+                                checked={allSelected}
+                                onChange={toggleSelectAll}
+                                style={{ borderBottom: '1px solid #ddd', paddingBottom: 6 }}
+                            >
+                                <strong><Message { ...i18n(allSelected ? "deselectAll" : "selectAll") } /></strong>
+                                {' '}
+                                <small><Message { ...i18n("selectedCount", { selected: selectedCount, total: candidatePks.length }) } /></small>
+                            </Checkbox>
                         }
+                        {/* long collections scroll inside the list, so prefix and buttons stay visible */}
+                        <div style={{ maxHeight: '40vh', overflowY: 'auto', paddingRight: 4 }}>
+                            {
+                                Object.values(doiResourceCandidatesUnique).map(resource =>
+                                    <Checkbox
+                                        type="switch"
+                                        key={resource.pk}
+                                        name={resource.pk}
+                                        checked={!!checkedItems[resource.pk]}
+                                        onChange={handleSelectionChange}
+                                    >
+                                        {resource.title + " (" + resource.source + ")"}
+                                    </Checkbox>
+                                )
+                            }
+                        </div>
                     </FormGroup>
 
                     <FormGroup className="mb-3">
