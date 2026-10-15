@@ -133,19 +133,26 @@
 
 .zalf-lp-hero-band {
   position: relative;
-  padding: clamp(1rem, 2.2vw, 2rem) clamp(1rem, 3vw, 2.5rem);
+  /* horizontal spacing comes from .zalf-lp-hero-inner, so the hero lines up with the body */
+  padding: clamp(1rem, 2.2vw, 2rem) 0;
   background:
     linear-gradient(90deg, rgba(198, 223, 142, 0.72) 0%, rgba(186, 231, 214, 0.4) 34%, rgba(130, 193, 229, 0.52) 100%),
     url('../../../../../static/img/bg_dataset_landing_topo.png') center center / cover no-repeat;
   overflow: hidden;
 }
 
+/* same box as .zalf-lp-body (max-width + side padding, incl. breakpoints below),
+   so the hero card is exactly as wide as the sections and cards (zalf-rdm/geonode#823) */
 .zalf-lp-hero-inner {
-  width: min(100%, 1500px);
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1180px;
   margin: 0 auto;
+  padding: 0 2rem;
 }
 
 .zalf-lp-hero-card {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(180px, 240px) minmax(0, 1fr);
   gap: clamp(1rem, 2vw, 1.75rem);
@@ -232,8 +239,9 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  background: var(--zalf-green-nav);
-  color: #fff;
+  background: transparent;
+  color: var(--zalf-text-muted);
+  border: 1px solid var(--zalf-border);
   padding: 0.15rem 0.45rem;
   border-radius: 3px;
   flex-shrink: 0;
@@ -241,7 +249,7 @@
 
 .zalf-lp-doi-value {
   font-size: 0.85rem;
-  color: var(--zalf-green-nav);
+  color: var(--zalf-green);
   text-decoration: none;
   font-family: 'SFMono-Regular', Consolas, monospace;
   word-break: break-all;
@@ -306,9 +314,9 @@
 }
 
 .zalf-lp-btn--primary {
-  background: var(--zalf-green-nav);
+  background: var(--zalf-green);
   color: #fff !important;
-  border: 2px solid var(--zalf-green-nav);
+  border: 2px solid var(--zalf-green);
 }
 
 .zalf-lp-btn--primary:hover {
@@ -321,8 +329,8 @@
 
 .zalf-lp-btn--outline {
   background: transparent;
-  color: var(--zalf-green-nav) !important;
-  border: 2px solid var(--zalf-green-nav);
+  color: var(--zalf-green) !important;
+  border: 2px solid var(--zalf-green);
 }
 
 .zalf-lp-btn--outline:hover {
@@ -352,6 +360,12 @@
 .zalf-lp-btn--disabled:hover {
   background: var(--zalf-bg);
   text-decoration: none;
+}
+
+.zalf-lp-btn:focus-visible,
+.zalf-lp-badge--link:focus-visible {
+  outline: 3px solid var(--zalf-text);
+  outline-offset: 2px;
 }
 
 .zalf-lp-btn--full {
@@ -711,7 +725,7 @@
 }
 
 .zalf-lp-meta-value a {
-  color: var(--zalf-green-nav);
+  color: var(--zalf-green);
   text-decoration: none;
 }
 
@@ -734,33 +748,38 @@
   border-radius: 20px;
   font-size: 0.775rem;
   font-weight: 600;
-  background: #eef6ef;
-  color: var(--zalf-green);
+  /* information only: neutral, never looks like a button */
+  background: #f1f3f5;
+  color: var(--zalf-text);
   text-decoration: none;
   transition: background 0.15s;
-  border: 1px solid rgba(78, 156, 24, 0.12);
+  border: 1px solid var(--zalf-border);
 }
 
-a.zalf-lp-badge:hover {
-  background: var(--zalf-green-mid);
-  text-decoration: none;
+/* clickable (keyword, category): outlined and underlined, recognisable without colour */
+.zalf-lp-badge--link {
+  background: #fff;
+  color: var(--zalf-green);
+  border-color: var(--zalf-green);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+a.zalf-lp-badge--link:hover {
+  background: var(--zalf-green-light);
+  text-decoration-thickness: 2px;
 }
 
 .zalf-lp-badge--type {
-  background: var(--zalf-green-nav);
-  color: #fff;
-  border-color: var(--zalf-green-nav);
-}
-
-.zalf-lp-badge--category {
-  background: var(--zalf-green-nav);
-  color: #fff;
-  border-color: var(--zalf-green-nav);
+  background: #f1f3f5;
+  color: var(--zalf-text-muted);
+  border-color: var(--zalf-border);
+  font-weight: 600;
 }
 
 .zalf-lp-badge--soft {
-  background: rgba(78, 156, 24, 0.1);
-  color: var(--zalf-green);
+  background: #f1f3f5;
+  color: var(--zalf-text-muted);
 }
 
 /* ── People / Contact roles ───────────────────────────────── */
@@ -1050,6 +1069,16 @@ a.zalf-lp-funder-name:hover {
   font-family: 'SFMono-Regular', Consolas, monospace;
 }
 
+/* BibTeX / RIS: one element per line; the hanging indent is set inline per line */
+.zalf-lp-citation-text--code {
+  line-height: 1.5;
+}
+
+.zalf-lp-citation-line {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 .zalf-lp-citation-btn-row {
   display: flex;
   gap: 0.6rem;
@@ -1201,9 +1230,8 @@ a.zalf-lp-funder-name:hover {
   font-weight: 600;
   color: var(--zalf-text, #111827);
   text-decoration: none;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .zalf-lp-layer-title:hover {
@@ -1374,9 +1402,9 @@ a.zalf-lp-funder-name:hover {
   font-weight: 600;
   color: var(--zalf-text, #111827);
   text-decoration: none;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  /* long file names wrap instead of being cut off (zalf-rdm/geonode#823) */
+  white-space: normal;
+  overflow-wrap: anywhere;
   min-width: 0;
 }
 
@@ -1573,11 +1601,15 @@ a.zalf-lp-tree-title:hover {
     grid-template-columns: 1fr;
     padding: 1.25rem;
   }
+
+  .zalf-lp-hero-inner {
+    padding: 0 1.25rem;
+  }
 }
 
 @media (max-width: 680px) {
   .zalf-lp-hero-band {
-    padding: 0.75rem;
+    padding: 0.75rem 0;
   }
 
   .zalf-lp-breadcrumb {
@@ -1611,6 +1643,10 @@ a.zalf-lp-tree-title:hover {
 @media (max-width: 600px) {
   .zalf-lp-body {
     padding: 1rem;
+  }
+
+  .zalf-lp-hero-inner {
+    padding: 0 1rem;
   }
 
   .zalf-lp-section,
@@ -1648,5 +1684,116 @@ a.zalf-lp-tree-title:hover {
 
   .zalf-lp-btn {
     flex: 1 1 auto;
+  }
+}
+
+/* ── zalf-rdm/geonode#823 additions ───────────────────────── */
+.zalf-lp-subtitle {
+  margin: 0.25rem 0 0.75rem;
+  font-size: 1.05rem;
+  color: var(--zalf-text-muted);
+}
+
+.zalf-lp-people-inline a {
+  color: inherit;
+  font-weight: 600;
+}
+
+.zalf-lp-people-inline-item .zalf-lp-orcid {
+  margin-left: 0.25rem;
+}
+
+/* text for screen readers only (e.g. what a counter counts) */
+.zalf-lp-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.zalf-lp-related-desc {
+  flex-basis: 100%;
+  font-size: 0.8rem;
+  color: var(--zalf-text-muted);
+}
+
+/* Keywords & Categories: one block per kind */
+.zalf-lp-class-block {
+  margin-top: 0.75rem;
+}
+
+/* clear gap between the bubbles of one block and the heading of the next */
+.zalf-lp-class-block + .zalf-lp-class-block {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--zalf-border);
+}
+
+.zalf-lp-class-title {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--zalf-text);
+}
+
+.zalf-lp-class-help {
+  margin: 0.15rem 0 0;
+  font-size: 0.75rem;
+  color: var(--zalf-text-muted);
+}
+
+.zalf-lp-class-block .zalf-lp-badge-cloud {
+  margin-top: 0.45rem;
+}
+
+/* Share button: top right corner of the hero card (zalf-rdm/geonode#823) */
+.zalf-lp-share-btn {
+  position: absolute;
+  top: clamp(0.75rem, 1.5vw, 1.1rem);
+  right: clamp(0.75rem, 1.5vw, 1.1rem);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.8rem;
+  border: 1px solid var(--zalf-green);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--zalf-green);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.zalf-lp-share-btn:hover {
+  background: var(--zalf-green-light);
+}
+
+.zalf-lp-share-btn:focus-visible {
+  outline: 3px solid var(--zalf-text);
+  outline-offset: 2px;
+}
+
+/* keep the title clear of the button */
+.zalf-lp-hero-card .zalf-lp-title {
+  padding-right: 7rem;
+}
+
+@media (max-width: 600px) {
+  .zalf-lp-share-label {
+    display: none;
+  }
+
+  .zalf-lp-share-btn {
+    padding: 0.45rem;
+  }
+
+  .zalf-lp-hero-card .zalf-lp-title {
+    padding-right: 2.5rem;
   }
 }

@@ -88,4 +88,9 @@ describe('ZALF metadata view utilities', () => {
         expect(getResourceIconName(resource)).toBe('table');
         expect(getLandingUrl(resource)).toBe('#/landing/dataset/80');
     });
+
+    it('calls a map a data collection', () => {
+        expect(getResourceTypeLabel({ resource_type: 'map' })).toBe('Data Collection');
+        expect(getResourceTypeLabel({ resource_type: 'map', subtype: 'tabular-collection' })).toBe('Table Collection');
+    });
 });

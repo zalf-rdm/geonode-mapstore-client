@@ -88,7 +88,9 @@ function getResourceUrl(resource) {
         .replace(/#\/map\/([^/]+)$/, '#/landing/map/$1')
         .replace(/#\/dataset\/([^/]+)$/, '#/landing/dataset/$1')
         .replace(/#\/document\/([^/]+)$/, '#/landing/document/$1')
-        .replace(/#\/tabular-collection\/([^/]+)$/, '#/landing/tabular-collection/$1');
+        .replace(/#\/tabular-collection\/([^/]+)$/, '#/landing/tabular-collection/$1')
+        // a table is a dataset: its landing route is #/landing/dataset/<pk>
+        .replace(/#\/tabular\/([^/]+)$/, '#/landing/dataset/$1');
 }
 
 function formatAuthorList(authors, style, maxBeforeEtAl) {

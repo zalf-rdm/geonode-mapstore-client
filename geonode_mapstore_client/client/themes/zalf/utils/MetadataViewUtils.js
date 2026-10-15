@@ -154,6 +154,8 @@ export function getResourceTypeLabel(resource = {}) {
     if (type === 'dataset' && subtype === 'raster') return 'Raster Dataset';
     if (type === 'dataset' && subtype === 'vector') return 'Vector Dataset';
     if (type === 'map' && subtype === 'tabular-collection') return 'Table Collection';
+    // same wording as the landing page (zalf-rdm/geonode#823)
+    if (type === 'map') return 'Data Collection';
     return humanizeMetadataKey(type);
 }
 
