@@ -133,19 +133,26 @@
 
 .zalf-lp-hero-band {
   position: relative;
-  padding: clamp(1rem, 2.2vw, 2rem) clamp(1rem, 3vw, 2.5rem);
+  /* horizontal spacing comes from .zalf-lp-hero-inner, so the hero lines up with the body */
+  padding: clamp(1rem, 2.2vw, 2rem) 0;
   background:
     linear-gradient(90deg, rgba(198, 223, 142, 0.72) 0%, rgba(186, 231, 214, 0.4) 34%, rgba(130, 193, 229, 0.52) 100%),
     url('../../../../../static/img/bg_dataset_landing_topo.png') center center / cover no-repeat;
   overflow: hidden;
 }
 
+/* same box as .zalf-lp-body (max-width + side padding, incl. breakpoints below),
+   so the hero card is exactly as wide as the sections and cards (zalf-rdm/geonode#823) */
 .zalf-lp-hero-inner {
-  width: min(100%, 1500px);
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1180px;
   margin: 0 auto;
+  padding: 0 2rem;
 }
 
 .zalf-lp-hero-card {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(180px, 240px) minmax(0, 1fr);
   gap: clamp(1rem, 2vw, 1.75rem);
@@ -1594,11 +1601,15 @@ a.zalf-lp-tree-title:hover {
     grid-template-columns: 1fr;
     padding: 1.25rem;
   }
+
+  .zalf-lp-hero-inner {
+    padding: 0 1.25rem;
+  }
 }
 
 @media (max-width: 680px) {
   .zalf-lp-hero-band {
-    padding: 0.75rem;
+    padding: 0.75rem 0;
   }
 
   .zalf-lp-breadcrumb {
@@ -1632,6 +1643,10 @@ a.zalf-lp-tree-title:hover {
 @media (max-width: 600px) {
   .zalf-lp-body {
     padding: 1rem;
+  }
+
+  .zalf-lp-hero-inner {
+    padding: 0 1rem;
   }
 
   .zalf-lp-section,
@@ -1708,9 +1723,14 @@ a.zalf-lp-tree-title:hover {
 }
 
 /* Keywords & Categories: one block per kind */
+.zalf-lp-class-block {
+  margin-top: 0.75rem;
+}
+
+/* clear gap between the bubbles of one block and the heading of the next */
 .zalf-lp-class-block + .zalf-lp-class-block {
-  margin-top: 1rem;
-  padding-top: 0.85rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
   border-top: 1px solid var(--zalf-border);
 }
 
@@ -1729,4 +1749,51 @@ a.zalf-lp-tree-title:hover {
 
 .zalf-lp-class-block .zalf-lp-badge-cloud {
   margin-top: 0.45rem;
+}
+
+/* Share button: top right corner of the hero card (zalf-rdm/geonode#823) */
+.zalf-lp-share-btn {
+  position: absolute;
+  top: clamp(0.75rem, 1.5vw, 1.1rem);
+  right: clamp(0.75rem, 1.5vw, 1.1rem);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.8rem;
+  border: 1px solid var(--zalf-green);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--zalf-green);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.zalf-lp-share-btn:hover {
+  background: var(--zalf-green-light);
+}
+
+.zalf-lp-share-btn:focus-visible {
+  outline: 3px solid var(--zalf-text);
+  outline-offset: 2px;
+}
+
+/* keep the title clear of the button */
+.zalf-lp-hero-card .zalf-lp-title {
+  padding-right: 7rem;
+}
+
+@media (max-width: 600px) {
+  .zalf-lp-share-label {
+    display: none;
+  }
+
+  .zalf-lp-share-btn {
+    padding: 0.45rem;
+  }
+
+  .zalf-lp-hero-card .zalf-lp-title {
+    padding-right: 2.5rem;
+  }
 }

@@ -223,6 +223,12 @@ function Icon({ name, className, size }) {
         ],
         chevron: [ce('path', { key: 'p1', d: 'M9 6l6 6-6 6' })],
         check: [ce('path', { key: 'p1', d: 'M20 6L9 17l-5-5' })],
+        share: [
+            ce('circle', { key: 'p1', cx: '18', cy: '5', r: '2.5' }),
+            ce('circle', { key: 'p2', cx: '6', cy: '12', r: '2.5' }),
+            ce('circle', { key: 'p3', cx: '18', cy: '19', r: '2.5' }),
+            ce('path', { key: 'p4', d: 'M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4' })
+        ],
         folder: [
             ce('path', { key: 'p1', d: 'M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V7z' })
         ],
@@ -395,6 +401,50 @@ function CopyMenu({ pk }) {
                 copied === 'api' ? 'Copied!' : 'Copy API command'
             )
         )
+    );
+}
+
+/**
+ * Share the stable landing page link /landing/<uuid>/ (the DOI target, zalf-rdm/geonode#823).
+ * Opens the system share dialog where available, otherwise copies the link.
+ */
+function ShareButton({ uuid, title }) {
+    const [copied, setCopied] = useState(false);
+    if (!uuid) return null;
+    const url = window.location.origin + '/landing/' + uuid + '/';
+
+    function copyLink() {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(() => {
+                setCopied(true);
+                setTimeout(() => setCopied(false), 1600);
+            }).catch((err) => console.error('Failed to copy link: ', err));
+        } else {
+            console.warn('Clipboard API not available');
+        }
+    }
+
+    function share() {
+        if (navigator.share) {
+            // a cancelled share dialog rejects; only fall back on real errors
+            navigator.share({ title, url }).catch((err) => {
+                if (err && err.name !== 'AbortError') copyLink();
+            });
+        } else {
+            copyLink();
+        }
+    }
+
+    return ce('button', {
+        type: 'button',
+        className: 'zalf-lp-share-btn',
+        onClick: share,
+        title: 'Share link: ' + url,
+        'aria-label': copied ? 'Link copied' : 'Share link to this page'
+    },
+    ce(Icon, { name: copied ? 'check' : 'share', className: 'zalf-lp-inline-icon' }),
+    ce('span', { className: 'zalf-lp-share-label' }, copied ? 'Link copied' : 'Share'),
+    ce('span', { className: 'zalf-lp-visually-hidden', 'aria-live': 'polite' }, copied ? 'Link copied' : '')
     );
 }
 
@@ -820,6 +870,18 @@ function CardTitle({ title, icon }) {
     return ce('div', { className: 'zalf-lp-card-title-row' },
         ce('span', { className: 'zalf-lp-card-title-icon' }, ce(Icon, { name: icon || 'info', className: 'zalf-lp-inline-icon' })),
         ce('h3', { className: 'zalf-lp-card-title' }, title)
+    );
+}
+
+/** Collapsible box inside the Description section (same look as the German abstract). */
+function DescriptionBox({ title, icon, children }) {
+    return ce('details', { className: 'zalf-lp-details' },
+        ce('summary', null,
+            ce(Icon, { name: icon || 'description', className: 'zalf-lp-meta-inline-icon' }),
+            title,
+            ce(Icon, { name: 'chevron', className: 'zalf-lp-summary-chevron' })
+        ),
+        children
     );
 }
 
@@ -1374,6 +1436,10 @@ export default function DatasetLandingPage() {
     const otherConstraints = (r.raw_constraints_other && r.raw_constraints_other !== 'None') ? r.raw_constraints_other : (r.constraints_other || null);
     const hasConstraints = useRestrictions.length || otherRestrictions.length || useConstraints || otherConstraints;
     const methodDescription = r.method_description || null;
+    const seriesInformation = r.series_information || null;
+    const tableOfContent = r.table_of_content || null;
+    const technicalInfo = r.technical_info || null;
+    const otherDescription = r.other_description || null;
     const doiUrl = doiToUrl(r.doi);
     const pubDate = formatDateSafe(r.date, { year: 'numeric', month: 'long', day: 'numeric' });
     const tempStart = formatDateSafe(r.temporal_extent_start, { year: 'numeric', month: 'short' });
@@ -1418,6 +1484,7 @@ export default function DatasetLandingPage() {
         ce('div', { className: 'zalf-lp-hero-band' },
             ce('div', { className: 'zalf-lp-hero-inner' },
                 ce('div', { className: 'zalf-lp-hero-card' },
+                    ce(ShareButton, { uuid: r.uuid, title: r.title }),
                     r.thumbnail_url
                         ? ce('div', { className: 'zalf-lp-hero-thumb' },
                             ce('img', { src: r.thumbnail_url, alt: r.title })
@@ -1470,27 +1537,34 @@ export default function DatasetLandingPage() {
             // ── Main column ──────────────────────────────────────────────────
             ce('div', { className: 'zalf-lp-main' },
 
-                // Description
+                // Description: abstract, then every further descriptive text as a
+                // collapsible box (zalf-rdm/geonode#823)
                 ce(Section, { title: 'Description', icon: 'description' },
                     ce(TextBlock, { text: abstract || 'No description available.' }),
-                    abstractDe && ce('details', { className: 'zalf-lp-details' },
-                        ce('summary', null,
-                            ce(Icon, { name: 'globe', className: 'zalf-lp-meta-inline-icon' }),
-                            'Beschreibung (Deutsch)',
-                            ce(Icon, { name: 'chevron', className: 'zalf-lp-summary-chevron' })
-                        ),
+                    abstractDe && ce(DescriptionBox, { title: 'Beschreibung (Deutsch)', icon: 'globe' },
                         ce(TextBlock, { text: abstractDe })
+                    ),
+                    purpose && ce(DescriptionBox, { title: 'Purpose', icon: 'purpose' },
+                        ce(TextBlock, { text: purpose })
+                    ),
+                    methodDescription && ce(DescriptionBox, { title: 'Methods', icon: 'description' },
+                        ce(TextBlock, { text: methodDescription })
+                    ),
+                    seriesInformation && ce(DescriptionBox, { title: 'Series Information', icon: 'layer' },
+                        ce(TextBlock, { text: seriesInformation })
+                    ),
+                    supplemental && ce(DescriptionBox, { title: 'Supplemental Information', icon: 'info' },
+                        ce(SupplementalInformationList, { text: supplemental })
+                    ),
+                    tableOfContent && ce(DescriptionBox, { title: 'Table of Contents', icon: 'description' },
+                        ce(TextBlock, { text: tableOfContent })
+                    ),
+                    technicalInfo && ce(DescriptionBox, { title: 'Technical Information', icon: 'info' },
+                        ce(TextBlock, { text: technicalInfo })
+                    ),
+                    otherDescription && ce(DescriptionBox, { title: 'Other Description', icon: 'description' },
+                        ce(TextBlock, { text: otherDescription })
                     )
-                ),
-
-                // Purpose
-                purpose && ce(Section, { title: 'Purpose', icon: 'purpose' },
-                    ce(TextBlock, { text: purpose })
-                ),
-
-                // Methods
-                methodDescription && ce(Section, { title: 'Methods', icon: 'description' },
-                    ce(TextBlock, { text: methodDescription })
                 ),
 
                 // Contributors: every contact role, named after the DataCite "contributors"
@@ -1501,13 +1575,6 @@ export default function DatasetLandingPage() {
                             label: group.label,
                             people: group.people
                         }))
-                    )
-                ) : null,
-
-                // Funders
-                fundings.length > 0 ? ce(Section, { title: 'Funding', icon: 'info' },
-                    ce('div', { className: 'zalf-lp-funders' },
-                        ...fundings.map((f, i) => ce(FunderCard, { key: i, funder: f }))
                     )
                 ) : null,
 
@@ -1523,36 +1590,6 @@ export default function DatasetLandingPage() {
                             ce('span', { className: 'zalf-lp-temporal-lbl' }, 'End'),
                             ce('strong', null, tempEnd || 'Ongoing')
                         )
-                    )
-                ) : null,
-
-                // Data Quality
-                dataQuality ? ce(Section, { title: 'Data Quality Statement', icon: 'info' },
-                    ce(TextBlock, { text: dataQuality })
-                ) : null,
-
-                // Data Lineage
-                dataLineage ? ce(Section, { title: 'Data Lineage', icon: 'layer' },
-                    ce(TextBlock, { text: dataLineage })
-                ) : null,
-
-                // Supplemental
-                supplemental ? ce(Section, { title: 'Supplemental Information', icon: 'description' },
-                    ce(SupplementalInformationList, { text: supplemental })
-                ) : null,
-
-                // Related Identifiers
-                relatedIdentifiers.length > 0 ? ce(Section, { title: 'Related Identifiers', icon: 'external' },
-                    ce(RelatedIdentifierList, { items: relatedIdentifiers })
-                ) : null,
-
-                // Use Constraints
-                hasConstraints ? ce(Section, { title: 'Use Constraints', icon: 'lock' },
-                    ce('div', { className: 'zalf-lp-meta-list' },
-                        ce(MetaItem, { label: 'Restrictions', value: useRestrictions.join(', ') }),
-                        ce(MetaItem, { label: 'Other Restrictions', value: otherRestrictions.join(', ') }),
-                        ce(MetaItem, { label: 'Use Constraints', value: useConstraints }),
-                        ce(MetaItem, { label: 'Other Constraints', value: otherConstraints })
                     )
                 ) : null,
 
@@ -1586,6 +1623,38 @@ export default function DatasetLandingPage() {
                             })
                         ]
                     ) : null,
+
+                // Related Identifiers
+                relatedIdentifiers.length > 0 ? ce(Section, { title: 'Related Identifiers', icon: 'external' },
+                    ce(RelatedIdentifierList, { items: relatedIdentifiers })
+                ) : null,
+
+                // Funders
+                fundings.length > 0 ? ce(Section, { title: 'Funding', icon: 'info' },
+                    ce('div', { className: 'zalf-lp-funders' },
+                        ...fundings.map((f, i) => ce(FunderCard, { key: i, funder: f }))
+                    )
+                ) : null,
+
+                // Use Constraints
+                hasConstraints ? ce(Section, { title: 'Use Constraints', icon: 'lock' },
+                    ce('div', { className: 'zalf-lp-meta-list' },
+                        ce(MetaItem, { label: 'Restrictions', value: useRestrictions.join(', ') }),
+                        ce(MetaItem, { label: 'Other Restrictions', value: otherRestrictions.join(', ') }),
+                        ce(MetaItem, { label: 'Use Constraints', value: useConstraints }),
+                        ce(MetaItem, { label: 'Other Constraints', value: otherConstraints })
+                    )
+                ) : null,
+
+                // Data Quality
+                dataQuality ? ce(Section, { title: 'Data Quality Statement', icon: 'info' },
+                    ce(TextBlock, { text: dataQuality })
+                ) : null,
+
+                // Data Lineage
+                dataLineage ? ce(Section, { title: 'Data Lineage', icon: 'layer' },
+                    ce(TextBlock, { text: dataLineage })
+                ) : null,
 
                 // linked resources are listed under "Parts of this Data Collection";
                 // the separate "Linked Resources" section was removed (zalf-rdm/geonode#823)
@@ -1627,14 +1696,6 @@ export default function DatasetLandingPage() {
                     )
                 ),
 
-                // Dates (DataCite date types)
-                resourceDates.length > 0 ? ce('div', { className: 'zalf-lp-card' },
-                    ce(CardTitle, { title: 'Dates', icon: 'calendar' }),
-                    ce('div', { className: 'zalf-lp-meta-list' },
-                        ...resourceDates.map((d) => ce(MetaItem, { key: d.key, label: d.label, value: d.value }))
-                    )
-                ) : null,
-
                 // Access card
                 ce('div', { className: 'zalf-lp-card zalf-lp-card--access' },
                     ce(CardTitle, { title: 'Access', icon: 'lock' }),
@@ -1659,6 +1720,14 @@ export default function DatasetLandingPage() {
                     // rendered through a portal, shared by both metadata buttons
                     ce(MetadataViewerDialog, { pk, show: showMetadata, onClose: () => setShowMetadata(false) })
                 ),
+
+                // Dates (DataCite date types)
+                resourceDates.length > 0 ? ce('div', { className: 'zalf-lp-card' },
+                    ce(CardTitle, { title: 'Dates', icon: 'calendar' }),
+                    ce('div', { className: 'zalf-lp-meta-list' },
+                        ...resourceDates.map((d) => ce(MetaItem, { key: d.key, label: d.label, value: d.value }))
+                    )
+                ) : null,
 
                 // Citation card
                 ce(CitationCard, { r }),
