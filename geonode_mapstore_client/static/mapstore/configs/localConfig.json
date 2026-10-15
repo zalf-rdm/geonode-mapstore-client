@@ -774,6 +774,12 @@
                   "value": "{context.get(state('gnResourceData'), 'language')}"
                 },
                 {
+                  "type": "text",
+                  "labelId": "gnviewer.license",
+                  "value": "{context.get(state('gnResourceData'), 'license.identifier')}",
+                  "disableIf": "{!context.get(state('gnResourceData'), 'license.identifier')}"
+                },
+                {
                   "type": "html",
                   "labelId": "gnviewer.supplementalInformation",
                   "value": "{context.get(state('gnResourceData'), 'supplemental_information')}"
@@ -1119,6 +1125,12 @@
                   "type": "text",
                   "labelId": "gnviewer.language",
                   "value": "{context.get(state('gnResourceData'), 'language')}"
+                },
+                {
+                  "type": "text",
+                  "labelId": "gnviewer.license",
+                  "value": "{context.get(state('gnResourceData'), 'license.identifier')}",
+                  "disableIf": "{!context.get(state('gnResourceData'), 'license.identifier')}"
                 },
                 {
                   "type": "html",
@@ -2980,6 +2992,12 @@
                   "type": "text",
                   "labelId": "gnviewer.language",
                   "value": "{get(state('gnResourceSelectedLayerDataset'), 'language')}"
+                },
+                {
+                  "type": "text",
+                  "labelId": "gnviewer.license",
+                  "value": "{get(state('gnResourceSelectedLayerDataset'), 'license.identifier')}",
+                  "disableIf": "{not get(state('gnResourceSelectedLayerDataset'), 'license.identifier')}"
                 },
                 {
                   "type": "html",

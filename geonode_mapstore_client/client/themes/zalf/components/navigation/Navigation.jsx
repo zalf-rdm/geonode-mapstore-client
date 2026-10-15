@@ -72,6 +72,12 @@ function renderLabel(item) {
     return item.label;
 }
 
+// getMessageById returns the id itself when a message is missing, so fall back explicitly.
+function translate(messages, id, fallback) {
+    const message = getMessageById(messages, id);
+    return message && message !== id ? message : fallback;
+}
+
 function Navigation({ messages }) {
     const hasServerNavigation = typeof document !== 'undefined'
         && document.querySelector('.zalf-navigation-shell[data-zalf-source="server"]');
@@ -97,7 +103,7 @@ function Navigation({ messages }) {
         const searchInput = searchBar?.querySelector('input');
 
         if (searchInput) {
-            searchInput.placeholder = getMessageById(messages, 'zalfTheme.nav.searchDatasets') || 'Search Datasets';
+            searchInput.placeholder = translate(messages, 'zalfTheme.nav.searchDatasets', 'Search Datasets');
         }
 
         const movedNodes = [
@@ -260,7 +266,7 @@ function Navigation({ messages }) {
                         type: 'button',
                         className: `zalf-navigation__toggle${mobileMenuOpen ? ' is-open' : ''}`,
                         'aria-expanded': mobileMenuOpen ? 'true' : 'false',
-                        'aria-label': getMessageById(messages, 'zalfTheme.nav.toggleNavigationMenu') || 'Toggle navigation menu',
+                        'aria-label': translate(messages, 'zalfTheme.nav.toggleNavigationMenu', 'Toggle navigation menu'),
                         onClick: () => setMobileMenuOpen(!mobileMenuOpen)
                     },
                     React.createElement('span', null),
@@ -276,7 +282,7 @@ function Navigation({ messages }) {
                         'nav',
                         {
                             className: 'zalf-navigation__primary',
-                            'aria-label': getMessageById(messages, 'zalfTheme.nav.primaryNavigation') || 'Primary navigation'
+                            'aria-label': translate(messages, 'zalfTheme.nav.primaryNavigation', 'Primary navigation')
                         },
                         ...navigationItems.map(renderPrimaryItem)
                     ),

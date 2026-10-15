@@ -33,7 +33,7 @@
 }
 
 .zalf-homepage__section--gallery .zalf-homepage__eyebrow {
-    color: var(--zalf-home-olive);
+    color: #4a6320;
 }
 
 .zalf-homepage__section--gallery .zalf-homepage__section-title {
@@ -112,6 +112,11 @@
     font-weight: 400;
     letter-spacing: 0;
     text-transform: none;
+    color: #4a6320;
+}
+
+/* Only the hero sits on a dark photo; the other sections are light. */
+.zalf-homepage__hero .zalf-homepage__eyebrow {
     color: #ffffff;
 }
 
@@ -708,7 +713,7 @@
     font-size: 0.82rem;
     font-weight: 500;
     letter-spacing: 0.01em;
-    color: var(--zalf-home-highlight);
+    color: #fff3a6;
 }
 
 .zalf-homepage__training-duration {
@@ -716,7 +721,7 @@
     margin-top: 3px;
     font-size: 0.76rem;
     font-weight: 400;
-    color: rgba(255, 255, 255, 0.55);
+    color: #e9f5d0;
 }
 
 .zalf-homepage__training-footer {

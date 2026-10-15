@@ -193,13 +193,13 @@
 .zalf-trainings__organizer {
     font-size: 0.82rem;
     font-weight: 500;
-    color: #5d9d46;
+    color: #3a7412;
 }
 
 .zalf-trainings__duration {
     font-size: 0.76rem;
     font-weight: 400;
-    color: #7a9a8e;
+    color: #5a6672;
 }
 
 .zalf-trainings__card--skeleton .zalf-trainings__thumb {
@@ -239,14 +239,14 @@
     grid-column: 1 / -1;
     text-align: center;
     padding: 48px;
-    color: #7a9a8e;
+    color: #5a6672;
     font-size: 0.95rem;
 }
 
 .zalf-trainings__count {
     margin-top: 28px;
     font-size: 0.85rem;
-    color: #7a9a8e;
+    color: #5a6672;
     text-align: right;
 }
 

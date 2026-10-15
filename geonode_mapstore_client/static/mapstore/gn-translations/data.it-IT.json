@@ -250,12 +250,10 @@
             "datasetsCatalogFilterPlaceholder": "Filtra set di dati per titolo o descrizione...",
             "datasetsCatalogEntriesNoResults": "Nessun risultato corrisponde alla tua ricerca",
             "legend": "Legenda",
-
             "zoomToLayer": "Zoom all'estensione del layer",
             "applyCurrentStyleToLayer": "Applica lo stile corrente al layer",
             "deleteCurrentStyle": "Elimina lo stile corrente",
             "createNewStyle": "Crea nuovo stile",
-
             "createStyleTitle": "Aggiungi nuovo stile",
             "createStyleTitleInput": "Titolo:",
             "createStyleClose": "Chiudi",
@@ -284,7 +282,6 @@
             "styleEditorCloseConfirm": "Sì, chiudi",
             "metadataUpload": "Carica Metadati",
             "styleUpload": "Carica Stile",
-
             "missingFiles": "File mancanti",
             "invalidUploadMessageError": "Errore",
             "invalidUploadMessageErrorTooltip": "Il processo di caricamento non è riuscito. Controlla la validità del file e prova a caricarlo di nuovo",
@@ -305,12 +302,10 @@
             "unsupportedUrlServiceType": "Seleziona un tipo di servizio",
             "remoteResourceURLPlaceholder": "URL risorsa...",
             "invalidRemoteUploadMessageErrorTooltip": "Il processo di caricamento non è riuscito. Controlla la validità dell'URL e prova a caricarlo di nuovo",
-
             "uploadDataset": "Carica un dataset",
             "dragAndDropFile": "Trascina e rilascia un file da caricare",
             "filterPendingUploadDataset": "Filtra i file per nome...",
             "filterNoMatchUploadDataset": "Il filtro non corrisponde a nessun file",
-
             "filterPendingUploadDocument": "Filtra i caricamenti per nome...",
             "filterNoMatchUploadDocument": "Il filtro non corrisponde a un caricamento",
             "uploadDocument": "Carica un documento",
@@ -559,7 +554,9 @@
         },
         "resourcesCatalog": {
             "anonymous": "Chiunque",
-            "registered-members": "Membri registrati"
+            "registered-members": "Membri registrati",
+            "noResultsWithQueryTitle": "Nessun risultato",
+            "noResultsWithQueryContent": "Nessuna risorsa corrisponde alla ricerca. <br/> Prova altre parole chiave o cancella i filtri."
         },
         "zalfTheme": {
             "nav": {
@@ -620,6 +617,66 @@
                 "unit": "Unità",
                 "method": "Metodo",
                 "description": "Descrizione"
+            },
+            "home": {
+                "heroEyebrow": "Il punto di riferimento globale per i dati agricoli",
+                "searchDatasets": "Cerca dataset",
+                "searchPlaceholder": "Che tipo di dati agricoli stai cercando?",
+                "exploreDatasets": "Esplora i dataset",
+                "aboutBonaRes": "Informazioni su BonaRes",
+                "publishEyebrow": "Come pubblicare i tuoi dati con noi",
+                "publishTitle": "Fasi della pubblicazione.",
+                "highlightedCases": "Casi in evidenza",
+                "browseByTopic": "Sfoglia per tema",
+                "viewTopic": "Vedi tema",
+                "previousSlide": "Diapositiva precedente",
+                "nextSlide": "Diapositiva successiva",
+                "spotlightPagination": "Paginazione in evidenza",
+                "slide": "Diapositiva",
+                "trainingResources": "Risorse formative",
+                "viewAllTrainings": "Vedi tutte le risorse formative",
+                "idasTitle": "Siti dei servizi di informazione, dati e analisi (IDAS)",
+                "topics": {
+                    "animals": "Animali",
+                    "atmosphere": "Atmosfera",
+                    "climate": "Clima",
+                    "forest": "Foresta",
+                    "hydrology": "Idrologia",
+                    "landscape": "Paesaggio",
+                    "plants": "Piante",
+                    "soilProfiles": "Profili del suolo"
+                },
+                "idas": {
+                    "zalf": "Lo ZALF è il Centro Leibniz per la ricerca sui paesaggi agricoli. Insieme alla società sviluppa soluzioni per un’agricoltura sostenibile dal punto di vista economico, ambientale e sociale, con particolare attenzione ai paesaggi agricoli e alla ricerca a lungo termine.",
+                    "bonares": "BonaRes è un archivio gratuito di dati di ricerca su suolo, agricoltura ed ecologia. Aiuta i ricercatori a pubblicare, trovare, conservare e riutilizzare i dati, compresi gli esperimenti di campo di lunga durata e i relativi metadati.",
+                    "fairagro": "FAIRagro realizza un’infrastruttura di dati di ricerca FAIR per la ricerca sui sistemi agricoli. Si concentra su strumenti, flussi di lavoro e servizi interoperabili che supportano una gestione dei dati aperta e collaborativa nella comunità."
+                }
+            },
+            "dateFilter": {
+                "loadingDistribution": "Caricamento della distribuzione annuale delle risorse",
+                "resourcesByYear": "Risorse per anno",
+                "resources": "risorse",
+                "startYear": "Anno di inizio",
+                "endYear": "Anno di fine",
+                "last6Months": "Ultimi 6 mesi",
+                "last1Year": "Ultimo anno",
+                "last5Years": "Ultimi 5 anni",
+                "from": "Dal",
+                "to": "Al",
+                "apply": "Applica"
+            },
+            "trainings": {
+                "title": "Risorse formative",
+                "subtitle": "Corsi, workshop e materiali di autoapprendimento per ricercatori che lavorano con dati agricoli e ambientali.",
+                "searchPlaceholder": "Cerca per titolo o tema…",
+                "searchLabel": "Cerca risorse formative",
+                "providerLabel": "Fornitore",
+                "allProviders": "Tutti i fornitori",
+                "durationLabel": "Durata",
+                "anyDuration": "Qualsiasi durata",
+                "clearFilters": "Cancella filtri",
+                "empty": "Nessuna risorsa formativa corrisponde alla ricerca.",
+                "count": "{visible} di {total} risorse"
             }
         }
     }

@@ -4,6 +4,8 @@
  */
 
 import React from 'react';
+import { connect } from 'react-redux';
+import { getMessageById } from '@mapstore/framework/utils/LocaleUtils';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './homepage.css';
@@ -11,14 +13,14 @@ import './homepage.css';
 gsap.registerPlugin(ScrollTrigger);
 
 const topicItems = [
-    { label: 'Animals', href: '/catalogue/#/?q=Animals' },
-    { label: 'Atmosphere', href: '/catalogue/#/?q=Atmosphere' },
-    { label: 'Climate', href: '/catalogue/#/?q=Climate' },
-    { label: 'Forest', href: '/catalogue/#/?q=Forest' },
-    { label: 'Hydrology', href: '/catalogue/#/?q=Hydrology' },
-    { label: 'Landscape', href: '/catalogue/#/?q=Landscape' },
-    { label: 'Plants', href: '/catalogue/#/?q=Plants' },
-    { label: 'Soil Profiles', href: '/catalogue/#/?q=Soil%20Profiles' }
+    { label: 'Animals', labelId: 'zalfTheme.home.topics.animals', href: '/catalogue/#/?q=Animals' },
+    { label: 'Atmosphere', labelId: 'zalfTheme.home.topics.atmosphere', href: '/catalogue/#/?q=Atmosphere' },
+    { label: 'Climate', labelId: 'zalfTheme.home.topics.climate', href: '/catalogue/#/?q=Climate' },
+    { label: 'Forest', labelId: 'zalfTheme.home.topics.forest', href: '/catalogue/#/?q=Forest' },
+    { label: 'Hydrology', labelId: 'zalfTheme.home.topics.hydrology', href: '/catalogue/#/?q=Hydrology' },
+    { label: 'Landscape', labelId: 'zalfTheme.home.topics.landscape', href: '/catalogue/#/?q=Landscape' },
+    { label: 'Plants', labelId: 'zalfTheme.home.topics.plants', href: '/catalogue/#/?q=Plants' },
+    { label: 'Soil Profiles', labelId: 'zalfTheme.home.topics.soilProfiles', href: '/catalogue/#/?q=Soil%20Profiles' }
 ];
 
 const valueItems = [
@@ -41,6 +43,8 @@ const idasSites = [
         name: 'ZALF.DE',
         href: 'https://www.zalf.de/',
         accent: 'var(--zalf-home-idas-zalf)',
+        textColor: 'var(--zalf-home-idas-zalf-text)',
+        descriptionId: 'zalfTheme.home.idas.zalf',
         description:
             'ZALF is the Leibniz Centre for Agricultural Landscape Research. It develops solutions for economically, environmentally, and socially sustainable agriculture together with society, with a strong focus on agricultural landscapes and long-term research.'
     },
@@ -48,6 +52,8 @@ const idasSites = [
         name: 'BONARES.DE',
         href: 'https://www.bonares.de/',
         accent: 'var(--zalf-home-idas-bonares)',
+        textColor: 'var(--zalf-home-idas-bonares-text)',
+        descriptionId: 'zalfTheme.home.idas.bonares',
         description:
             'BonaRes is a free repository for soil, agricultural, and ecology-related research data. It helps researchers publish, find, preserve, and reuse data, including long-term field experiments and their metadata.'
     },
@@ -55,12 +61,15 @@ const idasSites = [
         name: 'FAIRAGRO.NET',
         href: 'https://fairagro.net/en/',
         accent: 'var(--zalf-home-idas-fairagro)',
+        textColor: 'var(--zalf-home-idas-fairagro-text)',
+        descriptionId: 'zalfTheme.home.idas.fairagro',
         description:
             'FAIRagro builds FAIR research data infrastructure for agricultural systems research. It focuses on interoperable tools, workflows, and services that support open, collaborative data management across the community.'
     }
 ];
 
-const heroBackground = '/static/img/yulian-alexeyev-xDLEUTWCZdc-unsplash.jpg';
+// Photo: Yulian Alexeyev (Unsplash), resized to 1920px WebP (was a 4.9 MB JPEG).
+const heroBackground = '/static/img/home-hero.webp';
 
 function useCmsData() {
     const [cases, setCases] = React.useState([]);
@@ -88,6 +97,12 @@ function useCmsData() {
     return { cases, banners, trainings, loading };
 }
 
+// getMessageById returns the id itself when a message is missing, so fall back explicitly.
+function translate(messages, id, fallback) {
+    const message = getMessageById(messages, id);
+    return message && message !== id ? message : fallback;
+}
+
 function renderSectionHead(eyebrow, title, description, light) {
     return React.createElement(
         'div',
@@ -100,7 +115,8 @@ function renderSectionHead(eyebrow, title, description, light) {
     );
 }
 
-function Homepage() {
+function Homepage({ messages = {} }) {
+    const t = (id, fallback) => translate(messages, id, fallback);
     const [activeSpotlight, setActiveSpotlight] = React.useState(0);
     const [activeCase, setActiveCase] = React.useState(0);
     const [heroQuery, setHeroQuery] = React.useState('');
@@ -158,24 +174,24 @@ function Homepage() {
                 React.createElement(
                     'div',
                     { className: 'zalf-homepage__hero-copy' },
-                    React.createElement('span', { className: 'zalf-homepage__eyebrow' }, 'The global hub for agricultural data'),
+                    React.createElement('span', { className: 'zalf-homepage__eyebrow' }, t('zalfTheme.home.heroEyebrow', 'The global hub for agricultural data')),
                     React.createElement('h1', { className: 'zalf-homepage__title' }, 'BonaRes Repository'),
                     React.createElement(
                         'form',
                         { className: 'zalf-homepage__hero-search', onSubmit: handleHeroSearchSubmit, role: 'search' },
-                        React.createElement('label', { className: 'zalf-homepage__sr-only', htmlFor: 'zalf-homepage-hero-search' }, 'Search datasets'),
+                        React.createElement('label', { className: 'zalf-homepage__sr-only', htmlFor: 'zalf-homepage-hero-search' }, t('zalfTheme.home.searchDatasets', 'Search datasets')),
                         React.createElement('input', {
                             id: 'zalf-homepage-hero-search',
                             className: 'zalf-homepage__hero-search-input',
                             type: 'search',
                             value: heroQuery,
                             onChange: (event) => setHeroQuery(event.target.value),
-                            placeholder: 'What type of agricultural data are you searching for?',
+                            placeholder: t('zalfTheme.home.searchPlaceholder', 'What type of agricultural data are you searching for?'),
                             autoComplete: 'off'
                         }),
                         React.createElement(
                             'button',
-                            { type: 'submit', className: 'zalf-homepage__hero-search-button', 'aria-label': 'Search datasets' },
+                            { type: 'submit', className: 'zalf-homepage__hero-search-button', 'aria-label': t('zalfTheme.home.searchDatasets', 'Search datasets') },
                             React.createElement(
                                 'svg',
                                 { className: 'zalf-homepage__hero-search-icon', viewBox: '0 0 24 24', 'aria-hidden': 'true' },
@@ -189,8 +205,8 @@ function Homepage() {
                     React.createElement(
                         'div',
                         { className: 'zalf-homepage__actions' },
-                        React.createElement('a', { className: 'zalf-homepage__button zalf-homepage__button--primary', href: '/catalogue/#/' }, 'Explore Datasets'),
-                        React.createElement('a', { className: 'zalf-homepage__button zalf-homepage__button--secondary', href: '/about' }, 'About BonaRes')
+                        React.createElement('a', { className: 'zalf-homepage__button zalf-homepage__button--primary', href: '/catalogue/#/' }, t('zalfTheme.home.exploreDatasets', 'Explore Datasets')),
+                        React.createElement('a', { className: 'zalf-homepage__button zalf-homepage__button--secondary', href: '/about' }, t('zalfTheme.home.aboutBonaRes', 'About BonaRes'))
                     )
                 )
             )
@@ -203,7 +219,7 @@ function Homepage() {
             React.createElement(
                 'div',
                 { className: 'zalf-homepage__container' },
-                renderSectionHead('How to Publish your Data with us', 'Steps of Publication.'),
+                renderSectionHead(t('zalfTheme.home.publishEyebrow', 'How to Publish your Data with us'), t('zalfTheme.home.publishTitle', 'Steps of Publication.')),
                 React.createElement(
                     'div',
                     { className: 'zalf-homepage__value-grid' },
@@ -243,7 +259,7 @@ function Homepage() {
                 { className: 'zalf-homepage__cases-inner' },
                 React.createElement(
                     'div',
-                    { className: 'zalf-homepage__cases-tabs', role: 'tablist', 'aria-label': 'Highlighted cases' },
+                    { className: 'zalf-homepage__cases-tabs', role: 'tablist', 'aria-label': t('zalfTheme.home.highlightedCases', 'Highlighted cases') },
                     ...cases.map(({ tab_label }, index) => React.createElement(
                         'button',
                         {
@@ -278,15 +294,15 @@ function Homepage() {
             React.createElement(
                 'div',
                 { className: 'zalf-homepage__container' },
-                renderSectionHead('Browse by topic'),
+                renderSectionHead(t('zalfTheme.home.browseByTopic', 'Browse by topic')),
                 React.createElement(
                     'div',
                     { className: 'zalf-homepage__topic-grid' },
-                    ...topicItems.map(({ label, href }) => React.createElement(
+                    ...topicItems.map(({ label, labelId, href }) => React.createElement(
                         'a',
                         { key: label, className: 'zalf-homepage__topic-card', href },
-                        React.createElement('span', { className: 'zalf-homepage__topic-label' }, label),
-                        React.createElement('span', { className: 'zalf-homepage__topic-link' }, 'View topic')
+                        React.createElement('span', { className: 'zalf-homepage__topic-label' }, t(labelId, label)),
+                        React.createElement('span', { className: 'zalf-homepage__topic-link' }, t('zalfTheme.home.viewTopic', 'View topic'))
                     ))
                 )
             )
@@ -311,7 +327,7 @@ function Homepage() {
                             {
                                 type: 'button',
                                 className: 'zalf-homepage__spotlight-card zalf-homepage__spotlight-card--preview zalf-homepage__spotlight-card--left',
-                                'aria-label': `Previous slide: ${banners[previousSpotlight]?.title}`,
+                                'aria-label': `${t('zalfTheme.home.previousSlide', 'Previous slide')}: ${banners[previousSpotlight]?.title}`,
                                 onClick: () => setActiveSpotlight((activeSpotlight + banners.length - 1) % banners.length),
                                 style: {
                                     backgroundImage: `linear-gradient(180deg, rgba(247, 250, 246, 0.18), rgba(247, 250, 246, 0.4)), url(${banners[previousSpotlight]?.image_url || ''})`
@@ -353,7 +369,7 @@ function Homepage() {
                             {
                                 type: 'button',
                                 className: 'zalf-homepage__spotlight-card zalf-homepage__spotlight-card--preview zalf-homepage__spotlight-card--right',
-                                'aria-label': `Next slide: ${banners[nextSpotlight]?.title}`,
+                                'aria-label': `${t('zalfTheme.home.nextSlide', 'Next slide')}: ${banners[nextSpotlight]?.title}`,
                                 onClick: () => setActiveSpotlight((activeSpotlight + 1) % banners.length),
                                 style: {
                                     backgroundImage: `linear-gradient(180deg, rgba(247, 250, 246, 0.18), rgba(247, 250, 246, 0.4)), url(${banners[nextSpotlight]?.image_url || ''})`
@@ -364,7 +380,7 @@ function Homepage() {
                 ),
                 React.createElement(
                     'div',
-                    { className: 'zalf-homepage__spotlight-dots', role: 'tablist', 'aria-label': 'Spotlight pagination' },
+                    { className: 'zalf-homepage__spotlight-dots', role: 'tablist', 'aria-label': t('zalfTheme.home.spotlightPagination', 'Spotlight pagination') },
                     ...banners.map(({ title }, index) => React.createElement(
                         'button',
                         {
@@ -373,6 +389,7 @@ function Homepage() {
                             role: 'tab',
                             'aria-selected': index === activeSpotlight ? 'true' : 'false',
                             className: `zalf-homepage__spotlight-dot${index === activeSpotlight ? ' is-active' : ''}`,
+                            'aria-label': `${t('zalfTheme.home.slide', 'Slide')} ${index + 1}: ${title}`,
                             onClick: () => setActiveSpotlight(index)
                         }
                     ))
@@ -390,7 +407,7 @@ function Homepage() {
                 React.createElement(
                     'div',
                     { className: 'zalf-homepage__training-shell' },
-                    React.createElement('h2', { className: 'zalf-homepage__training-title' }, 'Training Resources'),
+                    React.createElement('h2', { className: 'zalf-homepage__training-title' }, t('zalfTheme.home.trainingResources', 'Training Resources')),
                     React.createElement(
                         'div',
                         { className: 'zalf-homepage__training-grid' },
@@ -427,7 +444,7 @@ function Homepage() {
                             'div',
                             { className: 'zalf-homepage__training-footer' },
                             React.createElement('span', { className: 'zalf-homepage__training-rule' }),
-                            React.createElement('a', { className: 'zalf-homepage__training-link', href: '/trainings/' }, 'View all training resources'),
+                            React.createElement('a', { className: 'zalf-homepage__training-link', href: '/trainings/' }, t('zalfTheme.home.viewAllTrainings', 'View all training resources')),
                             React.createElement('span', { className: 'zalf-homepage__training-rule' })
                         )
                         : null
@@ -442,16 +459,16 @@ function Homepage() {
             React.createElement(
                 'div',
                 { className: 'zalf-homepage__container' },
-                React.createElement('h2', { className: 'zalf-homepage__idas-title' }, 'Information, Data & Analytics Services(IDAS) Sites'),
+                React.createElement('h2', { className: 'zalf-homepage__idas-title' }, t('zalfTheme.home.idasTitle', 'Information, Data & Analytics Services (IDAS) Sites')),
                 React.createElement(
                     'div',
                     { className: 'zalf-homepage__idas-list' },
-                    ...idasSites.map(({ name, accent, description }) => React.createElement(
+                    ...idasSites.map(({ name, accent, textColor, descriptionId, description }) => React.createElement(
                         'article',
                         { key: name, className: 'zalf-homepage__idas-row' },
                         React.createElement('span', { className: 'zalf-homepage__idas-badge', style: { backgroundColor: accent } }),
-                        React.createElement('h3', { className: 'zalf-homepage__idas-name', style: { color: accent } }, name),
-                        React.createElement('p', { className: 'zalf-homepage__idas-description' }, description)
+                        React.createElement('h3', { className: 'zalf-homepage__idas-name', style: { color: textColor } }, name),
+                        React.createElement('p', { className: 'zalf-homepage__idas-description' }, t(descriptionId, description))
                     ))
                 )
             )
@@ -459,4 +476,6 @@ function Homepage() {
     );
 }
 
-export default Homepage;
+export default connect((state) => ({
+    messages: state?.locale?.messages || {}
+}))(Homepage);

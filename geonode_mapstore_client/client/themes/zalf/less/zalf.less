@@ -66,14 +66,18 @@
     --zalf-home-idas-zalf: @zalf-home-idas-zalf;
     --zalf-home-idas-bonares: @zalf-home-idas-bonares;
     --zalf-home-idas-fairagro: @zalf-home-idas-fairagro;
+    --zalf-home-idas-zalf-text: @zalf-home-idas-zalf-text;
+    --zalf-home-idas-bonares-text: @zalf-home-idas-bonares-text;
+    --zalf-home-idas-fairagro-text: @zalf-home-idas-fairagro-text;
     --ms-primary: @zalf-brand-primary;
     --ms-primary-contrast: @zalf-brand-primary-contrast;
     --ms-focus-color: rgba(78, 156, 24, 0.25);
     --ms-selected-color: @zalf-brand-primary;
     --ms-selected-bg: fade(@zalf-brand-primary, 20%);
     --ms-selected-hover-bg: fade(@zalf-brand-primary, 10%);
-    --ms-link-color: @zalf-brand-primary;
-    --ms-link-hover-color: @zalf-brand-primary-hover;
+    // Text links use the darker greens: @zalf-brand-primary on white is only 3.45:1.
+    --ms-link-color: @zalf-brand-primary-active;
+    --ms-link-hover-color: @zalf-brand-primary-strong;
     --ms-footer-link-hover-color: @zalf-brand-primary-hover;
     --ms-loader-primary-color: @zalf-brand-primary;
     --ms-loader-primary-fade-color: fade(@zalf-brand-primary, 20%);

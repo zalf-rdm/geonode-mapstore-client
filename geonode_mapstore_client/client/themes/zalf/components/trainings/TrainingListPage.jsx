@@ -1,4 +1,6 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { getMessageById } from '@mapstore/framework/utils/LocaleUtils';
 import './trainings.css';
 
 function unique(arr) {
@@ -30,7 +32,14 @@ function TrainingCard({ item }) {
     );
 }
 
-function TrainingListPage() {
+// getMessageById returns the id itself when a message is missing, so fall back explicitly.
+function translate(messages, id, fallback) {
+    const message = getMessageById(messages, id);
+    return message && message !== id ? message : fallback;
+}
+
+function TrainingListPage({ messages = {} }) {
+    const msg = (id, fallback) => translate(messages, `zalfTheme.trainings.${id}`, fallback);
     const [all, setAll] = React.useState([]);
     const [loading, setLoading] = React.useState(true);
     const [search, setSearch] = React.useState('');
@@ -71,8 +80,8 @@ function TrainingListPage() {
             React.createElement(
                 'div',
                 { className: 'zalf-trainings__header-inner' },
-                React.createElement('h1', { className: 'zalf-trainings__title' }, 'Training Resources'),
-                React.createElement('p', { className: 'zalf-trainings__subtitle' }, 'Courses, workshops, and self-study materials for researchers working with agricultural and environmental data.')
+                React.createElement('h1', { className: 'zalf-trainings__title' }, msg('title', 'Training Resources')),
+                React.createElement('p', { className: 'zalf-trainings__subtitle' }, msg('subtitle', 'Courses, workshops, and self-study materials for researchers working with agricultural and environmental data.'))
             )
         ),
 
@@ -86,21 +95,22 @@ function TrainingListPage() {
                 React.createElement('input', {
                     type: 'search',
                     className: 'zalf-trainings__search',
-                    placeholder: 'Search by title or topic…',
+                    placeholder: msg('searchPlaceholder', 'Search by title or topic…'),
+                    'aria-label': msg('searchLabel', 'Search training resources'),
                     value: search,
                     onChange: e => setSearch(e.target.value)
                 }),
                 React.createElement(
                     'select',
-                    { className: 'zalf-trainings__select', value: filterOrg, onChange: e => setFilterOrg(e.target.value) },
-                    React.createElement('option', { value: '' }, 'All providers'),
+                    { className: 'zalf-trainings__select', 'aria-label': msg('providerLabel', 'Provider'), value: filterOrg, onChange: e => setFilterOrg(e.target.value) },
+                    React.createElement('option', { value: '' }, msg('allProviders', 'All providers')),
                     ...organizers.map(o => React.createElement('option', { key: o, value: o }, o))
                 ),
                 hasDurations
                     ? React.createElement(
                         'select',
-                        { className: 'zalf-trainings__select', value: filterDur, onChange: e => setFilterDur(e.target.value) },
-                        React.createElement('option', { value: '' }, 'Any duration'),
+                        { className: 'zalf-trainings__select', 'aria-label': msg('durationLabel', 'Duration'), value: filterDur, onChange: e => setFilterDur(e.target.value) },
+                        React.createElement('option', { value: '' }, msg('anyDuration', 'Any duration')),
                         ...durations.map(d => React.createElement('option', { key: d, value: d }, d))
                     )
                     : null,
@@ -108,7 +118,7 @@ function TrainingListPage() {
                     ? React.createElement(
                         'button',
                         { type: 'button', className: 'zalf-trainings__clear', onClick: () => { setSearch(''); setFilterOrg(''); setFilterDur(''); } },
-                        'Clear filters'
+                        msg('clearFilters', 'Clear filters')
                     )
                     : null
             ),
@@ -128,16 +138,18 @@ function TrainingListPage() {
                     : React.createElement(
                         'p',
                         { className: 'zalf-trainings__empty' },
-                        'No training resources match your search.'
+                        msg('empty', 'No training resources match your search.')
                     ),
 
             !loading && React.createElement(
                 'p',
                 { className: 'zalf-trainings__count' },
-                `${visible.length} of ${all.length} resource${all.length !== 1 ? 's' : ''}`
+                msg('count', '{visible} of {total} resources').replace('{visible}', visible.length).replace('{total}', all.length)
             )
         )
     );
 }
 
-export default TrainingListPage;
+export default connect((state) => ({
+    messages: state?.locale?.messages || {}
+}))(TrainingListPage);
