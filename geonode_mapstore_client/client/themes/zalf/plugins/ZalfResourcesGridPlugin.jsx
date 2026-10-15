@@ -258,8 +258,20 @@ function ZalfResourcesGridContainer({
         }))
     );
 
+    // ResourcesMenu renders the page title ("All resources") as a plain <div>.
+    // Expose it as the page's level-1 heading without patching the upstream component.
+    const gridRef = useRef(null);
+    useEffect(() => {
+        const title = titleId && gridRef.current?.querySelector('.ms-resources-menu > .ms-text:first-child');
+        if (title) {
+            title.setAttribute('role', 'heading');
+            title.setAttribute('aria-level', '1');
+        }
+    });
+
     return ce(TargetSelectorPortal, { targetSelector },
         ce('div', {
+            ref: gridRef,
             className: `ms-resources-grid${panel ? ' _panel' : ''}${hideWithNoResults && !resources.length ? ' _hidden' : ''}`
 
         },

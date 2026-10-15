@@ -178,7 +178,7 @@
             "editData": "Editar Datos",
             "view": "Ver",
             "viewMetadata": "Ver metadatos",
-            "viewData":  "Ver datos",
+            "viewData": "Ver datos",
             "viewInfo": "Ver información",
             "backToDataset": "< Regrese al conjunto de datos",
             "goBackTo": "< Volver a { resourceName }",
@@ -252,7 +252,6 @@
             "applyCurrentStyleToLayer": "Aplicar el estilo actual a la capa",
             "deleteCurrentStyle": "Eliminar estilo actual",
             "createNewStyle": "Crear nuevo estilo",
-
             "createStyleTitle": "Agregar nuevo estilo",
             "createStyleTitleInput": "Título:",
             "createStyleClose": "Cerrar",
@@ -281,7 +280,6 @@
             "styleEditorCloseConfirm": "Sí, cerrar",
             "metadataUpload": "Subir Metadatos",
             "styleUpload": "Subir Estilo",
-
             "missingFiles": "Archivos perdidos",
             "invalidUploadMessageError": "Error",
             "invalidUploadMessageErrorTooltip": "El proceso de carga falló. Verifique la validez del archivo e intente cargarlo nuevamente",
@@ -302,12 +300,10 @@
             "unsupportedUrlServiceType": "Seleccionar un tipo de servicio",
             "remoteResourceURLPlaceholder": "URL del recurso...",
             "invalidRemoteUploadMessageErrorTooltip": "El proceso de carga falló. Verifique la validez de la URL e intente cargarla nuevamente",
-
             "uploadDataset": "Subir un conjunto de datos",
             "dragAndDropFile": "Arrastra y suelta un archivo para cargar",
             "filterPendingUploadDataset": "Filtrar cargas pendientes por nombre...",
             "filterNoMatchUploadDataset": "El filtro no coincide con una carga pendiente",
-
             "filterPendingUploadDocument": "Filtrar cargas por nombre...",
             "filterNoMatchUploadDocument": "El filtro no coincide con una carga",
             "uploadDocument": "Subir un documento",
@@ -556,7 +552,9 @@
         },
         "resourcesCatalog": {
             "anonymous": "Cualquiera",
-            "registered-members": "Miembros registrados"
+            "registered-members": "Miembros registrados",
+            "noResultsWithQueryTitle": "Sin resultados",
+            "noResultsWithQueryContent": "Ningún recurso coincide con su búsqueda. <br/> Pruebe con otras palabras clave o borre los filtros."
         },
         "zalfTheme": {
             "nav": {
@@ -617,6 +615,66 @@
                 "unit": "Unidad",
                 "method": "Método",
                 "description": "Descripción"
+            },
+            "home": {
+                "heroEyebrow": "El centro global de datos agrícolas",
+                "searchDatasets": "Buscar conjuntos de datos",
+                "searchPlaceholder": "¿Qué tipo de datos agrícolas busca?",
+                "exploreDatasets": "Explorar conjuntos de datos",
+                "aboutBonaRes": "Acerca de BonaRes",
+                "publishEyebrow": "Cómo publicar sus datos con nosotros",
+                "publishTitle": "Pasos de la publicación.",
+                "highlightedCases": "Casos destacados",
+                "browseByTopic": "Explorar por tema",
+                "viewTopic": "Ver tema",
+                "previousSlide": "Diapositiva anterior",
+                "nextSlide": "Diapositiva siguiente",
+                "spotlightPagination": "Paginación de destacados",
+                "slide": "Diapositiva",
+                "trainingResources": "Recursos de formación",
+                "viewAllTrainings": "Ver todos los recursos de formación",
+                "idasTitle": "Sitios de servicios de información, datos y análisis (IDAS)",
+                "topics": {
+                    "animals": "Animales",
+                    "atmosphere": "Atmósfera",
+                    "climate": "Clima",
+                    "forest": "Bosque",
+                    "hydrology": "Hidrología",
+                    "landscape": "Paisaje",
+                    "plants": "Plantas",
+                    "soilProfiles": "Perfiles de suelo"
+                },
+                "idas": {
+                    "zalf": "ZALF es el Centro Leibniz de Investigación de Paisajes Agrícolas. Junto con la sociedad, desarrolla soluciones para una agricultura económica, ambiental y socialmente sostenible, con especial atención a los paisajes agrícolas y la investigación a largo plazo.",
+                    "bonares": "BonaRes es un repositorio gratuito de datos de investigación sobre suelos, agricultura y ecología. Ayuda a los investigadores a publicar, encontrar, conservar y reutilizar datos, incluidos los ensayos de campo de larga duración y sus metadatos.",
+                    "fairagro": "FAIRagro construye una infraestructura de datos de investigación FAIR para la investigación de sistemas agrícolas. Se centra en herramientas, flujos de trabajo y servicios interoperables que favorecen una gestión de datos abierta y colaborativa en la comunidad."
+                }
+            },
+            "dateFilter": {
+                "loadingDistribution": "Cargando la distribución anual de recursos",
+                "resourcesByYear": "Recursos por año",
+                "resources": "recursos",
+                "startYear": "Año de inicio",
+                "endYear": "Año de fin",
+                "last6Months": "Últimos 6 meses",
+                "last1Year": "Último año",
+                "last5Years": "Últimos 5 años",
+                "from": "Desde",
+                "to": "Hasta",
+                "apply": "Aplicar"
+            },
+            "trainings": {
+                "title": "Recursos de formación",
+                "subtitle": "Cursos, talleres y materiales de autoaprendizaje para investigadores que trabajan con datos agrícolas y ambientales.",
+                "searchPlaceholder": "Buscar por título o tema…",
+                "searchLabel": "Buscar recursos de formación",
+                "providerLabel": "Proveedor",
+                "allProviders": "Todos los proveedores",
+                "durationLabel": "Duración",
+                "anyDuration": "Cualquier duración",
+                "clearFilters": "Borrar filtros",
+                "empty": "Ningún recurso de formación coincide con su búsqueda.",
+                "count": "{visible} de {total} recursos"
             }
         }
     }

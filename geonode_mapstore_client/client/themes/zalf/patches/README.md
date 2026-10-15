@@ -65,3 +65,21 @@ Record here any change made to files outside `themes/zalf`.
 - CHANGE: Replaced `ResourcesFiltersFormPlugin` import from `@mapstore/framework/plugins/ResourcesCatalog` with `ZalfResourcesFiltersFormPlugin` from `themes/zalf/plugins/`, exported under the same `ResourcesFiltersFormPlugin` key.
 - REASON: Use the ZALF collapsible filter sidebar (ZalfFiltersForm) instead of the core floating overlay. Filter is static in the CSS Grid layout and collapses/expands via a toggle header.
 - UPGRADE RISK: Medium — if core ResourcesFiltersForm API changes (new required props, hook renames), the ZALF plugin must be updated accordingly.
+
+- DATE: 2026-10-15
+- BASE FILE: js/plugins/ResourceDetails/ResourceDetails.jsx, static/mapstore/configs/localConfig.json
+- CHANGE: Added a `gnviewer.license` row (`license.identifier`, hidden when empty) after "Language" in the default Info tab and in the three Info tab configs in `localConfig.json` (#168).
+- REASON: Resource detail panels showed no licence, although the API returns one.
+- UPGRADE RISK: Low — additive field; re-apply if upstream rewrites the default Info tab fields.
+
+- DATE: 2026-10-15
+- BASE FILE: static/mapstore/gn-translations/data.{en-US,de-DE,es-ES,fr-FR,it-IT}.json
+- CHANGE: Added `resourcesCatalog.noResultsWithQuery{Title,Content}` (used by `ZalfResourcesGridPlugin` but missing upstream, so the raw keys were shown) and `zalfTheme.home.*`, `zalfTheme.dateFilter.*`, `zalfTheme.trainings.*`. German `gnviewer.extent` changed from "Ausmaß" to "Ausdehnung" (#168).
+- REASON: Raw translation keys on empty searches; untranslated ZALF home, trainings and date-filter UI.
+- UPGRADE RISK: Low — check that upstream does not later define `noResultsWithQuery*` with different wording.
+
+- DATE: 2026-10-15
+- BASE FILE: static/img/home-hero.webp (new), static/img/yulian-alexeyev-xDLEUTWCZdc-unsplash.jpg (removed), static/img/bonares-logo-white.png, static/mapstore/img/bonares-logo-white.png
+- CHANGE: Home hero re-encoded as 1920 px WebP (816 KB, was a 4.9 MB JPEG). BonaRes white logo downscaled from 5589×1514 to 640×173 (31 KB, was 176 KB) (#168).
+- REASON: Home page transferred about 9 MB; the hero alone was 4.9 MB.
+- UPGRADE RISK: Low (static assets only).

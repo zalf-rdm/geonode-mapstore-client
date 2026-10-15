@@ -235,7 +235,8 @@
 
 .zalf-institutional-hero__inner,
 .zalf-institutional-content {
-    width: min(960px, calc(100% - 48px));
+    // Escaped: unescaped, LESS evaluates min() at build time and emits a fixed 960px.
+    width: ~"min(960px, calc(100% - 48px))";
     margin: 0 auto;
 }
 
@@ -287,7 +288,7 @@
 }
 
 .zalf-institutional-footer__inner {
-    width: min(1280px, calc(100% - 48px));
+    width: ~"min(1280px, calc(100% - 48px))";
     margin: 0 auto;
     padding: 0 0 48px;
 }

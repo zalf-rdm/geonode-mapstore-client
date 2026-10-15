@@ -392,7 +392,7 @@
                 "uses": "Verwendet",
                 "usedBy": "Benutzt von"
             },
-            "extent": "Ausmaß",
+            "extent": "Ausdehnung",
             "dateFilter": {
                 "from": "Datum von",
                 "to": "Datum bis"
@@ -583,7 +583,9 @@
         },
         "resourcesCatalog": {
             "anonymous": "Jeder",
-            "registered-members": "Registrierte Mitglieder"
+            "registered-members": "Registrierte Mitglieder",
+            "noResultsWithQueryTitle": "Keine Ergebnisse",
+            "noResultsWithQueryContent": "Keine Ressourcen entsprechen Ihrer Suche. <br/> Versuchen Sie andere Suchbegriffe oder setzen Sie die Filter zurück."
         },
         "zalfTheme": {
             "nav": {
@@ -644,6 +646,66 @@
                 "unit": "Einheit",
                 "method": "Methode",
                 "description": "Beschreibung"
+            },
+            "home": {
+                "heroEyebrow": "Die zentrale Plattform für Agrardaten",
+                "searchDatasets": "Datensätze durchsuchen",
+                "searchPlaceholder": "Nach welchen Agrardaten suchen Sie?",
+                "exploreDatasets": "Datensätze entdecken",
+                "aboutBonaRes": "Über BonaRes",
+                "publishEyebrow": "So veröffentlichen Sie Ihre Daten bei uns",
+                "publishTitle": "Schritte der Veröffentlichung.",
+                "highlightedCases": "Ausgewählte Fallbeispiele",
+                "browseByTopic": "Nach Thema stöbern",
+                "viewTopic": "Thema ansehen",
+                "previousSlide": "Vorherige Folie",
+                "nextSlide": "Nächste Folie",
+                "spotlightPagination": "Spotlight-Navigation",
+                "slide": "Folie",
+                "trainingResources": "Schulungsmaterialien",
+                "viewAllTrainings": "Alle Schulungsmaterialien anzeigen",
+                "idasTitle": "Websites der Informations-, Daten- und Analysedienste (IDAS)",
+                "topics": {
+                    "animals": "Tiere",
+                    "atmosphere": "Atmosphäre",
+                    "climate": "Klima",
+                    "forest": "Wald",
+                    "hydrology": "Hydrologie",
+                    "landscape": "Landschaft",
+                    "plants": "Pflanzen",
+                    "soilProfiles": "Bodenprofile"
+                },
+                "idas": {
+                    "zalf": "Das ZALF ist das Leibniz-Zentrum für Agrarlandschaftsforschung. Gemeinsam mit der Gesellschaft entwickelt es Lösungen für eine ökonomisch, ökologisch und sozial nachhaltige Landwirtschaft – mit einem Schwerpunkt auf Agrarlandschaften und Langzeitforschung.",
+                    "bonares": "BonaRes ist ein freies Repositorium für Forschungsdaten aus Boden-, Agrar- und Ökologieforschung. Es unterstützt Forschende dabei, Daten zu veröffentlichen, zu finden, zu bewahren und nachzunutzen – einschließlich Dauerfeldversuchen und ihrer Metadaten.",
+                    "fairagro": "FAIRagro baut eine FAIRe Forschungsdateninfrastruktur für die Agrarsystemforschung auf. Im Fokus stehen interoperable Werkzeuge, Workflows und Dienste, die ein offenes, gemeinschaftliches Datenmanagement in der Community unterstützen."
+                }
+            },
+            "dateFilter": {
+                "loadingDistribution": "Jährliche Verteilung der Ressourcen wird geladen",
+                "resourcesByYear": "Ressourcen nach Jahr",
+                "resources": "Ressourcen",
+                "startYear": "Startjahr",
+                "endYear": "Endjahr",
+                "last6Months": "Letzte 6 Monate",
+                "last1Year": "Letztes Jahr",
+                "last5Years": "Letzte 5 Jahre",
+                "from": "Von",
+                "to": "Bis",
+                "apply": "Anwenden"
+            },
+            "trainings": {
+                "title": "Schulungsmaterialien",
+                "subtitle": "Kurse, Workshops und Selbstlernmaterialien für Forschende, die mit Agrar- und Umweltdaten arbeiten.",
+                "searchPlaceholder": "Nach Titel oder Thema suchen…",
+                "searchLabel": "Schulungsmaterialien durchsuchen",
+                "providerLabel": "Anbieter",
+                "allProviders": "Alle Anbieter",
+                "durationLabel": "Dauer",
+                "anyDuration": "Beliebige Dauer",
+                "clearFilters": "Filter zurücksetzen",
+                "empty": "Keine Schulungsmaterialien entsprechen Ihrer Suche.",
+                "count": "{visible} von {total} Ressourcen"
             }
         }
     }

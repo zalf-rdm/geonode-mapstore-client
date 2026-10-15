@@ -5,11 +5,29 @@
  * Uses React.createElement — themes/ is outside babel-loader include.
  */
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import FilterItems from '@mapstore/framework/plugins/ResourcesCatalog/components/FilterItems';
 import ZalfDateHistogramFilter from './ZalfDateHistogramFilter';
 
 const ce = React.createElement;
+
+// Upstream FilterItems renders a visible <label> next to each react-select, but
+// the label is not associated with the select's input, so screen readers announce
+// an unnamed text field. Copy the label text onto unlabelled inputs.
+const labelFilterInputs = (root) => {
+    root.querySelectorAll('.form-group').forEach((group) => {
+        const label = group.querySelector(':scope > label');
+        const text = label?.textContent?.trim();
+        if (!text) {
+            return;
+        }
+        group.querySelectorAll('input:not([type=hidden])').forEach((input) => {
+            if (!input.labels?.length && !input.getAttribute('aria-label') && !input.getAttribute('aria-labelledby')) {
+                input.setAttribute('aria-label', text);
+            }
+        });
+    });
+};
 
 export default function ZalfFiltersForm(props) {
     const { fields = [], onChange = () => {}, query = {}, expanded = true } = props;
@@ -18,7 +36,20 @@ export default function ZalfFiltersForm(props) {
     const panelClassName = 'zalf-filter-panel'
         + (expanded ? ' zalf-filter-panel--open' : ' zalf-filter-panel--closed');
 
-    return ce('div', { className: panelClassName },
+    const panelRef = useRef(null);
+    useEffect(() => {
+        const root = panelRef.current;
+        if (!root) {
+            return undefined;
+        }
+        labelFilterInputs(root);
+        // Select inputs are re-created when options load, so keep labelling them.
+        const observer = new MutationObserver(() => labelFilterInputs(root));
+        observer.observe(root, { childList: true, subtree: true });
+        return () => observer.disconnect();
+    }, [expanded]);
+
+    return ce('div', { ref: panelRef, className: panelClassName },
         expanded
             ? ce('div', { id: 'zalf-catalogue-filter-drawer', className: 'zalf-filter-panel-body' },
                 ce('div', { className: 'ms-filters-form' },

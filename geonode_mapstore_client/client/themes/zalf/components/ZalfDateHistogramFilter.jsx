@@ -6,7 +6,9 @@
  */
 
 import React, { useEffect, useMemo, useState } from 'react';
+import { connect } from 'react-redux';
 import axios from '@mapstore/framework/libs/ajax';
+import { getMessageById } from '@mapstore/framework/utils/LocaleUtils';
 import { paramsSerializer } from '../../../js/utils/APIUtils';
 
 const ce = React.createElement;
@@ -31,7 +33,14 @@ const buildPreset = (months) => {
     return { from: formatInputDate(from), to: formatInputDate(to) };
 };
 
-export default function ZalfDateHistogramFilter({ query = {}, filterKey = 'date', onChange = () => {} }) {
+// getMessageById returns the id itself when a message is missing, so fall back explicitly.
+const translate = (messages, id, fallback) => {
+    const message = getMessageById(messages, id);
+    return message && message !== id ? message : fallback;
+};
+
+function ZalfDateHistogramFilter({ query = {}, filterKey = 'date', onChange = () => {}, messages = {} }) {
+    const t = (id, fallback) => translate(messages, `zalfTheme.dateFilter.${id}`, fallback);
     const fromKey = getDateKey(filterKey, 'gte');
     const toKey = getDateKey(filterKey, 'lte');
     const queryFrom = toInputDate(query[fromKey]);
@@ -117,7 +126,7 @@ export default function ZalfDateHistogramFilter({ query = {}, filterKey = 'date'
         ce('legend', null, 'Publication date'),
         ce('div', {
             className: `zalf-date-histogram${loading ? ' is-loading' : ''}`,
-            'aria-label': loading ? 'Loading yearly resource distribution' : 'Resources by year'
+            'aria-label': loading ? t('loadingDistribution', 'Loading yearly resource distribution') : t('resourcesByYear', 'Resources by year')
         },
         years.map((year) => ce('button', {
             key: year,
@@ -125,19 +134,19 @@ export default function ZalfDateHistogramFilter({ query = {}, filterKey = 'date'
             className: 'zalf-date-histogram__bar',
             style: { '--zalf-date-count': `${Math.max(((counts[year] || 0) / maxCount) * 100, counts[year] ? 8 : 2)}%` },
             title: `${year}: ${counts[year] || 0} resources`,
-            'aria-label': `${year}: ${counts[year] || 0} resources`,
+            'aria-label': `${year}: ${counts[year] || 0} ${t('resources', 'resources')}`,
             onClick: () => selectYear(year)
         }))),
         ce('div', { className: 'zalf-date-range' },
             ce('div', { className: 'zalf-date-range__track', 'aria-hidden': 'true' }),
             ce('input', {
                 type: 'range', min: firstYear, max: lastYear, value: selectedFromYear,
-                'aria-label': 'Start year',
+                'aria-label': t('startYear', 'Start year'),
                 onChange: (event) => updateRangeYear('from', event.target.value)
             }),
             ce('input', {
                 type: 'range', min: firstYear, max: lastYear, value: selectedToYear,
-                'aria-label': 'End year',
+                'aria-label': t('endYear', 'End year'),
                 onChange: (event) => updateRangeYear('to', event.target.value)
             })
         ),
@@ -146,7 +155,7 @@ export default function ZalfDateHistogramFilter({ query = {}, filterKey = 'date'
             ce('span', null, lastYear)
         ),
         ce('div', { className: 'zalf-date-filter__presets' },
-            [[6, 'Last 6 months'], [12, 'Last 1 year'], [60, 'Last 5 years']].map(([months, label]) => {
+            [[6, t('last6Months', 'Last 6 months')], [12, t('last1Year', 'Last 1 year')], [60, t('last5Years', 'Last 5 years')]].map(([months, label]) => {
                 const range = buildPreset(months);
                 return ce('button', {
                     key: months,
@@ -158,14 +167,14 @@ export default function ZalfDateHistogramFilter({ query = {}, filterKey = 'date'
         ),
         ce('div', { className: 'zalf-date-filter__custom' },
             ce('label', null,
-                ce('span', null, 'From'),
+                ce('span', null, t('from', 'From')),
                 ce('input', {
                     type: 'date', value: draftFrom, max: draftTo || undefined,
                     onChange: (event) => setDraftFrom(event.target.value)
                 })
             ),
             ce('label', null,
-                ce('span', null, 'To'),
+                ce('span', null, t('to', 'To')),
                 ce('input', {
                     type: 'date', value: draftTo, min: draftFrom || undefined,
                     onChange: (event) => setDraftTo(event.target.value)
@@ -176,7 +185,11 @@ export default function ZalfDateHistogramFilter({ query = {}, filterKey = 'date'
                 className: 'zalf-date-filter__apply',
                 disabled: !draftFrom && !draftTo,
                 onClick: () => applyDates(draftFrom, draftTo)
-            }, 'Apply')
+            }, t('apply', 'Apply'))
         )
     );
 }
+
+export default connect((state) => ({
+    messages: state?.locale?.messages || {}
+}))(ZalfDateHistogramFilter);

@@ -586,7 +586,9 @@
         },
         "resourcesCatalog": {
             "anonymous": "Anyone",
-            "registered-members": "Registered members"
+            "registered-members": "Registered members",
+            "noResultsWithQueryTitle": "No results",
+            "noResultsWithQueryContent": "No resources match your search. <br/> Try other keywords or clear the filters."
         },
         "zalfTheme": {
             "nav": {
@@ -648,6 +650,66 @@
                 "unit": "Unit",
                 "method": "Method",
                 "description": "Description"
+            },
+            "home": {
+                "heroEyebrow": "The global hub for agricultural data",
+                "searchDatasets": "Search datasets",
+                "searchPlaceholder": "What type of agricultural data are you searching for?",
+                "exploreDatasets": "Explore Datasets",
+                "aboutBonaRes": "About BonaRes",
+                "publishEyebrow": "How to Publish your Data with us",
+                "publishTitle": "Steps of Publication.",
+                "highlightedCases": "Highlighted cases",
+                "browseByTopic": "Browse by topic",
+                "viewTopic": "View topic",
+                "previousSlide": "Previous slide",
+                "nextSlide": "Next slide",
+                "spotlightPagination": "Spotlight pagination",
+                "slide": "Slide",
+                "trainingResources": "Training Resources",
+                "viewAllTrainings": "View all training resources",
+                "idasTitle": "Information, Data & Analytics Services (IDAS) Sites",
+                "topics": {
+                    "animals": "Animals",
+                    "atmosphere": "Atmosphere",
+                    "climate": "Climate",
+                    "forest": "Forest",
+                    "hydrology": "Hydrology",
+                    "landscape": "Landscape",
+                    "plants": "Plants",
+                    "soilProfiles": "Soil Profiles"
+                },
+                "idas": {
+                    "zalf": "ZALF is the Leibniz Centre for Agricultural Landscape Research. It develops solutions for economically, environmentally, and socially sustainable agriculture together with society, with a strong focus on agricultural landscapes and long-term research.",
+                    "bonares": "BonaRes is a free repository for soil, agricultural, and ecology-related research data. It helps researchers publish, find, preserve, and reuse data, including long-term field experiments and their metadata.",
+                    "fairagro": "FAIRagro builds FAIR research data infrastructure for agricultural systems research. It focuses on interoperable tools, workflows, and services that support open, collaborative data management across the community."
+                }
+            },
+            "dateFilter": {
+                "loadingDistribution": "Loading yearly resource distribution",
+                "resourcesByYear": "Resources by year",
+                "resources": "resources",
+                "startYear": "Start year",
+                "endYear": "End year",
+                "last6Months": "Last 6 months",
+                "last1Year": "Last 1 year",
+                "last5Years": "Last 5 years",
+                "from": "From",
+                "to": "To",
+                "apply": "Apply"
+            },
+            "trainings": {
+                "title": "Training Resources",
+                "subtitle": "Courses, workshops, and self-study materials for researchers working with agricultural and environmental data.",
+                "searchPlaceholder": "Search by title or topic…",
+                "searchLabel": "Search training resources",
+                "providerLabel": "Provider",
+                "allProviders": "All providers",
+                "durationLabel": "Duration",
+                "anyDuration": "Any duration",
+                "clearFilters": "Clear filters",
+                "empty": "No training resources match your search.",
+                "count": "{visible} of {total} resources"
             }
         }
     }

@@ -175,7 +175,7 @@
             "fillMetadata": "Remplir les métadonnées",
             "view": "Vue",
             "viewMetadata": "Afficher les métadonnées",
-            "viewData":  "Afficher les données",
+            "viewData": "Afficher les données",
             "viewInfo": "Afficher les informations",
             "editInfo": "Modifier les informations",
             "editStyle": "Modifier le Style",
@@ -248,12 +248,10 @@
             "datasetsCatalogFilterPlaceholder": "Filtrer les jeux de données par titre ou résumé...",
             "datasetsCatalogEntriesNoResults": "Aucun résultat ne correspond à votre recherche",
             "legend": "Légende",
-
             "zoomToLayer": "Zoomer sur l'étendue du calque",
             "applyCurrentStyleToLayer": "Appliquer le style actuel au calque",
             "deleteCurrentStyle": "Supprimer le style actuel",
             "createNewStyle": "Créer un nouveau style",
-
             "createStyleTitle": "Ajouter un nouveau style",
             "createStyleTitleInput": "Titre:",
             "createStyleClose": "Fermer",
@@ -282,7 +280,6 @@
             "styleEditorCloseConfirm": "Oui, fermer",
             "metadataUpload": "Télécharger les Métadonnées",
             "styleUpload": "Uploader un Style",
-
             "missingFiles": "Fichiers manquants",
             "invalidUploadMessageError": "Erreur",
             "invalidUploadMessageErrorTooltip": "Le processus de téléchargement a échoué. Veuillez vérifier la validité du fichier et réessayez de le télécharger",
@@ -303,12 +300,10 @@
             "unsupportedUrlServiceType": "Sélectionner un type de service",
             "remoteResourceURLPlaceholder": "URL de la ressource...",
             "invalidRemoteUploadMessageErrorTooltip": "Le processus de téléchargement a échoué. Veuillez vérifier la validité de l'URL et réessayer de la télécharger",
-
             "uploadDataset": "Télécharger un jeu de données",
             "dragAndDropFile": "Glisser et déposer un fichier à télécharger",
             "filterPendingUploadDataset": "Filtrer les envois en attente par nom...",
             "filterNoMatchUploadDataset": "Le filtre ne correspond pas à un upload en attente",
-
             "filterPendingUploadDocument": "Filtrer les envois par nom...",
             "filterNoMatchUploadDocument": "Le filtre ne correspond pas à un document envoyé",
             "uploadDocument": "Télécharger un document",
@@ -557,7 +552,9 @@
         },
         "resourcesCatalog": {
             "anonymous": "N'importe qui",
-            "registered-members": "Membres enregistrés"
+            "registered-members": "Membres enregistrés",
+            "noResultsWithQueryTitle": "Aucun résultat",
+            "noResultsWithQueryContent": "Aucune ressource ne correspond à votre recherche. <br/> Essayez d’autres mots-clés ou effacez les filtres."
         },
         "zalfTheme": {
             "nav": {
@@ -618,6 +615,66 @@
                 "unit": "Unité",
                 "method": "Méthode",
                 "description": "Description"
+            },
+            "home": {
+                "heroEyebrow": "La plateforme mondiale des données agricoles",
+                "searchDatasets": "Rechercher des jeux de données",
+                "searchPlaceholder": "Quel type de données agricoles recherchez-vous ?",
+                "exploreDatasets": "Explorer les jeux de données",
+                "aboutBonaRes": "À propos de BonaRes",
+                "publishEyebrow": "Comment publier vos données chez nous",
+                "publishTitle": "Étapes de publication.",
+                "highlightedCases": "Cas mis en avant",
+                "browseByTopic": "Parcourir par thème",
+                "viewTopic": "Voir le thème",
+                "previousSlide": "Diapositive précédente",
+                "nextSlide": "Diapositive suivante",
+                "spotlightPagination": "Pagination des actualités",
+                "slide": "Diapositive",
+                "trainingResources": "Ressources de formation",
+                "viewAllTrainings": "Voir toutes les ressources de formation",
+                "idasTitle": "Sites des services d’information, de données et d’analyse (IDAS)",
+                "topics": {
+                    "animals": "Animaux",
+                    "atmosphere": "Atmosphère",
+                    "climate": "Climat",
+                    "forest": "Forêt",
+                    "hydrology": "Hydrologie",
+                    "landscape": "Paysage",
+                    "plants": "Plantes",
+                    "soilProfiles": "Profils de sol"
+                },
+                "idas": {
+                    "zalf": "Le ZALF est le Centre Leibniz de recherche sur les paysages agricoles. Avec la société, il développe des solutions pour une agriculture durable sur les plans économique, environnemental et social, en mettant l’accent sur les paysages agricoles et la recherche à long terme.",
+                    "bonares": "BonaRes est un dépôt gratuit de données de recherche sur les sols, l’agriculture et l’écologie. Il aide les chercheurs à publier, trouver, conserver et réutiliser des données, y compris les essais de terrain de longue durée et leurs métadonnées.",
+                    "fairagro": "FAIRagro construit une infrastructure de données de recherche FAIR pour la recherche sur les systèmes agricoles. Elle se concentre sur des outils, des flux de travail et des services interopérables qui favorisent une gestion des données ouverte et collaborative au sein de la communauté."
+                }
+            },
+            "dateFilter": {
+                "loadingDistribution": "Chargement de la répartition annuelle des ressources",
+                "resourcesByYear": "Ressources par année",
+                "resources": "ressources",
+                "startYear": "Année de début",
+                "endYear": "Année de fin",
+                "last6Months": "6 derniers mois",
+                "last1Year": "Dernière année",
+                "last5Years": "5 dernières années",
+                "from": "Du",
+                "to": "Au",
+                "apply": "Appliquer"
+            },
+            "trainings": {
+                "title": "Ressources de formation",
+                "subtitle": "Cours, ateliers et supports d’autoformation pour les chercheurs travaillant avec des données agricoles et environnementales.",
+                "searchPlaceholder": "Rechercher par titre ou thème…",
+                "searchLabel": "Rechercher des ressources de formation",
+                "providerLabel": "Fournisseur",
+                "allProviders": "Tous les fournisseurs",
+                "durationLabel": "Durée",
+                "anyDuration": "Toute durée",
+                "clearFilters": "Effacer les filtres",
+                "empty": "Aucune ressource de formation ne correspond à votre recherche.",
+                "count": "{visible} sur {total} ressources"
             }
         }
     }

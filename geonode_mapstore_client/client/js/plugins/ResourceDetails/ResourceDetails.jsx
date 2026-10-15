@@ -193,6 +193,12 @@ function ResourceDetailsPanel({
                     "value": "{get(state('gnResourceData'), 'language')}"
                 },
                 {
+                    "type": "text",
+                    "labelId": "gnviewer.license",
+                    "value": "{get(state('gnResourceData'), 'license.identifier')}",
+                    "disableIf": "{not get(state('gnResourceData'), 'license.identifier')}"
+                },
+                {
                     "type": "html",
                     "labelId": "gnviewer.supplementalInformation",
                     "value": "{get(state('gnResourceData'), 'supplemental_information')}"
