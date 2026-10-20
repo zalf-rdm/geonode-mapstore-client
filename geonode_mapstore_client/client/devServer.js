@@ -12,7 +12,13 @@ module.exports = (devServerDefault, projectConfig) => {
     const proxyTargetHost = envConfig.DEV_TARGET_GEONODE_HOST || 'localhost:8000';
     const uploadToolTargetHost = envConfig.DEV_TARGET_UPLOAD_TOOL_HOST || 'localhost:8001';
     const protocol = envConfig.DEV_SERVER_PROTOCOL || 'http';
-    const devServerPort = envConfig.DEV_SERVER_PORT || 8082;
+    // Must match the port webpack actually listens on: `mapstore-project start`
+    // uses 8081 for everything that is not an extension. This value is forged as
+    // the Host header below, and GeoNode derives the OIDC redirect_uri from it,
+    // so a mismatch sends the Keycloak callback to a port nothing serves.
+    // (env.json carries a DEV_SERVER_PORT of its own; nothing reads it into
+    // this file, so the two can silently disagree.)
+    const devServerPort = envConfig.DEV_SERVER_PORT || 8081;
 
     const proxyTargetURL = `${protocol}://${proxyTargetHost}`;
     const uploadToolTargetURL = `${protocol}://${uploadToolTargetHost}`;
