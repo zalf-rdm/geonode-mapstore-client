@@ -12,23 +12,23 @@ import logoCoreTrustSealWhite from '../../../../../static/img/logo_core_trust_se
 import logoZalfWhite from '../../../../../static/img/logo_zalf_white.png';
 import './footer.css';
 
-const quickLinks = [
-    { href: '/about', labelId: 'zalfTheme.footer.about' },
+const repositoryLinks = [
+    { href: '/about', labelId: 'zalfTheme.footer.aboutTheRepository' },
+    // /upload is routed to the separate Upload Tool deployment by the ingress.
     { href: '/upload/', labelId: 'zalfTheme.footer.upload' },
-    { href: '/ogc_and_api', labelId: 'zalfTheme.footer.ogcServicesApi' },
-    {
-        href: 'https://www.zalf.de/en/struktur/cdp/fdm/Pages/default.aspx',
-        labelId: 'zalfTheme.footer.researchDataManagement'
-    }
+    { href: '/ogc_and_api', labelId: 'zalfTheme.footer.apiServices' },
+    { href: '/data_policy', labelId: 'zalfTheme.footer.dataPolicy' },
+    { href: '/how_to_cite', labelId: 'zalfTheme.footer.howToCite' }
 ];
 
-const resources = [
-    { href: '/publications', labelId: 'zalfTheme.footer.publications' },
-    { href: '/data_policy', labelId: 'zalfTheme.footer.dataPolicy' },
-    { href: '/how_to_cite', labelId: 'zalfTheme.footer.howToCiteUs' },
+const legalLinks = [
     { href: '/imprint', labelId: 'zalfTheme.footer.imprint' },
-    { href: '/privacy', labelId: 'zalfTheme.footer.privacy' }
+    { href: '/privacy', labelId: 'zalfTheme.footer.privacyPolicy' }
 ];
+
+// Certification record for the repository, valid to 2028-06-12.
+const CORE_TRUST_SEAL_RECORD = 'https://doi.org/10.34894/YPU0UO';
+const ZALF_URL = 'https://www.zalf.de/';
 
 function renderLinkList(items) {
     return React.createElement(
@@ -66,48 +66,56 @@ function FooterBody() {
                     { className: 'row gy-4 text-start text-md-start' },
                     React.createElement(
                         'div',
-                        { className: 'col-6 col-md-6 col-lg-3' },
+                        { className: 'col-12 col-md-4' },
                         React.createElement('h3', { className: 'fs-5 fw-bold mb-3 text-light' }, React.createElement(Message, { msgId: 'zalfTheme.footer.repositoryTitle' })),
                         React.createElement(
                             'p',
-                            { className: 'mb-0 fs-7 text-gray-3' },
+                            { className: 'mb-4 fs-7 text-gray-3' },
                             React.createElement(Message, { msgId: 'zalfTheme.footer.repositoryDescription' })
+                        ),
+                        React.createElement(
+                            'nav',
+                            { 'aria-label': 'Legal' },
+                            React.createElement('h3', { className: 'fs-5 fw-bold mb-3 text-light' }, React.createElement(Message, { msgId: 'zalfTheme.footer.legal' })),
+                            renderLinkList(legalLinks)
                         )
                     ),
                     React.createElement(
                         'nav',
-                        { className: 'col-6 col-md-6 col-lg-3', 'aria-label': 'Quick Links' },
-                        React.createElement('h3', { className: 'fs-5 fw-bold mb-3 text-light' }, React.createElement(Message, { msgId: 'zalfTheme.footer.quickLinks' })),
-                        renderLinkList(quickLinks)
-                    ),
-                    React.createElement(
-                        'nav',
-                        { className: 'col-6 col-md-6 col-lg-3', 'aria-label': 'Resources' },
-                        React.createElement('h3', { className: 'fs-5 fw-bold mb-3 text-light' }, React.createElement(Message, { msgId: 'zalfTheme.footer.resources' })),
-                        renderLinkList(resources)
+                        { className: 'col-12 col-md-4', 'aria-label': 'Repository' },
+                        React.createElement('h3', { className: 'fs-5 fw-bold mb-3 text-light' }, React.createElement(Message, { msgId: 'zalfTheme.footer.repository' })),
+                        renderLinkList(repositoryLinks)
                     ),
                     React.createElement(
                         'div',
-                        { className: 'col-6 col-md-6 col-lg-3', 'aria-label': 'Certified' },
-                        React.createElement('h3', { className: 'fs-5 fw-bold mb-3 text-light' }, React.createElement(Message, { msgId: 'zalfTheme.footer.certifiedBy' })),
+                        { className: 'col-12 col-md-4', 'aria-label': 'Certification' },
+                        React.createElement('h3', { className: 'fs-5 fw-bold mb-3 text-light' }, React.createElement(Message, { msgId: 'zalfTheme.footer.certification' })),
                         React.createElement(
                             'div',
                             { className: 'text-start text-md-start mb-2' },
-                            React.createElement('img', {
-                                className: 'img-fluid zalf-footer-logo',
-                                src: logoCoreTrustSealWhite,
-                                alt: 'Core Trust Seal'
-                            })
+                            React.createElement(
+                                'a',
+                                { href: CORE_TRUST_SEAL_RECORD, target: '_blank', rel: 'noreferrer' },
+                                React.createElement('img', {
+                                    className: 'img-fluid zalf-footer-logo',
+                                    src: logoCoreTrustSealWhite,
+                                    alt: 'CoreTrustSeal certification record'
+                                })
+                            )
                         ),
                         React.createElement(
                             'div',
                             { className: 'text-start text-md-start mb-2' },
-                            React.createElement('h4', { className: 'fw-semibold mb-2 fs-7 text-light' }, React.createElement(Message, { msgId: 'zalfTheme.footer.poweredBy' })),
-                            React.createElement('img', {
-                                className: 'img-fluid zalf-footer-logo',
-                                src: logoZalfWhite,
-                                alt: 'ZALF'
-                            })
+                            React.createElement('h4', { className: 'fw-semibold mb-2 fs-7 text-light' }, React.createElement(Message, { msgId: 'zalfTheme.footer.operatedByZalf' })),
+                            React.createElement(
+                                'a',
+                                { href: ZALF_URL, target: '_blank', rel: 'noreferrer' },
+                                React.createElement('img', {
+                                    className: 'img-fluid zalf-footer-logo',
+                                    src: logoZalfWhite,
+                                    alt: 'ZALF'
+                                })
+                            )
                         )
                     )
                 )
