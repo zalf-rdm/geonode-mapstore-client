@@ -180,25 +180,52 @@ body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header-plac
     margin: 0 auto;
     padding: 0;
     min-height: 78px;
+    padding: 8px 0;
     display: flex;
     align-items: center;
     gap: 24px;
 }
 
+// Temporary branding until a dedicated repository logo exists: the ZALF mark,
+// a hairline, then the repository name. Swapping the asset and the one label
+// string is all that a future logo needs.
 .zalf-navigation__brand {
     display: inline-flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: flex-start;
-    min-width: 168px;
+    flex: 0 0 auto;
+    gap: 12px;
+    min-width: 0;
+    color: var(--zalf-nav-text);
+    text-decoration: none;
+}
+
+.zalf-navigation__brand:hover,
+.zalf-navigation__brand:focus {
+    color: var(--zalf-nav-text);
     text-decoration: none;
 }
 
 .zalf-navigation__brand-logo {
     display: block;
-    width: 180px;
-    height: auto;
+    flex: 0 0 auto;
+    width: auto;
+    height: 44px;
     max-width: 100%;
-    max-height: 62px;
+}
+
+.zalf-navigation__brand-divider {
+    flex: 0 0 auto;
+    width: 1px;
+    height: 36px;
+    background: var(--zalf-nav-brand-divider);
+}
+
+.zalf-navigation__brand-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
 }
 
 .zalf-navigation__content {
@@ -206,17 +233,27 @@ body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header-plac
     display: flex;
     align-items: center;
     flex: 1 1 auto;
-    gap: 24px;
+    gap: 32px;
     min-width: 0;
     transition: gap 260ms ease;
 }
 
+// Previously `flex: 1 1 0` with `min-width: 0`: the box could shrink below its
+// contents while the links inside stayed `nowrap`, so a long translation
+// (German "Uber") overflowed and was painted across the search field.
+//
+// `min-width: fit-content` now holds the row at its natural width as long as
+// the bar has the room, which pushes the shrinking onto the tools column — the
+// search field gives up width before the menu does. Where even that is not
+// enough, `fit-content` falls back to the space available and `flex-wrap` moves
+// the last items onto a second row. Either way the menu stays inside its box.
 .zalf-navigation__primary {
     display: flex;
     align-items: center;
-    gap: 12px;
-    flex: 1 1 0;
-    min-width: 0;
+    flex-wrap: wrap;
+    gap: 8px 8px;
+    flex: 1 1 auto;
+    min-width: fit-content;
     transition: flex-grow 260ms ease, opacity 160ms ease;
 }
 
@@ -299,16 +336,18 @@ body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header-plac
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    flex: 0 0 auto;
-    gap: 16px;
+    flex: 0 1 auto;
+    gap: 14px;
     min-width: 0;
     transition: flex-grow 260ms ease, gap 260ms ease;
 }
 
+// Narrows down to `min-width` before the menu is asked to give up any room,
+// so a long translation costs search width rather than a second menu row.
 .zalf-navigation__search-slot {
-    flex: 0 1 280px;
-    width: 280px;
-    min-width: 0;
+    flex: 0 1 260px;
+    width: auto;
+    min-width: 190px;
     overflow: hidden;
     transition: flex-grow 260ms ease, flex-basis 260ms ease, width 260ms ease;
 }
@@ -335,6 +374,19 @@ body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header-plac
 .zalf-navigation__utilities-slot .gn-brand-navbar-right-menu-container > li {
     margin: 0;
     padding: 0;
+}
+
+// The ORCID iD icon and its label are separate inline nodes; a bare text space
+// between them collapsed against the button padding.
+.zalf-navigation__utilities-slot #sign-in {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    white-space: nowrap;
+}
+
+.zalf-navigation__utilities-slot #sign-in img {
+    flex: 0 0 auto;
 }
 
 .zalf-navigation__search-slot .gn-search-bar {
@@ -577,10 +629,10 @@ body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header-plac
 .zalf-navigation__link {
     color: var(--zalf-nav-text);
     text-decoration: none;
-    font-size: 0.96rem;
+    font-size: 0.92rem;
     font-weight: 500;
     line-height: 1;
-    padding: 12px 14px;
+    padding: 12px 9px;
     border-radius: 999px;
     transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
     border: 1px solid transparent;
@@ -653,6 +705,7 @@ body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header-plac
 
     .zalf-navigation__content:has(.zalf-navigation__search-slot:focus-within) .zalf-navigation__primary {
         flex: 0 1 0;
+        min-width: 0;
         overflow: hidden;
     }
 
@@ -663,7 +716,7 @@ body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header-plac
 
     .zalf-navigation__content:has(.zalf-navigation__search-slot:focus-within) .zalf-navigation__search-slot {
         flex: 1 1 280px;
-        width: 280px;
+        width: auto;
     }
 
     .zalf-navigation__content:has(.zalf-navigation__search-slot:focus-within) .zalf-navigation__utilities-slot {
@@ -708,6 +761,10 @@ body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header-plac
         gap: 8px;
     }
 
+    .zalf-navigation__primary {
+        min-width: 0;
+    }
+
     .zalf-navigation__dropdown-menu,
     .zalf-navigation__dropdown-menu.is-wide {
         position: static;
@@ -732,6 +789,7 @@ body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header-plac
 
     .zalf-navigation__search-slot {
         flex: 0 0 auto;
+        min-width: 0;
     }
 
     .zalf-navigation__utilities-slot .gn-brand-navbar-right-menu-container {
@@ -743,30 +801,65 @@ body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header-plac
         width: 100%;
         text-align: left;
     }
+
+    .zalf-navigation__brand {
+        min-width: 0;
+        margin-right: auto;
+    }
+
+    .zalf-navigation__brand-name {
+        white-space: normal;
+    }
 }
 
-// At intermediate desktop widths retain the full navigation, but compact its
-// spacing and search field. The explanatory ORCID link remains available from
-// the login flow and returns once the full-width layout has enough room.
+@media (max-width: 479px) {
+    .zalf-navigation__brand {
+        gap: 10px;
+    }
+
+    .zalf-navigation__brand-logo {
+        height: 40px;
+    }
+
+    .zalf-navigation__brand-divider {
+        height: 28px;
+    }
+
+    .zalf-navigation__brand-name {
+        font-size: 0.95rem;
+    }
+}
+
+// At intermediate desktop widths retain the full navigation, but compact the
+// branding, the spacing and the search field. Bounds verified every 50px from
+// 1200 up in English and German — German is the longest set of labels and is
+// what decides where each tier has to start.
 @media (min-width: 1200px) and (max-width: 1439px) {
     .zalf-navigation__inner {
         gap: 12px;
     }
 
     .zalf-navigation__brand {
-        min-width: 120px;
+        gap: 10px;
     }
 
     .zalf-navigation__brand-logo {
-        max-width: 132px;
+        height: 42px;
+    }
+
+    .zalf-navigation__brand-name {
+        font-size: 1rem;
     }
 
     .zalf-navigation__content {
-        gap: 12px;
+        gap: 24px;
     }
 
     .zalf-navigation__primary {
         gap: 4px;
+        // The search field is already at its floor here, so there is nothing
+        // left for it to give: let the menu wrap rather than overflow.
+        min-width: 0;
     }
 
     .zalf-navigation__link {
@@ -782,10 +875,7 @@ body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header-plac
 
     .zalf-navigation__search-slot {
         flex-basis: clamp(160px, 14vw, 190px);
-        width: clamp(160px, 14vw, 190px);
-    }
-
-    .zalf-navigation__utilities-slot a[title="Why do we use ORCID?"] {
-        display: none;
+        width: auto;
+        min-width: 160px;
     }
 }

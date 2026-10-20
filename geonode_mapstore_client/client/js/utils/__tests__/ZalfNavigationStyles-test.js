@@ -14,4 +14,38 @@ describe('ZALF navigation search expansion styles', () => {
         expect(stylesheet).toContain('flex-basis: clamp(160px, 14vw, 190px)');
         expect(stylesheet).toContain('@media (max-width: 1199px)');
     });
+
+    // zalf-rdm/geonode#835: the menu used to shrink below its contents while its
+    // links stayed nowrap, so a long translation overflowed onto the search field.
+    it('holds the primary menu at its natural width and wraps as a last resort', () => {
+        const primary = stylesheet.split('.zalf-navigation__primary {')[1].split('}')[0];
+        expect(primary).toContain('min-width: fit-content');
+        expect(primary).toContain('flex-wrap: wrap');
+        expect(primary).toNotContain('min-width: 0');
+    });
+
+    // The search field has to be the one that gives way, so the tools column
+    // must be shrinkable and the field must have a floor of its own.
+    it('lets the tools column shrink before the menu does', () => {
+        const tools = stylesheet.split('.zalf-navigation__tools {')[1].split('}')[0];
+        expect(tools).toContain('flex: 0 1 auto');
+        const search = stylesheet.split('.zalf-navigation__search-slot {')[1].split('}')[0];
+        expect(search).toContain('min-width: 190px');
+    });
+
+    it('keeps the menu clear of the search field', () => {
+        const content = stylesheet.split('.zalf-navigation__content {')[1].split('}')[0];
+        expect(content).toContain('gap: 32px');
+    });
+
+    it('spaces the ORCID icon from its label', () => {
+        expect(stylesheet).toContain('.zalf-navigation__utilities-slot #sign-in');
+    });
+
+    // "What is ORCID?" lives in the About dropdown, so the bar needs no rule
+    // to keep it on one line or to hide it when space runs short.
+    it('carries no leftover rules for the ORCID explanation link', () => {
+        expect(stylesheet).toNotContain('zalf-navigation__orcid-info');
+        expect(stylesheet).toNotContain('a[title="Why do we use ORCID?"]');
+    });
 });

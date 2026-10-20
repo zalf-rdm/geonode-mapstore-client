@@ -27,7 +27,7 @@ const UploadResource = ({ resourceType, ...uploadConfig }) => {
         <div className="gn-upload-container">
             <header className="zalf-upload-hero">
                 <div className="zalf-upload-hero__inner">
-                    <h1><Message msgId="zalfTheme.nav.upload" /></h1>
+                    <h1><Message msgId="zalfTheme.nav.submitData" /></h1>
                     <p><Message msgId="zalfTheme.upload.heroSubtitle" /></p>
                 </div>
             </header>

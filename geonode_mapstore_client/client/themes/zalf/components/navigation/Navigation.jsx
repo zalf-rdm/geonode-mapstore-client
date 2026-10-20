@@ -9,7 +9,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Message from '@mapstore/framework/components/I18N/Message';
 import { getMessageById } from '@mapstore/framework/utils/LocaleUtils';
-import logoBonaRes from '../../../../../static/img/bonares-logo-white.png';
+import logoZalfMark from '../../../../../static/img/logo_zalf_white_mark.png';
 
 const navigationItems = [
     { href: '/catalogue/', labelId: 'zalfTheme.nav.allData' },
@@ -23,7 +23,9 @@ const navigationItems = [
             { href: '/catalogue/#/?q=Forest', labelId: 'zalfTheme.topic.forest' },
             { href: '/catalogue/#/?q=Hydrology', labelId: 'zalfTheme.topic.hydrology' },
             { href: '/catalogue/#/?q=Landscape', labelId: 'zalfTheme.topic.landscape' },
-            { href: '/catalogue/#/?q=Long%20Term%20Field%20Experiment', labelId: 'zalfTheme.topic.longTermFieldExperiment' },
+            // The query stays "Long Term Field Experiment" — that is what the
+            // catalogue matches; only the label was renamed.
+            { href: '/catalogue/#/?q=Long%20Term%20Field%20Experiment', labelId: 'zalfTheme.topic.longTermExperiments' },
             { href: '/catalogue/#/?q=Plants', labelId: 'zalfTheme.topic.plants' },
             { href: '/catalogue/#/?q=Soil%20Profiles', labelId: 'zalfTheme.topic.soilProfiles' },
             { href: '/catalogue/#/?q=Water', labelId: 'zalfTheme.topic.water' }
@@ -31,25 +33,33 @@ const navigationItems = [
         wide: true
     },
     {
-        key: 'tools-services',
-        labelId: 'zalfTheme.nav.toolsServices',
+        key: 'tools',
+        labelId: 'zalfTheme.nav.tools',
         children: [
-            { href: '/trainings/', labelId: 'zalfTheme.nav.trainings' },
-            { href: 'https://tools.bonares.de/ltfe/', labelId: 'zalfTheme.nav.lteMaps', external: true },
+            { href: 'https://tools.bonares.de/ltfe/', labelId: 'zalfTheme.nav.lteMap', external: true },
             { href: 'https://tools.bonares.de/bp_db/', labelId: 'zalfTheme.nav.soilProfiles', external: true },
             { href: 'https://dqkit.bonares.de/', labelId: 'zalfTheme.nav.dqKit', external: true }
         ]
     },
-    { href: '/upload/', labelId: 'zalfTheme.nav.upload' },
+    { href: '/upload/', labelId: 'zalfTheme.nav.submitData' },
+    {
+        key: 'resources',
+        labelId: 'zalfTheme.nav.resources',
+        children: [
+            { href: '/publications/', labelId: 'zalfTheme.nav.publications' },
+            { href: '/data_policy/', labelId: 'zalfTheme.nav.dataPolicy' },
+            { href: '/how_to_cite/', labelId: 'zalfTheme.nav.howToCiteData' }
+        ]
+    },
     {
         key: 'about',
         labelId: 'zalfTheme.nav.about',
         children: [
-            { href: '/development', labelId: 'zalfTheme.nav.development' },
-            { href: '/services', labelId: 'zalfTheme.nav.ogcServicesApi' },
-            { href: '/faq', labelId: 'zalfTheme.nav.faq' },
-            { href: '#', labelId: 'zalfTheme.nav.contactUs' },
-            { href: '#', labelId: 'zalfTheme.nav.version', msgParams: { version: '2.0.1' }, muted: true }
+            { href: '/about/', labelId: 'zalfTheme.nav.about' },
+            { href: '/faq/', labelId: 'zalfTheme.nav.faq' },
+            // Not /account/login/: repository_sso redirects that straight to
+            // Keycloak, skipping the explanation entirely.
+            { href: '/what_is_orcid/', labelId: 'zalfTheme.nav.whatIsOrcid' }
         ]
     }
 ];
@@ -256,9 +266,18 @@ function Navigation({ messages }) {
                     { className: 'zalf-navigation__brand', href: '/' },
                     React.createElement('img', {
                         className: 'zalf-navigation__brand-logo',
-                        src: logoBonaRes,
-                        alt: 'BonaRes'
-                    })
+                        src: logoZalfMark,
+                        alt: 'ZALF'
+                    }),
+                    React.createElement('span', {
+                        className: 'zalf-navigation__brand-divider',
+                        'aria-hidden': 'true'
+                    }),
+                    React.createElement(
+                        'span',
+                        { className: 'zalf-navigation__brand-name' },
+                        'BonaRes Repository'
+                    )
                 ),
                 React.createElement(
                     'button',

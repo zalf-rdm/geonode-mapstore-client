@@ -26,8 +26,18 @@ touch .env
 ```
 DEV_SERVER_PROTOCOL=https
 DEV_SERVER_HOSTNAME=localhost
+DEV_SERVER_PORT=8081
 DEV_TARGET_GEONODE_HOST=mygeonodeinstance.org
 ```
+
+`DEV_SERVER_HOSTNAME` and `DEV_SERVER_PORT` are sent to GeoNode as the `Host`
+header, and GeoNode builds the OIDC `redirect_uri` from it. They must therefore
+name the address you open in the browser, and that address must be registered as
+a valid redirect URI on the Keycloak client — otherwise login fails with
+`Invalid parameter: redirect_uri`, or returns to a port nothing is serving.
+
+Note that `env.json` holds similar keys under different names; it is not read by
+`devServer.js`, so changing it has no effect on the development proxy.
 
 - install all package dependencies with the command
 
