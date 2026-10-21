@@ -332,6 +332,16 @@ body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header-plac
     opacity: 0.88;
 }
 
+// Divides the two halves of the merged Information menu (zalf-rdm/geonode#864).
+// The server-rendered header carries the same rule inline so it ships without a
+// package rebuild; this one is for the client-rendered navigation.
+.zalf-navigation__dropdown-separator {
+    display: block;
+    height: 1px;
+    margin: 8px 18px;
+    background: var(--zalf-nav-divider-soft);
+}
+
 .zalf-navigation__tools {
     display: flex;
     align-items: center;
@@ -706,6 +716,22 @@ body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header-plac
     // `flex: 0 1 0` did not suppress the menu's growth: the freed width went to
     // the menu, the field itself shrank slightly, and only the buttons vanishing
     // made it look like an expansion.
+    // The overlay is a fixed width and CSS cannot measure how much gap is really
+    // free, so on a tight bar it covered menu items: ~97px of "Uber" in German at
+    // 1366-1920, and 54px in English at 1280 (zalf-rdm/geonode-mapstore-client#183).
+    // Merging the Resources and About dropdowns in zalf-rdm/geonode#864 narrowed
+    // the row by ~70px but only cut that to ~26px — it did not remove it.
+    //
+    // Fading the menu out while the field has focus removes the problem outright:
+    // there is nothing left to overlap, at any width and in any language. The
+    // language selector and the Login button stay put, which is what made the
+    // original hide-everything behaviour jarring.
+    .zalf-navigation__content:has(.zalf-navigation__search-slot:focus-within) .zalf-navigation__primary {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 160ms ease;
+    }
+
     .zalf-navigation__content:has(.zalf-navigation__search-slot:focus-within) .zalf-navigation__search-slot {
         position: relative;
         overflow: visible;
