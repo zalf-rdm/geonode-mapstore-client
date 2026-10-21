@@ -42,24 +42,22 @@ const navigationItems = [
         ]
     },
     { href: '/upload/', labelId: 'zalfTheme.nav.submitData' },
+    // Resources and About merged into one menu (zalf-rdm/geonode#864): six entries
+    // across two dropdowns, and the extra toggle widened a bar that is already
+    // tight in German. The separator keeps the two halves scannable.
     {
-        key: 'resources',
-        labelId: 'zalfTheme.nav.resources',
+        key: 'information',
+        labelId: 'zalfTheme.nav.information',
         children: [
-            { href: '/publications/', labelId: 'zalfTheme.nav.publications' },
-            { href: '/data_policy/', labelId: 'zalfTheme.nav.dataPolicy' },
-            { href: '/how_to_cite/', labelId: 'zalfTheme.nav.howToCiteData' }
-        ]
-    },
-    {
-        key: 'about',
-        labelId: 'zalfTheme.nav.about',
-        children: [
-            { href: '/about/', labelId: 'zalfTheme.nav.about' },
+            { href: '/about/', labelId: 'zalfTheme.nav.aboutTheRepository' },
             { href: '/faq/', labelId: 'zalfTheme.nav.faq' },
             // Not /account/login/: repository_sso redirects that straight to
             // Keycloak, skipping the explanation entirely.
-            { href: '/what_is_orcid/', labelId: 'zalfTheme.nav.whatIsOrcid' }
+            { href: '/what_is_orcid/', labelId: 'zalfTheme.nav.whatIsOrcid' },
+            { separator: true },
+            { href: '/publications/', labelId: 'zalfTheme.nav.publications' },
+            { href: '/data_policy/', labelId: 'zalfTheme.nav.dataPolicy' },
+            { href: '/how_to_cite/', labelId: 'zalfTheme.nav.howToCiteData' }
         ]
     }
 ];
@@ -193,6 +191,13 @@ function Navigation({ messages }) {
     }
 
     function renderDropdownItem(item, idx) {
+        if (item.separator) {
+            return React.createElement('span', {
+                key: `separator-${idx}`,
+                className: 'zalf-navigation__dropdown-separator',
+                role: 'separator'
+            });
+        }
         return React.createElement(
             'a',
             {

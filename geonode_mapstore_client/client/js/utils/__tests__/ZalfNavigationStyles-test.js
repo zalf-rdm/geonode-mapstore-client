@@ -18,8 +18,20 @@ describe('ZALF navigation search expansion styles', () => {
         )[1].split('}')[0];
         expect(focused).toContain('position: absolute');
         expect(focused).toContain('width: 380px !important');
-        // Nothing may be hidden to make room any more.
-        expect(stylesheet).toNotContain('opacity: 0;\n        pointer-events: none;');
+    });
+
+    // zalf-rdm/geonode-mapstore-client#183: the overlay is a fixed width and CSS
+    // cannot measure the free gap, so on a tight bar it covered menu items. The
+    // menu is faded while the field has focus; the account controls are not.
+    it('fades the menu while the search has focus, but not the account controls', () => {
+        const menu = stylesheet.split(
+            ':focus-within) .zalf-navigation__primary {'
+        )[1].split('}')[0];
+        expect(menu).toContain('opacity: 0');
+        expect(menu).toContain('pointer-events: none');
+        expect(stylesheet).toNotContain(
+            ':focus-within) .zalf-navigation__utilities-slot'
+        );
     });
 
     it('compacts search and navigation at intermediate desktop widths', () => {
