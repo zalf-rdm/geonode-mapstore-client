@@ -30,7 +30,6 @@ import FavoritesPlugin from '@js/plugins/Favorites';
 import CreateDatasetPlugin from '@js/plugins/CreateDataset';
 import ZalfNavigationPlugin from '../../themes/zalf/plugins/NavigationPlugin';
 import ZalfHomepagePlugin from '../../themes/zalf/plugins/HomepagePlugin';
-import ZalfFaqPlugin from '../../themes/zalf/plugins/FaqPlugin';
 import ZalfCmsPlugin from '../../themes/zalf/plugins/CmsPlugin';
 import ZalfTrainingListPlugin from '../../themes/zalf/plugins/TrainingListPlugin';
 import ZalfFooterPlugin from '../../themes/zalf/plugins/FooterPlugin';
@@ -96,7 +95,6 @@ export const plugins = {
     CreateDatasetPlugin,
     ZalfNavigationPlugin,
     ZalfHomepagePlugin,
-    ZalfFaqPlugin,
     ZalfCmsPlugin,
     ZalfTrainingListPlugin,
     ZalfFooterPlugin,
