@@ -101,7 +101,7 @@
     },
     "fr": {
       "code": "fr-FR",
-      "description": "Fran\u00e7ais"
+      "description": "Français"
     },
     "de": {
       "code": "de-DE",
@@ -109,7 +109,7 @@
     },
     "es": {
       "code": "es-ES",
-      "description": "Espa\u00f1ol"
+      "description": "Español"
     }
   },
   "mapType": {
@@ -4309,17 +4309,6 @@
       },
       {
         "name": "ZalfHomepage"
-      },
-      {
-        "name": "ZalfFooter"
-      }
-    ],
-    "zalf_faq": [
-      {
-        "name": "ZalfNavigation"
-      },
-      {
-        "name": "ZalfFaq"
       },
       {
         "name": "ZalfFooter"
