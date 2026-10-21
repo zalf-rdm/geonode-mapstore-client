@@ -9,6 +9,19 @@ describe('ZALF navigation search expansion styles', () => {
         expect(stylesheet).toNotContain('.zalf-navigation__content:focus-within');
     });
 
+    // zalf-rdm/geonode-mapstore-client#179: focus used to hide the menu and the
+    // account controls, and the freed width went to the menu rather than the
+    // field. The field now grows as an overlay so the bar does not reflow.
+    it('expands the search as an overlay instead of reflowing the bar', () => {
+        const focused = stylesheet.split(
+            ':focus-within) .zalf-navigation__search-slot .gn-search-bar {'
+        )[1].split('}')[0];
+        expect(focused).toContain('position: absolute');
+        expect(focused).toContain('width: 380px !important');
+        // Nothing may be hidden to make room any more.
+        expect(stylesheet).toNotContain('opacity: 0;\n        pointer-events: none;');
+    });
+
     it('compacts search and navigation at intermediate desktop widths', () => {
         expect(stylesheet).toContain('@media (min-width: 1200px) and (max-width: 1439px)');
         expect(stylesheet).toContain('flex-basis: clamp(160px, 14vw, 190px)');

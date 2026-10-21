@@ -693,37 +693,47 @@ body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header-plac
     // Expand only when the search itself owns focus. Using focus-within on the
     // whole navigation content made every link and utility button activate the
     // search layout as a side effect.
-    .zalf-navigation__content:has(.zalf-navigation__search-slot:focus-within) {
-        gap: 0;
-    }
-
-    .zalf-navigation__content:has(.zalf-navigation__search-slot:focus-within) .zalf-navigation__primary,
-    .zalf-navigation__content:has(.zalf-navigation__search-slot:focus-within) .zalf-navigation__utilities-slot {
-        opacity: 0;
-        pointer-events: none;
-    }
-
-    .zalf-navigation__content:has(.zalf-navigation__search-slot:focus-within) .zalf-navigation__primary {
-        flex: 0 1 0;
-        min-width: 0;
-        overflow: hidden;
-    }
-
-    .zalf-navigation__content:has(.zalf-navigation__search-slot:focus-within) .zalf-navigation__tools {
-        flex: 1 1 auto;
-        gap: 0;
-    }
-
+    //
+    // The field grows as an overlay rather than by reflowing the bar. The slot
+    // keeps its place in the layout and the control is lifted out of flow over
+    // the tail of the menu, so nothing shifts: the menu cannot be squeezed into
+    // wrapping and the language and account controls stay where they are.
+    //
+    // Reflowing is not an option here. `min-width: fit-content` on the menu —
+    // which stops a long translation spilling over the field — means the bar is
+    // already exactly full at most desktop widths, so there is no slack to give.
+    // The previous rules hid the menu and the account controls to make room, but
+    // `flex: 0 1 0` did not suppress the menu's growth: the freed width went to
+    // the menu, the field itself shrank slightly, and only the buttons vanishing
+    // made it look like an expansion.
     .zalf-navigation__content:has(.zalf-navigation__search-slot:focus-within) .zalf-navigation__search-slot {
-        flex: 1 1 280px;
-        width: auto;
+        position: relative;
+        overflow: visible;
     }
 
-    .zalf-navigation__content:has(.zalf-navigation__search-slot:focus-within) .zalf-navigation__utilities-slot {
-        flex: 0 1 0;
-        width: 0;
-        max-width: 0;
-        overflow: hidden;
+    .zalf-navigation__content:has(.zalf-navigation__search-slot:focus-within) .zalf-navigation__search-slot .gn-search-bar {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        z-index: 25;
+        // `!important` matches the base rule, which pins `max-width: 100%` of the
+        // slot and would otherwise clamp the overlay back to the slot's width.
+        width: 380px !important;
+        max-width: ~"calc(100vw - 96px)" !important;
+        transform: translateY(-50%);
+    }
+
+    // Lifting the control out of flow empties the slot, so it settles to its
+    // `min-width` floor and frees ~34px. The menu takes that, which is invisible
+    // because its items are left-aligned — only the box grows. The account
+    // controls end up about 13px narrower at the widest tiers, where they are
+    // already slightly compressed. Pinning them with `flex-shrink: 0` only trades
+    // that for a 14px widening, so it is left alone.
+
+    // The control is transparent apart from its border, so it has to be opaque
+    // where it covers the menu.
+    .zalf-navigation__content:has(.zalf-navigation__search-slot:focus-within) .zalf-navigation__search-slot .gn-search-bar .input-group {
+        background: var(--zalf-nav-bg) !important;
     }
 }
 
