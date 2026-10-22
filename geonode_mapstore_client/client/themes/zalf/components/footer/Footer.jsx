@@ -16,7 +16,6 @@ const repositoryLinks = [
     { href: '/about', labelId: 'zalfTheme.footer.aboutTheRepository' },
     // /upload is routed to the separate Upload Tool deployment by the ingress.
     { href: '/upload/', labelId: 'zalfTheme.footer.upload' },
-    { href: '/ogc_and_api', labelId: 'zalfTheme.footer.apiServices' },
     { href: '/data_policy', labelId: 'zalfTheme.footer.dataPolicy' },
     { href: '/how_to_cite', labelId: 'zalfTheme.footer.howToCite' }
 ];
