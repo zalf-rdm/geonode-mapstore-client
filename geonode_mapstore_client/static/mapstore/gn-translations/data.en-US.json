@@ -700,6 +700,10 @@
                 "clearFilters": "Clear filters",
                 "empty": "No training resources match your search.",
                 "count": "{visible} of {total} resources"
+            },
+            "share": {
+                "shareLink": "Share link",
+                "linkCopied": "Link copied"
             }
         }
     }

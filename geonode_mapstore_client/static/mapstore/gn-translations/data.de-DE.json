@@ -697,6 +697,10 @@
                 "clearFilters": "Filter zurücksetzen",
                 "empty": "Keine Schulungsmaterialien entsprechen Ihrer Suche.",
                 "count": "{visible} von {total} Ressourcen"
+            },
+            "share": {
+                "shareLink": "Link teilen",
+                "linkCopied": "Link kopiert"
             }
         }
     }

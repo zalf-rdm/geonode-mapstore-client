@@ -665,6 +665,10 @@
                 "clearFilters": "Cancella filtri",
                 "empty": "Nessuna risorsa formativa corrisponde alla ricerca.",
                 "count": "{visible} di {total} risorse"
+            },
+            "share": {
+                "shareLink": "Condividi link",
+                "linkCopied": "Link copiato"
             }
         }
     }

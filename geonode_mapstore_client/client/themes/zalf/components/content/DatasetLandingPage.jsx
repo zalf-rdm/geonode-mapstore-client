@@ -29,6 +29,7 @@ import {
 import Portal from '@mapstore/framework/components/misc/Portal';
 import ResizableModal from '@mapstore/framework/components/misc/ResizableModal';
 import './datasetlanding.css';
+import { getLandingShareUrl, shareLink } from '../../utils/ZalfShareUtils';
 
 const ce = React.createElement;
 
@@ -407,32 +408,22 @@ function CopyMenu({ pk }) {
 /**
  * Share the stable landing page link /landing/<uuid>/ (the DOI target, zalf-rdm/geonode#823).
  * Opens the system share dialog where available, otherwise copies the link.
+ *
+ * The behaviour lives in ZalfShareUtils so the catalogue cards and the catalogue
+ * detail panel share it (zalf-rdm/geonode#812) instead of reimplementing it.
  */
 function ShareButton({ uuid, title }) {
     const [copied, setCopied] = useState(false);
     if (!uuid) return null;
-    const url = window.location.origin + '/landing/' + uuid + '/';
-
-    function copyLink() {
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(url).then(() => {
-                setCopied(true);
-                setTimeout(() => setCopied(false), 1600);
-            }).catch((err) => console.error('Failed to copy link: ', err));
-        } else {
-            console.warn('Clipboard API not available');
-        }
-    }
+    const url = getLandingShareUrl(uuid);
 
     function share() {
-        if (navigator.share) {
-            // a cancelled share dialog rejects; only fall back on real errors
-            navigator.share({ title, url }).catch((err) => {
-                if (err && err.name !== 'AbortError') copyLink();
-            });
-        } else {
-            copyLink();
-        }
+        shareLink({ url, title }).then((wasCopied) => {
+            if (wasCopied) {
+                setCopied(true);
+                setTimeout(() => setCopied(false), 1600);
+            }
+        });
     }
 
     return ce('button', {

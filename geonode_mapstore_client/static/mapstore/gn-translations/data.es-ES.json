@@ -663,6 +663,10 @@
                 "clearFilters": "Borrar filtros",
                 "empty": "Ningún recurso de formación coincide con su búsqueda.",
                 "count": "{visible} de {total} recursos"
+            },
+            "share": {
+                "shareLink": "Compartir enlace",
+                "linkCopied": "Enlace copiado"
             }
         }
     }

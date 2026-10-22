@@ -39,6 +39,7 @@ import ZalfTabularViewerPlugin from '../../themes/zalf/plugins/TabularViewerPlug
 import ZalfTabularCollectionViewerPlugin from '../../themes/zalf/plugins/TabularCollectionViewerPlugin';
 import ResourcesGridPlugin from '../../themes/zalf/plugins/ZalfResourcesGridPlugin';
 import ResourcesFiltersFormPlugin from '../../themes/zalf/plugins/ZalfResourcesFiltersFormPlugin';
+import ZalfShareResourcePlugin from '../../themes/zalf/plugins/ZalfShareResourcePlugin';
 
 let epicsNamesToExclude = [
     'loadGeostoryEpic',
@@ -102,6 +103,7 @@ export const plugins = {
     ZalfMetadataViewPlugin,
     ZalfTabularViewerPlugin,
     ZalfTabularCollectionViewerPlugin,
+    ZalfShareResourcePlugin,
     IsochronePlugin: Isochrone,
     ItineraryPlugin: Itinerary,
     SecurityPopupPlugin: SecurityPopup,

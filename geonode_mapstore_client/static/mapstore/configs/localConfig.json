@@ -4083,6 +4083,9 @@
               },
               {
                 "path": "group.title",
+                "image": {
+                  "path": "group.logo"
+                },
                 "icon": {
                   "glyph": "folder-open"
                 },
@@ -4135,6 +4138,16 @@
                 "format": "MMM Do YYYY",
                 "icon": {
                   "glyph": "time"
+                },
+                "noDataLabelId": "resourcesCatalog.emptyNA"
+              },
+              {
+                "path": "group.title",
+                "image": {
+                  "path": "group.logo"
+                },
+                "icon": {
+                  "glyph": "folder-open"
                 },
                 "noDataLabelId": "resourcesCatalog.emptyNA"
               },
@@ -4292,6 +4305,9 @@
       },
       {
         "name": "DownloadResource"
+      },
+      {
+        "name": "ZalfShareResource"
       },
       {
         "name": "Notifications"

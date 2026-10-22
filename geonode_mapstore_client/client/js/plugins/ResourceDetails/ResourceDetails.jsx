@@ -10,6 +10,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { createPlugin } from '@mapstore/framework/utils/PluginsUtils';
 import { connect } from 'react-redux';
 import { createStructuredSelector, createSelector } from 'reselect';
+import { userSelector } from '@mapstore/framework/selectors/security';
 import PropTypes from 'prop-types';
 
 import controls from '@mapstore/framework/reducers/controls';
@@ -496,14 +497,22 @@ export default createPlugin('ResourceDetails', {
             Component: connect(
                 createStructuredSelector({
                     selectedResource: getResourceData,
-                    show: getShowDetails
+                    show: getShowDetails,
+                    user: userSelector
                 }),
                 {
                     onSelect: requestResource,
                     onShow: setShowDetails
                 }
-            )(({ resourcesGridId, resource, onSelect, component, selectedResource, onShow, show }) => {
+            )(({ resourcesGridId, resource, onSelect, component, selectedResource, onShow, show, user }) => {
                 const Component = component;
+                // zalf-rdm/geonode#812: the properties panel is an editor-facing view of
+                // the raw metadata. Anonymous visitors belong on the resource's landing
+                // page, which is where the card itself already takes them, so they are
+                // not offered this panel at all.
+                if (!user) {
+                    return null;
+                }
                 function handleClick() {
                     const isSameResource = selectedResource?.pk === resource?.pk;
                     if (!selectedResource?.['@ms-detail'] || !isSameResource) {

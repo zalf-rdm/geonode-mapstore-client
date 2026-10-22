@@ -19,6 +19,7 @@ import {
     ensureCatalogueThumbnail,
     filterCatalogueMetadata
 } from '../utils/CatalogueUtils';
+import { useGroupProfiles, withGroupProfile } from '../utils/ZalfGroupProfiles';
 
 const renderSkeletons = (cardLayoutStyle) => Array.from({ length: cardLayoutStyle === 'list' ? 8 : 6 })
     .map((_, idx) => ce('li', { key: `catalogue-skeleton-${idx}`, 'aria-hidden': 'true' },
@@ -34,6 +35,10 @@ const renderSkeletons = (cardLayoutStyle) => Array.from({ length: cardLayoutStyl
 
 const ZalfResourcesContainer = (props) => {
     const containerRef = useRef();
+    // A resource carries only { pk, name } for its group, so the title and logo the
+    // cards show come from /api/v2/groups/ (zalf-rdm/geonode#812). The returned
+    // counter re-renders the cards once the profiles have arrived.
+    useGroupProfiles(props.resources);
     const {
         resources,
         isCardActive,
@@ -83,7 +88,7 @@ const ZalfResourcesContainer = (props) => {
                 classNames: ['_relative', '_padding-tb-lg']
             },
             ...(loading && !resources.length ? renderSkeletons(cardLayoutStyle) : resources.map((resource, idx) => {
-                const cardResource = ensureCatalogueThumbnail(resource);
+                const cardResource = withGroupProfile(ensureCatalogueThumbnail(resource));
                 const { isProcessing, items: statusItems } = getResourceStatus(cardResource);
                 const allowedOptions = !isProcessing ? cardOptions : [];
                 return ce('li', { key: `${idx}:${resource && resource.id}` },
