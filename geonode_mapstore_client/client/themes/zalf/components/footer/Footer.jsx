@@ -20,9 +20,13 @@ const repositoryLinks = [
     { href: '/how_to_cite', labelId: 'zalfTheme.footer.howToCite' }
 ];
 
+// Cookies joined the list in zalf-rdm/geonode#866: the Legal group was taken out
+// of the static pages' side navigation, and the cookie notice is the only other
+// link to it — which is gone once the notice has been dismissed.
 const legalLinks = [
     { href: '/imprint', labelId: 'zalfTheme.footer.imprint' },
-    { href: '/privacy', labelId: 'zalfTheme.footer.privacyPolicy' }
+    { href: '/privacy', labelId: 'zalfTheme.footer.privacyPolicy' },
+    { href: '/privacy_cookies/', labelId: 'zalfTheme.footer.cookies' }
 ];
 
 // Certification record for the repository, valid to 2028-06-12.

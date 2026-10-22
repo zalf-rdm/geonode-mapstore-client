@@ -332,14 +332,28 @@ body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header-plac
     opacity: 0.88;
 }
 
-// Divides the two halves of the merged Information menu (zalf-rdm/geonode#864).
-// The server-rendered header carries the same rule inline so it ships without a
-// package rebuild; this one is for the client-rendered navigation.
-.zalf-navigation__dropdown-separator {
+// Group labels inside the merged Help & Information menu (zalf-rdm/geonode#866),
+// which replaced the plain separator the menu carried since #864. The
+// server-rendered header carries the same rules inline so they ship without a
+// package rebuild; these are for the client-rendered navigation.
+.zalf-navigation__dropdown-heading {
     display: block;
-    height: 1px;
-    margin: 8px 18px;
-    background: var(--zalf-nav-divider-soft);
+    margin: 2px 0 6px;
+    padding: 0 18px;
+    color: var(--zalf-nav-text-muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    line-height: 1.4;
+    text-transform: uppercase;
+}
+
+// Only a heading that follows links needs a rule above it, so the first group
+// label in the menu stays flush with the top.
+.zalf-navigation__dropdown-link + .zalf-navigation__dropdown-heading {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--zalf-nav-divider-soft);
 }
 
 .zalf-navigation__tools {
