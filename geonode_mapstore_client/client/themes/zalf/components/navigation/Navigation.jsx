@@ -41,7 +41,9 @@ const navigationItems = [
             { href: 'https://dqkit.bonares.de/', labelId: 'zalfTheme.nav.dqKit', external: true }
         ]
     },
-    { href: '/upload/', labelId: 'zalfTheme.nav.submitData' },
+    // Temporary submission page (zalf-rdm/geonode#867). Not /upload/: the ingress
+    // routes that prefix to the separate Upload Tool deployment.
+    { href: '/submit_data/', labelId: 'zalfTheme.nav.submitData' },
     // Resources and About merged into one menu (zalf-rdm/geonode#864): six entries
     // across two dropdowns, and the extra toggle widened a bar that is already
     // tight in German. The separator keeps the two halves scannable.
