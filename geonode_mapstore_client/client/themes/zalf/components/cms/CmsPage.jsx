@@ -5,7 +5,9 @@ import SpotlightBannerEditor from './editors/SpotlightBannerEditor';
 import TrainingResourceEditor from './editors/TrainingResourceEditor';
 
 const TABS = [
-    { key: 'cases', label: 'Highlighted Cases' },
+    // Visitors see this section as "Highlighted Datasets" (zalf-rdm/geonode#838);
+    // the model and API keep the HighlightedCase name.
+    { key: 'cases', label: 'Highlighted Datasets' },
     { key: 'banners', label: 'Spotlight Banners' },
     { key: 'trainings', label: 'Training Resources' },
 ];

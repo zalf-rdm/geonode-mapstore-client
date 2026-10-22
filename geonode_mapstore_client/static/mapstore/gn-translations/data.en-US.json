@@ -652,23 +652,15 @@
                 "description": "Description"
             },
             "home": {
-                "heroEyebrow": "The global hub for agricultural data",
+                "heroEyebrow": "Discover and share soil and agricultural research data",
                 "searchDatasets": "Search datasets",
                 "searchPlaceholder": "What type of agricultural data are you searching for?",
                 "exploreDatasets": "Explore Datasets",
-                "aboutBonaRes": "About BonaRes",
-                "publishEyebrow": "How to Publish your Data with us",
-                "publishTitle": "Steps of Publication.",
-                "highlightedCases": "Highlighted cases",
+                "highlightedCases": "Highlighted Datasets",
                 "browseByTopic": "Browse by topic",
                 "viewTopic": "View topic",
-                "previousSlide": "Previous slide",
-                "nextSlide": "Next slide",
-                "spotlightPagination": "Spotlight pagination",
-                "slide": "Slide",
                 "trainingResources": "Training Resources",
                 "viewAllTrainings": "View all training resources",
-                "idasTitle": "Information, Data & Analytics Services (IDAS) Sites",
                 "topics": {
                     "animals": "Animals",
                     "atmosphere": "Atmosphere",
@@ -678,11 +670,6 @@
                     "landscape": "Landscape",
                     "plants": "Plants",
                     "soilProfiles": "Soil Profiles"
-                },
-                "idas": {
-                    "zalf": "ZALF is the Leibniz Centre for Agricultural Landscape Research. It develops solutions for economically, environmentally, and socially sustainable agriculture together with society, with a strong focus on agricultural landscapes and long-term research.",
-                    "bonares": "BonaRes is a free repository for soil, agricultural, and ecology-related research data. It helps researchers publish, find, preserve, and reuse data, including long-term field experiments and their metadata.",
-                    "fairagro": "FAIRagro builds FAIR research data infrastructure for agricultural systems research. It focuses on interoperable tools, workflows, and services that support open, collaborative data management across the community."
                 }
             },
             "dateFilter": {

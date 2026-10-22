@@ -617,23 +617,15 @@
                 "description": "Descrizione"
             },
             "home": {
-                "heroEyebrow": "Il punto di riferimento globale per i dati agricoli",
+                "heroEyebrow": "Scopri e condividi i dati della ricerca su suolo e agricoltura",
                 "searchDatasets": "Cerca dataset",
                 "searchPlaceholder": "Che tipo di dati agricoli stai cercando?",
                 "exploreDatasets": "Esplora i dataset",
-                "aboutBonaRes": "Informazioni su BonaRes",
-                "publishEyebrow": "Come pubblicare i tuoi dati con noi",
-                "publishTitle": "Fasi della pubblicazione.",
-                "highlightedCases": "Casi in evidenza",
+                "highlightedCases": "Dataset in evidenza",
                 "browseByTopic": "Sfoglia per tema",
                 "viewTopic": "Vedi tema",
-                "previousSlide": "Diapositiva precedente",
-                "nextSlide": "Diapositiva successiva",
-                "spotlightPagination": "Paginazione in evidenza",
-                "slide": "Diapositiva",
                 "trainingResources": "Risorse formative",
                 "viewAllTrainings": "Vedi tutte le risorse formative",
-                "idasTitle": "Siti dei servizi di informazione, dati e analisi (IDAS)",
                 "topics": {
                     "animals": "Animali",
                     "atmosphere": "Atmosfera",
@@ -643,11 +635,6 @@
                     "landscape": "Paesaggio",
                     "plants": "Piante",
                     "soilProfiles": "Profili del suolo"
-                },
-                "idas": {
-                    "zalf": "Lo ZALF è il Centro Leibniz per la ricerca sui paesaggi agricoli. Insieme alla società sviluppa soluzioni per un’agricoltura sostenibile dal punto di vista economico, ambientale e sociale, con particolare attenzione ai paesaggi agricoli e alla ricerca a lungo termine.",
-                    "bonares": "BonaRes è un archivio gratuito di dati di ricerca su suolo, agricoltura ed ecologia. Aiuta i ricercatori a pubblicare, trovare, conservare e riutilizzare i dati, compresi gli esperimenti di campo di lunga durata e i relativi metadati.",
-                    "fairagro": "FAIRagro realizza un’infrastruttura di dati di ricerca FAIR per la ricerca sui sistemi agricoli. Si concentra su strumenti, flussi di lavoro e servizi interoperabili che supportano una gestione dei dati aperta e collaborativa nella comunità."
                 }
             },
             "dateFilter": {
