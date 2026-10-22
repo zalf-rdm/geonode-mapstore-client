@@ -23,78 +23,30 @@ const topicItems = [
     { label: 'Soil Profiles', labelId: 'zalfTheme.home.topics.soilProfiles', href: '/catalogue/#/?q=Soil%20Profiles' }
 ];
 
-const valueItems = [
-    {
-        title: 'Section-driven storytelling',
-        description: 'Each section has a clear job: orient the visitor, expose topics, explain value, and promote curated content.'
-    },
-    {
-        title: 'Frontend-ready for CMS data',
-        description: 'The spotlight section already follows a stable card model that can later be loaded from an API or admin panel.'
-    },
-    {
-        title: 'Consistent with catalogue growth',
-        description: 'The layout is designed to absorb more content without collapsing into a single static landing page.'
-    }
-];
-
-const idasSites = [
-    {
-        name: 'ZALF.DE',
-        href: 'https://www.zalf.de/',
-        accent: 'var(--zalf-home-idas-zalf)',
-        textColor: 'var(--zalf-home-idas-zalf-text)',
-        descriptionId: 'zalfTheme.home.idas.zalf',
-        description:
-            'ZALF is the Leibniz Centre for Agricultural Landscape Research. It develops solutions for economically, environmentally, and socially sustainable agriculture together with society, with a strong focus on agricultural landscapes and long-term research.'
-    },
-    {
-        name: 'BONARES.DE',
-        href: 'https://www.bonares.de/',
-        accent: 'var(--zalf-home-idas-bonares)',
-        textColor: 'var(--zalf-home-idas-bonares-text)',
-        descriptionId: 'zalfTheme.home.idas.bonares',
-        description:
-            'BonaRes is a free repository for soil, agricultural, and ecology-related research data. It helps researchers publish, find, preserve, and reuse data, including long-term field experiments and their metadata.'
-    },
-    {
-        name: 'FAIRAGRO.NET',
-        href: 'https://fairagro.net/en/',
-        accent: 'var(--zalf-home-idas-fairagro)',
-        textColor: 'var(--zalf-home-idas-fairagro-text)',
-        descriptionId: 'zalfTheme.home.idas.fairagro',
-        description:
-            'FAIRagro builds FAIR research data infrastructure for agricultural systems research. It focuses on interoperable tools, workflows, and services that support open, collaborative data management across the community.'
-    }
-];
-
 // Photo: Yulian Alexeyev (Unsplash), resized to 1920px WebP (was a 4.9 MB JPEG).
 const heroBackground = '/static/img/home-hero.webp';
 
 function useCmsData() {
     const [cases, setCases] = React.useState([]);
-    const [banners, setBanners] = React.useState([]);
     const [trainings, setTrainings] = React.useState([]);
     const [loading, setLoading] = React.useState(true);
 
     React.useEffect(() => {
         Promise.all([
             fetch('/api/v2/cms/cases/').then(r => r.ok ? r.json() : []).catch(() => []),
-            fetch('/api/v2/cms/banners/').then(r => r.ok ? r.json() : []).catch(() => []),
             fetch('/api/v2/cms/trainings/').then(r => r.ok ? r.json() : []).catch(() => []),
-        ]).then(([c, b, t]) => {
+        ]).then(([c, t]) => {
             // Staff users receive inactive records too so the CMS can manage
             // them. Public-facing pages must never render those records.
             const activeOnly = (items) => Array.isArray(items)
                 ? items.filter((item) => item.is_active !== false)
                 : [];
             setCases(activeOnly(c));
-            setBanners(activeOnly(b));
             setTrainings(activeOnly(t));
         }).catch(() => {}).finally(() => setLoading(false));
     }, []);
 
-    return { cases, banners, trainings, loading };
+    return { cases, trainings, loading };
 }
 
 // getMessageById returns the id itself when a message is missing, so fall back explicitly.
@@ -117,19 +69,10 @@ function renderSectionHead(eyebrow, title, description, light) {
 
 function Homepage({ messages = {} }) {
     const t = (id, fallback) => translate(messages, id, fallback);
-    const [activeSpotlight, setActiveSpotlight] = React.useState(0);
     const [activeCase, setActiveCase] = React.useState(0);
     const [heroQuery, setHeroQuery] = React.useState('');
 
-    const { cases, banners, trainings, loading } = useCmsData();
-
-    React.useEffect(() => {
-        if (banners.length === 0) return;
-        const timer = window.setInterval(() => {
-            setActiveSpotlight((current) => (current + 1) % banners.length);
-        }, 6000);
-        return () => window.clearInterval(timer);
-    }, [banners.length]);
+    const { cases, trainings, loading } = useCmsData();
 
     React.useEffect(() => {
         setActiveCase(0);
@@ -151,9 +94,6 @@ function Homepage({ messages = {} }) {
     };
 
     const currentCase = cases[activeCase] || null;
-    const spotlightCount = banners.length;
-    const previousSpotlight = spotlightCount > 0 ? (activeSpotlight + spotlightCount - 1) % spotlightCount : 0;
-    const nextSpotlight = spotlightCount > 0 ? (activeSpotlight + 1) % spotlightCount : 0;
 
     return React.createElement(
         'main',
@@ -174,7 +114,7 @@ function Homepage({ messages = {} }) {
                 React.createElement(
                     'div',
                     { className: 'zalf-homepage__hero-copy' },
-                    React.createElement('span', { className: 'zalf-homepage__eyebrow' }, t('zalfTheme.home.heroEyebrow', 'The global hub for agricultural data')),
+                    React.createElement('span', { className: 'zalf-homepage__eyebrow' }, t('zalfTheme.home.heroEyebrow', 'Discover and share soil and agricultural research data')),
                     React.createElement('h1', { className: 'zalf-homepage__title' }, 'BonaRes Repository'),
                     React.createElement(
                         'form',
@@ -205,30 +145,8 @@ function Homepage({ messages = {} }) {
                     React.createElement(
                         'div',
                         { className: 'zalf-homepage__actions' },
-                        React.createElement('a', { className: 'zalf-homepage__button zalf-homepage__button--primary', href: '/catalogue/#/' }, t('zalfTheme.home.exploreDatasets', 'Explore Datasets')),
-                        React.createElement('a', { className: 'zalf-homepage__button zalf-homepage__button--secondary', href: '/about' }, t('zalfTheme.home.aboutBonaRes', 'About BonaRes'))
+                        React.createElement('a', { className: 'zalf-homepage__button zalf-homepage__button--primary', href: '/catalogue/#/' }, t('zalfTheme.home.exploreDatasets', 'Explore Datasets'))
                     )
-                )
-            )
-        ),
-
-        // Steps of publication
-        React.createElement(
-            'section',
-            { className: 'zalf-homepage__section' },
-            React.createElement(
-                'div',
-                { className: 'zalf-homepage__container' },
-                renderSectionHead(t('zalfTheme.home.publishEyebrow', 'How to Publish your Data with us'), t('zalfTheme.home.publishTitle', 'Steps of Publication.')),
-                React.createElement(
-                    'div',
-                    { className: 'zalf-homepage__value-grid' },
-                    ...valueItems.map(({ title, description }) => React.createElement(
-                        'article',
-                        { key: title, className: 'zalf-homepage__value-card' },
-                        React.createElement('h3', null, title),
-                        React.createElement('p', null, description)
-                    ))
                 )
             )
         ),
@@ -259,7 +177,7 @@ function Homepage({ messages = {} }) {
                 { className: 'zalf-homepage__cases-inner' },
                 React.createElement(
                     'div',
-                    { className: 'zalf-homepage__cases-tabs', role: 'tablist', 'aria-label': t('zalfTheme.home.highlightedCases', 'Highlighted cases') },
+                    { className: 'zalf-homepage__cases-tabs', role: 'tablist', 'aria-label': t('zalfTheme.home.highlightedCases', 'Highlighted Datasets') },
                     ...cases.map(({ tab_label }, index) => React.createElement(
                         'button',
                         {
@@ -307,95 +225,6 @@ function Homepage({ messages = {} }) {
                 )
             )
         ),
-
-        // Spotlight / dynamic banners
-        banners.length > 0 ? React.createElement(
-            'section',
-            { className: 'zalf-homepage__section zalf-homepage__section--gallery' },
-            React.createElement(
-                'div',
-                { className: 'zalf-homepage__gallery-shell' },
-                renderSectionHead('', false),
-                React.createElement(
-                    'div',
-                    { className: 'zalf-homepage__spotlight-shell zalf-homepage__spotlight-shell--panels' },
-                    React.createElement(
-                        'div',
-                        { className: 'zalf-homepage__spotlight-stage zalf-homepage__spotlight-stage--panels' },
-                        React.createElement(
-                            'button',
-                            {
-                                type: 'button',
-                                className: 'zalf-homepage__spotlight-card zalf-homepage__spotlight-card--preview zalf-homepage__spotlight-card--left',
-                                'aria-label': `${t('zalfTheme.home.previousSlide', 'Previous slide')}: ${banners[previousSpotlight]?.title}`,
-                                onClick: () => setActiveSpotlight((activeSpotlight + banners.length - 1) % banners.length),
-                                style: {
-                                    backgroundImage: `linear-gradient(180deg, rgba(247, 250, 246, 0.18), rgba(247, 250, 246, 0.4)), url(${banners[previousSpotlight]?.image_url || ''})`
-                                }
-                            }
-                        ),
-                        React.createElement(
-                            'article',
-                            { className: 'zalf-homepage__spotlight-slide zalf-homepage__spotlight-slide--active' },
-                            React.createElement(
-                                'a',
-                                {
-                                    className: 'zalf-homepage__spotlight-card zalf-homepage__spotlight-card--active',
-                                    href: banners[activeSpotlight]?.href,
-                                    style: {
-                                        backgroundImage: `linear-gradient(135deg, rgba(5, 19, 35, 0.12), rgba(5, 19, 35, 0.58)), url(${banners[activeSpotlight]?.image_url || ''})`
-                                    }
-                                },
-                                React.createElement(
-                                    'div',
-                                    { className: 'zalf-homepage__spotlight-content' },
-                                    React.createElement(
-                                        'div',
-                                        { className: 'zalf-homepage__spotlight-footer' },
-                                        React.createElement('span', { className: 'zalf-homepage__button zalf-homepage__button--light' }, banners[activeSpotlight]?.button_text),
-                                        React.createElement(
-                                            'div',
-                                            { className: 'zalf-homepage__spotlight-copy' },
-                                            React.createElement('span', { className: 'zalf-homepage__spotlight-kicker' }, banners[activeSpotlight]?.kicker),
-                                            React.createElement('h3', null, banners[activeSpotlight]?.title),
-                                            React.createElement('p', null, banners[activeSpotlight]?.description)
-                                        )
-                                    )
-                                )
-                            )
-                        ),
-                        React.createElement(
-                            'button',
-                            {
-                                type: 'button',
-                                className: 'zalf-homepage__spotlight-card zalf-homepage__spotlight-card--preview zalf-homepage__spotlight-card--right',
-                                'aria-label': `${t('zalfTheme.home.nextSlide', 'Next slide')}: ${banners[nextSpotlight]?.title}`,
-                                onClick: () => setActiveSpotlight((activeSpotlight + 1) % banners.length),
-                                style: {
-                                    backgroundImage: `linear-gradient(180deg, rgba(247, 250, 246, 0.18), rgba(247, 250, 246, 0.4)), url(${banners[nextSpotlight]?.image_url || ''})`
-                                }
-                            }
-                        )
-                    )
-                ),
-                React.createElement(
-                    'div',
-                    { className: 'zalf-homepage__spotlight-dots', role: 'tablist', 'aria-label': t('zalfTheme.home.spotlightPagination', 'Spotlight pagination') },
-                    ...banners.map(({ title }, index) => React.createElement(
-                        'button',
-                        {
-                            key: title,
-                            type: 'button',
-                            role: 'tab',
-                            'aria-selected': index === activeSpotlight ? 'true' : 'false',
-                            className: `zalf-homepage__spotlight-dot${index === activeSpotlight ? ' is-active' : ''}`,
-                            'aria-label': `${t('zalfTheme.home.slide', 'Slide')} ${index + 1}: ${title}`,
-                            onClick: () => setActiveSpotlight(index)
-                        }
-                    ))
-                )
-            )
-        ) : null,
 
         // Training Resources — published only while there is content (#189).
         // With an empty CMS this used to render a heading over an empty grid, plus
@@ -454,29 +283,7 @@ function Homepage({ messages = {} }) {
                         : null
                 )
             )
-        ) : null,
-
-        // IDAS Sites
-        React.createElement(
-            'section',
-            { className: 'zalf-homepage__section zalf-homepage__section--idas' },
-            React.createElement(
-                'div',
-                { className: 'zalf-homepage__container' },
-                React.createElement('h2', { className: 'zalf-homepage__idas-title' }, t('zalfTheme.home.idasTitle', 'Information, Data & Analytics Services (IDAS) Sites')),
-                React.createElement(
-                    'div',
-                    { className: 'zalf-homepage__idas-list' },
-                    ...idasSites.map(({ name, accent, textColor, descriptionId, description }) => React.createElement(
-                        'article',
-                        { key: name, className: 'zalf-homepage__idas-row' },
-                        React.createElement('span', { className: 'zalf-homepage__idas-badge', style: { backgroundColor: accent } }),
-                        React.createElement('h3', { className: 'zalf-homepage__idas-name', style: { color: textColor } }, name),
-                        React.createElement('p', { className: 'zalf-homepage__idas-description' }, t(descriptionId, description))
-                    ))
-                )
-            )
-        )
+        ) : null
     );
 }
 

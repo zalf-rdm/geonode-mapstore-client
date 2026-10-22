@@ -649,23 +649,15 @@
                 "description": "Beschreibung"
             },
             "home": {
-                "heroEyebrow": "Die zentrale Plattform für Agrardaten",
+                "heroEyebrow": "Boden- und agrarwissenschaftliche Forschungsdaten entdecken und teilen",
                 "searchDatasets": "Datensätze durchsuchen",
                 "searchPlaceholder": "Nach welchen Agrardaten suchen Sie?",
                 "exploreDatasets": "Datensätze entdecken",
-                "aboutBonaRes": "Über BonaRes",
-                "publishEyebrow": "So veröffentlichen Sie Ihre Daten bei uns",
-                "publishTitle": "Schritte der Veröffentlichung.",
-                "highlightedCases": "Ausgewählte Fallbeispiele",
+                "highlightedCases": "Hervorgehobene Datensätze",
                 "browseByTopic": "Nach Thema stöbern",
                 "viewTopic": "Thema ansehen",
-                "previousSlide": "Vorherige Folie",
-                "nextSlide": "Nächste Folie",
-                "spotlightPagination": "Spotlight-Navigation",
-                "slide": "Folie",
                 "trainingResources": "Schulungsmaterialien",
                 "viewAllTrainings": "Alle Schulungsmaterialien anzeigen",
-                "idasTitle": "Websites der Informations-, Daten- und Analysedienste (IDAS)",
                 "topics": {
                     "animals": "Tiere",
                     "atmosphere": "Atmosphäre",
@@ -675,11 +667,6 @@
                     "landscape": "Landschaft",
                     "plants": "Pflanzen",
                     "soilProfiles": "Bodenprofile"
-                },
-                "idas": {
-                    "zalf": "Das ZALF ist das Leibniz-Zentrum für Agrarlandschaftsforschung. Gemeinsam mit der Gesellschaft entwickelt es Lösungen für eine ökonomisch, ökologisch und sozial nachhaltige Landwirtschaft – mit einem Schwerpunkt auf Agrarlandschaften und Langzeitforschung.",
-                    "bonares": "BonaRes ist ein freies Repositorium für Forschungsdaten aus Boden-, Agrar- und Ökologieforschung. Es unterstützt Forschende dabei, Daten zu veröffentlichen, zu finden, zu bewahren und nachzunutzen – einschließlich Dauerfeldversuchen und ihrer Metadaten.",
-                    "fairagro": "FAIRagro baut eine FAIRe Forschungsdateninfrastruktur für die Agrarsystemforschung auf. Im Fokus stehen interoperable Werkzeuge, Workflows und Dienste, die ein offenes, gemeinschaftliches Datenmanagement in der Community unterstützen."
                 }
             },
             "dateFilter": {
