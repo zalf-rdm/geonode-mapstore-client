@@ -397,8 +397,12 @@ function Homepage({ messages = {} }) {
             )
         ) : null,
 
-        // Training Resources
-        React.createElement(
+        // Training Resources — published only while there is content (#189).
+        // With an empty CMS this used to render a heading over an empty grid, plus
+        // four skeleton cards on every load. zalf-rdm/geonode#850 makes /trainings/
+        // 404 on the same condition, so these cards and the page they link to stay
+        // in step. Adding resources in the CMS brings the section back on its own.
+        trainings.length > 0 ? React.createElement(
             'section',
             { className: 'zalf-homepage__section zalf-homepage__section--training' },
             React.createElement(
@@ -450,7 +454,7 @@ function Homepage({ messages = {} }) {
                         : null
                 )
             )
-        ),
+        ) : null,
 
         // IDAS Sites
         React.createElement(
