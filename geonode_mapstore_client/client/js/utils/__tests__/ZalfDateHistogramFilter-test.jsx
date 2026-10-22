@@ -4,10 +4,19 @@ import ReactDOM from 'react-dom';
 import TestUtils, { act } from 'react-dom/test-utils';
 import MockAdapter from 'axios-mock-adapter';
 import axios from '@mapstore/framework/libs/ajax';
+import { Provider } from 'react-redux';
 import ZalfDateHistogramFilter from '../../../themes/zalf/components/ZalfDateHistogramFilter';
 
 describe('ZALF catalogue date histogram filter', () => {
     let mockAxios;
+
+    // The component is connect()-ed and reads only state.locale.messages,
+    // so the tests need a store, but not a real one.
+    const store = {
+        getState: () => ({ locale: { messages: {} } }),
+        subscribe: () => () => {},
+        dispatch: () => {}
+    };
 
     beforeEach(() => {
         document.body.innerHTML = '<div id="container"></div>';
@@ -33,7 +42,9 @@ describe('ZALF catalogue date histogram filter', () => {
 
         act(() => {
             ReactDOM.render(
-                <ZalfDateHistogramFilter query={{}} onChange={(query) => { changedQuery = query; }}/>,
+                <Provider store={store}>
+                    <ZalfDateHistogramFilter query={{}} onChange={(query) => { changedQuery = query; }}/>
+                </Provider>,
                 document.getElementById('container')
             );
         });
@@ -58,10 +69,12 @@ describe('ZALF catalogue date histogram filter', () => {
         mockAxios.onGet('/api/v2/facets/date').reply(200, { topics: { items: [] } });
         act(() => {
             ReactDOM.render(
-                <ZalfDateHistogramFilter query={{
-                    'filter{category.identifier.in}': ['farming'],
-                    'filter{date.gte}': '2020-01-01T00:00:00'
-                }}/>,
+                <Provider store={store}>
+                    <ZalfDateHistogramFilter query={{
+                        'filter{category.identifier.in}': ['farming'],
+                        'filter{date.gte}': '2020-01-01T00:00:00'
+                    }}/>
+                </Provider>,
                 document.getElementById('container')
             );
         });
