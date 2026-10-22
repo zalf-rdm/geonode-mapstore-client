@@ -73,4 +73,22 @@ describe('ZALF navigation search expansion styles', () => {
         expect(stylesheet).toNotContain('zalf-navigation__orcid-info');
         expect(stylesheet).toNotContain('a[title="Why do we use ORCID?"]');
     });
+
+    // zalf-rdm/geonode#866: the merged menu is grouped under labelled headings
+    // instead of being halved by a bare separator.
+    it('styles the group headings in the merged menu', () => {
+        const heading = stylesheet.split('.zalf-navigation__dropdown-heading {')[1].split('}')[0];
+        expect(heading).toContain('text-transform: uppercase');
+        expect(heading).toContain('color: var(--zalf-nav-text-muted)');
+    });
+
+    it('rules off a heading only when links come before it', () => {
+        expect(stylesheet).toContain(
+            '.zalf-navigation__dropdown-link + .zalf-navigation__dropdown-heading'
+        );
+    });
+
+    it('carries no leftover separator rule', () => {
+        expect(stylesheet).toNotContain('zalf-navigation__dropdown-separator');
+    });
 });

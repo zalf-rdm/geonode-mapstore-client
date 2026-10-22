@@ -44,22 +44,24 @@ const navigationItems = [
     // Temporary submission page (zalf-rdm/geonode#867). Not /upload/: the ingress
     // routes that prefix to the separate Upload Tool deployment.
     { href: '/submit_data/', labelId: 'zalfTheme.nav.submitData' },
-    // Resources and About merged into one menu (zalf-rdm/geonode#864): six entries
-    // across two dropdowns, and the extra toggle widened a bar that is already
-    // tight in German. The separator keeps the two halves scannable.
+    // Resources and About are one menu (zalf-rdm/geonode#864): six entries across
+    // two dropdowns, and the extra toggle widened a bar that is already tight in
+    // German. zalf-rdm/geonode#866 named it and replaced the plain separator with
+    // labelled headings, so each half says what it is.
     {
-        key: 'information',
-        labelId: 'zalfTheme.nav.information',
+        key: 'help-and-information',
+        labelId: 'zalfTheme.nav.helpAndInformation',
         children: [
+            { heading: true, labelId: 'zalfTheme.nav.resources' },
+            { href: '/publications/', labelId: 'zalfTheme.nav.publications' },
+            { href: '/data_policy/', labelId: 'zalfTheme.nav.dataPolicy' },
+            { href: '/how_to_cite/', labelId: 'zalfTheme.nav.howToCiteData' },
+            { heading: true, labelId: 'zalfTheme.nav.about' },
             { href: '/about/', labelId: 'zalfTheme.nav.aboutTheRepository' },
-            { href: '/faq/', labelId: 'zalfTheme.nav.faq' },
             // Not /account/login/: repository_sso redirects that straight to
             // Keycloak, skipping the explanation entirely.
             { href: '/what_is_orcid/', labelId: 'zalfTheme.nav.whatIsOrcid' },
-            { separator: true },
-            { href: '/publications/', labelId: 'zalfTheme.nav.publications' },
-            { href: '/data_policy/', labelId: 'zalfTheme.nav.dataPolicy' },
-            { href: '/how_to_cite/', labelId: 'zalfTheme.nav.howToCiteData' }
+            { href: '/faq/', labelId: 'zalfTheme.nav.faq' }
         ]
     }
 ];
@@ -193,12 +195,17 @@ function Navigation({ messages }) {
     }
 
     function renderDropdownItem(item, idx) {
-        if (item.separator) {
-            return React.createElement('span', {
-                key: `separator-${idx}`,
-                className: 'zalf-navigation__dropdown-separator',
-                role: 'separator'
-            });
+        // Not aria-hidden: the label is what tells a screen reader which group
+        // the links below it belong to.
+        if (item.heading) {
+            return React.createElement(
+                'span',
+                {
+                    key: `heading-${idx}`,
+                    className: 'zalf-navigation__dropdown-heading'
+                },
+                renderLabel(item)
+            );
         }
         return React.createElement(
             'a',

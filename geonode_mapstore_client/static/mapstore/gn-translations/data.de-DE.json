@@ -598,7 +598,9 @@
                 "lteMap": "LTE-Karte",
                 "soilProfiles": "Bodenprofile",
                 "dqKit": "DQ Kit",
-                "information": "Information",
+                "helpAndInformation": "Hilfe & Information",
+                "resources": "Ressourcen",
+                "about": "Über",
                 "publications": "Publikationen",
                 "dataPolicy": "Datenrichtlinie",
                 "howToCiteData": "Daten zitieren",
@@ -635,6 +637,7 @@
                 "howToCite": "Zitieren",
                 "imprint": "Impressum",
                 "privacyPolicy": "Datenschutzerklärung",
+                "cookies": "Cookies",
                 "copyright": "© BonaRes Repository. Alle Rechte vorbehalten"
             },
             "upload": {
