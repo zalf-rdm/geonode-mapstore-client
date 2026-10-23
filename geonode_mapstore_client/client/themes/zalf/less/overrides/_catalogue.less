@@ -1380,15 +1380,35 @@
     // name is hidden here rather than left out of the config: the tile card drops any
     // metadata entry whose text value is empty, which would take the logo with it.
     // A group with no logo keeps its name, which is what the entry falls back to.
-    .ms-resource-card .ms-text:has(> .ms-resource-icon-logo) > span {
-        display: none;
+    // The group name sits in the entry as a bare text node, not an element, so it
+    // cannot be selected and hidden: collapsing the font size is what removes it.
+    // The logo is sized in px, so it is unaffected. !important is needed because
+    // the theme's own card rules set a font size at a higher specificity.
+    .ms-resource-card .ms-text:has(> .ms-resource-icon-logo) {
+        font-size: 0 !important;
+        line-height: 0 !important;
     }
 
     // Table view: on the right-hand edge of the row, after the other metadata.
-    .ms-resource-card-type-list .ms-text:has(> .ms-resource-icon-logo) {
+    //
+    // The selector has to carry the full ancestor chain the theme's own rules use
+    // (and then some), because those pin every metadata row to `width: 100%` and
+    // `flex: 0 0 100%` with !important, and force `display: -webkit-box` on any row
+    // without a glyphicon — which the logo row is. Without matching that weight the
+    // row stays full width and the logo stays on the left.
+    .ms-resource-card-type-list .ms-resource-card-body > .ms-flex-fill.ms-flex-box._flex._flex-center-v > .ms-text:has(> .ms-resource-icon-logo) {
         order: 1;
-        flex: 0 0 auto;
-        margin-left: auto;
+        // The row is a wrapping flex container, so align-self moves an item
+        // vertically; margin-left is what pushes it to the right-hand edge. It only
+        // works once the width override above has freed the row from `width: 100%`.
+        margin-left: auto !important;
+        display: block !important;
+        flex: 0 0 auto !important;
+        width: auto !important;
+        max-width: none !important;
+        max-height: none !important;
+        overflow: visible !important;
+        padding: 0 !important;
     }
 
     .ms-resource-card-type-list .ms-resource-icon-logo {
@@ -1404,7 +1424,7 @@
     // so the logo lands beside the date rather than on top of the counters.
     .ms-resource-card-type-grid .ms-resource-card-body {
         position: relative;
-        --zalf-group-logo-offset: 34px;
+        --zalf-group-logo-offset: 46px;
     }
 
     .ms-resource-card-type-grid .ms-text:has(> .ms-resource-icon-logo) {

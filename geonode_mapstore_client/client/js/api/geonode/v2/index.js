@@ -96,7 +96,10 @@ export const CATALOGUE_CARD_FIELDS = [
     'group',
     'abstract',
     'embed_url',
-    'sourcetype'
+    'sourcetype',
+    // the cards' share action links to /landing/<uuid>/, the stable DOI target
+    // (zalf-rdm/geonode#812, #823); without this the catalogue never sees a uuid
+    'uuid'
 ];
 
 /**
