@@ -1373,9 +1373,51 @@
         margin-top: 2px;
     }
 
+    // Group logo on the cards (zalf-rdm/geonode#812).
+    //
+    // The card config gives the group entry both a value (group.title) and an image
+    // (group.logo). Where there is a logo it stands for the group on its own and the
+    // name is hidden here rather than left out of the config: the tile card drops any
+    // metadata entry whose text value is empty, which would take the logo with it.
+    // A group with no logo keeps its name, which is what the entry falls back to.
+    .ms-resource-card .ms-text:has(> .ms-resource-icon-logo) > span {
+        display: none;
+    }
+
+    // Table view: on the right-hand edge of the row, after the other metadata.
+    .ms-resource-card-type-list .ms-text:has(> .ms-resource-icon-logo) {
+        order: 1;
+        flex: 0 0 auto;
+        margin-left: auto;
+    }
+
+    .ms-resource-card-type-list .ms-resource-icon-logo {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+    }
+
+    // Tile view: bottom right, on the line the date sits on. The entry follows the
+    // date in the card config, but the tile lays its metadata out in a column, so it
+    // is lifted out of the flow and anchored to the bottom of the card instead.
+    // --zalf-group-logo-offset clears the footer row (its border, padding and line),
+    // so the logo lands beside the date rather than on top of the counters.
+    .ms-resource-card-type-grid .ms-resource-card-body {
+        position: relative;
+        --zalf-group-logo-offset: 34px;
+    }
+
+    .ms-resource-card-type-grid .ms-text:has(> .ms-resource-icon-logo) {
+        position: absolute;
+        right: 0;
+        bottom: var(--zalf-group-logo-offset);
+        padding: 0;
+        margin: 0;
+    }
+
     .ms-resource-card-type-grid .ms-resource-icon-logo {
-        width: 18px;
-        height: 18px;
+        width: 26px;
+        height: 26px;
         border-radius: 50%;
     }
 

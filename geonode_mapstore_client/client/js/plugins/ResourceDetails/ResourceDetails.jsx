@@ -10,7 +10,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { createPlugin } from '@mapstore/framework/utils/PluginsUtils';
 import { connect } from 'react-redux';
 import { createStructuredSelector, createSelector } from 'reselect';
-import { userSelector } from '@mapstore/framework/selectors/security';
 import PropTypes from 'prop-types';
 
 import controls from '@mapstore/framework/reducers/controls';
@@ -34,7 +33,7 @@ import {
     isNewResource,
     getResourceId
 } from '@js/selectors/resource';
-import { requestResource, setResource } from '@js/actions/gnresource';
+import { setResource } from '@js/actions/gnresource';
 import gnresource from '@js/reducers/gnresource';
 import useDetectClickOut from '@js/hooks/useDetectClickOut';
 import tabComponents from '@js/plugins/ResourceDetails/containers/tabComponents';
@@ -489,51 +488,14 @@ export default createPlugin('ResourceDetails', {
             }),
             priority: 1,
             doNotHide: true
-        }],
-        ResourcesGrid: {
-            priority: 2,
-            target: 'card-buttons',
-            position: 2,
-            Component: connect(
-                createStructuredSelector({
-                    selectedResource: getResourceData,
-                    show: getShowDetails,
-                    user: userSelector
-                }),
-                {
-                    onSelect: requestResource,
-                    onShow: setShowDetails
-                }
-            )(({ resourcesGridId, resource, onSelect, component, selectedResource, onShow, show, user }) => {
-                const Component = component;
-                // zalf-rdm/geonode#812: the properties panel is an editor-facing view of
-                // the raw metadata. Anonymous visitors belong on the resource's landing
-                // page, which is where the card itself already takes them, so they are
-                // not offered this panel at all.
-                if (!user) {
-                    return null;
-                }
-                function handleClick() {
-                    const isSameResource = selectedResource?.pk === resource?.pk;
-                    if (!selectedResource?.['@ms-detail'] || !isSameResource) {
-                        onSelect(resource, resourcesGridId);
-                        onShow(true, resourcesGridId);
-                    } else {
-                        onShow(!show, resourcesGridId);
-                    }
-                }
-                return (
-                    <Component
-                        className="ms-resource-details-toggle"
-                        onClick={handleClick}
-                        glyph="details"
-                        square
-                        labelId="resourcesCatalog.viewResourceProperties"
-                    />
-                );
-            }),
-            doNotHide: true
-        }
+        }]
+        // zalf-rdm/geonode#812: the catalogue cards had an "Open properties" action
+        // (target: 'card-buttons') that opened this panel. It was offered to everyone,
+        // anonymous visitors included, and the panel it opened is broken, so it is
+        // removed outright rather than gated. A card already links to the resource's
+        // landing page, which is the view this repository means people to read.
+        // The ActionNavbar contribution above is untouched: that is the viewer's own
+        // details button, not the catalogue's.
     },
     reducers: {
         gnresource,

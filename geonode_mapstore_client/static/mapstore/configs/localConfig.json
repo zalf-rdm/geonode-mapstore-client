@@ -4085,11 +4085,7 @@
                 "path": "group.title",
                 "image": {
                   "path": "group.logo"
-                },
-                "icon": {
-                  "glyph": "folder-open"
-                },
-                "noDataLabelId": "resourcesCatalog.emptyNA"
+                }
               },
               {
                 "path": "created",
@@ -4145,11 +4141,7 @@
                 "path": "group.title",
                 "image": {
                   "path": "group.logo"
-                },
-                "icon": {
-                  "glyph": "folder-open"
-                },
-                "noDataLabelId": "resourcesCatalog.emptyNA"
+                }
               },
               {
                 "path": "popular_count",
