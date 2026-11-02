@@ -124,10 +124,19 @@ describe('ZALF navigation search expansion styles', () => {
             '.zalf-navigation__dropdown-link.zalf-navigation__dropdown-link--external::after {'
         )[1].split('}')[0];
         expect(marker).toContain("content: ''");
-        expect(marker).toContain('mask-image: @zalf-icon-external-link');
+        expect(marker).toContain('--zalf-icon-external-link: @zalf-icon-external-link');
+        expect(marker).toContain('mask-image: var(--zalf-icon-external-link)');
         // currentColor is what keeps the marker in step with the link, so it
         // needs no second rule per dropdown skin.
         expect(marker).toContain('background-color: currentColor');
+    });
+
+    // A masked icon is painted by background-color, which forced colours
+    // override, so without this the marker vanishes in high contrast.
+    it('keeps the external marker visible in forced colours', () => {
+        expect(stylesheet).toContain('@media (forced-colors: active)');
+        const forced = stylesheet.split('@media (forced-colors: active) {')[1].split('}')[0];
+        expect(forced).toContain('background-color: CanvasText');
     });
 
     // The build prefixes theme rules with `.msgapi`, so the base class already

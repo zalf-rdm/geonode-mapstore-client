@@ -365,15 +365,28 @@ body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header-plac
     flex: 0 0 auto;
     width: 14px;
     height: 14px;
+    // Held in a custom property so the data URI is written once per copy of
+    // these rules, not once per prefix.
+    --zalf-icon-external-link: @zalf-icon-external-link;
     background-color: currentColor;
-    -webkit-mask-image: @zalf-icon-external-link;
-    mask-image: @zalf-icon-external-link;
+    -webkit-mask-image: var(--zalf-icon-external-link);
+    mask-image: var(--zalf-icon-external-link);
     -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
     -webkit-mask-position: center;
     mask-position: center;
     -webkit-mask-size: contain;
     mask-size: contain;
+}
+
+// Forced colours (Windows high contrast) override background-color, which is
+// what paints a masked icon, so the marker would disappear for the readers most
+// likely to need it. CanvasText is the forced text colour, so it keeps the
+// marker in step with the label here too.
+@media (forced-colors: active) {
+    .zalf-navigation__dropdown-link.zalf-navigation__dropdown-link--external::after {
+        background-color: CanvasText;
+    }
 }
 
 // The visually hidden half of the external-link marker: it makes the accessible
