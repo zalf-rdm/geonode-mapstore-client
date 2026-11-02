@@ -79,7 +79,31 @@ describe('ZALF navigation search expansion styles', () => {
     it('styles the group headings in the merged menu', () => {
         const heading = stylesheet.split('.zalf-navigation__dropdown-heading {')[1].split('}')[0];
         expect(heading).toContain('text-transform: uppercase');
-        expect(heading).toContain('color: var(--zalf-nav-text-muted)');
+        // zalf-rdm/geonode#883 turned the panel white, so the heading takes the
+        // dark green muted colour, not the white-on-dark one the bar uses.
+        expect(heading).toContain('color: var(--zalf-nav-panel-text-muted)');
+    });
+
+    // zalf-rdm/geonode#883: one flat colour across the bar — no gradient, and
+    // no hairline that only one of the two navigations ever showed.
+    it('paints the bar in one flat colour', () => {
+        const bar = stylesheet.split('.zalf-navigation {')[1].split('}')[0];
+        expect(bar).toContain('background: var(--zalf-nav-bg)');
+        expect(bar).toNotContain('linear-gradient');
+        expect(bar).toNotContain('border-bottom');
+        expect(bar).toNotContain('backdrop-filter');
+    });
+
+    // The dropdowns are white panels with dark green text, so nothing inside
+    // them may keep a white-on-dark colour.
+    it('skins the dropdown panels light', () => {
+        const panel = stylesheet.split('.zalf-navigation__dropdown-menu {')[1].split('}')[0];
+        expect(panel).toContain('background: var(--zalf-nav-panel-bg)');
+        expect(panel).toContain('color: var(--zalf-nav-panel-text)');
+        const link = stylesheet.split('.zalf-navigation__dropdown-link {')[1].split('}')[0];
+        expect(link).toContain('color: var(--zalf-nav-panel-text)');
+        expect(stylesheet).toNotContain('var(--zalf-nav-highlight)');
+        expect(stylesheet).toNotContain('var(--zalf-nav-hover-bg)');
     });
 
     it('rules off a heading only when links come before it', () => {
