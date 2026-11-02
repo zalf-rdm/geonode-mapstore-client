@@ -207,17 +207,29 @@ function Navigation({ messages }) {
                 renderLabel(item)
             );
         }
+        // zalf-rdm/geonode#863: a link that leaves the repository says so twice —
+        // the modifier class draws the marker, and the visually hidden text makes
+        // the accessible name read "LTE Map (opens in a new tab)". The marker is
+        // CSS-generated, so there is nothing here for a screen reader to skip.
+        const externalClass = item.external ? ' zalf-navigation__dropdown-link--external' : '';
         return React.createElement(
             'a',
             {
                 key: `${getItemKey(item)}-${idx}`,
                 href: item.href,
-                className: `zalf-navigation__dropdown-link${item.muted ? ' is-muted' : ''}`,
+                className: `zalf-navigation__dropdown-link${item.muted ? ' is-muted' : ''}${externalClass}`,
                 target: item.external ? '_blank' : undefined,
                 rel: item.external ? 'noreferrer' : undefined,
                 onClick: () => setOpenDropdown(null)
             },
-            renderLabel(item)
+            renderLabel(item),
+            item.external
+                ? React.createElement(
+                    'span',
+                    { className: 'zalf-navigation__sr-only' },
+                    ' ' + translate(messages, 'zalfTheme.nav.opensInNewTab', '(opens in a new tab)')
+                )
+                : null
         );
     }
 
