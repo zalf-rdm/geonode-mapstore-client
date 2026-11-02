@@ -19,10 +19,6 @@
     --zalf-brand-primary-strong-hover: @zalf-brand-primary-strong-hover;
     --zalf-brand-surface-light: @zalf-brand-surface-light;
     --zalf-brand-surface-mid: @zalf-brand-surface-mid;
-    --zalf-brand-panel-bg: @zalf-brand-panel-bg;
-    --zalf-brand-panel-hover: @zalf-brand-panel-hover;
-    --zalf-brand-highlight: @zalf-brand-highlight;
-    --zalf-brand-highlight-bg: @zalf-brand-highlight-bg;
     --zalf-text: @zalf-text;
     --zalf-text-muted: @zalf-text-muted;
     --zalf-border: @zalf-border-color;
@@ -32,29 +28,32 @@
     --zalf-radius: @zalf-radius-sm;
     --zalf-green: @zalf-brand-primary-strong;
     --zalf-green-dark: @zalf-brand-primary-strong-hover;
+    // Historic alias for the bright brand green, used on catalogue and detail
+    // pages. Since zalf-rdm/geonode#883 the bar is no longer this colour — that
+    // is --zalf-nav-bg — so do not reach for this one to style the navigation.
     --zalf-green-nav: @zalf-brand-primary;
     --zalf-green-light: @zalf-brand-surface-light;
     --zalf-green-mid: @zalf-brand-surface-mid;
-    --zalf-nav-bg: @zalf-brand-primary;
-    --zalf-nav-border: @zalf-nav-border;
-    --zalf-nav-panel-bg: @zalf-brand-panel-bg;
-    --zalf-nav-panel-hover-bg: @zalf-brand-panel-hover;
+    --zalf-nav-bg: @zalf-nav-bg;
+    --zalf-nav-surface: @zalf-nav-surface;
+    --zalf-nav-surface-hover: @zalf-nav-surface-hover;
+    --zalf-nav-panel-bg: @zalf-nav-panel-bg;
+    --zalf-nav-panel-text: @zalf-nav-panel-text;
+    --zalf-nav-panel-text-muted: @zalf-nav-panel-text-muted;
+    --zalf-nav-panel-hover-bg: @zalf-nav-panel-hover-bg;
     --zalf-nav-panel-border: @zalf-nav-panel-border;
+    --zalf-nav-panel-divider-strong: @zalf-nav-panel-divider-strong;
+    --zalf-nav-panel-divider-soft: @zalf-nav-panel-divider-soft;
     --zalf-nav-shadow: @zalf-nav-shadow;
     --zalf-nav-panel-shadow: @zalf-panel-shadow;
-    --zalf-nav-hover-bg: @zalf-brand-highlight-bg;
-    --zalf-nav-highlight: @zalf-brand-highlight;
     --zalf-nav-text: @zalf-nav-text;
     --zalf-nav-text-muted: @zalf-nav-text-muted;
-    --zalf-nav-divider-strong: @zalf-nav-divider-strong;
-    --zalf-nav-divider-soft: @zalf-nav-divider-soft;
     --zalf-nav-brand-divider: @zalf-nav-brand-divider;
     --zalf-nav-border-subtle: @zalf-nav-border-subtle;
     --zalf-nav-border-active: @zalf-nav-border-active;
     --zalf-nav-button-border: @zalf-nav-button-border;
     --zalf-nav-search-border: @zalf-nav-search-border;
     --zalf-nav-toggle-border: @zalf-nav-toggle-border;
-    --zalf-nav-list-border: @zalf-nav-list-border;
     --zalf-home-olive: @zalf-home-olive;
     --zalf-home-olive-soft: @zalf-home-olive-soft;
     --zalf-home-primary-gradient-start: @zalf-home-primary-gradient-start;
