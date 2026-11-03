@@ -600,7 +600,7 @@
                 "tools": "Tools",
                 "lteMap": "LTE Map",
                 "soilProfiles": "Soil Profiles",
-                "dqKit": "DQ Kit",
+                "dqKit": "DQ-Kit",
                 "helpAndInformation": "Help & Information",
                 "resources": "Resources",
                 "about": "About",
@@ -613,7 +613,8 @@
                 "whatIsOrcid": "What is ORCID?",
                 "searchDatasets": "Search Datasets",
                 "toggleNavigationMenu": "Toggle navigation menu",
-                "primaryNavigation": "Primary navigation"
+                "primaryNavigation": "Primary navigation",
+                "opensInNewTab": "(opens in a new tab)"
             },
             "topic": {
                 "animals": "Animals",

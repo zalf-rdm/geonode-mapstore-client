@@ -115,4 +115,54 @@ describe('ZALF navigation search expansion styles', () => {
     it('carries no leftover separator rule', () => {
         expect(stylesheet).toNotContain('zalf-navigation__dropdown-separator');
     });
+
+    // zalf-rdm/geonode#863: the Tools menu leaves the repository, so its links
+    // carry an "open in new" marker. It is drawn by ::after, which needs no
+    // markup of its own in either navigation.
+    it('marks external dropdown links with a generated icon', () => {
+        const marker = stylesheet.split(
+            '.zalf-navigation__dropdown-link.zalf-navigation__dropdown-link--external::after {'
+        )[1].split('}')[0];
+        expect(marker).toContain("content: ''");
+        expect(marker).toContain('--zalf-icon-external-link: @zalf-icon-external-link');
+        expect(marker).toContain('mask-image: var(--zalf-icon-external-link)');
+        // currentColor is what keeps the marker in step with the link, so it
+        // needs no second rule per dropdown skin.
+        expect(marker).toContain('background-color: currentColor');
+    });
+
+    // A masked icon is painted by background-color, which forced colours
+    // override, so without this the marker vanishes in high contrast.
+    it('keeps the external marker visible in forced colours', () => {
+        expect(stylesheet).toContain('@media (forced-colors: active)');
+        const forced = stylesheet.split('@media (forced-colors: active) {')[1].split('}')[0];
+        expect(forced).toContain('background-color: CanvasText');
+    });
+
+    // The build prefixes theme rules with `.msgapi`, so the base class already
+    // weighs two classes. A lone modifier lost to its `display: block`, which
+    // left the marker an inline box that ignored its width and height.
+    it('names the base class alongside the external modifier', () => {
+        expect(stylesheet).toContain(
+            '.zalf-navigation__dropdown-link.zalf-navigation__dropdown-link--external {'
+        );
+        expect(stylesheet).toNotContain('\n.zalf-navigation__dropdown-link--external');
+        const layout = stylesheet.split(
+            '.zalf-navigation__dropdown-link.zalf-navigation__dropdown-link--external {'
+        )[1].split('}')[0];
+        expect(layout).toContain('display: flex');
+        expect(layout).toContain('justify-content: space-between');
+    });
+
+    // The spoken half of the marker. It must stay out of the flex row, or it
+    // becomes a third item competing with the label and the icon.
+    it('hides the external-link text visually but not from screen readers', () => {
+        const srOnly = stylesheet.split('.zalf-navigation__sr-only {')[1].split('}')[0];
+        expect(srOnly).toContain('position: absolute');
+        expect(srOnly).toContain('clip: rect(0, 0, 0, 0)');
+        // display:none or visibility:hidden would take it out of the accessible
+        // name as well, which is the one thing it exists for.
+        expect(srOnly).toNotContain('display: none');
+        expect(srOnly).toNotContain('visibility: hidden');
+    });
 });

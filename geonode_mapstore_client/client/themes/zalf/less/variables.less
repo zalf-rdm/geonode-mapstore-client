@@ -18,6 +18,11 @@
 @zalf-shadow: 0 1px 4px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.06);
 @zalf-nav-shadow: 0 16px 40px rgba(13, 38, 31, 0.22);
 @zalf-panel-shadow: 0 18px 40px rgba(17, 40, 20, 0.28);
+// "Open in new" box-and-arrow, used as a mask so the marker takes the link's
+// own colour (zalf-rdm/geonode#863). Fully percent-encoded, so the data URI
+// needs no quotes of its own inside url() and Less passes it through as is.
+@zalf-icon-external-link: ~"url(data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%2024%2024%27%3E%3Cpath%20d=%27M19%2019H5V5h7V3H5c-1.11%200-2%20.9-2%202v14c0%201.1.89%202%202%202h14c1.1%200%202-.9%202-2v-7h-2v7zM14%203v2h3.59l-9.83%209.83%201.41%201.41L19%206.41V10h2V3h-7z%27/%3E%3C/svg%3E)";
+
 @zalf-radius-sm: 8px;
 @zalf-radius-md: 16px;
 

@@ -337,6 +337,74 @@ body:has(.zalf-navigation-shell[data-zalf-source="server"]) .gn-main-header-plac
     opacity: 0.88;
 }
 
+// External links in the Tools menu (zalf-rdm/geonode#863): the menu leaves the
+// repository, and nothing said so.
+//
+// The marker is a decorative `::after` rather than an icon in the markup, so it
+// needs no element of its own in either navigation — the server-rendered header
+// and the React one only add the modifier class. `currentColor` keeps it in
+// step with the link, so it follows the dropdown's text colour without a second
+// rule. Screen readers are told separately, by the visually hidden text inside
+// the link: generated content is not a reliable place to put anything that has
+// to be announced.
+//
+// Both selectors name the base class as well as the modifier. The build prefixes
+// theme rules with `.msgapi`, so `.zalf-navigation__dropdown-link` alone already
+// weighs two classes; a lone modifier would lose to its `display: block` and the
+// marker, as an inline box, would then ignore its own width and height and
+// collapse to nothing.
+.zalf-navigation__dropdown-link.zalf-navigation__dropdown-link--external {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.zalf-navigation__dropdown-link.zalf-navigation__dropdown-link--external::after {
+    content: '';
+    flex: 0 0 auto;
+    width: 14px;
+    height: 14px;
+    // Held in a custom property so the data URI is written once per copy of
+    // these rules, not once per prefix.
+    --zalf-icon-external-link: @zalf-icon-external-link;
+    background-color: currentColor;
+    -webkit-mask-image: var(--zalf-icon-external-link);
+    mask-image: var(--zalf-icon-external-link);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+}
+
+// Forced colours (Windows high contrast) override background-color, which is
+// what paints a masked icon, so the marker would disappear for the readers most
+// likely to need it. CanvasText is the forced text colour, so it keeps the
+// marker in step with the label here too.
+@media (forced-colors: active) {
+    .zalf-navigation__dropdown-link.zalf-navigation__dropdown-link--external::after {
+        background-color: CanvasText;
+    }
+}
+
+// The visually hidden half of the external-link marker: it makes the accessible
+// name read "LTE Map (opens in a new tab)". `position: absolute` also takes it
+// out of the flex row above, so it does not become a third item competing for
+// space with the label and the icon.
+.zalf-navigation__sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 // Group labels inside the merged Help & Information menu (zalf-rdm/geonode#866),
 // which replaced the plain separator the menu carried since #864. The
 // server-rendered header carries the same rules inline so they ship without a

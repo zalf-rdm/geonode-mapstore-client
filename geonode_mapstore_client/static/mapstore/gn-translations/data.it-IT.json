@@ -565,7 +565,7 @@
                 "tools": "Strumenti",
                 "lteMap": "Mappa LTE",
                 "soilProfiles": "Profili del suolo",
-                "dqKit": "DQ Kit",
+                "dqKit": "DQ-Kit",
                 "helpAndInformation": "Aiuto e informazioni",
                 "resources": "Risorse",
                 "about": "Informazioni",
@@ -578,7 +578,8 @@
                 "whatIsOrcid": "Che cos'è ORCID?",
                 "searchDatasets": "Cerca dataset",
                 "toggleNavigationMenu": "Apri o chiudi il menu di navigazione",
-                "primaryNavigation": "Navigazione principale"
+                "primaryNavigation": "Navigazione principale",
+                "opensInNewTab": "(si apre in una nuova scheda)"
             },
             "topic": {
                 "animals": "Animali",
