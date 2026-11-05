@@ -33,7 +33,9 @@ function useCmsData() {
             fetch('/api/v2/cms/trainings/').then(r => r.ok ? r.json() : []).catch(() => []),
             fetch('/api/v2/cms/banners/').then(r => r.ok ? r.json() : []).catch(() => []),
             fetch(TOPICS_URL).then(r => r.ok ? r.json() : []).catch(() => []),
-            fetch(SECTIONS_URL).then(r => r.ok ? r.json() : []).catch(() => [])
+            // null, not [], on failure: selectSectionOrder treats an empty
+            // array as "the admin hid every section" and must not fall back.
+            fetch(SECTIONS_URL).then(r => r.ok ? r.json() : null).catch(() => null)
         ]).then(([c, t, b, p, s]) => {
             // Staff users receive inactive records too so the CMS can manage
             // them. Public-facing pages must never render those records.

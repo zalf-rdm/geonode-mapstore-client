@@ -153,11 +153,26 @@ describe('ZALF SectionUtils - selectSectionOrder', () => {
         ])).toEqual(['trainings', 'topics', 'cases']);
     });
 
-    // Falling back beats rendering a homepage with no sections at all.
-    it('falls back to the default order on an empty or failed response', () => {
-        expect(selectSectionOrder([])).toEqual(DEFAULT_SECTION_ORDER);
+    // Only a failed request falls back; the hook passes null for that.
+    it('falls back to the default order when the request failed', () => {
         expect(selectSectionOrder(null)).toEqual(DEFAULT_SECTION_ORDER);
         expect(selectSectionOrder(undefined)).toEqual(DEFAULT_SECTION_ORDER);
+        expect(selectSectionOrder({})).toEqual(DEFAULT_SECTION_ORDER);
+    });
+
+    // Regression: falling back here made every section reappear for visitors.
+    // The visitor-facing API strips inactive rows, so an admin who hid all four
+    // sends [] — and the staff member would not notice, because staff receive
+    // all rows and filter client-side.
+    it('renders nothing when the admin hid every section', () => {
+        expect(selectSectionOrder([])).toEqual([]);
+    });
+
+    it('renders nothing when every row is inactive', () => {
+        expect(selectSectionOrder([
+            { id: 1, key: 'cases', order: 0, is_active: false },
+            { id: 2, key: 'topics', order: 1, is_active: false }
+        ])).toEqual([]);
     });
 
     it('skips rows without a key', () => {

@@ -21,32 +21,40 @@ function HomepageSectionEditor() {
     const [saving, setSaving] = React.useState(false);
     const [error, setError] = React.useState(null);
 
-    const loadItems = React.useCallback(() => {
-        setLoading(true);
+    // `showSpinner` only on first load: re-entering the loading state unmounts
+    // the list, which destroys the move button that was just pressed and drops
+    // keyboard focus, making multi-step reordering unusable from the keyboard.
+    const loadItems = React.useCallback((showSpinner = false) => {
+        if (showSpinner) setLoading(true);
         setError(null);
-        cmsGet(BASE)
+        return cmsGet(BASE)
             .then((data) => setItems(Array.isArray(data) ? data : []))
             .catch((err) => setError(errorMessage(err)))
-            .finally(() => setLoading(false));
+            .finally(() => { if (showSpinner) setLoading(false); });
     }, []);
-    React.useEffect(() => { loadItems(); }, [loadItems]);
+    React.useEffect(() => { loadItems(true); }, [loadItems]);
 
     // Persist the whole list: a swap changes two rows, and renumbering from 0
     // keeps the values contiguous however often the admin reorders.
     function persist(ordered) {
         setSaving(true);
         setError(null);
-        const previous = items;
-        setItems(ordered);
+        // Optimistic: the local list already holds the intended order, and
+        // renumbering it is exactly what we are about to send.
+        setItems(ordered.map((item, index) => ({ ...item, order: index })));
         Promise.all(ordered.map((item, index) => (
             item.order === index
                 ? Promise.resolve(item)
                 : cmsRequest(`${BASE}${item.key}/`, 'PATCH', { order: index })
         )))
-            .then(() => loadItems())
             .catch((err) => {
                 setError(errorMessage(err, 'The order could not be saved.'));
-                setItems(previous);
+                // Not a rollback to the previous list: Promise.all rejects on
+                // the first failure while earlier PATCHes have already been
+                // committed, so the only honest state is whatever the server
+                // actually holds. Re-reading also avoids showing an order the
+                // database does not have.
+                return loadItems();
             })
             .finally(() => setSaving(false));
     }
@@ -86,7 +94,7 @@ function HomepageSectionEditor() {
             'div',
             { className: 'cms-editor__error', role: 'alert' },
             error, ' ',
-            React.createElement('button', { type: 'button', className: 'btn btn-link', onClick: loadItems }, 'Try again')
+            React.createElement('button', { type: 'button', className: 'btn btn-link', onClick: () => loadItems(true) }, 'Try again')
         ),
         items.length === 0
             ? React.createElement('p', { className: 'cms-editor__empty' }, 'No homepage sections are configured.')

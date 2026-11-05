@@ -48,6 +48,7 @@ const LOCALE_FIELDS = [
 
 function useFacets() {
     const [facets, setFacets] = React.useState([]);
+    const [error, setError] = React.useState(null);
     React.useEffect(() => {
         // include_config=true because `order` lives in the provider's config,
         // not in the base get_info() payload — without it every facet would
@@ -60,9 +61,12 @@ function useFacets() {
                         || String(a.label || a.name).localeCompare(String(b.label || b.name)));
                 setFacets(items);
             })
-            .catch(() => {});
+            // Surfaced rather than swallowed: with no facets "+ Add filter" is
+            // permanently disabled, and the save then fails with the
+            // unrelated-looking "needs at least one filter or a search term".
+            .catch((err) => setError(errorMessage(err, 'The filter fields could not be loaded.')));
     }, []);
-    return facets;
+    return { facets, error };
 }
 
 /** Selectable values for one facet, filtered server-side by `search`. */
@@ -90,6 +94,10 @@ function useFacetValues(facetName, search) {
 
 function FilterRow({ row, index, facets, usedFields, onChange, onRemove }) {
     const [search, setSearch] = React.useState('');
+    // Rows are keyed by index, so removing one reuses this instance for the row
+    // that shifts into its place. Without this the surviving row would keep the
+    // removed row's search text and query its own facet with it.
+    React.useEffect(() => { setSearch(''); }, [row.field]);
     const { items, loading } = useFacetValues(row.field, search);
     const facet = facets.find((f) => f.name === row.field);
     const values = row.values || [];
@@ -144,7 +152,7 @@ function FilterRow({ row, index, facets, usedFields, onChange, onRemove }) {
                 'p',
                 { className: 'cms-topic-filter__warning' },
                 'Thesaurus keywords are stored as database ids, which differ between environments. '
-                + 'Prefer Category, Keyword or Region for a topic that must survive a data migration.'
+                + 'Prefer Category or Keyword for a topic that must survive a data migration.'
             )
             : null,
         values.length > 0
@@ -257,7 +265,7 @@ function Modal({ item, onClose, onSaved }) {
     const [saving, setSaving] = React.useState(false);
     const [error, setError] = React.useState(null);
     const isNew = !item?.id;
-    const facets = useFacets();
+    const { facets, error: facetsError } = useFacets();
 
     function set(key, value) { setForm(f => ({ ...f, [key]: value })); }
 
@@ -330,6 +338,9 @@ function Modal({ item, onClose, onSaved }) {
                 'div',
                 { className: 'cms-modal__field' },
                 React.createElement('label', null, 'Filters'),
+                facetsError
+                    ? React.createElement('p', { className: 'cms-editor__error', role: 'alert' }, facetsError)
+                    : null,
                 React.createElement(FilterBuilder, {
                     value: form.filters,
                     facets,
