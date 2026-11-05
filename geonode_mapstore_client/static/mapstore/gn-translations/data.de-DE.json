@@ -592,38 +592,7 @@
         },
         "zalfTheme": {
             "nav": {
-                "allData": "Alle Daten",
-                "topics": "Themen",
-                "tools": "Werkzeuge",
-                "lteMap": "LTE-Karte",
-                "soilProfiles": "Bodenprofile",
-                "dqKit": "DQ-Kit",
-                "helpAndInformation": "Hilfe & Information",
-                "resources": "Ressourcen",
-                "about": "Über",
-                "publications": "Publikationen",
-                "dataPolicy": "Datenrichtlinie",
-                "howToCiteData": "Daten zitieren",
-                "submitData": "Daten einreichen",
-                "aboutTheRepository": "Über das Repositorium",
-                "faq": "FAQ",
-                "whatIsOrcid": "Was ist ORCID?",
-                "searchDatasets": "Datensätze suchen",
-                "toggleNavigationMenu": "Navigationsmenü umschalten",
-                "primaryNavigation": "Hauptnavigation",
-                "opensInNewTab": "(öffnet in einem neuen Tab)"
-            },
-            "topic": {
-                "animals": "Tiere",
-                "atmosphere": "Atmosphäre",
-                "climate": "Klima",
-                "forest": "Wald",
-                "hydrology": "Hydrologie",
-                "landscape": "Landschaft",
-                "longTermExperiments": "Dauerfeldversuche (LTE)",
-                "plants": "Pflanzen",
-                "soilProfiles": "Bodenprofile",
-                "water": "Wasser"
+                "submitData": "Daten einreichen"
             },
             "footer": {
                 "repositoryTitle": "BonaRes-Repository",
@@ -662,16 +631,10 @@
                 "viewTopic": "Thema ansehen",
                 "trainingResources": "Schulungsmaterialien",
                 "viewAllTrainings": "Alle Schulungsmaterialien anzeigen",
-                "topics": {
-                    "animals": "Tiere",
-                    "atmosphere": "Atmosphäre",
-                    "climate": "Klima",
-                    "forest": "Wald",
-                    "hydrology": "Hydrologie",
-                    "landscape": "Landschaft",
-                    "plants": "Pflanzen",
-                    "soilProfiles": "Bodenprofile"
-                }
+                "previousSlide": "Vorherige Folie",
+                "nextSlide": "Nächste Folie",
+                "spotlightPagination": "Spotlight-Navigation",
+                "slide": "Folie"
             },
             "dateFilter": {
                 "loadingDistribution": "Jährliche Verteilung der Ressourcen wird geladen",
