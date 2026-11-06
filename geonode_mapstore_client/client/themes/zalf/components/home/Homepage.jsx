@@ -10,6 +10,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { TOPICS_URL, localizeTopicName, selectTopics } from '../../utils/TopicUtils';
 import { SECTIONS_URL, DEFAULT_SECTION_ORDER, selectSectionOrder } from '../../utils/SectionUtils';
+import TopicIcon from '../common/TopicIcon';
 import './homepage.css';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -221,7 +222,7 @@ function Homepage({ messages = {}, currentLocale = 'en-US' }) {
         // is the same string the navbar uses.
         topics: topics.length > 0 ? React.createElement(
             'section',
-            { key: 'topics', className: 'zalf-homepage__section zalf-homepage__section--alt' },
+            { key: 'topics', className: 'zalf-homepage__section' },
             React.createElement(
                 'div',
                 { className: 'zalf-homepage__container' },
@@ -230,12 +231,19 @@ function Homepage({ messages = {}, currentLocale = 'en-US' }) {
                 React.createElement(
                     'div',
                     { className: 'zalf-homepage__topic-grid' },
+                    // The whole tile is the link, so there is no inner call
+                    // to action to miss. A CMS thumbnail, when there is one,
+                    // takes the icon's place rather than stacking above it, so
+                    // a tile is always an image-or-glyph plus its label.
                     ...topics.map((topic) => React.createElement(
                         'a',
                         {
                             key: topic.id,
-                            className: `zalf-homepage__topic-card${topic.image_url ? ' zalf-homepage__topic-card--with-image' : ''}`,
-                            href: topic.catalogue_href
+                            className: 'zalf-homepage__topic-card',
+                            href: topic.catalogue_href,
+                            // The label is clamped to two lines, so a long
+                            // topic name is only fully readable here.
+                            title: localizeTopicName(topic, currentLocale)
                         },
                         topic.image_url ? React.createElement('img', {
                             className: 'zalf-homepage__topic-image',
@@ -243,12 +251,11 @@ function Homepage({ messages = {}, currentLocale = 'en-US' }) {
                             // Decorative: the label right below names the topic.
                             alt: '',
                             loading: 'lazy'
-                        }) : null,
-                        React.createElement(
-                            'div',
-                            { className: 'zalf-homepage__topic-body' },
-                            React.createElement('span', { className: 'zalf-homepage__topic-label' }, localizeTopicName(topic, currentLocale))
-                        )
+                        }) : React.createElement(TopicIcon, {
+                            name: topic.icon,
+                            className: 'zalf-homepage__topic-icon'
+                        }),
+                        React.createElement('span', { className: 'zalf-homepage__topic-label' }, localizeTopicName(topic, currentLocale))
                     ))
                 )
             )

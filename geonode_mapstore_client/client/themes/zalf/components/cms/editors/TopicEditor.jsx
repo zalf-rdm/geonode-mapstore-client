@@ -13,12 +13,14 @@ import React from 'react';
 import { cmsGet, cmsRequest, buildFormData, errorMessage } from '../cmsApi';
 import { buildTopicHref, toggleFilterValue } from '../../../utils/TopicUtils';
 import CmsModal from './CmsModal';
+import TopicIcon from '../../common/TopicIcon';
+import { TOPIC_ICON_NAMES } from '../../../utils/TopicIcons';
 
 const BASE = '/api/v2/cms/topics/';
 
 const EMPTY = {
     name: '', name_de: '', name_fr: '', name_es: '', name_it: '',
-    search_term: '', filters: [],
+    search_term: '', filters: [], icon: '',
     show_in_navbar: true, show_on_homepage: true,
     order: 0, is_active: true
 };
@@ -38,6 +40,17 @@ const UNSUPPORTED_FILTER_KEYS = [
     'filter{regions.code.in}',
     'filter{author.pk.in}'
 ];
+
+// A homepage tile clamps its label to two lines. Past roughly this many
+// characters a name starts being cut off at the narrowest grid column, so the
+// editor says so while the admin can still shorten it, rather than letting them
+// discover it on the live page. Advisory only -- a long name is still valid,
+// and the navbar dropdown never clamps.
+const TILE_LABEL_BUDGET = 28;
+
+function isLongForTile(value) {
+    return (value || '').trim().length > TILE_LABEL_BUDGET;
+}
 
 const LOCALE_FIELDS = [
     ['name_de', 'German'],
@@ -311,7 +324,14 @@ function Modal({ item, onClose, onSaved }) {
                 React.createElement('input', {
                     type: 'text', value: form.name, maxLength: 120, required: true,
                     onChange: e => set('name', e.target.value)
-                })
+                }),
+                form.show_on_homepage && isLongForTile(form.name)
+                    ? React.createElement(
+                        'small',
+                        { className: 'cms-modal__warning' },
+                        `Over ${TILE_LABEL_BUDGET} characters: the homepage tile clamps its label to two lines, so this name will be cut off. The navbar shows it in full.`
+                    )
+                    : null
             ),
             React.createElement(
                 'div',
@@ -332,7 +352,21 @@ function Modal({ item, onClose, onSaved }) {
                         placeholder: label,
                         onChange: e => set(field, e.target.value)
                     }
-                ))
+                )),
+                // Checked per language: a translation can overflow the tile
+                // while the English name fits, and German routinely does.
+                (() => {
+                    const over = LOCALE_FIELDS
+                        .filter(([field]) => isLongForTile(form[field]))
+                        .map(([, label]) => label);
+                    return form.show_on_homepage && over.length > 0
+                        ? React.createElement(
+                            'small',
+                            { className: 'cms-modal__warning' },
+                            `Too long for the homepage tile in ${over.join(', ')}: the label will be cut off after two lines.`
+                        )
+                        : null;
+                })()
             ),
             React.createElement(
                 'div',
@@ -373,10 +407,46 @@ function Modal({ item, onClose, onSaved }) {
                     'Preview in catalogue →'
                 )
             ),
+            // The picker offers exactly the icons the homepage can draw: both
+            // read the same TOPIC_ICON_NAMES, so an admin can never choose one
+            // that renders blank on the card.
             React.createElement(
                 'div',
                 { className: 'cms-modal__field' },
-                React.createElement('label', null, 'Thumbnail (homepage card only)'),
+                React.createElement('label', null, 'Icon (homepage card only)'),
+                React.createElement(
+                    'div',
+                    { className: 'cms-editor__icon-picker' },
+                    React.createElement(
+                        'button',
+                        {
+                            type: 'button',
+                            className: `cms-editor__icon-option${form.icon ? '' : ' is-selected'}`,
+                            title: 'No icon',
+                            'aria-pressed': !form.icon,
+                            onClick: () => set('icon', '')
+                        },
+                        React.createElement('span', { className: 'cms-editor__icon-none' }, '\u2014')
+                    ),
+                    ...TOPIC_ICON_NAMES.map(name => React.createElement(
+                        'button',
+                        {
+                            key: name,
+                            type: 'button',
+                            className: `cms-editor__icon-option${form.icon === name ? ' is-selected' : ''}`,
+                            title: name,
+                            'aria-label': name,
+                            'aria-pressed': form.icon === name,
+                            onClick: () => set('icon', name)
+                        },
+                        React.createElement(TopicIcon, { name, className: 'cms-editor__icon-glyph' })
+                    ))
+                )
+            ),
+            React.createElement(
+                'div',
+                { className: 'cms-modal__field' },
+                React.createElement('label', null, 'Thumbnail (replaces the icon on the card)'),
                 previewUrl && React.createElement('img', {
                     src: previewUrl, alt: '',
                     style: { width: 160, height: 90, objectFit: 'cover', marginBottom: 8, display: 'block', borderRadius: 6 }
@@ -503,7 +573,11 @@ function TopicEditor() {
                     { key: item.id, className: `cms-editor__row${item.is_active ? '' : ' is-inactive'}` },
                     item.image_url
                         ? React.createElement('img', { src: item.image_url, className: 'cms-editor__thumb', alt: '' })
-                        : React.createElement('div', { className: 'cms-editor__thumb cms-editor__thumb--empty' }),
+                        : React.createElement(
+                            'div',
+                            { className: 'cms-editor__thumb cms-editor__thumb--empty' },
+                            React.createElement(TopicIcon, { name: item.icon, className: 'cms-editor__thumb-glyph' })
+                        ),
                     React.createElement(
                         'div',
                         { className: 'cms-editor__info' },
