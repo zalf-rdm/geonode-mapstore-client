@@ -7,10 +7,6 @@
     padding: 72px 0;
 }
 
-.zalf-homepage__section--alt {
-    background: #edf2f7;
-}
-
 .zalf-homepage__section--cases {
     background: linear-gradient(180deg, #f5f7fa 0%, #edf5f0 100%);
 }
@@ -352,10 +348,18 @@
     box-shadow: 0 18px 40px rgba(19, 34, 56, 0.08);
 }
 
+/* Every tile the same size, not merely the ones that happen to share a row.
+   `minmax(0, 1fr)` columns already give equal widths; `grid-auto-rows: 1fr` is
+   what equalises the heights, because `fr` row tracks in an auto-height grid
+   all resolve to the tallest track's content. Without it a row holding a
+   thumbnail or a two-line label would be taller than the row above it, since
+   grid stretches items within a row but sizes each row independently. Tiles
+   are grid items with the default `stretch`, so each one fills its track. */
 .zalf-homepage__topic-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 20px;
+    grid-auto-rows: 1fr;
+    gap: 16px;
 }
 
 .zalf-homepage__cases-panel {
@@ -473,56 +477,101 @@
     margin-top: 6px;
 }
 
+/* Topic tiles (zalf-rdm/geonode#863).
+   A quiet, flat tile: white, a light grey hairline, slightly rounded, with the
+   icon and the label in the navigation bar's dark petrol green. No background
+   tint and no shadow -- the border alone separates the tile from the page, and
+   hover just darkens that border to the same petrol green, so nothing below
+   the cursor shifts or repaints. The whole tile is the <a>, so the entire area
+   is clickable rather than only the label. */
 .zalf-homepage__topic-card {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    min-height: 180px;
-    padding: 24px;
-    border-radius: 24px;
-    background: linear-gradient(135deg, #ffffff 0%, #f2f6fb 100%);
-    color: #132238;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 92px;
+    /* Less room under the label than above the icon: the icon or thumbnail
+       carries its own visual whitespace, so symmetric padding read as a gap at
+       the bottom of the tile. */
+    padding: 16px 14px 10px;
+    border: 1px solid var(--zalf-home-topic-border);
+    border-radius: 8px;
+    background: #ffffff;
+    color: var(--zalf-home-topic-ink);
+    text-align: center;
     text-decoration: none;
-    box-shadow: 0 18px 40px rgba(19, 34, 56, 0.08);
+    transition: border-color 0.15s ease-in-out;
 }
 
+.zalf-homepage__topic-card:hover,
+.zalf-homepage__topic-card:focus-visible {
+    border-color: var(--zalf-home-topic-ink);
+    background: #ffffff;
+    color: var(--zalf-home-topic-ink);
+    text-decoration: none;
+}
+
+/* Honour "no shadows" even while focused: the ring is drawn as an outline, so
+   it sits outside the border instead of under it. */
+.zalf-homepage__topic-card:focus-visible {
+    outline: 2px solid var(--zalf-home-topic-ink);
+    outline-offset: 2px;
+}
+
+/* Topic names are CMS content, so the tile has to survive a long one without
+   the admin having to guess a character budget. Three defences, in order:
+   `overflow-wrap` breaks a single unbroken word that is wider than the tile
+   (otherwise it escapes the border entirely); the clamp caps the label at two
+   lines so one verbose topic cannot stretch its whole grid row, since grid rows
+   are equal height; and `hyphens` lets German compounds -- "Dauerfeldversuche"
+   -- break at sensible points rather than mid-syllable. The full name stays
+   reachable: the <a> carries it as a title, and the navbar dropdown never
+   clamps. */
 .zalf-homepage__topic-label {
-    font-size: 1.2rem;
-    font-weight: 700;
-}
-
-/* zalf-rdm/geonode#863: a topic card may carry a CMS thumbnail.
-   The card is `flex-direction: column; justify-content: space-between`, so an
-   image added as a third flex child would push the label into the middle. This
-   wrapper keeps the card at exactly two flex children whether or not there is an
-   image, so space-between keeps behaving as it did. */
-.zalf-homepage__topic-body {
-    display: flex;
-    flex: 1 1 auto;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 8px;
-    min-width: 0;
-}
-
-/* The image sits flush against the rounded card edge, so the padding moves off
-   the card and onto the body. */
-.zalf-homepage__topic-card--with-image {
-    padding: 0;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
     overflow: hidden;
-    min-height: 240px;
+    overflow-wrap: anywhere;
+    hyphens: auto;
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.25;
 }
 
+/* `stroke: currentColor` on the icon means the single `color` above drives the
+   label and the icon together, in either state.
+
+   `stroke-width` is set here rather than left at the component's 1.6 because
+   the icons are drawn on a 24-unit grid: the stroke scales with the icon, so at
+   50px a 1.6 stroke renders at 3.3px and reads as a heavy glyph rather than an
+   outline. 0.9 holds the rendered line near 1.9px, the weight the set was drawn
+   for. Keep the two in step if the size changes again: stroke-width is roughly
+   45 / <pixel size>. A CSS property beats the SVG presentation attribute, so
+   the CMS picker -- which draws the same icons small -- keeps the component
+   default and stays legible. */
+.zalf-homepage__topic-icon {
+    display: block;
+    flex: 0 0 auto;
+    width: 50px;
+    height: 50px;
+    stroke-width: 0.9;
+}
+
+/* A CMS thumbnail stands in for the icon, but drawn larger: at icon size a
+   photo is unreadable, and the admin uploaded a picture precisely because they
+   wanted something an outline glyph cannot say. `contain` rather than `cover`
+   so a logo or a diagram is never cropped. Grid rows are equal height, so a
+   row mixing thumbnails and icons simply grows to the taller tile. */
 .zalf-homepage__topic-image {
     display: block;
     flex: 0 0 auto;
     width: 100%;
-    height: 120px;
-    object-fit: cover;
-}
-
-.zalf-homepage__topic-card--with-image .zalf-homepage__topic-body {
-    padding: 16px 24px 20px;
+    max-width: 170px;
+    height: 88px;
+    object-fit: contain;
 }
 
 .zalf-homepage__spotlight-shell {
@@ -846,10 +895,6 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .zalf-homepage__topic-image {
-        height: 140px;
-    }
-
     .zalf-homepage__training-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -872,12 +917,8 @@
         grid-template-columns: 1fr;
     }
 
-    /* One column: the card is full width, so it no longer needs a floor height. */
-    .zalf-homepage__topic-image {
-        height: 150px;
-    }
-
-    .zalf-homepage__topic-card--with-image {
+    /* One column: the tile is full width, so it no longer needs a floor height. */
+    .zalf-homepage__topic-card {
         min-height: 0;
     }
 

@@ -217,6 +217,70 @@
     justify-content: center;
 }
 
+/* Advisory note under a field: the value is valid and will save, but it will
+   not render the way the admin probably expects. Distinct from the modal's
+   error styling, which marks a save that failed. */
+.cms-modal__warning {
+    display: block;
+    margin-top: 6px;
+    color: #8a6100;
+    line-height: 1.35;
+}
+
+/* The topic icon drawn inside the empty-thumbnail tile, so the CMS list shows
+   the same glyph the homepage card will (zalf-rdm/geonode#863). */
+.cms-editor__thumb-glyph {
+    width: 28px;
+    height: 28px;
+    color: #244e43;
+}
+
+/* Icon picker in the topic modal. The options are toggle buttons rather than a
+   <select>: a controlled select re-applies its value on every render, which
+   resets selectedIndex and makes options unclickable -- the same trap already
+   hit by the filter value list. */
+.cms-editor__icon-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.cms-editor__icon-option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid #d9dfdf;
+    border-radius: 8px;
+    background: #fff;
+    color: #244e43;
+    cursor: pointer;
+}
+
+.cms-editor__icon-option:hover {
+    border-color: #244e43;
+}
+
+.cms-editor__icon-option.is-selected {
+    border-color: #244e43;
+    /* Doubling the border inward marks the selection without changing the
+       button's size, so the row does not reflow as the choice moves. */
+    box-shadow: inset 0 0 0 1px #244e43;
+}
+
+.cms-editor__icon-glyph {
+    width: 24px;
+    height: 24px;
+}
+
+.cms-editor__icon-none {
+    font-size: 1.1rem;
+    line-height: 1;
+    color: #6b7a77;
+}
+
 .cms-editor__info {
     flex: 1;
     min-width: 0;
