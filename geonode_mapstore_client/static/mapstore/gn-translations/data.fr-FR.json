@@ -558,38 +558,7 @@
         },
         "zalfTheme": {
             "nav": {
-                "allData": "Toutes les données",
-                "topics": "Thèmes",
-                "tools": "Outils",
-                "lteMap": "Carte LTE",
-                "soilProfiles": "Profils de sol",
-                "dqKit": "DQ-Kit",
-                "helpAndInformation": "Aide et information",
-                "resources": "Ressources",
-                "about": "À propos",
-                "publications": "Publications",
-                "dataPolicy": "Politique de données",
-                "howToCiteData": "Comment citer les données",
-                "submitData": "Soumettre des données",
-                "aboutTheRepository": "À propos de l'entrepôt",
-                "faq": "FAQ",
-                "whatIsOrcid": "Qu'est-ce qu'ORCID ?",
-                "searchDatasets": "Rechercher des jeux de données",
-                "toggleNavigationMenu": "Afficher ou masquer le menu de navigation",
-                "primaryNavigation": "Navigation principale",
-                "opensInNewTab": "(ouvre dans un nouvel onglet)"
-            },
-            "topic": {
-                "animals": "Animaux",
-                "atmosphere": "Atmosphère",
-                "climate": "Climat",
-                "forest": "Forêt",
-                "hydrology": "Hydrologie",
-                "landscape": "Paysage",
-                "longTermExperiments": "Expériences de longue durée (LTE)",
-                "plants": "Plantes",
-                "soilProfiles": "Profils de sol",
-                "water": "Eau"
+                "submitData": "Soumettre des données"
             },
             "footer": {
                 "repositoryTitle": "Référentiel BonaRes",
@@ -628,16 +597,10 @@
                 "viewTopic": "Voir le thème",
                 "trainingResources": "Ressources de formation",
                 "viewAllTrainings": "Voir toutes les ressources de formation",
-                "topics": {
-                    "animals": "Animaux",
-                    "atmosphere": "Atmosphère",
-                    "climate": "Climat",
-                    "forest": "Forêt",
-                    "hydrology": "Hydrologie",
-                    "landscape": "Paysage",
-                    "plants": "Plantes",
-                    "soilProfiles": "Profils de sol"
-                }
+                "previousSlide": "Diapositive précédente",
+                "nextSlide": "Diapositive suivante",
+                "spotlightPagination": "Pagination des actualités",
+                "slide": "Diapositive"
             },
             "dateFilter": {
                 "loadingDistribution": "Chargement de la répartition annuelle des ressources",

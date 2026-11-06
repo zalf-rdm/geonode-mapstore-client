@@ -632,3 +632,178 @@
         padding: 18px 20px 16px;
     }
 }
+
+/* ---------------------------------------------------------------------------
+   Topics editor (zalf-rdm/geonode#863)
+   --------------------------------------------------------------------------- */
+
+.cms-topic-filters {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.cms-topic-filter {
+    padding: 12px;
+    border: 1px solid #dde3ea;
+    border-radius: 6px;
+    background: #f8fafc;
+}
+
+.cms-topic-filter__head {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.cms-topic-filter__head select {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.cms-topic-filter__warning {
+    margin: 8px 0 0;
+    font-size: 0.85em;
+    color: #8a6d3b;
+}
+
+.cms-topic-filter__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.cms-topic-filter__chip {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #e3ecf6;
+    font-size: 0.85em;
+}
+
+.cms-topic-filter__chip button {
+    border: 0;
+    background: none;
+    padding: 0;
+    line-height: 1;
+    cursor: pointer;
+    color: #43536b;
+}
+
+.cms-topic-filter__picker {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+/* A list of toggle buttons, not a <select>: a controlled select reset its
+   selection on every render, so clicks never stuck. */
+.cms-topic-filter__options {
+    display: flex;
+    flex-direction: column;
+    max-height: 190px;
+    overflow-y: auto;
+    border: 1px solid #ccd4de;
+    border-radius: 4px;
+    background: #fff;
+}
+
+.cms-topic-filter__option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border: 0;
+    border-bottom: 1px solid #eef1f5;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+}
+
+.cms-topic-filter__option:last-child {
+    border-bottom: 0;
+}
+
+.cms-topic-filter__option:hover,
+.cms-topic-filter__option:focus-visible {
+    background: #f1f6fb;
+}
+
+/* The checkmark carries the state visually; aria-pressed carries it for
+   screen readers, so the glyph is hidden from them. */
+.cms-topic-filter__option::before {
+    content: '';
+    flex: 0 0 auto;
+    width: 14px;
+    color: #2368b5;
+    font-weight: 700;
+}
+
+.cms-topic-filter__option.is-selected {
+    background: #e3ecf6;
+    font-weight: 600;
+}
+
+.cms-topic-filter__option.is-selected::before {
+    content: '✓';
+}
+
+/* No resource currently carries this value. */
+.cms-topic-filter__option.is-empty {
+    color: #99a3b0;
+}
+
+.cms-topic-filter__loading,
+.cms-topic-filter__empty {
+    padding: 8px 10px;
+    color: #6b7684;
+    font-size: 0.9em;
+}
+
+.cms-topic-preview {
+    display: block;
+    margin-bottom: 6px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    background: #f1f3f6;
+    word-break: break-all;
+    font-size: 0.85em;
+}
+
+.cms-editor__meta {
+    font-size: 0.8em;
+    color: #6b7684;
+}
+
+/* Homepage Layout tab (zalf-rdm/geonode#863) */
+
+.cms-editor__hint {
+    margin-bottom: 14px;
+    color: #4a5563;
+}
+
+.cms-editor__list--ordered {
+    counter-reset: zalf-section;
+    list-style: none;
+    padding-left: 0;
+}
+
+.cms-editor__list--ordered > .cms-editor__row::before {
+    counter-increment: zalf-section;
+    content: counter(zalf-section);
+    flex: 0 0 auto;
+    width: 26px;
+    height: 26px;
+    margin-right: 12px;
+    border-radius: 50%;
+    background: #e3ecf6;
+    color: #43536b;
+    font-size: 0.85em;
+    font-weight: 600;
+    text-align: center;
+    line-height: 26px;
+}

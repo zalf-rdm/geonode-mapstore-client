@@ -28,7 +28,6 @@ import MetadataEditorPlugin from '@js/plugins/MetadataEditor';
 import MetadataViewerPlugin from '@js/plugins/MetadataEditor/MetadataViewer';
 import FavoritesPlugin from '@js/plugins/Favorites';
 import CreateDatasetPlugin from '@js/plugins/CreateDataset';
-import ZalfNavigationPlugin from '../../themes/zalf/plugins/NavigationPlugin';
 import ZalfHomepagePlugin from '../../themes/zalf/plugins/HomepagePlugin';
 import ZalfCmsPlugin from '../../themes/zalf/plugins/CmsPlugin';
 import ZalfTrainingListPlugin from '../../themes/zalf/plugins/TrainingListPlugin';
@@ -93,7 +92,6 @@ export const plugins = {
     FavoritesPlugin,
     ResourcesFiltersFormPlugin,
     CreateDatasetPlugin,
-    ZalfNavigationPlugin,
     ZalfHomepagePlugin,
     ZalfCmsPlugin,
     ZalfTrainingListPlugin,

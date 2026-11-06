@@ -538,12 +538,6 @@
     ],
     "tabular_viewer": [
       {
-        "name": "ZalfNavigation",
-        "cfg": {
-          "containerPosition": "header"
-        }
-      },
-      {
         "name": "ActionNavbar",
         "cfg": {
           "containerPosition": "header",
@@ -892,12 +886,6 @@
     ],
     "tabular-collection_viewer": [
       {
-        "name": "ZalfNavigation",
-        "cfg": {
-          "containerPosition": "header"
-        }
-      },
-      {
         "name": "ActionNavbar",
         "cfg": {
           "containerPosition": "header",
@@ -1237,12 +1225,6 @@
       }
     ],
     "dataset_viewer": [
-      {
-        "name": "ZalfNavigation",
-        "cfg": {
-          "containerPosition": "header"
-        }
-      },
       {
         "name": "ActionNavbar",
         "cfg": {
@@ -1988,12 +1970,6 @@
     ],
     "dataset_edit_data_viewer": [
       {
-        "name": "ZalfNavigation",
-        "cfg": {
-          "containerPosition": "header"
-        }
-      },
-      {
         "name": "ActionNavbar",
         "cfg": {
           "containerPosition": "header",
@@ -2127,12 +2103,6 @@
     ],
     "dataset_edit_layer_settings": [
       {
-        "name": "ZalfNavigation",
-        "cfg": {
-          "containerPosition": "header"
-        }
-      },
-      {
         "name": "ActionNavbar",
         "cfg": {
           "containerPosition": "header",
@@ -2248,12 +2218,6 @@
       {
         "name": "DownloadResource",
         "mandatory": true
-      },
-      {
-        "name": "ZalfNavigation",
-        "cfg": {
-          "containerPosition": "header"
-        }
       },
       {
         "mandatory": true,
@@ -3049,12 +3013,6 @@
     ],
     "geostory_viewer": [
       {
-        "name": "ZalfNavigation",
-        "cfg": {
-          "containerPosition": "header"
-        }
-      },
-      {
         "name": "ActionNavbar",
         "cfg": {
           "containerPosition": "header",
@@ -3242,12 +3200,6 @@
     ],
     "document_viewer": [
       {
-        "name": "ZalfNavigation",
-        "cfg": {
-          "containerPosition": "header"
-        }
-      },
-      {
         "name": "ActionNavbar",
         "cfg": {
           "containerPosition": "header",
@@ -3380,12 +3332,6 @@
       }
     ],
     "dashboard_viewer": [
-      {
-        "name": "ZalfNavigation",
-        "cfg": {
-          "containerPosition": "header"
-        }
-      },
       {
         "name": "ActionNavbar",
         "cfg": {
@@ -4028,9 +3974,6 @@
     ],
     "catalogue": [
       {
-        "name": "ZalfNavigation"
-      },
-      {
         "name": "ResourcesGrid",
         "cfg": {
           "id": "catalog",
@@ -4305,9 +4248,6 @@
     ],
     "zalf_home": [
       {
-        "name": "ZalfNavigation"
-      },
-      {
         "name": "ZalfHomepage"
       },
       {
@@ -4315,9 +4255,6 @@
       }
     ],
     "zalf_cms": [
-      {
-        "name": "ZalfNavigation"
-      },
       {
         "name": "ZalfCms"
       },
@@ -4327,9 +4264,6 @@
     ],
     "zalf_trainings_list": [
       {
-        "name": "ZalfNavigation"
-      },
-      {
         "name": "ZalfTrainingList"
       },
       {
@@ -4337,12 +4271,6 @@
       }
     ],
     "viewer": [
-      {
-        "name": "ZalfNavigation",
-        "cfg": {
-          "containerPosition": "header"
-        }
-      },
       {
         "name": "ActionNavbar",
         "cfg": {
@@ -4483,12 +4411,6 @@
     ],
     "metadata": [
       {
-        "name": "ZalfNavigation",
-        "cfg": {
-          "containerPosition": "header"
-        }
-      },
-      {
         "name": "ActionNavbar",
         "cfg": {
           "containerPosition": "header",
@@ -4527,9 +4449,6 @@
     ],
     "metadata_view": [
       {
-        "name": "ZalfNavigation"
-      },
-      {
         "name": "ZalfMetadataView"
       },
       {
@@ -4537,9 +4456,6 @@
       }
     ],
     "upload_dataset": [
-      {
-        "name": "ZalfNavigation"
-      },
       {
         "name": "UploadResource",
         "cfg": {
@@ -4552,9 +4468,6 @@
     ],
     "upload_document": [
       {
-        "name": "ZalfNavigation"
-      },
-      {
         "name": "UploadResource",
         "cfg": {
           "resourceType": "document"
@@ -4565,9 +4478,6 @@
       }
     ],
     "create_dataset": [
-      {
-        "name": "ZalfNavigation"
-      },
       {
         "name": "CreateDataset"
       },
@@ -4580,9 +4490,6 @@
     ],
     "dataset_landing": [
       {
-        "name": "ZalfNavigation"
-      },
-      {
         "name": "ZalfDatasetLanding"
       },
       {
@@ -4590,9 +4497,6 @@
       }
     ],
     "map_landing": [
-      {
-        "name": "ZalfNavigation"
-      },
       {
         "name": "ZalfDatasetLanding"
       },
@@ -4602,9 +4506,6 @@
     ],
     "document_landing": [
       {
-        "name": "ZalfNavigation"
-      },
-      {
         "name": "ZalfDatasetLanding"
       },
       {
@@ -4612,9 +4513,6 @@
       }
     ],
     "tabular-collection_landing": [
-      {
-        "name": "ZalfNavigation"
-      },
       {
         "name": "ZalfDatasetLanding"
       },
