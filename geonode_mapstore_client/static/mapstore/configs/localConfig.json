@@ -3982,6 +3982,9 @@
           "footerNodeSelector": "",
           "queryPage": true,
           "defaultCardLayoutStyle": "list",
+          "defaultQuery": {
+            "filter{resource_type.in}": "map"
+          },
           "order": {
             "defaultLabelId": "resourcesCatalog.orderBy",
             "options": [
@@ -4161,6 +4164,9 @@
           "resourcesGridId": "catalog",
           "headerNodeSelector": ".zalf-navigation-shell",
           "footerNodeSelector": "",
+          "defaultQuery": {
+            "filter{resource_type.in}": "map"
+          },
           "fields": [
             {
               "type": "search"
