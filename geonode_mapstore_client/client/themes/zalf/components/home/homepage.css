@@ -491,9 +491,38 @@
     font-weight: 700;
 }
 
-.zalf-homepage__topic-link {
-    color: #2368b5;
-    font-weight: 600;
+/* zalf-rdm/geonode#863: a topic card may carry a CMS thumbnail.
+   The card is `flex-direction: column; justify-content: space-between`, so an
+   image added as a third flex child would push the label into the middle. This
+   wrapper keeps the card at exactly two flex children whether or not there is an
+   image, so space-between keeps behaving as it did. */
+.zalf-homepage__topic-body {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 8px;
+    min-width: 0;
+}
+
+/* The image sits flush against the rounded card edge, so the padding moves off
+   the card and onto the body. */
+.zalf-homepage__topic-card--with-image {
+    padding: 0;
+    overflow: hidden;
+    min-height: 240px;
+}
+
+.zalf-homepage__topic-image {
+    display: block;
+    flex: 0 0 auto;
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+}
+
+.zalf-homepage__topic-card--with-image .zalf-homepage__topic-body {
+    padding: 16px 24px 20px;
 }
 
 .zalf-homepage__spotlight-shell {
@@ -817,6 +846,10 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
+    .zalf-homepage__topic-image {
+        height: 140px;
+    }
+
     .zalf-homepage__training-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -837,6 +870,15 @@
     .zalf-homepage__topic-grid,
     .zalf-homepage__spotlight-shell {
         grid-template-columns: 1fr;
+    }
+
+    /* One column: the card is full width, so it no longer needs a floor height. */
+    .zalf-homepage__topic-image {
+        height: 150px;
+    }
+
+    .zalf-homepage__topic-card--with-image {
+        min-height: 0;
     }
 
     .zalf-homepage__hero {
