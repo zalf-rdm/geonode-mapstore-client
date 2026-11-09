@@ -7,10 +7,20 @@ import {
     getResourceTypeLabel,
     getSchemaOptionLabel,
     isMetadataValuePresent,
+    toPlainText,
     visibleObjectEntries
 } from '../../../themes/zalf/utils/MetadataViewUtils';
 
 describe('ZALF metadata view utilities', () => {
+    it('decodes HTML entities and drops tags in plain text values', () => {
+        expect(toPlainText('Gr&ouml;&szlig;e &amp; M&auml;rz: <b>Boden</b>, a &lt; b, CO&#8322;'))
+            .toBe('Größe & März: Boden, a < b, CO₂');
+        expect(toPlainText('a < b > c')).toBe('a < b > c');
+        expect(toPlainText('Plain ä ö ü')).toBe('Plain ä ö ü');
+        expect(toPlainText('<img src=x onerror=alert(1)>ok')).toBe('ok');
+        expect(toPlainText(undefined)).toBe(undefined);
+    });
+
     it('filters empty values without hiding false or zero', () => {
         expect(isMetadataValuePresent(null)).toBe(false);
         expect(isMetadataValuePresent(' None ')).toBe(false);

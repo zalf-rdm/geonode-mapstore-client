@@ -17,6 +17,7 @@ import {
     getResourceTypeLabel,
     getSchemaOptionLabel,
     isMetadataValuePresent,
+    toPlainText,
     visibleObjectEntries
 } from '../../utils/MetadataViewUtils';
 import { createTranslator, dateLocale, localeCode } from '../../utils/I18nUtils';
@@ -122,7 +123,7 @@ function PrimitiveValue({ value, schema }) {
             ce('pre', null, JSON.stringify(parsedJson, null, 2))
         );
     }
-    return ce('span', { className: 'zalf-mv-text' }, String(normalized));
+    return ce('span', { className: 'zalf-mv-text' }, toPlainText(String(normalized)));
 }
 
 function ObjectValue({ value, schema, compact = false }) {

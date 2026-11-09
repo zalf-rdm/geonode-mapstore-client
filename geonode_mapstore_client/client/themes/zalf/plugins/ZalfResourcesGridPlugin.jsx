@@ -67,6 +67,7 @@ import {
 import resourcesEpics from '@mapstore/framework/plugins/ResourcesCatalog/epics/resources';
 import resourcesReducer from '@mapstore/framework/plugins/ResourcesCatalog/reducers/resources';
 import { formatUsernameFallback } from '@js/utils/SearchUtils';
+import { toPlainText } from '../utils/MetadataViewUtils';
 
 // ─── Resource pre-processing (replaces MapStore2 ResourcesUtils virtual paths) ──
 
@@ -104,8 +105,8 @@ const resolveVirtualPaths = (resource) => {
         ...resource,
         author: authorDisplay || resource.author,
         author_citation: authorDisplay || resource.author,
-        catalogue_summary: resource.abstract || resource.raw_abstract
-            || resource.description || resource.catalogue_summary
+        catalogue_summary: toPlainText(resource.abstract || resource.raw_abstract
+            || resource.description || resource.catalogue_summary)
     };
 };
 

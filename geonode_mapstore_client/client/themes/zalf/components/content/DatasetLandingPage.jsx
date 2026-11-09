@@ -1250,7 +1250,6 @@ function DatasetLandingContent() {
     const [layersLoading, setLayersLoading] = useState(false);
     const [linkedResources, setLinkedResources] = useState(null);
     const [attributes, setAttributes] = useState(null);
-    const [showMetadata, setShowMetadata] = useState(false);
     const pk = extractPkFromHash();
 
     useEffect(() => {
@@ -1434,11 +1433,6 @@ function DatasetLandingContent() {
     // A plain click opens the read-only metadata overlay; a modified click (new tab/window)
     // follows the link to the full read-only metadata page. Neither opens the editor.
     const metadataHref = '#/metadata-view/' + pk;
-    const openMetadata = (event) => {
-        if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-        event.preventDefault();
-        setShowMetadata(true);
-    };
     const backHref = '#/';
 
     const canDownload = (r.perms || []).includes('download_resourcebase');
@@ -1755,12 +1749,10 @@ function DatasetLandingContent() {
                         : ce('span', { className: 'zalf-lp-btn zalf-lp-btn--disabled zalf-lp-btn--full' },
                             ce('span', { className: 'zalf-lp-btn-icon' }, ce(Icon, { name: 'download', className: 'zalf-lp-inline-icon' })), t('downloadLoginRequired', 'Download (login required)')
                         ),
-                    ce('a', { className: 'zalf-lp-btn zalf-lp-btn--ghost zalf-lp-btn--full', href: metadataHref, onClick: openMetadata },
+                    ce('a', { className: 'zalf-lp-btn zalf-lp-btn--ghost zalf-lp-btn--full', href: metadataHref },
                         ce('span', { className: 'zalf-lp-btn-icon' }, ce(Icon, { name: 'description', className: 'zalf-lp-inline-icon' })),
                         t('fullMetadataRecord', 'Full Metadata Record')
                     ),
-                    // rendered through a portal, shared by both metadata buttons
-                    ce(MetadataViewerDialog, { pk, show: showMetadata, onClose: () => setShowMetadata(false) })
                 ),
 
                 // Dates (DataCite date types)
