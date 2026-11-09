@@ -31,6 +31,7 @@ import Portal from '@mapstore/framework/components/misc/Portal';
 import ResizableModal from '@mapstore/framework/components/misc/ResizableModal';
 import { capitalize, createTranslator, dateLocale, interpolate } from '../../utils/I18nUtils';
 import { getResourceTypeLabel } from '../../utils/MetadataViewUtils';
+import { downloadPackageUrl, getPackageDownload } from '../../utils/DownloadPackageUtils';
 import './datasetlanding.css';
 
 const ce = React.createElement;
@@ -1250,6 +1251,8 @@ function DatasetLandingContent() {
     const [layersLoading, setLayersLoading] = useState(false);
     const [linkedResources, setLinkedResources] = useState(null);
     const [attributes, setAttributes] = useState(null);
+    // the map's download package (zalf-rdm/geonode#659)
+    const [downloadPackage, setDownloadPackage] = useState(null);
     const pk = extractPkFromHash();
 
     useEffect(() => {
@@ -1260,6 +1263,7 @@ function DatasetLandingContent() {
         setLayersLoading(false);
         setLinkedResources(null);
         setAttributes(null);
+        setDownloadPackage(null);
         // Error keys, not texts, so a locale switch re-renders the message in the new language.
         if (!pk) { setError('noIdentifier'); setLoading(false); return; }
         fetchResource(pk)
@@ -1285,6 +1289,9 @@ function DatasetLandingContent() {
         }
 
         if (resource.resource_type === 'map') {
+            axios.get(downloadPackageUrl(pk))
+                .then(({ data }) => setDownloadPackage(data))
+                .catch(() => setDownloadPackage(null));
             setLayersLoading(true);
             axios.get('/api/v2/maps/' + pk + '/maplayers/')
                 .then(({ data }) => {
@@ -1439,6 +1446,9 @@ function DatasetLandingContent() {
     const downloadUrls = r.download_urls || [];
     const defaultDownload = downloadUrls.find((d) => d.default) || downloadUrls[0] || null;
     const downloadHref = canDownload && defaultDownload ? defaultDownload.url : null;
+    // A map has no download of its own; it offers its package, and only once one exists.
+    const isMap = r.resource_type === 'map';
+    const packageDownload = isMap ? getPackageDownload(downloadPackage) : null;
 
     const keywordItems = getKeywordItems(r);
     const thesaurusKeywordGroups = getThesaurusKeywordGroups(r);
@@ -1741,7 +1751,14 @@ function DatasetLandingContent() {
                     ce('a', { className: 'zalf-lp-btn zalf-lp-btn--primary zalf-lp-btn--full', href: viewerHref },
                         ce('span', { className: 'zalf-lp-btn-icon' }, ce(Icon, { name: 'map', className: 'zalf-lp-inline-icon' })), viewerBtnLabel
                     ),
-                    downloadHref
+                    packageDownload && ce('a', {
+                        className: 'zalf-lp-btn zalf-lp-btn--outline zalf-lp-btn--full',
+                        href: packageDownload.href
+                    },
+                    ce('span', { className: 'zalf-lp-btn-icon' }, ce(Icon, { name: 'download', className: 'zalf-lp-inline-icon' })),
+                    t('downloadAll', 'Download all') + ' (ZIP' + (packageDownload.size ? ', ' + formatFileSize(packageDownload.size) : '') + ')'
+                    ),
+                    isMap ? null : downloadHref
                         ? ce('a', {
                             className: 'zalf-lp-btn zalf-lp-btn--outline zalf-lp-btn--full',
                             href: downloadHref

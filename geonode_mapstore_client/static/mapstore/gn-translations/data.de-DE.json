@@ -49,7 +49,17 @@
                 "publish": "Datenpublikation starten",
                 "selectAll": "Alle auswählen",
                 "deselectAll": "Alle abwählen",
-                "selectedCount": "{selected} von {total} ausgewählt"
+                "selectedCount": "{selected} von {total} ausgewählt",
+                "buildDownloadPackage": "Download-Paket nach der Publikation erstellen",
+                "buildDownloadPackageNow": "Download-Paket erstellen",
+                "rebuildDownloadPackage": "Download-Paket neu erstellen",
+                "packageState": {
+                    "none": "Noch kein Download-Paket",
+                    "pending": "Das Download-Paket ist in der Warteschlange",
+                    "building": "Das Download-Paket wird erstellt",
+                    "ready": "Das Download-Paket ist bereit; klicken, um es neu zu erstellen",
+                    "failed": "Das Erstellen des Download-Pakets ist fehlgeschlagen: {error}"
+                }
             }
         },
         "gnhome": {
@@ -839,7 +849,8 @@
                     "creation": "Erstellung",
                     "publication": "Veröffentlichung",
                     "revision": "Überarbeitung"
-                }
+                },
+                "downloadAll": "Alles herunterladen"
             },
             "metadataView": {
                 "yes": "Ja",

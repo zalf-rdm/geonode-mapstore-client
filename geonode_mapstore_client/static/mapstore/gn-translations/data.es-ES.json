@@ -805,7 +805,8 @@
                     "creation": "Creación",
                     "publication": "Publicación",
                     "revision": "Revisión"
-                }
+                },
+                "downloadAll": "Descargar todo"
             },
             "metadataView": {
                 "yes": "Sí",
@@ -857,6 +858,31 @@
             },
             "catalogue": {
                 "resourceActions": "Acciones del recurso"
+            }
+        },
+        "plugins": {
+            "PublishDataCollection": {
+                "button": "Publicar la colección de datos",
+                "cancel": "Cancelar",
+                "buttonTooltip": "Publicar la colección de datos",
+                "title": "Publicar la colección de datos",
+                "description": "Seleccione los datos que se publicarán con la colección {title}",
+                "selectDoiPrefix": "Elija un prefijo DOI",
+                "skipDoiPrefix": "Publicar sin registrar un DOI",
+                "publish": "Iniciar la publicación de los datos",
+                "selectAll": "Seleccionar todo",
+                "deselectAll": "Deseleccionar todo",
+                "selectedCount": "{selected} de {total} seleccionados",
+                "buildDownloadPackage": "Crear el paquete de descarga tras la publicación",
+                "buildDownloadPackageNow": "Crear el paquete de descarga",
+                "rebuildDownloadPackage": "Volver a crear el paquete de descarga",
+                "packageState": {
+                    "none": "Todavía no hay paquete de descarga",
+                    "pending": "El paquete de descarga está en cola",
+                    "building": "Se está creando el paquete de descarga",
+                    "ready": "El paquete de descarga está listo; haga clic para volver a crearlo",
+                    "failed": "La creación del paquete de descarga falló: {error}"
+                }
             }
         }
     }

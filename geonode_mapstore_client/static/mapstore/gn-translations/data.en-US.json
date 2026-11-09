@@ -49,7 +49,17 @@
                 "publish": "Start data publication",
                 "selectAll": "Select all",
                 "deselectAll": "Deselect all",
-                "selectedCount": "{selected} of {total} selected"
+                "selectedCount": "{selected} of {total} selected",
+                "buildDownloadPackage": "Build download package after publication",
+                "buildDownloadPackageNow": "Build download package",
+                "rebuildDownloadPackage": "Rebuild download package",
+                "packageState": {
+                    "none": "No download package yet",
+                    "pending": "The download package is queued",
+                    "building": "The download package is being built",
+                    "ready": "The download package is ready; click to rebuild it",
+                    "failed": "Building the download package failed: {error}"
+                }
             }
         },
         "gnhome": {
@@ -842,7 +852,8 @@
                     "creation": "Creation",
                     "publication": "Publication",
                     "revision": "Revision"
-                }
+                },
+                "downloadAll": "Download all"
             },
             "metadataView": {
                 "yes": "Yes",

@@ -98,6 +98,8 @@ const PublishDataCollectionComponent = ({
     const [ doiPrefix, setDoiPrefix ] = useState();
     const [ skipDoiPrefix, setSkipDoiPrefix ] = useState(false);
     const toggleSkipDoiPrefix = () => setSkipDoiPrefix(prev => !prev);
+    // Build the download package after publication (zalf-rdm/geonode#659); on by default.
+    const [ buildPackage, setBuildPackage ] = useState(true);
 
     useEffect(() => {
         // example: ?id__in=3,2&filter{owner}=1000&exclude[]=*&include[]=owner&include[]=pk
@@ -129,7 +131,8 @@ const PublishDataCollectionComponent = ({
         const payload = {
             "owner": owner.pk,
             "doi_prefix": skipDoiPrefix ? undefined : (doiPrefix || doiPrefixes?.[0]),
-            "resources": Object.keys(checkedItems).filter(itemPk => checkedItems[itemPk])
+            "resources": Object.keys(checkedItems).filter(itemPk => checkedItems[itemPk]),
+            "build_download_package": buildPackage
         };
 
         const url = parseDevHostname(`/api/v2/publish/${pk}/`);
@@ -154,7 +157,7 @@ const PublishDataCollectionComponent = ({
             setPublishError(error?.response?.data?.message || 'An error occurred during publish.');
             console.error(`An error occured during publish: ${error.statusText}`);
         });
-    }, [pk, owner, skipDoiPrefix, doiPrefix, doiPrefixes, checkedItems, resourceData, dispatch, onClose]);
+    }, [pk, owner, skipDoiPrefix, doiPrefix, doiPrefixes, checkedItems, buildPackage, resourceData, dispatch, onClose]);
 
     return (
         <Portal>
@@ -226,6 +229,16 @@ const PublishDataCollectionComponent = ({
                         </FormControl>
                     </FormGroup>
 
+                    <FormGroup className="mb-3">
+                        <Checkbox
+                            id="publish-build-download-package"
+                            checked={buildPackage}
+                            onChange={() => setBuildPackage(prev => !prev)}
+                        >
+                            <Message { ...i18n("buildDownloadPackage") } />
+                        </Checkbox>
+                    </FormGroup>
+
                 </div>
                 <div role="footer">
                     <Button onClick={onClose}>
@@ -244,6 +257,60 @@ const PublishDataCollectionComponent = ({
     );
 };
 
+const PACKAGE_ICONS = {
+    pending: 'cog fa-spin',
+    building: 'cog fa-spin',
+    failed: 'exclamation-circle'
+};
+
+/**
+ * Build or rebuild the download package of a published map (zalf-rdm/geonode#659),
+ * e.g. for maps published before packages existed. Shows the package state and
+ * polls while a build is pending or running.
+ */
+export const DownloadPackageButton = ({ pk, variant, size }) => {
+    const [pkg, setPkg] = useState(null);
+    const [error, setError] = useState(null);
+    const url = parseDevHostname(`/api/v2/maps/${pk}/download_package/`);
+
+    const load = useCallback(() => axios.get(url)
+        .then(({ data }) => setPkg(data))
+        .catch(() => setPkg(null)), [url]);
+
+    useEffect(() => { load(); }, [load]);
+
+    const running = ['pending', 'building'].includes(pkg?.state);
+    useEffect(() => {
+        if (!running) return () => {};
+        const timer = setInterval(load, 10000);
+        return () => clearInterval(timer);
+    }, [running, load]);
+
+    const build = () => {
+        setError(null);
+        axios.post(url)
+            .then(({ data }) => setPkg(data))
+            .catch((e) => setError(e?.response?.data?.detail || 'error'));
+    };
+
+    const TooltipButton = tooltip(Button);
+    const state = error ? 'failed' : (pkg?.state || 'none');
+    return (
+        <TooltipButton
+            id="build-download-package"
+            tooltipPosition="left"
+            tooltip={<Message { ...i18n(`packageState.${state}`, { error: error || pkg?.error || '' }) } />}
+            variant={variant}
+            size={size}
+            disabled={running}
+            onClick={build}
+        >
+            <i className={'fa fa-' + (PACKAGE_ICONS[state] || 'file-archive-o')} />
+            {' '}<Message { ...i18n(pkg?.asset_id ? 'rebuildDownloadPackage' : 'buildDownloadPackageNow') } />
+        </TooltipButton>
+    );
+};
+
 const OpenDialogButton = ({
     variant,
     size,
@@ -257,6 +324,9 @@ const OpenDialogButton = ({
     // Publishing is restricted to managers of an allowed DataCite group
     const { canPublish } = useDatacitePrefixes();
 
+    if (canPublish && resourceData?.is_published && resourceData?.resource_type === 'map') {
+        return <DownloadPackageButton pk={resourceData.pk} variant={variant} size={size} />;
+    }
     if (!canPublish || resourceData?.is_published || !resourceData?.is_approved) {
         return null;
     }
