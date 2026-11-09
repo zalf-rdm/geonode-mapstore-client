@@ -17,6 +17,17 @@ export function isMetadataValuePresent(value) {
     return true;
 }
 
+/**
+ * Plain text of a metadata string: HTML entities decoded (`&auml;` -> `ä`) and tags
+ * dropped, like the backend `raw_*` fields the landing page reads. The metadata
+ * instance API returns the stored value as is. DOMParser builds an inert
+ * document, so nothing in the value is executed or rendered as markup.
+ */
+export function toPlainText(value) {
+    if (typeof value !== 'string' || !/[<&]/.test(value)) return value;
+    return new DOMParser().parseFromString(value, 'text/html').body.textContent;
+}
+
 export function getSchemaOptionLabel(schema = {}, value) {
     const option = (schema.oneOf || schema.anyOf || []).find((entry) => entry.const === value);
     return option?.title || value;
