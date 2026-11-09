@@ -8,6 +8,7 @@
 
 // Uses React.createElement — themes/zalf/ is outside babel-loader include, JSX not supported here.
 import React, { useEffect, useRef } from 'react';
+import { connect } from 'react-redux';
 const ce = React.createElement;
 import HTML from '@mapstore/framework/components/I18N/HTML';
 import ResourceCard from '@mapstore/framework/plugins/ResourcesCatalog/components/ResourceCard';
@@ -19,6 +20,7 @@ import {
     ensureCatalogueThumbnail,
     filterCatalogueMetadata
 } from '../utils/CatalogueUtils';
+import { translate } from '../utils/I18nUtils';
 
 const renderSkeletons = (cardLayoutStyle) => Array.from({ length: cardLayoutStyle === 'list' ? 8 : 6 })
     .map((_, idx) => ce('li', { key: `catalogue-skeleton-${idx}`, 'aria-hidden': 'true' },
@@ -45,6 +47,7 @@ const ZalfResourcesContainer = (props) => {
         cardLayoutStyle,
         loading,
         getMainMessageId = () => '',
+        messages = {},
         onSelect,
         theme = 'main',
         cardButtons,
@@ -59,11 +62,12 @@ const ZalfResourcesContainer = (props) => {
     const messageId = getMainMessageId(props);
     const msgParams = { q: (query && query.q) || '' };
 
+    const actionsLabel = translate(messages, 'zalfTheme.catalogue.resourceActions', 'Resource actions');
     useEffect(() => {
         containerRef.current
             ?.querySelectorAll('.ms-resource-card-action-buttons .dropdown-toggle')
-            .forEach((button) => button.setAttribute('aria-label', 'Resource actions'));
-    }, [resources, cardLayoutStyle, cardOptions]);
+            .forEach((button) => button.setAttribute('aria-label', actionsLabel));
+    }, [resources, cardLayoutStyle, cardOptions, actionsLabel]);
 
     return ce('div',
         {
@@ -141,4 +145,6 @@ ZalfResourcesContainer.defaultProps = {
     getMessageId: () => undefined
 };
 
-export default ZalfResourcesContainer;
+export default connect((state) => ({
+    messages: state?.locale?.messages || {}
+}))(ZalfResourcesContainer);

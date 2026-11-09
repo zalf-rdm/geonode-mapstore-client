@@ -25,6 +25,7 @@ import { withResizeDetector } from 'react-resize-detector';
 import { Glyphicon } from 'react-bootstrap';
 
 import { createPlugin } from '@mapstore/framework/utils/PluginsUtils';
+import Message from '@mapstore/framework/components/I18N/Message';
 import { userSelector } from '@mapstore/framework/selectors/security';
 import {
     getCurrentPage,
@@ -252,7 +253,7 @@ function ZalfResourcesGridContainer({
             'aria-controls': 'zalf-catalogue-filter-drawer'
         },
         ce('span', { className: 'fa fa-filter', 'aria-hidden': 'true' }),
-        ce('span', null, 'Filters'),
+        ce('span', null, ce(Message, { msgId: 'gnhome.filters' })),
         ce('span', {
             className: 'fa fa-chevron-down zalf-filter-panel-caret',
             'aria-hidden': 'true'

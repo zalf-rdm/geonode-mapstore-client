@@ -7,7 +7,9 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { connect } from 'react-redux';
 import Message from '@mapstore/framework/components/I18N/Message';
+import { translate } from '../../utils/I18nUtils';
 import logoCoreTrustSealWhite from '../../../../../static/img/logo_core_trust_seal_white.png';
 import logoZalfWhite from '../../../../../static/img/logo_zalf_white.png';
 import './footer.css';
@@ -54,7 +56,7 @@ function renderLinkList(items) {
     );
 }
 
-function FooterBody() {
+function FooterBody({ messages = {} }) {
     return React.createElement(
         'div',
         { className: 'ms-footer zalf-footer-shell' },
@@ -78,20 +80,22 @@ function FooterBody() {
                         ),
                         React.createElement(
                             'nav',
-                            { 'aria-label': 'Legal' },
-                            React.createElement('h3', { className: 'fs-5 fw-bold mb-3 text-light' }, React.createElement(Message, { msgId: 'zalfTheme.footer.legal' })),
+                            // Named by the visible heading, so the landmark follows the page language.
+                            { 'aria-labelledby': 'zalf-footer-legal' },
+                            React.createElement('h3', { id: 'zalf-footer-legal', className: 'fs-5 fw-bold mb-3 text-light' }, React.createElement(Message, { msgId: 'zalfTheme.footer.legal' })),
                             renderLinkList(legalLinks)
                         )
                     ),
                     React.createElement(
                         'nav',
-                        { className: 'col-12 col-md-4', 'aria-label': 'Repository' },
-                        React.createElement('h3', { className: 'fs-5 fw-bold mb-3 text-light' }, React.createElement(Message, { msgId: 'zalfTheme.footer.repository' })),
+                        { className: 'col-12 col-md-4', 'aria-labelledby': 'zalf-footer-repository' },
+                        React.createElement('h3', { id: 'zalf-footer-repository', className: 'fs-5 fw-bold mb-3 text-light' }, React.createElement(Message, { msgId: 'zalfTheme.footer.repository' })),
                         renderLinkList(repositoryLinks)
                     ),
                     React.createElement(
                         'div',
-                        { className: 'col-12 col-md-4', 'aria-label': 'Certification' },
+                        // A plain div is no landmark, so it needs no accessible name of its own.
+                        { className: 'col-12 col-md-4' },
                         React.createElement('h3', { className: 'fs-5 fw-bold mb-3 text-light' }, React.createElement(Message, { msgId: 'zalfTheme.footer.certification' })),
                         React.createElement(
                             'div',
@@ -102,7 +106,7 @@ function FooterBody() {
                                 React.createElement('img', {
                                     className: 'img-fluid zalf-footer-logo',
                                     src: logoCoreTrustSealWhite,
-                                    alt: 'CoreTrustSeal certification record'
+                                    alt: translate(messages, 'zalfTheme.footer.coreTrustSealRecord', 'CoreTrustSeal certification record')
                                 })
                             )
                         ),
@@ -131,6 +135,10 @@ function FooterBody() {
         )
     );
 }
+
+const ConnectedFooterBody = connect((state) => ({
+    messages: state?.locale?.messages || {}
+}))(FooterBody);
 
 function Footer() {
     const [portalTarget, setPortalTarget] = React.useState(null);
@@ -172,7 +180,7 @@ function Footer() {
     if (!portalTarget) return null;
 
     return ReactDOM.createPortal(
-        React.createElement(FooterBody, {}),
+        React.createElement(ConnectedFooterBody, {}),
         portalTarget
     );
 }

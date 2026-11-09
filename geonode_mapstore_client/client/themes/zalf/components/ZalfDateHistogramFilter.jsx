@@ -8,7 +8,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { connect } from 'react-redux';
 import axios from '@mapstore/framework/libs/ajax';
-import { getMessageById } from '@mapstore/framework/utils/LocaleUtils';
+import { createTranslator } from '../utils/I18nUtils';
 import { paramsSerializer } from '../../../js/utils/APIUtils';
 
 const ce = React.createElement;
@@ -33,14 +33,8 @@ const buildPreset = (months) => {
     return { from: formatInputDate(from), to: formatInputDate(to) };
 };
 
-// getMessageById returns the id itself when a message is missing, so fall back explicitly.
-const translate = (messages, id, fallback) => {
-    const message = getMessageById(messages, id);
-    return message && message !== id ? message : fallback;
-};
-
 function ZalfDateHistogramFilter({ query = {}, filterKey = 'date', onChange = () => {}, messages = {} }) {
-    const t = (id, fallback) => translate(messages, `zalfTheme.dateFilter.${id}`, fallback);
+    const t = createTranslator(messages, 'zalfTheme.dateFilter');
     const fromKey = getDateKey(filterKey, 'gte');
     const toKey = getDateKey(filterKey, 'lte');
     const queryFrom = toInputDate(query[fromKey]);
@@ -123,7 +117,7 @@ function ZalfDateHistogramFilter({ query = {}, filterKey = 'date', onChange = ()
     };
 
     return ce('fieldset', { className: 'zalf-date-filter' },
-        ce('legend', null, 'Publication date'),
+        ce('legend', null, t('publicationDate', 'Publication date')),
         ce('div', {
             className: `zalf-date-histogram${loading ? ' is-loading' : ''}`,
             'aria-label': loading ? t('loadingDistribution', 'Loading yearly resource distribution') : t('resourcesByYear', 'Resources by year')

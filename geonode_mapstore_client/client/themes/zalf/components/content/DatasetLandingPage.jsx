@@ -7,6 +7,7 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
+import { connect } from 'react-redux';
 import axios from '@mapstore/framework/libs/ajax';
 import Message from '@mapstore/framework/components/I18N/Message';
 import { formatUsernameFallback } from '../../../../js/utils/SearchUtils';
@@ -26,9 +27,49 @@ import {
     getThesaurusKeywordGroups,
     parseSupplementalInformation
 } from '../../../../js/utils/ZalfLandingPageUtils';
+import Portal from '@mapstore/framework/components/misc/Portal';
+import ResizableModal from '@mapstore/framework/components/misc/ResizableModal';
+import { capitalize, createTranslator, dateLocale, interpolate } from '../../utils/I18nUtils';
+import { getResourceTypeLabel } from '../../utils/MetadataViewUtils';
 import './datasetlanding.css';
 
 const ce = React.createElement;
+
+/**
+ * `t(id, fallback)` reading zalfTheme.landing.<id>, plus the live locale.
+ * Provided by the connected page; the plain helpers below take `t` as an argument.
+ */
+const LandingI18n = React.createContext({ t: (id, fallback) => fallback, locale: 'en-US' });
+
+function useLandingI18n() {
+    return React.useContext(LandingI18n);
+}
+
+const METADATA_EMBED_PROPS = encodeURIComponent(JSON.stringify({ capitalizeTitle: true }));
+
+/**
+ * Same overlay as "View Metadata" in the viewers (js/plugins/MetadataEditor/MetadataViewer.jsx):
+ * the read-only metadata record embedded in a dialog, instead of opening the
+ * metadata editor (zalf-rdm/geonode#748).
+ */
+function MetadataViewerDialog({ pk, show, onClose }) {
+    const { t } = useLandingI18n();
+    return ce(Portal, null,
+        ce(ResizableModal, {
+            title: ce(Message, { msgId: 'gnviewer.viewMetadata' }),
+            show,
+            size: 'lg',
+            clickOutEnabled: false,
+            modalClassName: 'gn-simple-dialog',
+            onClose
+        },
+        show && ce('iframe', {
+            title: t('metadata', 'Metadata'),
+            style: { border: 'none', position: 'absolute', width: '100%', height: '100%' },
+            src: '/metadata/' + pk + '/embed?props=' + METADATA_EMBED_PROPS
+        }))
+    );
+}
 
 /**
  * A person's real name, or null when the profile carries none.
@@ -54,6 +95,7 @@ const ORCID_ICON_SRC = '/static/geonode/img/orcid_id.svg';
 
 /** Official icon + hyperlinked iD, per the ORCID display guidelines. */
 function OrcidId({ person, compact }) {
+    const { t } = useLandingI18n();
     const id = getOrcidId(person);
     const href = getOrcidUrl(person);
     if (!id || !href) return null;
@@ -67,7 +109,7 @@ function OrcidId({ person, compact }) {
     const iconProps = {
         className: 'zalf-lp-orcid-icon',
         src: ORCID_ICON_SRC,
-        alt: 'ORCID iD icon',
+        alt: t('orcidIcon', 'ORCID iD icon'),
         width: 14,
         height: 14
     };
@@ -83,9 +125,15 @@ function parseValidDate(dateStr) {
     return isNaN(d.getTime()) ? null : d;
 }
 
-function formatDateSafe(dateStr, options) {
+function formatDateSafe(dateStr, options, locale) {
     const d = parseValidDate(dateStr);
-    return d ? d.toLocaleDateString('en-GB', options) : null;
+    const tag = dateLocale(locale);
+    // An unsupported locale tag throws a RangeError; fall back to the browser default.
+    try {
+        return d ? d.toLocaleDateString(tag, options) : null;
+    } catch (e) {
+        return d.toLocaleDateString(undefined, options);
+    }
 }
 
 function Icon({ name, className, size }) {
@@ -262,23 +310,6 @@ function fetchResource(pk) {
 
 // ─── Resource-type helpers ────────────────────────────────────────────────────
 
-function getResourceTypeLabel(r) {
-    const rt = r.resource_type || 'dataset';
-    const st = r.subtype || '';
-    if (rt === 'dataset') {
-        if (st === 'raster') return 'Raster Dataset';
-        if (st === 'vector') return 'Vector Dataset';
-        if (st === 'tabular' || st === 'table') return 'Table';
-        if (st === 'remote') return 'Remote Service';
-        return 'Dataset';
-    }
-    if (rt === 'map' && st === 'tabular-collection') return 'Table Collection';
-    // a map is the container of a ZALF data collection (zalf-rdm/geonode#823)
-    if (rt === 'map') return 'Data Collection';
-    if (rt === 'document') return 'Document';
-    return rt.charAt(0).toUpperCase() + rt.slice(1);
-}
-
 function getViewerHref(pk, r) {
     const rt = r.resource_type || 'dataset';
     if (rt === 'map') return r.subtype === 'tabular-collection' ? '#/tabular-collection/' + pk : '#/map/' + pk;
@@ -287,12 +318,12 @@ function getViewerHref(pk, r) {
     return '#/dataset/' + pk;
 }
 
-function getViewerButtonLabel(r) {
+function getViewerButtonLabel(r, t) {
     const rt = r.resource_type || 'dataset';
-    if (rt === 'map' && r.subtype === 'tabular-collection') return 'Data Access';
-    if (rt === 'map') return 'Open Map';
-    if (rt === 'document') return 'View Document';
-    return 'Data Access';
+    if (rt === 'map' && r.subtype === 'tabular-collection') return t('dataAccess', 'Data Access');
+    if (rt === 'map') return t('openMap', 'Open Map');
+    if (rt === 'document') return t('viewDocument', 'View Document');
+    return t('dataAccess', 'Data Access');
 }
 
 function getHeroIconName(r) {
@@ -319,6 +350,7 @@ function formatFileSize(bytes) {
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 function CopyMenu({ pk }) {
+    const { t } = useLandingI18n();
     const [open, setOpen] = useState(false);
     const [copied, setCopied] = useState(null);
     const ref = useRef(null);
@@ -361,17 +393,17 @@ function CopyMenu({ pk }) {
         ce('button', {
             className: 'zalf-lp-dots-btn',
             onClick: () => setOpen((v) => !v),
-            title: 'More options',
-            'aria-label': 'More options'
+            title: t('moreOptions', 'More options'),
+            'aria-label': t('moreOptions', 'More options')
         }, ce(Icon, { name: 'dots', className: 'zalf-lp-inline-icon' })),
         open && ce('div', { className: 'zalf-lp-dropdown' },
             ce('button', { className: 'zalf-lp-dropdown-item', onClick: () => copy(landingUrl, 'url') },
                 ce('span', { className: 'zalf-lp-dropdown-icon' }, ce(Icon, { name: 'copy', className: 'zalf-lp-inline-icon' })),
-                copied === 'url' ? 'Copied!' : 'Copy URL'
+                copied === 'url' ? t('copied', 'Copied!') : t('copyUrl', 'Copy URL')
             ),
             ce('button', { className: 'zalf-lp-dropdown-item', onClick: () => copy(apiCmd, 'api') },
                 ce('span', { className: 'zalf-lp-dropdown-icon' }, ce(Icon, { name: 'code', className: 'zalf-lp-inline-icon' })),
-                copied === 'api' ? 'Copied!' : 'Copy API command'
+                copied === 'api' ? t('copied', 'Copied!') : t('copyApiCommand', 'Copy API command')
             )
         )
     );
@@ -382,6 +414,7 @@ function CopyMenu({ pk }) {
  * Opens the system share dialog where available, otherwise copies the link.
  */
 function ShareButton({ uuid, title }) {
+    const { t } = useLandingI18n();
     const [copied, setCopied] = useState(false);
     if (!uuid) return null;
     const url = window.location.origin + '/landing/' + uuid + '/';
@@ -412,12 +445,12 @@ function ShareButton({ uuid, title }) {
         type: 'button',
         className: 'zalf-lp-share-btn',
         onClick: share,
-        title: 'Share link: ' + url,
-        'aria-label': copied ? 'Link copied' : 'Share link to this page'
+        title: t('shareLink', 'Share link') + ': ' + url,
+        'aria-label': copied ? t('linkCopied', 'Link copied') : t('shareLinkToPage', 'Share link to this page')
     },
     ce(Icon, { name: copied ? 'check' : 'share', className: 'zalf-lp-inline-icon' }),
-    ce('span', { className: 'zalf-lp-share-label' }, copied ? 'Link copied' : 'Share'),
-    ce('span', { className: 'zalf-lp-visually-hidden', 'aria-live': 'polite' }, copied ? 'Link copied' : '')
+    ce('span', { className: 'zalf-lp-share-label' }, copied ? t('linkCopied', 'Link copied') : t('share', 'Share')),
+    ce('span', { className: 'zalf-lp-visually-hidden', 'aria-live': 'polite' }, copied ? t('linkCopied', 'Link copied') : '')
     );
 }
 
@@ -721,6 +754,7 @@ function CitationText({ citation, formatKey }) {
 }
 
 function CitationCard({ r }) {
+    const { t } = useLandingI18n();
     const [formatKey, setFormatKey] = useState('apa');
     const [copied, setCopied] = useState(false);
     const citation = buildCitation(r, formatKey);
@@ -753,12 +787,12 @@ function CitationCard({ r }) {
     }
 
     return ce('div', { className: 'zalf-lp-card zalf-lp-card--citation' },
-        ce('h3', { className: 'zalf-lp-card-title' }, 'Citation'),
+        ce('h3', { className: 'zalf-lp-card-title' }, t('citation', 'Citation')),
         ce('p', { className: 'zalf-lp-citation-note' },
-            'This resource is openly shared. Please cite it when used in publications.'
+            t('citationNote', 'This resource is openly shared. Please cite it when used in publications.')
         ),
         ce('div', { className: 'zalf-lp-citation-style-row' },
-            ce('span', { className: 'zalf-lp-citation-style-lbl' }, 'Style'),
+            ce('span', { className: 'zalf-lp-citation-style-lbl' }, t('citationStyle', 'Style')),
             ce('select', {
                 className: 'zalf-lp-citation-select',
                 value: formatKey,
@@ -774,14 +808,14 @@ function CitationCard({ r }) {
                 onClick: copy
             },
             ce('span', { className: 'zalf-lp-btn-icon' }, ce(Icon, { name: copied ? 'check' : 'quote', className: 'zalf-lp-inline-icon' })),
-            copied ? 'Copied!' : 'Copy Citation'
+            copied ? t('copied', 'Copied!') : t('copyCitation', 'Copy Citation')
             ),
             ce('button', {
                 className: 'zalf-lp-btn zalf-lp-btn--outline zalf-lp-citation-download',
                 onClick: download
             },
             ce('span', { className: 'zalf-lp-btn-icon' }, ce(Icon, { name: 'download', className: 'zalf-lp-inline-icon' })),
-            'Download'
+            t('download', 'Download')
             )
         )
     );
@@ -909,6 +943,7 @@ function ContactRoleBlock({ label, people }) {
 }
 
 function FunderCard({ funder }) {
+    const { t } = useLandingI18n();
     const org = funder.organization;
     const orgName = org?.organization || org?.name || '—';
     const abbr = org?.abbreviation || null;
@@ -929,7 +964,7 @@ function FunderCard({ funder }) {
             href: funder.award_uri,
             target: '_blank',
             rel: 'noopener noreferrer'
-        }, 'View grant →')
+        }, t('viewGrant', 'View grant') + ' →')
     );
 }
 
@@ -957,29 +992,38 @@ function RelatedIdentifierList({ items }) {
 
 // ─── Map layers & linked resources ───────────────────────────────────────────
 
-function subtypeLabel(st) {
+function subtypeLabel(st, t) {
     if (!st) return null;
-    const map = { vector: 'Vector', raster: 'Raster', tabular: 'Table', table: 'Table', remote: 'Remote' };
+    const map = {
+        vector: t('subtype.vector', 'Vector'),
+        raster: t('subtype.raster', 'Raster'),
+        tabular: t('subtype.table', 'Table'),
+        table: t('subtype.table', 'Table'),
+        remote: t('subtype.remote', 'Remote')
+    };
     return map[st] || (st.charAt(0).toUpperCase() + st.slice(1));
 }
 
 function pluralLabel(count, singular, plural) {
-    return count === 1 ? singular : (plural || singular + 's');
+    return count === 1 ? singular : plural;
 }
 
 function MapStatsBar({ items, isCollection }) {
+    const { t } = useLandingI18n();
     const total = items.length;
     const totalAttrs = items.reduce((acc, item) => acc + (item.attributes ? item.attributes.length : 0), 0);
-    const totalLabel = isCollection ? pluralLabel(total, 'Table') : pluralLabel(total, 'Item');
+    const totalLabel = isCollection
+        ? pluralLabel(total, t('count.table', 'table'), t('count.tables', 'tables'))
+        : pluralLabel(total, t('count.item', 'item'), t('count.items', 'items'));
 
     return ce('div', { className: 'zalf-lp-stats-bar' },
         ce('div', { className: 'zalf-lp-stat-item' },
             ce('span', { className: 'zalf-lp-stat-value' }, total),
-            ce('span', { className: 'zalf-lp-stat-label' }, totalLabel)
+            ce('span', { className: 'zalf-lp-stat-label' }, capitalize(totalLabel))
         ),
         totalAttrs > 0 && ce('div', { className: 'zalf-lp-stat-item' },
             ce('span', { className: 'zalf-lp-stat-value' }, totalAttrs),
-            ce('span', { className: 'zalf-lp-stat-label' }, pluralLabel(totalAttrs, 'Attribute'))
+            ce('span', { className: 'zalf-lp-stat-label' }, capitalize(pluralLabel(totalAttrs, t('count.attribute', 'attribute'), t('count.attributes', 'attributes'))))
         )
     );
 }
@@ -999,8 +1043,9 @@ function MapContentsSkeleton() {
 }
 
 function LayerCard({ layer }) {
+    const { t } = useLandingI18n();
     const ds = layer.datasetDetail || layer.dataset || {};
-    const title = ds.title || layer.dataset?.title || layer.resourceTitle || 'Untitled Layer';
+    const title = ds.title || layer.dataset?.title || layer.resourceTitle || t('untitledLayer', 'Untitled Layer');
     const dspk = ds.pk || layer.dataset?.pk;
     const thumb = ds.thumbnail_url || null;
     const subtype = ds.subtype || null;
@@ -1018,16 +1063,18 @@ function LayerCard({ layer }) {
                 ? ce('a', { className: 'zalf-lp-layer-title', href: layerHref }, title)
                 : ce('span', { className: 'zalf-lp-layer-title' }, title),
             ce('div', { className: 'zalf-lp-layer-meta' },
-                subtype && ce(Badge, { label: subtypeLabel(subtype), variant: 'type' }),
-                attrs !== null && ce('span', { className: 'zalf-lp-layer-attrs' }, attrs + ' attributes')
+                subtype && ce(Badge, { label: subtypeLabel(subtype, t), variant: 'type' }),
+                attrs !== null && ce('span', { className: 'zalf-lp-layer-attrs' },
+                    attrs + ' ' + pluralLabel(attrs, t('count.attribute', 'attribute'), t('count.attributes', 'attributes')))
             )
         )
     );
 }
 
 function LinkedResourceCard({ res }) {
-    const title = res.title || 'Untitled';
-    const typeLabel = res.resource_type ? getResourceTypeLabel(res) : 'Resource';
+    const { t } = useLandingI18n();
+    const title = res.title || t('untitled', 'Untitled');
+    const typeLabel = res.resource_type ? getResourceTypeLabel(res, t) : t('type.resource', 'Resource');
     const href = getLandingHref(res);
     const thumb = res.thumbnail_url || null;
 
@@ -1111,6 +1158,7 @@ function AttributeTable({ attributes }) {
 // ─── Map content tree (explorer view) ────────────────────────────────────────
 
 function TreeItemNode({ item, nodeId, expanded, onToggle }) {
+    const { t } = useLandingI18n();
     const { title, subtype, badgeLabel, href } = item;
     const attrs = item.attributes || [];
     const hasAttrs = attrs.length > 0;
@@ -1123,7 +1171,7 @@ function TreeItemNode({ item, nodeId, expanded, onToggle }) {
                 ? ce('button', {
                     className: 'zalf-lp-tree-chevron' + (expanded ? ' zalf-lp-tree-chevron--open' : ''),
                     onClick: () => onToggle(nodeId),
-                    'aria-label': (expanded ? 'Collapse ' : 'Expand ') + title
+                    'aria-label': (expanded ? t('collapse', 'Collapse') : t('expand', 'Expand')) + ' ' + title
                 }, ce(Icon, { name: 'chevron', className: 'zalf-lp-inline-icon' }))
                 : ce('span', { className: 'zalf-lp-tree-chevron zalf-lp-tree-chevron--none' }),
             ce('span', { className: 'zalf-lp-tree-icon' }, ce(Icon, { name: iconName, className: 'zalf-lp-inline-icon' })),
@@ -1138,7 +1186,7 @@ function TreeItemNode({ item, nodeId, expanded, onToggle }) {
                     : ce('span', { className: 'zalf-lp-tree-title' }, title)),
             badgeLabel && ce(Badge, { label: badgeLabel, variant: 'type' }),
             hasAttrs && ce('span', { className: 'zalf-lp-tree-count' },
-                attrs.length + ' ' + pluralLabel(attrs.length, 'attribute'))
+                attrs.length + ' ' + pluralLabel(attrs.length, t('count.attribute', 'attribute'), t('count.attributes', 'attributes')))
         ),
         hasAttrs && expanded && ce('ul', { className: 'zalf-lp-tree-children zalf-lp-tree-children--attrs', role: 'group' },
             ...attrs.map((a) => ce('li', { key: a.pk || a.attribute, className: 'zalf-lp-tree-attr', role: 'treeitem' },
@@ -1153,18 +1201,21 @@ function TreeItemNode({ item, nodeId, expanded, onToggle }) {
 }
 
 function MapContentTree({ rootTitle, items, isCollection }) {
+    const { t } = useLandingI18n();
     const [expanded, setExpanded] = useState({ root: true });
     const toggle = (id) => setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
     const rootOpen = !!expanded.root;
-    const childLabel = isCollection ? 'table' : 'item';
+    const childLabel = isCollection
+        ? pluralLabel(items.length, t('count.table', 'table'), t('count.tables', 'tables'))
+        : pluralLabel(items.length, t('count.item', 'item'), t('count.items', 'items'));
 
-    return ce('ul', { className: 'zalf-lp-tree', role: 'tree', 'aria-label': isCollection ? 'Tables in this collection' : 'Map contents' },
+    return ce('ul', { className: 'zalf-lp-tree', role: 'tree', 'aria-label': isCollection ? t('tablesInCollection', 'Tables in this Collection') : t('mapContents', 'Map contents') },
         ce('li', { className: 'zalf-lp-tree-node', role: 'treeitem', 'aria-expanded': rootOpen },
             ce('div', { className: 'zalf-lp-tree-row zalf-lp-tree-row--root' },
                 ce('button', {
                     className: 'zalf-lp-tree-chevron' + (rootOpen ? ' zalf-lp-tree-chevron--open' : ''),
                     onClick: () => toggle('root'),
-                    'aria-label': (rootOpen ? 'Collapse ' : 'Expand ') + rootTitle
+                    'aria-label': (rootOpen ? t('collapse', 'Collapse') : t('expand', 'Expand')) + ' ' + rootTitle
                 }, ce(Icon, { name: 'chevron', className: 'zalf-lp-inline-icon' })),
                 ce('span', { className: 'zalf-lp-tree-icon zalf-lp-tree-icon--folder' }, ce(Icon, { name: 'folder', className: 'zalf-lp-inline-icon' })),
                 ce('button', {
@@ -1173,7 +1224,7 @@ function MapContentTree({ rootTitle, items, isCollection }) {
                     'aria-expanded': rootOpen
                 }, rootTitle),
                 ce('span', { className: 'zalf-lp-tree-count' },
-                    items.length + ' ' + pluralLabel(items.length, childLabel))
+                    items.length + ' ' + childLabel)
             ),
             rootOpen && ce('ul', { className: 'zalf-lp-tree-children', role: 'group' },
                 ...items.map((item, i) => ce(TreeItemNode, {
@@ -1190,7 +1241,8 @@ function MapContentTree({ rootTitle, items, isCollection }) {
 
 // ─── Main page ────────────────────────────────────────────────────────────────
 
-export default function DatasetLandingPage() {
+function DatasetLandingContent() {
+    const { t, locale } = useLandingI18n();
     const [resource, setResource] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -1208,10 +1260,11 @@ export default function DatasetLandingPage() {
         setLayersLoading(false);
         setLinkedResources(null);
         setAttributes(null);
-        if (!pk) { setError('No resource identifier found in URL.'); setLoading(false); return; }
+        // Error keys, not texts, so a locale switch re-renders the message in the new language.
+        if (!pk) { setError('noIdentifier'); setLoading(false); return; }
         fetchResource(pk)
             .then((res) => { setResource(res); setLoading(false); })
-            .catch(() => { setError('Could not load resource information.'); setLoading(false); });
+            .catch(() => { setError('loadFailed'); setLoading(false); });
     }, [pk]);
 
     useEffect(() => {
@@ -1289,7 +1342,7 @@ export default function DatasetLandingPage() {
         return ce('div', { className: 'zalf-lp-shell' },
             ce('div', { className: 'zalf-lp-state zalf-lp-state--loading' },
                 ce('div', { className: 'zalf-lp-spinner' }),
-                ce('p', null, 'Loading…')
+                ce('p', null, t('loading', 'Loading…'))
             )
         );
     }
@@ -1297,7 +1350,10 @@ export default function DatasetLandingPage() {
     if (error || !resource) {
         return ce('div', { className: 'zalf-lp-shell' },
             ce('div', { className: 'zalf-lp-state zalf-lp-state--error' },
-                ce('p', null, error || 'Resource not found.')
+                ce('p', null, {
+                    noIdentifier: t('noIdentifier', 'No resource identifier found in URL.'),
+                    loadFailed: t('loadFailed', 'Could not load resource information.')
+                }[error] || t('notFound', 'Resource not found.'))
             )
         );
     }
@@ -1307,7 +1363,14 @@ export default function DatasetLandingPage() {
     if (extractTypePrefixFromHash() !== getExpectedTypePrefix(resource)) {
         return ce('div', { className: 'zalf-lp-shell' },
             ce('div', { className: 'zalf-lp-state zalf-lp-state--error' },
-                ce('p', null, 'The requested ' + (extractTypePrefixFromHash() || 'resource') + ' does not exist.')
+                ce('p', null, interpolate(t('doesNotExist', '{type}: the requested resource does not exist.'), {
+                    type: {
+                        dataset: t('type.dataset', 'Dataset'),
+                        map: t('type.dataCollection', 'Data Collection'),
+                        document: t('type.document', 'Document'),
+                        'tabular-collection': t('type.tableCollection', 'Table Collection')
+                    }[extractTypePrefixFromHash()] || t('type.resource', 'Resource')
+                }))
             )
         );
     }
@@ -1338,9 +1401,9 @@ export default function DatasetLandingPage() {
                 const dsPk = ds.pk || layer.dataset?.pk;
                 return {
                     key: 'layer-' + (dsPk || layer.name),
-                    title: ds.title || layer.dataset?.title || layer.resourceTitle || 'Untitled Layer',
+                    title: ds.title || layer.dataset?.title || layer.resourceTitle || t('untitledLayer', 'Untitled Layer'),
                     subtype,
-                    badgeLabel: subtype ? subtypeLabel(subtype) : null,
+                    badgeLabel: subtype ? subtypeLabel(subtype, t) : null,
                     attributes: sortAttributes(ds.attribute_set || []),
                     // every part links to its landing page, layers included
                     href: dsPk ? getLandingHref({ pk: dsPk, resource_type: 'dataset' }) : null,
@@ -1351,9 +1414,9 @@ export default function DatasetLandingPage() {
                 const subtype = res.subtype || null;
                 return {
                     key: 'linked-' + res.pk,
-                    title: res.title || 'Untitled',
+                    title: res.title || t('untitled', 'Untitled'),
                     subtype,
-                    badgeLabel: subtype ? subtypeLabel(subtype) : (res.resource_type ? getResourceTypeLabel(res) : null),
+                    badgeLabel: subtype ? subtypeLabel(subtype, t) : (res.resource_type ? getResourceTypeLabel(res, t) : null),
                     attributes: [],
                     // built from the type: detail_url of a table is #/tabular/<pk>, which
                     // has no landing route
@@ -1364,10 +1427,11 @@ export default function DatasetLandingPage() {
         ]
         : null;
 
-    const typeLabel = getResourceTypeLabel(r);
+    const typeLabel = getResourceTypeLabel(r, t);
     const viewerHref = getViewerHref(pk, r);
-    const viewerBtnLabel = getViewerButtonLabel(r);
-    // Full read-only metadata page (route metadata_view); neither link opens the editor.
+    const viewerBtnLabel = getViewerButtonLabel(r, t);
+    // A plain click opens the read-only metadata overlay; a modified click (new tab/window)
+    // follows the link to the full read-only metadata page. Neither opens the editor.
     const metadataHref = '#/metadata-view/' + pk;
     const backHref = '#/';
 
@@ -1388,13 +1452,19 @@ export default function DatasetLandingPage() {
     // shown in the hero instead of "Published by <owner>"; falls back to the owner
     const heroAuthors = getCitationAuthors(r);
     const publishers = (r.publisher || []).filter(Boolean);
-    const contributorGroups = getContributorGroups(r);
+    // Role and date labels come from ZalfLandingPageUtils in English; translate them by key.
+    const contributorGroups = getContributorGroups(r)
+        .map((group) => ({ ...group, label: t('roles.' + group.key, group.label) }));
     // the API embeds licenses as { identifier } only
     const license = r.license?.identifier || null;
     const metadataLicense = r.metadata_license?.identifier || null;
     const spatialType = r.spatial_representation_type?.identifier || (typeof r.spatial_representation_type === 'string' ? r.spatial_representation_type : null);
     const resourceDates = getResourceDates(r)
-        .map((d) => ({ ...d, value: formatDateSafe(d.value, { year: 'numeric', month: 'long', day: 'numeric' }) }))
+        .map((d) => ({
+            ...d,
+            label: t('dates.' + d.key, d.label),
+            value: formatDateSafe(d.value, { year: 'numeric', month: 'long', day: 'numeric' }, locale)
+        }))
         .filter((d) => d.value);
     const useRestrictions = getRestrictionLabels(r.use_constraint_restrictions);
     const otherRestrictions = getRestrictionLabels(r.restriction_other);
@@ -1407,12 +1477,12 @@ export default function DatasetLandingPage() {
     const technicalInfo = r.technical_info || null;
     const otherDescription = r.other_description || null;
     const doiUrl = doiToUrl(r.doi);
-    const pubDate = formatDateSafe(r.date, { year: 'numeric', month: 'long', day: 'numeric' });
-    const tempStart = formatDateSafe(r.temporal_extent_start, { year: 'numeric', month: 'short' });
-    const tempEnd = formatDateSafe(r.temporal_extent_end, { year: 'numeric', month: 'short' });
+    const pubDate = formatDateSafe(r.date, { year: 'numeric', month: 'long', day: 'numeric' }, locale);
+    const tempStart = formatDateSafe(r.temporal_extent_start, { year: 'numeric', month: 'short' }, locale);
+    const tempEnd = formatDateSafe(r.temporal_extent_end, { year: 'numeric', month: 'short' }, locale);
     const dateTypeLabel = r.date_type
-        ? r.date_type.charAt(0).toUpperCase() + r.date_type.slice(1)
-        : 'Date';
+        ? t('dateType.' + r.date_type, r.date_type.charAt(0).toUpperCase() + r.date_type.slice(1))
+        : t('date', 'Date');
     const fileSizeLabel = formatFileSize(r.file_size);
 
     const isDataset = !r.resource_type || r.resource_type === 'dataset';
@@ -1437,10 +1507,10 @@ export default function DatasetLandingPage() {
     return ce('div', { className: 'zalf-lp-shell' },
 
         // ── Breadcrumb ────────────────────────────────────────────────────────
-        ce('nav', { className: 'zalf-lp-breadcrumb' },
+        ce('nav', { className: 'zalf-lp-breadcrumb', 'aria-label': t('breadcrumb', 'Breadcrumb') },
             ce('a', { href: backHref, className: 'zalf-lp-breadcrumb-link' },
                 ce(Icon, { name: 'back', className: 'zalf-lp-breadcrumb-icon' }),
-                'Catalogue'
+                t('catalogue', 'Catalogue')
             ),
             ce('span', { className: 'zalf-lp-breadcrumb-sep' }, '/'),
             ce('span', { className: 'zalf-lp-breadcrumb-current' }, r.title)
@@ -1468,7 +1538,7 @@ export default function DatasetLandingPage() {
                         ce('div', { className: 'zalf-lp-hero-meta' },
                             heroAuthors.length > 0 && ce('span', { className: 'zalf-lp-hero-authors' },
                                 ce(Icon, { name: 'user', className: 'zalf-lp-meta-inline-icon' }),
-                                ce('span', { className: 'zalf-lp-visually-hidden' }, pluralLabel(heroAuthors.length, 'Author') + ': '),
+                                ce('span', { className: 'zalf-lp-visually-hidden' }, capitalize(pluralLabel(heroAuthors.length, t('count.author', 'author'), t('count.authors', 'authors'))) + ': '),
                                 ce(PeopleInline, { people: heroAuthors })
                             ),
                             pubDate && ce('span', { className: 'zalf-lp-hero-date' },
@@ -1477,15 +1547,15 @@ export default function DatasetLandingPage() {
                             )
                         ),
                         ce('div', { className: 'zalf-lp-hero-stats' },
-                            ce('span', { className: 'zalf-lp-hero-stat', title: 'Page views' },
+                            ce('span', { className: 'zalf-lp-hero-stat', title: t('pageViews', 'Page views') },
                                 ce('span', { className: 'zalf-lp-hero-stat-icon' }, ce(Icon, { name: 'eye', className: 'zalf-lp-inline-icon' })),
                                 ce('span', { className: 'zalf-lp-hero-stat-value' }, r.popular_count !== null && r.popular_count !== undefined ? r.popular_count : '—'),
-                                ce('span', { className: 'zalf-lp-visually-hidden' }, ' page views')
+                                ce('span', { className: 'zalf-lp-visually-hidden' }, ' ' + t('pageViews', 'Page views'))
                             ),
-                            ce('span', { className: 'zalf-lp-hero-stat', title: 'Downloads' },
+                            ce('span', { className: 'zalf-lp-hero-stat', title: t('downloads', 'Downloads') },
                                 ce('span', { className: 'zalf-lp-hero-stat-icon' }, ce(Icon, { name: 'download', className: 'zalf-lp-inline-icon' })),
                                 ce('span', { className: 'zalf-lp-hero-stat-value' }, r.download_count !== null && r.download_count !== undefined ? r.download_count : '—'),
-                                ce('span', { className: 'zalf-lp-visually-hidden' }, ' downloads')
+                                ce('span', { className: 'zalf-lp-visually-hidden' }, ' ' + t('downloads', 'Downloads'))
                             )
                         ),
                         ce('div', { className: 'zalf-lp-hero-actions' },
@@ -1505,36 +1575,36 @@ export default function DatasetLandingPage() {
 
                 // Description: abstract, then every further descriptive text as a
                 // collapsible box (zalf-rdm/geonode#823)
-                ce(Section, { title: 'Description', icon: 'description' },
-                    ce(TextBlock, { text: abstract || 'No description available.' }),
-                    abstractDe && ce(DescriptionBox, { title: 'Beschreibung (Deutsch)', icon: 'globe' },
+                ce(Section, { title: t('section.description', 'Description'), icon: 'description' },
+                    ce(TextBlock, { text: abstract || t('noDescription', 'No description available.') }),
+                    abstractDe && ce(DescriptionBox, { title: t('box.abstractGerman', 'Description (German)'), icon: 'globe' },
                         ce(TextBlock, { text: abstractDe })
                     ),
-                    purpose && ce(DescriptionBox, { title: 'Purpose', icon: 'purpose' },
+                    purpose && ce(DescriptionBox, { title: t('box.purpose', 'Purpose'), icon: 'purpose' },
                         ce(TextBlock, { text: purpose })
                     ),
-                    methodDescription && ce(DescriptionBox, { title: 'Methods', icon: 'description' },
+                    methodDescription && ce(DescriptionBox, { title: t('box.methods', 'Methods'), icon: 'description' },
                         ce(TextBlock, { text: methodDescription })
                     ),
-                    seriesInformation && ce(DescriptionBox, { title: 'Series Information', icon: 'layer' },
+                    seriesInformation && ce(DescriptionBox, { title: t('box.seriesInformation', 'Series Information'), icon: 'layer' },
                         ce(TextBlock, { text: seriesInformation })
                     ),
-                    supplemental && ce(DescriptionBox, { title: 'Supplemental Information', icon: 'info' },
+                    supplemental && ce(DescriptionBox, { title: t('box.supplementalInformation', 'Supplemental Information'), icon: 'info' },
                         ce(SupplementalInformationList, { text: supplemental })
                     ),
-                    tableOfContent && ce(DescriptionBox, { title: 'Table of Contents', icon: 'description' },
+                    tableOfContent && ce(DescriptionBox, { title: t('box.tableOfContents', 'Table of Contents'), icon: 'description' },
                         ce(TextBlock, { text: tableOfContent })
                     ),
-                    technicalInfo && ce(DescriptionBox, { title: 'Technical Information', icon: 'info' },
+                    technicalInfo && ce(DescriptionBox, { title: t('box.technicalInformation', 'Technical Information'), icon: 'info' },
                         ce(TextBlock, { text: technicalInfo })
                     ),
-                    otherDescription && ce(DescriptionBox, { title: 'Other Description', icon: 'description' },
+                    otherDescription && ce(DescriptionBox, { title: t('box.otherDescription', 'Other Description'), icon: 'description' },
                         ce(TextBlock, { text: otherDescription })
                     )
                 ),
 
                 // Contributors: every contact role, named after the DataCite "contributors"
-                contributorGroups.length > 0 ? ce(Section, { title: 'Contributors', icon: 'people' },
+                contributorGroups.length > 0 ? ce(Section, { title: t('section.contributors', 'Contributors'), icon: 'people' },
                     ce('div', { className: 'zalf-lp-roles' },
                         ...contributorGroups.map((group) => ce(ContactRoleBlock, {
                             key: group.key,
@@ -1545,23 +1615,23 @@ export default function DatasetLandingPage() {
                 ) : null,
 
                 // Temporal Coverage
-                (tempStart || tempEnd) ? ce(Section, { title: 'Temporal Coverage', icon: 'calendar' },
+                (tempStart || tempEnd) ? ce(Section, { title: t('section.temporalCoverage', 'Temporal Coverage'), icon: 'calendar' },
                     ce('div', { className: 'zalf-lp-temporal-bar' },
                         ce('div', { className: 'zalf-lp-temporal-start' },
-                            ce('span', { className: 'zalf-lp-temporal-lbl' }, 'Start'),
+                            ce('span', { className: 'zalf-lp-temporal-lbl' }, t('start', 'Start')),
                             ce('strong', null, tempStart || '—')
                         ),
                         ce('div', { className: 'zalf-lp-temporal-arrow' }, '→'),
                         ce('div', { className: 'zalf-lp-temporal-end' },
-                            ce('span', { className: 'zalf-lp-temporal-lbl' }, 'End'),
-                            ce('strong', null, tempEnd || 'Ongoing')
+                            ce('span', { className: 'zalf-lp-temporal-lbl' }, t('end', 'End')),
+                            ce('strong', null, tempEnd || t('ongoing', 'Ongoing'))
                         )
                     )
                 ) : null,
 
                 // Attributes (only for datasets)
                 isDataset && attributes && attributes.length > 0
-                    ? ce(Section, { title: 'Attributes', icon: 'table' },
+                    ? ce(Section, { title: t('section.attributes', 'Attributes'), icon: 'table' },
                         ce(AttributeTable, { attributes })
                     ) : null,
 
@@ -1570,7 +1640,7 @@ export default function DatasetLandingPage() {
                 // (e.g. supporting documents) not already covered by a layer.
                 r.resource_type === 'map' && (layersLoading || (mapContentItems && mapContentItems.length > 0))
                     ? ce(Section, {
-                        title: r.subtype === 'tabular-collection' ? 'Tables in this Collection' : 'Parts of this Data Collection',
+                        title: r.subtype === 'tabular-collection' ? t('tablesInCollection', 'Tables in this Collection') : t('partsOfCollection', 'Parts of this Data Collection'),
                         icon: r.subtype === 'tabular-collection' ? 'table-collection' : 'map'
                     },
                     layersLoading
@@ -1591,41 +1661,41 @@ export default function DatasetLandingPage() {
                     ) : null,
 
                 // Related Identifiers
-                relatedIdentifiers.length > 0 ? ce(Section, { title: 'Related Identifiers', icon: 'external' },
+                relatedIdentifiers.length > 0 ? ce(Section, { title: t('section.relatedIdentifiers', 'Related Identifiers'), icon: 'external' },
                     ce(RelatedIdentifierList, { items: relatedIdentifiers })
                 ) : null,
 
                 // Funders
-                fundings.length > 0 ? ce(Section, { title: 'Funding', icon: 'info' },
+                fundings.length > 0 ? ce(Section, { title: t('section.funding', 'Funding'), icon: 'info' },
                     ce('div', { className: 'zalf-lp-funders' },
                         ...fundings.map((f, i) => ce(FunderCard, { key: i, funder: f }))
                     )
                 ) : null,
 
                 // Use Constraints
-                hasConstraints ? ce(Section, { title: 'Use Constraints', icon: 'lock' },
+                hasConstraints ? ce(Section, { title: t('section.useConstraints', 'Use Constraints'), icon: 'lock' },
                     ce('div', { className: 'zalf-lp-meta-list' },
-                        ce(MetaItem, { label: 'Restrictions', value: useRestrictions.join(', ') }),
-                        ce(MetaItem, { label: 'Other Restrictions', value: otherRestrictions.join(', ') }),
-                        ce(MetaItem, { label: 'Use Constraints', value: useConstraints }),
-                        ce(MetaItem, { label: 'Other Constraints', value: otherConstraints })
+                        ce(MetaItem, { label: t('meta.restrictions', 'Restrictions'), value: useRestrictions.join(', ') }),
+                        ce(MetaItem, { label: t('meta.otherRestrictions', 'Other Restrictions'), value: otherRestrictions.join(', ') }),
+                        ce(MetaItem, { label: t('meta.useConstraints', 'Use Constraints'), value: useConstraints }),
+                        ce(MetaItem, { label: t('meta.otherConstraints', 'Other Constraints'), value: otherConstraints })
                     )
                 ) : null,
 
                 // Data Quality
-                dataQuality ? ce(Section, { title: 'Data Quality Statement', icon: 'info' },
+                dataQuality ? ce(Section, { title: t('section.dataQuality', 'Data Quality Statement'), icon: 'info' },
                     ce(TextBlock, { text: dataQuality })
                 ) : null,
 
                 // Data Lineage
-                dataLineage ? ce(Section, { title: 'Data Lineage', icon: 'layer' },
+                dataLineage ? ce(Section, { title: t('section.dataLineage', 'Data Lineage'), icon: 'layer' },
                     ce(TextBlock, { text: dataLineage })
                 ) : null,
 
                 // linked resources are listed under "Parts of this Data Collection";
                 // the separate "Linked Resources" section was removed (zalf-rdm/geonode#823)
                 (externalLinkedBy.length > 0)
-                    ? ce(Section, { title: 'Used by', icon: 'link' },
+                    ? ce(Section, { title: t('section.usedBy', 'Used by'), icon: 'link' },
                         ce('div', { className: 'zalf-lp-linked-grid' },
                             ...externalLinkedBy.map((res, i) => ce(LinkedResourceCard, { key: i, res }))
                         )
@@ -1638,35 +1708,35 @@ export default function DatasetLandingPage() {
                 // Resource Details card
                 ce('div', { className: 'zalf-lp-card' },
                     ce('div', { className: 'zalf-lp-card-header' },
-                        ce(CardTitle, { title: 'Resource Details', icon: 'info' }),
+                        ce(CardTitle, { title: t('card.resourceDetails', 'Resource Details'), icon: 'info' }),
                         ce(CopyMenu, { pk })
                     ),
                     ce('div', { className: 'zalf-lp-meta-list' },
-                        ce(MetaItem, { label: 'Type', value: typeLabel }),
+                        ce(MetaItem, { label: t('meta.type', 'Type'), value: typeLabel }),
                         publishers.length > 0 && ce(MetaItem, {
-                            label: 'Publisher',
+                            label: t('meta.publisher', 'Publisher'),
                             value: ce(PeopleInline, { people: publishers })
                         }),
-                        ce(MetaItem, { label: 'Attribution', value: r.attribution }),
+                        ce(MetaItem, { label: t('meta.attribution', 'Attribution'), value: r.attribution }),
                         ce(MetaItem, { label: dateTypeLabel, value: pubDate }),
-                        ce(MetaItem, { label: 'Version', value: r.edition }),
-                        ce(MetaItem, { label: 'Language', value: r.language }),
-                        isDataset && ce(MetaItem, { label: 'Spatial Type', value: spatialType }),
-                        isDataset && ce(MetaItem, { label: 'SRID', value: r.srid }),
-                        isDataset && ce(MetaItem, { label: 'Update Freq.', value: r.maintenance_frequency }),
-                        r.subtype === 'remote' && r.ows_url && ce(MetaItem, { label: 'Service URL', value: r.ows_url, link: r.ows_url }),
-                        r.resource_type === 'document' && r.extension && ce(MetaItem, { label: 'Format', value: r.extension.toUpperCase() }),
-                        r.resource_type === 'document' && fileSizeLabel && ce(MetaItem, { label: 'File Size', value: fileSizeLabel }),
-                        ce(MetaItem, { label: 'License', value: license }),
-                        ce(MetaItem, { label: 'Metadata License', value: metadataLicense })
+                        ce(MetaItem, { label: t('meta.version', 'Version'), value: r.edition }),
+                        ce(MetaItem, { label: t('meta.language', 'Language'), value: r.language }),
+                        isDataset && ce(MetaItem, { label: t('meta.spatialType', 'Spatial Type'), value: spatialType }),
+                        isDataset && ce(MetaItem, { label: t('meta.srid', 'SRID'), value: r.srid }),
+                        isDataset && ce(MetaItem, { label: t('meta.updateFrequency', 'Update Freq.'), value: r.maintenance_frequency }),
+                        r.subtype === 'remote' && r.ows_url && ce(MetaItem, { label: t('meta.serviceUrl', 'Service URL'), value: r.ows_url, link: r.ows_url }),
+                        r.resource_type === 'document' && r.extension && ce(MetaItem, { label: t('meta.format', 'Format'), value: r.extension.toUpperCase() }),
+                        r.resource_type === 'document' && fileSizeLabel && ce(MetaItem, { label: t('meta.fileSize', 'File Size'), value: fileSizeLabel }),
+                        ce(MetaItem, { label: t('meta.license', 'License'), value: license }),
+                        ce(MetaItem, { label: t('meta.metadataLicense', 'Metadata License'), value: metadataLicense })
                     )
                 ),
 
                 // Access card
                 ce('div', { className: 'zalf-lp-card zalf-lp-card--access' },
-                    ce(CardTitle, { title: 'Access', icon: 'lock' }),
+                    ce(CardTitle, { title: t('card.access', 'Access'), icon: 'lock' }),
                     ce('p', { className: 'zalf-lp-access-desc' },
-                        'Explore and interact with this resource in the viewer.'
+                        t('accessDescription', 'Explore and interact with this resource in the viewer.')
                     ),
                     ce('a', { className: 'zalf-lp-btn zalf-lp-btn--primary zalf-lp-btn--full', href: viewerHref },
                         ce('span', { className: 'zalf-lp-btn-icon' }, ce(Icon, { name: 'map', className: 'zalf-lp-inline-icon' })), viewerBtnLabel
@@ -1675,19 +1745,19 @@ export default function DatasetLandingPage() {
                         ? ce('a', {
                             className: 'zalf-lp-btn zalf-lp-btn--outline zalf-lp-btn--full',
                             href: downloadHref
-                        }, ce('span', { className: 'zalf-lp-btn-icon' }, ce(Icon, { name: 'download', className: 'zalf-lp-inline-icon' })), 'Download')
+                        }, ce('span', { className: 'zalf-lp-btn-icon' }, ce(Icon, { name: 'download', className: 'zalf-lp-inline-icon' })), t('download', 'Download'))
                         : ce('span', { className: 'zalf-lp-btn zalf-lp-btn--disabled zalf-lp-btn--full' },
-                            ce('span', { className: 'zalf-lp-btn-icon' }, ce(Icon, { name: 'download', className: 'zalf-lp-inline-icon' })), 'Download (login required)'
+                            ce('span', { className: 'zalf-lp-btn-icon' }, ce(Icon, { name: 'download', className: 'zalf-lp-inline-icon' })), t('downloadLoginRequired', 'Download (login required)')
                         ),
                     ce('a', { className: 'zalf-lp-btn zalf-lp-btn--ghost zalf-lp-btn--full', href: metadataHref },
                         ce('span', { className: 'zalf-lp-btn-icon' }, ce(Icon, { name: 'description', className: 'zalf-lp-inline-icon' })),
-                        'Full Metadata Record'
+                        t('fullMetadataRecord', 'Full Metadata Record')
                     ),
                 ),
 
                 // Dates (DataCite date types)
                 resourceDates.length > 0 ? ce('div', { className: 'zalf-lp-card' },
-                    ce(CardTitle, { title: 'Dates', icon: 'calendar' }),
+                    ce(CardTitle, { title: t('card.dates', 'Dates'), icon: 'calendar' }),
                     ce('div', { className: 'zalf-lp-meta-list' },
                         ...resourceDates.map((d) => ce(MetaItem, { key: d.key, label: d.label, value: d.value }))
                     )
@@ -1699,41 +1769,41 @@ export default function DatasetLandingPage() {
                 // Keywords & Categories: one card, broad to specific, each block explained
                 (category || keywordItems.length || thesaurusKeywordGroups.length || researchDomains.length
                     || regions.length || projects.length) ? ce('div', { className: 'zalf-lp-card' },
-                        ce(CardTitle, { title: 'Keywords & Categories', icon: 'tag' }),
+                        ce(CardTitle, { title: t('card.keywordsCategories', 'Keywords & Categories'), icon: 'tag' }),
                         category && ce(ClassificationBlock, {
-                            title: 'Category',
-                            help: 'ISO 19115 topic category. Opens all resources of this category.'
+                            title: t('class.category', 'Category'),
+                            help: t('class.categoryHelp', 'ISO 19115 topic category. Opens all resources of this category.')
                         },
                         ce(Badge, { label: category.label, href: category.href, variant: 'category' })
                         ),
                         keywordItems.length > 0 && ce(ClassificationBlock, {
-                            title: 'Keywords',
-                            help: 'Free keywords given by the authors. Opens all resources with this keyword.'
+                            title: t('class.keywords', 'Keywords'),
+                            help: t('class.keywordsHelp', 'Free keywords given by the authors. Opens all resources with this keyword.')
                         },
                         ...keywordItems.map((kw) => ce(Badge, { key: 'kw-' + kw.name, label: kw.name, href: kw.href }))
                         ),
                         ...thesaurusKeywordGroups.map((group) => ce(ClassificationBlock, {
                             key: 'thesaurus-' + group.thesaurus,
                             title: group.thesaurus,
-                            help: 'Terms from the controlled vocabulary "' + group.thesaurus + '".'
+                            help: interpolate(t('class.thesaurusHelp', 'Terms from the controlled vocabulary "{thesaurus}".'), { thesaurus: group.thesaurus })
                         },
                         ...group.keywords.map((kw) => ce(Badge, { key: 'tk-' + kw.name, label: kw.name, title: kw.uri || undefined }))
                         )),
                         researchDomains.length > 0 && ce(ClassificationBlock, {
-                            title: 'Research Domains',
-                            help: 'Scientific disciplines the data belongs to.'
+                            title: t('class.researchDomains', 'Research Domains'),
+                            help: t('class.researchDomainsHelp', 'Scientific disciplines the data belongs to.')
                         },
                         ...researchDomains.map((domain) => ce(Badge, { key: 'domain-' + domain, label: domain }))
                         ),
                         regions.length > 0 && ce(ClassificationBlock, {
-                            title: 'Regions',
-                            help: 'Administrative areas (GADM) covered by the data.'
+                            title: t('class.regions', 'Regions'),
+                            help: t('class.regionsHelp', 'Administrative areas (GADM) covered by the data.')
                         },
                         ...regions.map((rg, index) => ce(Badge, { key: 'region-' + index + '-' + rg, label: rg }))
                         ),
                         projects.length > 0 && ce(ClassificationBlock, {
-                            title: 'Projects',
-                            help: 'Research projects in which the data was produced.'
+                            title: t('class.projects', 'Projects'),
+                            help: t('class.projectsHelp', 'Research projects in which the data was produced.')
                         },
                         ...projects.map((project, index) => ce(Badge, {
                             key: 'project-' + index + '-' + project,
@@ -1746,3 +1816,16 @@ export default function DatasetLandingPage() {
         )
     );
 }
+
+function DatasetLandingPage({ messages = {}, currentLocale = 'en-US' }) {
+    const i18n = React.useMemo(
+        () => ({ t: createTranslator(messages, 'zalfTheme.landing'), locale: currentLocale }),
+        [messages, currentLocale]
+    );
+    return ce(LandingI18n.Provider, { value: i18n }, ce(DatasetLandingContent));
+}
+
+export default connect((state) => ({
+    messages: state?.locale?.messages || {},
+    currentLocale: state?.locale?.current || 'en-US'
+}))(DatasetLandingPage);

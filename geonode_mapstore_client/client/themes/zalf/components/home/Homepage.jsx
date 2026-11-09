@@ -5,12 +5,12 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { getMessageById } from '@mapstore/framework/utils/LocaleUtils';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { TOPICS_URL, localizeTopicName, selectTopics } from '../../utils/TopicUtils';
 import { SECTIONS_URL, DEFAULT_SECTION_ORDER, selectSectionOrder } from '../../utils/SectionUtils';
 import TopicIcon from '../common/TopicIcon';
+import { CMS_TRANSLATED_FIELDS, localizeRecord, translate } from '../../utils/I18nUtils';
 import './homepage.css';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -56,19 +56,20 @@ function useCmsData() {
     return { cases, banners, trainings, topics, sectionOrder, loading };
 }
 
-// getMessageById returns the id itself when a message is missing, so fall back explicitly.
-function translate(messages, id, fallback) {
-    const message = getMessageById(messages, id);
-    return message && message !== id ? message : fallback;
-}
-
 function Homepage({ messages = {}, currentLocale = 'en-US' }) {
     const t = (id, fallback) => translate(messages, id, fallback);
     const [activeCase, setActiveCase] = React.useState(0);
     const [activeSpotlight, setActiveSpotlight] = React.useState(0);
     const [heroQuery, setHeroQuery] = React.useState('');
 
-    const { cases, banners, trainings, topics, sectionOrder, loading } = useCmsData();
+    const cms = useCmsData();
+    const { topics, sectionOrder, loading } = cms;
+    // CMS content carries per-language variants; resolve them for the live locale.
+    const [cases, banners, trainings] = React.useMemo(
+        () => ['cases', 'banners', 'trainings'].map((type) =>
+            cms[type].map((record) => localizeRecord(record, CMS_TRANSLATED_FIELDS[type], currentLocale))),
+        [cms.cases, cms.banners, cms.trainings, currentLocale]
+    );
 
     React.useEffect(() => {
         setActiveCase(0);
@@ -170,10 +171,11 @@ function Homepage({ messages = {}, currentLocale = 'en-US' }) {
             React.createElement(
                 'div',
                 { className: 'zalf-homepage__cases-bg' },
-                ...cases.map(({ image_url, tab_label }, index) => React.createElement(
+                // Keyed by id: localized tab labels can coincide across cases.
+                ...cases.map(({ id, image_url, tab_label }, index) => React.createElement(
                     'img',
                     {
-                        key: tab_label,
+                        key: id ?? index,
                         src: image_url || '',
                         alt: tab_label,
                         className: `zalf-homepage__cases-bg-img${index === activeCase ? ' is-active' : ''}`,
@@ -188,10 +190,10 @@ function Homepage({ messages = {}, currentLocale = 'en-US' }) {
                 React.createElement(
                     'div',
                     { className: 'zalf-homepage__cases-tabs', role: 'tablist', 'aria-label': t('zalfTheme.home.highlightedCases', 'Highlighted Datasets') },
-                    ...cases.map(({ tab_label }, index) => React.createElement(
+                    ...cases.map(({ id, tab_label }, index) => React.createElement(
                         'button',
                         {
-                            key: tab_label,
+                            key: id ?? index,
                             type: 'button',
                             role: 'tab',
                             'aria-selected': index === activeCase ? 'true' : 'false',

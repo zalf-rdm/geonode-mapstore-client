@@ -1,6 +1,7 @@
 import React from 'react';
 import { cmsGet, cmsRequest, buildFormData, errorMessage } from '../cmsApi';
 import CmsModal from './CmsModal';
+import TranslationFields from './TranslationFields';
 
 const BASE = '/api/v2/cms/banners/';
 const EMPTY = { kicker: '', title: '', description: '', button_text: '', href: '', order: 0, is_active: true };
@@ -53,21 +54,25 @@ function Modal({ item, onClose, onSaved }) {
                     React.createElement('input', { type: 'text', value: form.kicker, maxLength: 80, required: true, onChange: e => set('kicker', e.target.value) }),
                     React.createElement(CharCount, { value: form.kicker, max: 80 })
                 ),
+                React.createElement(TranslationFields, { form, field: 'kicker', label: 'Kicker', set, maxLength: 80 }),
                 React.createElement('div', { className: 'cms-modal__field' },
                     React.createElement('label', null, 'Title (main headline)'),
                     React.createElement('input', { type: 'text', value: form.title, maxLength: 120, required: true, onChange: e => set('title', e.target.value) }),
                     React.createElement(CharCount, { value: form.title, max: 120 })
                 ),
+                React.createElement(TranslationFields, { form, field: 'title', label: 'Title', set, maxLength: 120 }),
                 React.createElement('div', { className: 'cms-modal__field' },
                     React.createElement('label', null, 'Description (optional)'),
                     React.createElement('textarea', { value: form.description, maxLength: 240, rows: 2, onChange: e => set('description', e.target.value) }),
                     React.createElement(CharCount, { value: form.description, max: 240 })
                 ),
+                React.createElement(TranslationFields, { form, field: 'description', label: 'Description', set, maxLength: 240 }),
                 React.createElement('div', { className: 'cms-modal__field' },
                     React.createElement('label', null, 'Button text'),
                     React.createElement('input', { type: 'text', value: form.button_text, maxLength: 40, required: true, onChange: e => set('button_text', e.target.value) }),
                     React.createElement(CharCount, { value: form.button_text, max: 40 })
                 ),
+                React.createElement(TranslationFields, { form, field: 'button_text', label: 'Button text', set, maxLength: 40 }),
                 React.createElement('div', { className: 'cms-modal__field' },
                     React.createElement('label', null, 'Link (href)'),
                     React.createElement('input', { type: 'text', value: form.href, required: true, placeholder: '/catalogue/#/?q=climate or https://…', onChange: e => set('href', e.target.value) })
