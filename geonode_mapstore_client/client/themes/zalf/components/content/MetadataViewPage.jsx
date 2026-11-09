@@ -16,6 +16,7 @@ import {
     getResourceTypeLabel,
     getSchemaOptionLabel,
     isMetadataValuePresent,
+    toPlainText,
     visibleObjectEntries
 } from '../../utils/MetadataViewUtils';
 import './metadata-view.css';
@@ -108,7 +109,7 @@ function PrimitiveValue({ value, schema }) {
             ce('pre', null, JSON.stringify(parsedJson, null, 2))
         );
     }
-    return ce('span', { className: 'zalf-mv-text' }, String(normalized));
+    return ce('span', { className: 'zalf-mv-text' }, toPlainText(String(normalized)));
 }
 
 function ObjectValue({ value, schema, compact = false }) {
@@ -305,8 +306,8 @@ export default function MetadataViewPage() {
                         resource.language && ce('span', { className: 'zalf-mv-badge zalf-mv-badge--soft' }, resource.language.toUpperCase()),
                         ce('span', { className: 'zalf-mv-badge zalf-mv-badge--soft' }, `${sections.length} sections`)
                     ),
-                    ce('h1', null, resource.title),
-                    resource.title_translated && ce('p', { className: 'zalf-mv-title-alt' }, resource.title_translated),
+                    ce('h1', null, toPlainText(resource.title)),
+                    resource.title_translated && ce('p', { className: 'zalf-mv-title-alt' }, toPlainText(resource.title_translated)),
                     ce('p', { className: 'zalf-mv-hero-summary' }, 'Complete structured metadata for discovery, interpretation and reuse of this resource.'),
                     ce('div', { className: 'zalf-mv-hero-actions' },
                         ce('a', { className: 'zalf-mv-button zalf-mv-button--primary', href: getLandingUrl(resource) },
