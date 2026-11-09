@@ -75,10 +75,12 @@ function resourcePeopleById(resource = {}) {
     return people;
 }
 
-export function buildContactPeople(contacts = {}, resource = {}, roleSchema = {}) {
+// `labels` lets the page pass translated texts; the defaults are the English ones.
+export function buildContactPeople(contacts = {}, resource = {}, roleSchema = {}, labels = {}) {
+    const { owner = 'Owner', unnamed = 'Unnamed person' } = labels;
     const detailedPeople = resourcePeopleById(resource);
     const assignments = [
-        contacts?.owner && { role: 'Owner', users: [contacts.owner] },
+        contacts?.owner && { role: owner, users: [contacts.owner] },
         ...(contacts?.contact_roles || []).map(({ role, users = [] }) => ({
             role: getSchemaOptionLabel(roleSchema, role), users
         }))
@@ -94,7 +96,7 @@ export function buildContactPeople(contacts = {}, resource = {}, roleSchema = {}
         current.roles = [...new Set([...current.roles, role])];
         current.label = details.full_name
             || [details.first_name, details.last_name].filter(Boolean).join(' ')
-            || user?.label || details.username || 'Unnamed person';
+            || user?.label || details.username || unnamed;
         people.set(key, current);
     }));
 
@@ -147,15 +149,20 @@ export function buildMetadataSections(metadata = {}, schema = {}, resource = {})
         });
 }
 
-export function getResourceTypeLabel(resource = {}) {
+// Shared by the landing page and the full metadata page, so the two never label a type differently.
+// `t(id, fallback)` translates; the default returns the English fallback.
+export function getResourceTypeLabel(resource = {}, t = (id, fallback) => fallback) {
     const type = resource.resource_type || 'dataset';
     const subtype = resource.subtype || '';
-    if (type === 'dataset' && ['tabular', 'table'].includes(subtype)) return 'Table';
-    if (type === 'dataset' && subtype === 'raster') return 'Raster Dataset';
-    if (type === 'dataset' && subtype === 'vector') return 'Vector Dataset';
-    if (type === 'map' && subtype === 'tabular-collection') return 'Table Collection';
+    if (type === 'dataset' && ['tabular', 'table'].includes(subtype)) return t('type.table', 'Table');
+    if (type === 'dataset' && subtype === 'raster') return t('type.rasterDataset', 'Raster Dataset');
+    if (type === 'dataset' && subtype === 'vector') return t('type.vectorDataset', 'Vector Dataset');
+    if (type === 'dataset' && subtype === 'remote') return t('type.remoteService', 'Remote Service');
+    if (type === 'map' && subtype === 'tabular-collection') return t('type.tableCollection', 'Table Collection');
     // same wording as the landing page (zalf-rdm/geonode#823)
-    if (type === 'map') return 'Data Collection';
+    if (type === 'map') return t('type.dataCollection', 'Data Collection');
+    if (type === 'dataset') return t('type.dataset', 'Dataset');
+    if (type === 'document') return t('type.document', 'Document');
     return humanizeMetadataKey(type);
 }
 

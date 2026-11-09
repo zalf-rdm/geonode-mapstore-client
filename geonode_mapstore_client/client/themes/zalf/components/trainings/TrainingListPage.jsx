@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { getMessageById } from '@mapstore/framework/utils/LocaleUtils';
+import { CMS_TRANSLATED_FIELDS, createTranslator, interpolate, localizeRecord } from '../../utils/I18nUtils';
 import './trainings.css';
 
 function unique(arr) {
@@ -32,15 +32,9 @@ function TrainingCard({ item }) {
     );
 }
 
-// getMessageById returns the id itself when a message is missing, so fall back explicitly.
-function translate(messages, id, fallback) {
-    const message = getMessageById(messages, id);
-    return message && message !== id ? message : fallback;
-}
-
-function TrainingListPage({ messages = {} }) {
-    const msg = (id, fallback) => translate(messages, `zalfTheme.trainings.${id}`, fallback);
-    const [all, setAll] = React.useState([]);
+function TrainingListPage({ messages = {}, currentLocale = 'en-US' }) {
+    const msg = createTranslator(messages, 'zalfTheme.trainings');
+    const [records, setRecords] = React.useState([]);
     const [loading, setLoading] = React.useState(true);
     const [search, setSearch] = React.useState('');
     const [filterOrg, setFilterOrg] = React.useState('');
@@ -51,12 +45,21 @@ function TrainingListPage({ messages = {} }) {
             .then(r => r.ok ? r.json() : [])
             // The CMS API exposes inactive records to staff for management;
             // this is a public listing and must only show published entries.
-            .then(data => setAll(Array.isArray(data)
+            .then(data => setRecords(Array.isArray(data)
                 ? data.filter(item => item.is_active !== false).sort((a, b) => b.id - a.id)
                 : []))
             .catch(() => {})
             .finally(() => setLoading(false));
     }, []);
+
+    // CMS content carries per-language variants; resolve them for the live locale.
+    const all = React.useMemo(
+        () => records.map((record) => localizeRecord(record, CMS_TRANSLATED_FIELDS.trainings, currentLocale)),
+        [records, currentLocale]
+    );
+
+    // The duration filter holds a localized value, which matches nothing once the locale changes.
+    React.useEffect(() => { setFilterDur(''); }, [currentLocale]);
 
     const organizers = unique(all.map(t => t.organizer));
     const durations = unique(all.map(t => t.duration));
@@ -144,12 +147,13 @@ function TrainingListPage({ messages = {} }) {
             !loading && React.createElement(
                 'p',
                 { className: 'zalf-trainings__count' },
-                msg('count', '{visible} of {total} resources').replace('{visible}', visible.length).replace('{total}', all.length)
+                interpolate(msg('count', '{visible} of {total} resources'), { visible: visible.length, total: all.length })
             )
         )
     );
 }
 
 export default connect((state) => ({
-    messages: state?.locale?.messages || {}
+    messages: state?.locale?.messages || {},
+    currentLocale: state?.locale?.current || 'en-US'
 }))(TrainingListPage);

@@ -2,6 +2,7 @@ import React from 'react';
 import MarkdownEditor from './MarkdownEditor';
 import { cmsGet, cmsRequest, buildFormData, errorMessage } from '../cmsApi';
 import CmsModal from './CmsModal';
+import TranslationFields from './TranslationFields';
 
 const BASE = '/api/v2/cms/cases/';
 const EMPTY = {
@@ -78,6 +79,8 @@ function Modal({ item, onClose, onSaved }) {
                         )
                     )
                 ),
+                React.createElement(TranslationFields, { form, field: 'tab_label', label: 'Tab label', set, maxLength: 40 }),
+                React.createElement(TranslationFields, { form, field: 'eyebrow', label: 'Eyebrow (default "HIGHLIGHTED CASE")', set, maxLength: 60 }),
                 React.createElement(
                     'div',
                     { className: 'cms-modal__field' },
@@ -85,6 +88,7 @@ function Modal({ item, onClose, onSaved }) {
                     React.createElement('input', { type: 'text', value: form.title, maxLength: 160, required: true, onChange: e => set('title', e.target.value) }),
                     React.createElement(CharCount, { value: form.title, max: 160 })
                 ),
+                React.createElement(TranslationFields, { form, field: 'title', label: 'Title', set, maxLength: 160 }),
                 React.createElement(
                     'div',
                     { className: 'cms-modal__field' },
@@ -92,6 +96,7 @@ function Modal({ item, onClose, onSaved }) {
                     React.createElement('input', { type: 'text', value: form.button_text, maxLength: 20, onChange: e => set('button_text', e.target.value) }),
                     React.createElement(CharCount, { value: form.button_text, max: 20 })
                 ),
+                React.createElement(TranslationFields, { form, field: 'button_text', label: 'Button text', set, maxLength: 20 }),
                 React.createElement(
                     'div',
                     { className: 'cms-modal__field' },
@@ -123,6 +128,7 @@ function Modal({ item, onClose, onSaved }) {
                     React.createElement('label', null, 'Detail page content (Markdown)'),
                     React.createElement(MarkdownEditor, { value: form.body_markdown, onChange: v => set('body_markdown', v) })
                 ),
+                React.createElement(TranslationFields, { form, field: 'body_markdown', label: 'Detail page content', set, markdown: true }),
                 error && React.createElement('p', { className: 'cms-editor__error', role: 'alert' }, error),
                 React.createElement(
                     'div',
@@ -149,7 +155,14 @@ function HighlightedCaseEditor() {
     React.useEffect(() => { loadItems(); }, [loadItems]);
 
     function openNew() { setEditItem({ ...EMPTY }); setShowModal(true); }
-    function openEdit(item) { setEditItem(item); setShowModal(true); }
+    // The list endpoint omits the Markdown bodies, so edit from the detail record:
+    // filling the form from the list row would save an empty body.
+    function openEdit(item) {
+        setError(null);
+        cmsGet(`${BASE}${item.id}/`)
+            .then(detail => { setEditItem(detail); setShowModal(true); })
+            .catch(err => setError(errorMessage(err)));
+    }
     function closeModal() { setShowModal(false); setEditItem(null); }
 
     function handleSaved(saved, isNew) {

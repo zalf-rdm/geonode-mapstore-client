@@ -5,14 +5,9 @@
  * homepage grid — which had already drifted apart.
  */
 
-export const TOPICS_URL = '/api/v2/cms/topics/';
+import { localizeField } from './I18nUtils';
 
-const LOCALE_NAME_FIELDS = {
-    de: 'name_de',
-    fr: 'name_fr',
-    es: 'name_es',
-    it: 'name_it'
-};
+export const TOPICS_URL = '/api/v2/cms/topics/';
 
 /**
  * The topic label for the given locale, falling back to `name` when the
@@ -24,10 +19,7 @@ const LOCALE_NAME_FIELDS = {
  * authoritative.
  */
 export function localizeTopicName(topic = {}, currentLocale = 'en-US') {
-    const code = String(currentLocale || 'en').split('-')[0].toLowerCase();
-    const field = LOCALE_NAME_FIELDS[code];
-    const translated = field ? (topic[field] || '').trim() : '';
-    return translated || topic.name || '';
+    return localizeField(topic, 'name', currentLocale);
 }
 
 /**

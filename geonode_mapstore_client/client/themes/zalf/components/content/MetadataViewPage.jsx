@@ -7,6 +7,7 @@
 /* eslint-disable no-use-before-define */
 
 import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
 import axios from '@mapstore/framework/libs/ajax';
 import {
     buildContactPeople,
@@ -18,9 +19,17 @@ import {
     isMetadataValuePresent,
     visibleObjectEntries
 } from '../../utils/MetadataViewUtils';
+import { createTranslator, dateLocale, localeCode } from '../../utils/I18nUtils';
 import './metadata-view.css';
 
 const ce = React.createElement;
+
+/** `t(id, fallback)` reading zalfTheme.metadataView.<id>, plus the live locale; provided by the connected page. */
+const MetadataI18n = React.createContext({ t: (id, fallback) => fallback, locale: 'en-US' });
+
+function useMetadataI18n() {
+    return React.useContext(MetadataI18n);
+}
 
 function extractPkFromHash() {
     const match = window.location.hash.match(/#\/metadata-view\/([^/?]+)/);
@@ -68,12 +77,16 @@ function isUrl(value) {
     return typeof value === 'string' && /^(https?:\/\/|mailto:)/i.test(value.trim());
 }
 
-function formatDate(value, includeTime) {
+function formatDate(value, includeTime, locale) {
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return value;
-    return date.toLocaleString(undefined, includeTime
-        ? { dateStyle: 'medium', timeStyle: 'short' }
-        : { dateStyle: 'medium' });
+    const options = includeTime ? { dateStyle: 'medium', timeStyle: 'short' } : { dateStyle: 'medium' };
+    // An unsupported locale tag throws a RangeError; fall back to the browser default.
+    try {
+        return date.toLocaleString(dateLocale(locale), options);
+    } catch (e) {
+        return date.toLocaleString(undefined, options);
+    }
 }
 
 function parseJsonValue(value) {
@@ -90,10 +103,11 @@ function scrollToMetadataSection(id) {
 }
 
 function PrimitiveValue({ value, schema }) {
+    const { t, locale } = useMetadataI18n();
     const normalized = getSchemaOptionLabel(schema, value);
-    if (typeof normalized === 'boolean') return normalized ? 'Yes' : 'No';
-    if (schema?.format === 'date-time') return formatDate(normalized, true);
-    if (schema?.format === 'date') return formatDate(normalized, false);
+    if (typeof normalized === 'boolean') return normalized ? t('yes', 'Yes') : t('no', 'No');
+    if (schema?.format === 'date-time') return formatDate(normalized, true, locale);
+    if (schema?.format === 'date') return formatDate(normalized, false, locale);
     if (isUrl(normalized)) {
         return ce('a', {
             href: normalized, target: '_blank', rel: 'noopener noreferrer',
@@ -104,7 +118,7 @@ function PrimitiveValue({ value, schema }) {
     if (parsedJson) {
         const itemCount = Array.isArray(parsedJson) ? parsedJson.length : Object.keys(parsedJson).length;
         return ce('details', { className: 'zalf-mv-structured' },
-            ce('summary', null, `Structured upload metadata · ${itemCount} ${itemCount === 1 ? 'group' : 'groups'}`),
+            ce('summary', null, `${t('structuredUploadMetadata', 'Structured upload metadata')} · ${itemCount} ${itemCount === 1 ? t('count.group', 'group') : t('count.groups', 'groups')}`),
             ce('pre', null, JSON.stringify(parsedJson, null, 2))
         );
     }
@@ -164,8 +178,12 @@ function AttributeTable({ value, schema }) {
 }
 
 function ContactsValue({ value, schema, resource }) {
+    const { t } = useMetadataI18n();
     const roleSchema = schema?.properties?.contact_roles?.items?.properties?.role || {};
-    const people = buildContactPeople(value, resource, roleSchema);
+    const people = buildContactPeople(value, resource, roleSchema, {
+        owner: t('owner', 'Owner'),
+        unnamed: t('unnamedPerson', 'Unnamed person')
+    });
     return ce('div', { className: 'zalf-mv-contacts' },
         ...people.map((person, index) => {
             const orcid = person.orcid_url || person.orcid_identifier || person.orcid;
@@ -176,7 +194,7 @@ function ContactsValue({ value, schema, resource }) {
             const ror = typeof person.organization === 'object' ? person.organization?.ror : person.ror;
             return ce('article', { className: 'zalf-mv-person', key: person.pk || person.id || index },
                 ce('div', { className: 'zalf-mv-person-name' }, person.label),
-                ce('ul', { className: 'zalf-mv-person-roles', 'aria-label': 'Roles' },
+                ce('ul', { className: 'zalf-mv-person-roles', 'aria-label': t('roles', 'Roles') },
                     ...person.roles.map((role) => ce('li', { key: role }, role))
                 ),
                 ce('div', { className: 'zalf-mv-person-details' },
@@ -226,11 +244,18 @@ function MetadataField({ field, resource }) {
     })));
 }
 
+// Section titles and item labels come from MetadataViewUtils in English, where they
+// also serve as ids and sort keys; translate them only for display.
+function sectionTitle(t, section) {
+    return t('group.' + section.title, section.title);
+}
+
 function MetadataSection({ section, resource }) {
+    const { t } = useMetadataI18n();
     return ce('section', { id: `metadata-section-${section.id}`, className: 'zalf-mv-section' },
         ce('header', { className: 'zalf-mv-section-header' },
-            ce('h2', null, section.title),
-            ce('span', null, `${section.itemCount} ${section.itemLabel}`)
+            ce('h2', null, sectionTitle(t, section)),
+            ce('span', null, `${section.itemCount} ${t('count.' + section.itemLabel, section.itemLabel)}`)
         ),
         ce('div', { className: 'zalf-mv-fields' },
             ...section.fields.map((field) => ce(MetadataField, { key: field.key, field, resource }))
@@ -239,13 +264,17 @@ function MetadataSection({ section, resource }) {
 }
 
 function LoadingState() {
+    const { t } = useMetadataI18n();
     return ce('main', { className: 'zalf-mv-page' },
         ce('div', { className: 'zalf-mv-state', role: 'status' },
-            ce('div', { className: 'zalf-mv-spinner' }), ce('p', null, 'Loading metadata…'))
+            ce('div', { className: 'zalf-mv-spinner' }), ce('p', null, t('loading', 'Loading metadata…')))
     );
 }
 
-export default function MetadataViewPage() {
+function MetadataViewContent() {
+    const { t, locale } = useMetadataI18n();
+    // The schema API localises field titles and option labels for `lang`.
+    const lang = localeCode(locale);
     const pk = extractPkFromHash();
     const [state, setState] = useState({ loading: true, resource: null, metadata: null, schema: null, error: null });
 
@@ -253,13 +282,14 @@ export default function MetadataViewPage() {
         let active = true;
         setState({ loading: true, resource: null, metadata: null, schema: null, error: null });
         if (!pk) {
-            setState({ loading: false, resource: null, metadata: null, schema: null, error: 'No resource identifier found.' });
+            // Error keys, not texts, so a locale switch re-renders the message in the new language.
+            setState({ loading: false, resource: null, metadata: null, schema: null, error: 'noIdentifier' });
             return () => { active = false; };
         }
         Promise.all([
             axios.get(`/api/v2/resources/${pk}/`),
-            axios.get(`/api/v2/metadata/instance/${pk}/`),
-            axios.get('/api/v2/metadata/schema/')
+            axios.get(`/api/v2/metadata/instance/${pk}/`, { params: { lang } }),
+            axios.get('/api/v2/metadata/schema/', { params: { lang } })
         ])
             .then(([resourceResponse, metadataResponse, schemaResponse]) => {
                 if (!active) return;
@@ -273,15 +303,18 @@ export default function MetadataViewPage() {
             })
             .catch(() => active && setState({
                 loading: false, resource: null, metadata: null, schema: null,
-                error: 'The metadata record could not be loaded.'
+                error: 'loadFailed'
             }));
         return () => { active = false; };
-    }, [pk]);
+    }, [pk, lang]);
 
     if (state.loading) return ce(LoadingState);
     if (state.error || !state.resource) {
         return ce('main', { className: 'zalf-mv-page' },
-            ce('div', { className: 'zalf-mv-state zalf-mv-state--error', role: 'alert' }, state.error || 'Resource not found.'));
+            ce('div', { className: 'zalf-mv-state zalf-mv-state--error', role: 'alert' }, {
+                noIdentifier: t('noIdentifier', 'No resource identifier found.'),
+                loadFailed: t('loadFailed', 'The metadata record could not be loaded.')
+            }[state.error] || t('notFound', 'Resource not found.')));
     }
 
     const { resource } = state;
@@ -289,10 +322,10 @@ export default function MetadataViewPage() {
     const iconName = getResourceIconName(resource);
 
     return ce('main', { className: 'zalf-mv-page' },
-        ce('nav', { className: 'zalf-mv-breadcrumb', 'aria-label': 'Breadcrumb' },
-            ce('a', { href: getLandingUrl(resource) }, ce(Icon, { name: 'back' }), 'Resource landing page'),
+        ce('nav', { className: 'zalf-mv-breadcrumb', 'aria-label': t('breadcrumb', 'Breadcrumb') },
+            ce('a', { href: getLandingUrl(resource) }, ce(Icon, { name: 'back' }), t('landingPage', 'Resource landing page')),
             ce('span', { 'aria-hidden': 'true' }, '/'),
-            ce('span', null, 'Full metadata record')
+            ce('span', null, t('fullRecord', 'Full metadata record'))
         ),
         ce('header', { className: 'zalf-mv-hero-band' },
             ce('div', { className: 'zalf-mv-hero' },
@@ -301,21 +334,21 @@ export default function MetadataViewPage() {
                     : ce('div', { className: 'zalf-mv-visual zalf-mv-visual--placeholder' }, ce(Icon, { name: iconName, size: '4.5rem' })),
                 ce('div', { className: 'zalf-mv-hero-content' },
                     ce('div', { className: 'zalf-mv-badges' },
-                        ce('span', { className: 'zalf-mv-badge' }, getResourceTypeLabel(resource)),
+                        ce('span', { className: 'zalf-mv-badge' }, getResourceTypeLabel(resource, t)),
                         resource.language && ce('span', { className: 'zalf-mv-badge zalf-mv-badge--soft' }, resource.language.toUpperCase()),
-                        ce('span', { className: 'zalf-mv-badge zalf-mv-badge--soft' }, `${sections.length} sections`)
+                        ce('span', { className: 'zalf-mv-badge zalf-mv-badge--soft' }, `${sections.length} ${sections.length === 1 ? t('count.section', 'section') : t('count.sections', 'sections')}`)
                     ),
                     ce('h1', null, resource.title),
                     resource.title_translated && ce('p', { className: 'zalf-mv-title-alt' }, resource.title_translated),
-                    ce('p', { className: 'zalf-mv-hero-summary' }, 'Complete structured metadata for discovery, interpretation and reuse of this resource.'),
+                    ce('p', { className: 'zalf-mv-hero-summary' }, t('summary', 'Complete structured metadata for discovery, interpretation and reuse of this resource.')),
                     ce('div', { className: 'zalf-mv-hero-actions' },
                         ce('a', { className: 'zalf-mv-button zalf-mv-button--primary', href: getLandingUrl(resource) },
-                            ce(Icon, { name: 'back' }), 'Back to resource'),
+                            ce(Icon, { name: 'back' }), t('backToResource', 'Back to resource')),
                         ce('button', {
                             className: 'zalf-mv-button', type: 'button',
                             onClick: () => scrollToMetadataSection('metadata-sections')
                         },
-                        ce(Icon, { name: 'metadata' }), 'Browse sections')
+                        ce(Icon, { name: 'metadata' }), t('browseSections', 'Browse sections'))
                     )
                 )
             )
@@ -323,20 +356,33 @@ export default function MetadataViewPage() {
         ce('div', { id: 'metadata-sections', className: 'zalf-mv-layout' },
             ce('aside', { className: 'zalf-mv-sidebar' },
                 ce('div', { className: 'zalf-mv-sidebar-inner' },
-                    ce('div', { className: 'zalf-mv-sidebar-title' }, 'On this page'),
-                    ce('nav', { className: 'zalf-mv-section-nav', 'aria-label': 'Metadata sections' },
+                    ce('div', { className: 'zalf-mv-sidebar-title' }, t('onThisPage', 'On this page')),
+                    ce('nav', { className: 'zalf-mv-section-nav', 'aria-label': t('metadataSections', 'Metadata sections') },
                         ...sections.map((section) => ce('button', {
                             key: section.id, type: 'button',
                             onClick: () => scrollToMetadataSection(`metadata-section-${section.id}`)
-                        }, ce('span', null, section.title), ce('small', null, section.itemCount)))
+                        }, ce('span', null, sectionTitle(t, section)), ce('small', null, section.itemCount)))
                     )
                 )
             ),
             ce('div', { className: 'zalf-mv-content' },
                 sections.length
                     ? sections.map((section) => ce(MetadataSection, { key: section.id, section, resource }))
-                    : ce('div', { className: 'zalf-mv-state' }, 'No metadata values are available.')
+                    : ce('div', { className: 'zalf-mv-state' }, t('noValues', 'No metadata values are available.'))
             )
         )
     );
 }
+
+function MetadataViewPage({ messages = {}, currentLocale = 'en-US' }) {
+    const i18n = React.useMemo(
+        () => ({ t: createTranslator(messages, 'zalfTheme.metadataView'), locale: currentLocale }),
+        [messages, currentLocale]
+    );
+    return ce(MetadataI18n.Provider, { value: i18n }, ce(MetadataViewContent));
+}
+
+export default connect((state) => ({
+    messages: state?.locale?.messages || {},
+    currentLocale: state?.locale?.current || 'en-US'
+}))(MetadataViewPage);

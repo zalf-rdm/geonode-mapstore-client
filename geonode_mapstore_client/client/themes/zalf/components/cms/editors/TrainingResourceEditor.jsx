@@ -2,6 +2,7 @@ import React from 'react';
 import MarkdownEditor from './MarkdownEditor';
 import { cmsGet, cmsRequest, buildFormData, errorMessage } from '../cmsApi';
 import CmsModal from './CmsModal';
+import TranslationFields from './TranslationFields';
 
 const BASE = '/api/v2/cms/trainings/';
 
@@ -78,6 +79,7 @@ function Modal({ item, onClose, onSaved }) {
                     React.createElement('input', { type: 'text', value: form.title, maxLength: 160, required: true, onChange: e => set('title', e.target.value) }),
                     React.createElement(CharCount, { value: form.title, max: 160 })
                 ),
+                React.createElement(TranslationFields, { form, field: 'title', label: 'Course title', set, maxLength: 160 }),
 
                 React.createElement(Field, { label: 'Organizer / Provider' },
                     React.createElement('input', { type: 'text', value: form.organizer, maxLength: 120, required: true, onChange: e => set('organizer', e.target.value) }),
@@ -88,6 +90,7 @@ function Modal({ item, onClose, onSaved }) {
                     React.createElement('input', { type: 'text', value: form.category, maxLength: 80, placeholder: 'e.g. Data Management, Remote Sensing, GIS…', onChange: e => set('category', e.target.value) }),
                     React.createElement(CharCount, { value: form.category, max: 80 })
                 ),
+                React.createElement(TranslationFields, { form, field: 'category', label: 'Category', set, maxLength: 80 }),
 
                 React.createElement(Field, { label: 'Format' },
                     React.createElement(
@@ -100,6 +103,7 @@ function Modal({ item, onClose, onSaved }) {
                 React.createElement(Field, { label: 'Duration' },
                     React.createElement('input', { type: 'text', value: form.duration, maxLength: 60, placeholder: 'e.g. 3 hours, 90 minutes, 2 days…', onChange: e => set('duration', e.target.value) })
                 ),
+                React.createElement(TranslationFields, { form, field: 'duration', label: 'Duration', set, maxLength: 60 }),
 
                 isScheduled && React.createElement(
                     'div',
@@ -145,6 +149,7 @@ function Modal({ item, onClose, onSaved }) {
                 React.createElement(Field, { label: 'Course page content (Markdown) — shown when no Course URL is set' },
                     React.createElement(MarkdownEditor, { value: form.body_markdown, onChange: v => set('body_markdown', v) })
                 ),
+                React.createElement(TranslationFields, { form, field: 'body_markdown', label: 'Course page content', set, markdown: true }),
 
                 error && React.createElement('p', { className: 'cms-editor__error', role: 'alert' }, error),
 
@@ -173,7 +178,14 @@ function TrainingResourceEditor() {
     React.useEffect(() => { loadItems(); }, [loadItems]);
 
     function openNew() { setEditItem({ ...EMPTY }); setShowModal(true); }
-    function openEdit(item) { setEditItem(item); setShowModal(true); }
+    // The list endpoint omits the Markdown bodies, so edit from the detail record:
+    // filling the form from the list row would save an empty body.
+    function openEdit(item) {
+        setError(null);
+        cmsGet(`${BASE}${item.id}/`)
+            .then(detail => { setEditItem(detail); setShowModal(true); })
+            .catch(err => setError(errorMessage(err)));
+    }
     function closeModal() { setShowModal(false); setEditItem(null); }
 
     function handleSaved(saved, isNew) {
