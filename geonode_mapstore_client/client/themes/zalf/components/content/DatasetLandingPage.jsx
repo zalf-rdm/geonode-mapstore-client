@@ -6,7 +6,7 @@
  * NOTE: uses React.createElement (no JSX) — themes/ is outside babel-loader include.
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import axios from '@mapstore/framework/libs/ajax';
 import Message from '@mapstore/framework/components/I18N/Message';
@@ -349,66 +349,6 @@ function formatFileSize(bytes) {
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
-
-function CopyMenu({ pk }) {
-    const { t } = useLandingI18n();
-    const [open, setOpen] = useState(false);
-    const [copied, setCopied] = useState(null);
-    const ref = useRef(null);
-
-    useEffect(() => {
-        function onOutside(e) {
-            if (ref.current && !ref.current.contains(e.target)) setOpen(false);
-        }
-        if (open) {
-            document.addEventListener('mousedown', onOutside);
-        }
-        return () => {
-            if (open) {
-                document.removeEventListener('mousedown', onOutside);
-            }
-        };
-    }, [open]);
-
-    function copy(text, key) {
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(text).then(() => {
-                setCopied(key);
-                setTimeout(() => {
-                    setCopied(null);
-                    setOpen(false);
-                }, 1200);
-            }).catch((err) => {
-                console.error('Failed to copy text: ', err);
-            });
-        } else {
-            console.warn('Clipboard API not available');
-        }
-    }
-
-    const landingUrl = window.location.origin + window.location.pathname + window.location.hash;
-    const apiUrl = window.location.origin + '/api/v2/resources/' + pk + '/';
-    const apiCmd = 'curl "' + apiUrl + '"';
-
-    return ce('div', { className: 'zalf-lp-copy-menu', ref },
-        ce('button', {
-            className: 'zalf-lp-dots-btn',
-            onClick: () => setOpen((v) => !v),
-            title: t('moreOptions', 'More options'),
-            'aria-label': t('moreOptions', 'More options')
-        }, ce(Icon, { name: 'dots', className: 'zalf-lp-inline-icon' })),
-        open && ce('div', { className: 'zalf-lp-dropdown' },
-            ce('button', { className: 'zalf-lp-dropdown-item', onClick: () => copy(landingUrl, 'url') },
-                ce('span', { className: 'zalf-lp-dropdown-icon' }, ce(Icon, { name: 'copy', className: 'zalf-lp-inline-icon' })),
-                copied === 'url' ? t('copied', 'Copied!') : t('copyUrl', 'Copy URL')
-            ),
-            ce('button', { className: 'zalf-lp-dropdown-item', onClick: () => copy(apiCmd, 'api') },
-                ce('span', { className: 'zalf-lp-dropdown-icon' }, ce(Icon, { name: 'code', className: 'zalf-lp-inline-icon' })),
-                copied === 'api' ? t('copied', 'Copied!') : t('copyApiCommand', 'Copy API command')
-            )
-        )
-    );
-}
 
 /**
  * Share the stable landing page link /landing/<uuid>/ (the DOI target, zalf-rdm/geonode#823).
@@ -1715,8 +1655,7 @@ function DatasetLandingContent() {
                 // Resource Details card
                 ce('div', { className: 'zalf-lp-card' },
                     ce('div', { className: 'zalf-lp-card-header' },
-                        ce(CardTitle, { title: t('card.resourceDetails', 'Resource Details'), icon: 'info' }),
-                        ce(CopyMenu, { pk })
+                        ce(CardTitle, { title: t('card.resourceDetails', 'Resource Details'), icon: 'info' })
                     ),
                     ce('div', { className: 'zalf-lp-meta-list' },
                         ce(MetaItem, { label: t('meta.type', 'Type'), value: typeLabel }),
