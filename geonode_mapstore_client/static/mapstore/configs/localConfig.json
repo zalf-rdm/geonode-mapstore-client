@@ -965,7 +965,7 @@
                 {
                   "type": "plugin",
                   "name": "PublishDataCollection",
-                  "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'change_resourcebase') && !state('isNewResource') || context.get(state('gnResourceData'), 'is_published')}"
+                  "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'change_resourcebase') && !state('isNewResource')}"
                 }
               ]
             },
@@ -2307,7 +2307,7 @@
                 {
                   "type": "plugin",
                   "name": "PublishDataCollection",
-                  "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'change_resourcebase') && !state('isNewResource') || context.get(state('gnResourceData'), 'is_published')}"
+                  "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'change_resourcebase') && !state('isNewResource')}"
                 },
                 {
                   "type": "divider",

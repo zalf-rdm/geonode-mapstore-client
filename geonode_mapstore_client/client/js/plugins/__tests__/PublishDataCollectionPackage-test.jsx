@@ -43,6 +43,43 @@ describe('DownloadPackageButton', () => {
         expect(document.getElementById('build-download-package').disabled).toBe(true);
     });
 
+    it('reports why a build was declined', async() => {
+        mockAxios.onGet('/api/v2/maps/3/download_package/').reply(200, { enabled: true, state: null, asset_id: null });
+        // MapStore's axios interceptor rejects with the response itself, so the
+        // detail sits at e.data.detail, not e.response.data.detail.
+        mockAxios.onPost('/api/v2/maps/3/download_package/').reply(409, { detail: 'Only a published data collection has a download package.' });
+        await act(async() => {
+            ReactDOM.render(<DownloadPackageButton pk={3} />, document.getElementById('container'));
+            await wait();
+        });
+        await act(async() => {
+            document.getElementById('build-download-package').click();
+            await wait();
+        });
+        const button = document.getElementById('build-download-package');
+        expect(button).toExist();
+        expect(button.textContent).toContain('buildDownloadPackageNow');
+        expect(button.querySelector('i').className).toContain('exclamation-circle');
+    });
+
+    it('hides itself while the feature is switched off', async() => {
+        mockAxios.onGet('/api/v2/maps/3/download_package/').reply(200, { enabled: false, state: null, asset_id: null });
+        await act(async() => {
+            ReactDOM.render(<DownloadPackageButton pk={3} />, document.getElementById('container'));
+            await wait();
+        });
+        expect(document.getElementById('build-download-package')).toBe(null);
+    });
+
+    it('hides itself when the endpoint is not there', async() => {
+        mockAxios.onGet('/api/v2/maps/3/download_package/').reply(404);
+        await act(async() => {
+            ReactDOM.render(<DownloadPackageButton pk={3} />, document.getElementById('container'));
+            await wait();
+        });
+        expect(document.getElementById('build-download-package')).toBe(null);
+    });
+
     it('offers to rebuild an existing package', async() => {
         mockAxios.onGet('/api/v2/maps/3/download_package/').reply(200, { state: 'ready', asset_id: 5 });
         await act(async() => {
