@@ -6,7 +6,7 @@
  * NOTE: uses React.createElement (no JSX) — themes/ is outside babel-loader include.
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import axios from '@mapstore/framework/libs/ajax';
 import Message from '@mapstore/framework/components/I18N/Message';
@@ -31,6 +31,7 @@ import Portal from '@mapstore/framework/components/misc/Portal';
 import ResizableModal from '@mapstore/framework/components/misc/ResizableModal';
 import { capitalize, createTranslator, dateLocale, interpolate } from '../../utils/I18nUtils';
 import { getResourceTypeLabel } from '../../utils/MetadataViewUtils';
+import { downloadPackageUrl, getPackageDownload } from '../../utils/DownloadPackageUtils';
 import './datasetlanding.css';
 
 const ce = React.createElement;
@@ -348,66 +349,6 @@ function formatFileSize(bytes) {
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
-
-function CopyMenu({ pk }) {
-    const { t } = useLandingI18n();
-    const [open, setOpen] = useState(false);
-    const [copied, setCopied] = useState(null);
-    const ref = useRef(null);
-
-    useEffect(() => {
-        function onOutside(e) {
-            if (ref.current && !ref.current.contains(e.target)) setOpen(false);
-        }
-        if (open) {
-            document.addEventListener('mousedown', onOutside);
-        }
-        return () => {
-            if (open) {
-                document.removeEventListener('mousedown', onOutside);
-            }
-        };
-    }, [open]);
-
-    function copy(text, key) {
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(text).then(() => {
-                setCopied(key);
-                setTimeout(() => {
-                    setCopied(null);
-                    setOpen(false);
-                }, 1200);
-            }).catch((err) => {
-                console.error('Failed to copy text: ', err);
-            });
-        } else {
-            console.warn('Clipboard API not available');
-        }
-    }
-
-    const landingUrl = window.location.origin + window.location.pathname + window.location.hash;
-    const apiUrl = window.location.origin + '/api/v2/resources/' + pk + '/';
-    const apiCmd = 'curl "' + apiUrl + '"';
-
-    return ce('div', { className: 'zalf-lp-copy-menu', ref },
-        ce('button', {
-            className: 'zalf-lp-dots-btn',
-            onClick: () => setOpen((v) => !v),
-            title: t('moreOptions', 'More options'),
-            'aria-label': t('moreOptions', 'More options')
-        }, ce(Icon, { name: 'dots', className: 'zalf-lp-inline-icon' })),
-        open && ce('div', { className: 'zalf-lp-dropdown' },
-            ce('button', { className: 'zalf-lp-dropdown-item', onClick: () => copy(landingUrl, 'url') },
-                ce('span', { className: 'zalf-lp-dropdown-icon' }, ce(Icon, { name: 'copy', className: 'zalf-lp-inline-icon' })),
-                copied === 'url' ? t('copied', 'Copied!') : t('copyUrl', 'Copy URL')
-            ),
-            ce('button', { className: 'zalf-lp-dropdown-item', onClick: () => copy(apiCmd, 'api') },
-                ce('span', { className: 'zalf-lp-dropdown-icon' }, ce(Icon, { name: 'code', className: 'zalf-lp-inline-icon' })),
-                copied === 'api' ? t('copied', 'Copied!') : t('copyApiCommand', 'Copy API command')
-            )
-        )
-    );
-}
 
 /**
  * Share the stable landing page link /landing/<uuid>/ (the DOI target, zalf-rdm/geonode#823).
@@ -1250,6 +1191,8 @@ function DatasetLandingContent() {
     const [layersLoading, setLayersLoading] = useState(false);
     const [linkedResources, setLinkedResources] = useState(null);
     const [attributes, setAttributes] = useState(null);
+    // the map's download package (zalf-rdm/geonode#659)
+    const [downloadPackage, setDownloadPackage] = useState(null);
     const pk = extractPkFromHash();
 
     useEffect(() => {
@@ -1260,6 +1203,7 @@ function DatasetLandingContent() {
         setLayersLoading(false);
         setLinkedResources(null);
         setAttributes(null);
+        setDownloadPackage(null);
         // Error keys, not texts, so a locale switch re-renders the message in the new language.
         if (!pk) { setError('noIdentifier'); setLoading(false); return; }
         fetchResource(pk)
@@ -1285,6 +1229,9 @@ function DatasetLandingContent() {
         }
 
         if (resource.resource_type === 'map') {
+            axios.get(downloadPackageUrl(pk))
+                .then(({ data }) => setDownloadPackage(data))
+                .catch(() => setDownloadPackage(null));
             setLayersLoading(true);
             axios.get('/api/v2/maps/' + pk + '/maplayers/')
                 .then(({ data }) => {
@@ -1430,15 +1377,15 @@ function DatasetLandingContent() {
     const typeLabel = getResourceTypeLabel(r, t);
     const viewerHref = getViewerHref(pk, r);
     const viewerBtnLabel = getViewerButtonLabel(r, t);
-    // A plain click opens the read-only metadata overlay; a modified click (new tab/window)
-    // follows the link to the full read-only metadata page. Neither opens the editor.
-    const metadataHref = '#/metadata-view/' + pk;
     const backHref = '#/';
 
     const canDownload = (r.perms || []).includes('download_resourcebase');
     const downloadUrls = r.download_urls || [];
     const defaultDownload = downloadUrls.find((d) => d.default) || downloadUrls[0] || null;
     const downloadHref = canDownload && defaultDownload ? defaultDownload.url : null;
+    // A map has no download of its own; it offers its package, and only once one exists.
+    const isMap = r.resource_type === 'map';
+    const packageDownload = isMap ? getPackageDownload(downloadPackage) : null;
 
     const keywordItems = getKeywordItems(r);
     const thesaurusKeywordGroups = getThesaurusKeywordGroups(r);
@@ -1708,8 +1655,7 @@ function DatasetLandingContent() {
                 // Resource Details card
                 ce('div', { className: 'zalf-lp-card' },
                     ce('div', { className: 'zalf-lp-card-header' },
-                        ce(CardTitle, { title: t('card.resourceDetails', 'Resource Details'), icon: 'info' }),
-                        ce(CopyMenu, { pk })
+                        ce(CardTitle, { title: t('card.resourceDetails', 'Resource Details'), icon: 'info' })
                     ),
                     ce('div', { className: 'zalf-lp-meta-list' },
                         ce(MetaItem, { label: t('meta.type', 'Type'), value: typeLabel }),
@@ -1741,18 +1687,21 @@ function DatasetLandingContent() {
                     ce('a', { className: 'zalf-lp-btn zalf-lp-btn--primary zalf-lp-btn--full', href: viewerHref },
                         ce('span', { className: 'zalf-lp-btn-icon' }, ce(Icon, { name: 'map', className: 'zalf-lp-inline-icon' })), viewerBtnLabel
                     ),
-                    downloadHref
+                    packageDownload && ce('a', {
+                        className: 'zalf-lp-btn zalf-lp-btn--outline zalf-lp-btn--full',
+                        href: packageDownload.href
+                    },
+                    ce('span', { className: 'zalf-lp-btn-icon' }, ce(Icon, { name: 'download', className: 'zalf-lp-inline-icon' })),
+                    t('downloadAll', 'Download all') + ' (ZIP' + (packageDownload.size ? ', ' + formatFileSize(packageDownload.size) : '') + ')'
+                    ),
+                    isMap ? null : downloadHref
                         ? ce('a', {
                             className: 'zalf-lp-btn zalf-lp-btn--outline zalf-lp-btn--full',
                             href: downloadHref
                         }, ce('span', { className: 'zalf-lp-btn-icon' }, ce(Icon, { name: 'download', className: 'zalf-lp-inline-icon' })), t('download', 'Download'))
                         : ce('span', { className: 'zalf-lp-btn zalf-lp-btn--disabled zalf-lp-btn--full' },
                             ce('span', { className: 'zalf-lp-btn-icon' }, ce(Icon, { name: 'download', className: 'zalf-lp-inline-icon' })), t('downloadLoginRequired', 'Download (login required)')
-                        ),
-                    ce('a', { className: 'zalf-lp-btn zalf-lp-btn--ghost zalf-lp-btn--full', href: metadataHref },
-                        ce('span', { className: 'zalf-lp-btn-icon' }, ce(Icon, { name: 'description', className: 'zalf-lp-inline-icon' })),
-                        t('fullMetadataRecord', 'Full Metadata Record')
-                    ),
+                        )
                 ),
 
                 // Dates (DataCite date types)

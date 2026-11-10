@@ -807,7 +807,8 @@
                     "creation": "Creazione",
                     "publication": "Pubblicazione",
                     "revision": "Revisione"
-                }
+                },
+                "downloadAll": "Scarica tutto"
             },
             "metadataView": {
                 "yes": "Sì",
@@ -859,6 +860,31 @@
             },
             "catalogue": {
                 "resourceActions": "Azioni sulla risorsa"
+            }
+        },
+        "plugins": {
+            "PublishDataCollection": {
+                "button": "Pubblica la raccolta di dati",
+                "cancel": "Annulla",
+                "buttonTooltip": "Pubblica la raccolta di dati",
+                "title": "Pubblica la raccolta di dati",
+                "description": "Seleziona i dati da pubblicare con la raccolta {title}",
+                "selectDoiPrefix": "Scegli un prefisso DOI",
+                "skipDoiPrefix": "Pubblica senza registrare un DOI",
+                "publish": "Avvia la pubblicazione dei dati",
+                "selectAll": "Seleziona tutto",
+                "deselectAll": "Deseleziona tutto",
+                "selectedCount": "{selected} di {total} selezionati",
+                "buildDownloadPackage": "Crea il pacchetto di download dopo la pubblicazione",
+                "buildDownloadPackageNow": "Crea il pacchetto di download",
+                "rebuildDownloadPackage": "Ricrea il pacchetto di download",
+                "packageState": {
+                    "none": "Ancora nessun pacchetto di download",
+                    "pending": "Il pacchetto di download è in coda",
+                    "building": "Il pacchetto di download è in fase di creazione",
+                    "ready": "Il pacchetto di download è pronto; fai clic per ricrearlo",
+                    "failed": "La creazione del pacchetto di download non è riuscita: {error}"
+                }
             }
         }
     }

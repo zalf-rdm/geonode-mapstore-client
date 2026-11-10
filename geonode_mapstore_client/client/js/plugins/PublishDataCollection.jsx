@@ -18,7 +18,16 @@ import {
     getCompactPermissions
 } from '@js/selectors/resource';
 import useDatacitePrefixes from '@js/hooks/useDatacitePrefixes';
+import { downloadPackageUrl, packagesEnabled } from '../../themes/zalf/utils/DownloadPackageUtils';
 
+
+// MapStore's axios interceptor rejects with the response itself
+// (`{...error.response, originalError}`, libs/ajax.js), so a rejection carries
+// `status`/`data` directly; `response` is the shape plain axios rejects with.
+// Both are read, so these also work if the interceptor is ever bypassed.
+const errorStatus = (error) => error?.status ?? error?.response?.status;
+const errorDetail = (error) => error?.data?.detail ?? error?.response?.data?.detail;
+const errorMessage = (error) => error?.data?.message ?? error?.response?.data?.message;
 
 const i18n = (shortId, msgParams = {}) => {
     const msgId = `plugins.PublishDataCollection.${shortId}`;
@@ -98,6 +107,18 @@ const PublishDataCollectionComponent = ({
     const [ doiPrefix, setDoiPrefix ] = useState();
     const [ skipDoiPrefix, setSkipDoiPrefix ] = useState(false);
     const toggleSkipDoiPrefix = () => setSkipDoiPrefix(prev => !prev);
+    // Build the download package after publication (zalf-rdm/geonode#659); on by default.
+    const [ buildPackage, setBuildPackage ] = useState(true);
+    // The state endpoint reports whether the backend has the feature switched on
+    // (ZALF_DOWNLOAD_PACKAGE_ENABLED). Off: no checkbox, since nothing would build.
+    // A probe that fails leaves it on; the backend ignores the flag either way.
+    const [ packageFeature, setPackageFeature ] = useState(true);
+    useEffect(() => {
+        if (!open || !pk) return;
+        axios.get(parseDevHostname(downloadPackageUrl(pk)))
+            .then(({ data }) => setPackageFeature(packagesEnabled(data)))
+            .catch(() => setPackageFeature(true));
+    }, [open, pk]);
 
     useEffect(() => {
         // example: ?id__in=3,2&filter{owner}=1000&exclude[]=*&include[]=owner&include[]=pk
@@ -129,7 +150,8 @@ const PublishDataCollectionComponent = ({
         const payload = {
             "owner": owner.pk,
             "doi_prefix": skipDoiPrefix ? undefined : (doiPrefix || doiPrefixes?.[0]),
-            "resources": Object.keys(checkedItems).filter(itemPk => checkedItems[itemPk])
+            "resources": Object.keys(checkedItems).filter(itemPk => checkedItems[itemPk]),
+            "build_download_package": packageFeature && buildPackage
         };
 
         const url = parseDevHostname(`/api/v2/publish/${pk}/`);
@@ -151,10 +173,10 @@ const PublishDataCollectionComponent = ({
             setTimeout(onClose, 200);
         }).catch(error => {
             setIconPublishButton("exclamation-circle");
-            setPublishError(error?.response?.data?.message || 'An error occurred during publish.');
-            console.error(`An error occured during publish: ${error.statusText}`);
+            setPublishError(errorMessage(error) || 'An error occurred during publish.');
+            console.error(`An error occured during publish: ${error?.statusText}`);
         });
-    }, [pk, owner, skipDoiPrefix, doiPrefix, doiPrefixes, checkedItems, resourceData, dispatch, onClose]);
+    }, [pk, owner, skipDoiPrefix, doiPrefix, doiPrefixes, checkedItems, buildPackage, packageFeature, resourceData, dispatch, onClose]);
 
     return (
         <Portal>
@@ -226,6 +248,16 @@ const PublishDataCollectionComponent = ({
                         </FormControl>
                     </FormGroup>
 
+                    {packageFeature && <FormGroup className="mb-3">
+                        <Checkbox
+                            id="publish-build-download-package"
+                            checked={buildPackage}
+                            onChange={() => setBuildPackage(prev => !prev)}
+                        >
+                            <Message { ...i18n("buildDownloadPackage") } />
+                        </Checkbox>
+                    </FormGroup>}
+
                 </div>
                 <div role="footer">
                     <Button onClick={onClose}>
@@ -244,6 +276,75 @@ const PublishDataCollectionComponent = ({
     );
 };
 
+const PACKAGE_ICONS = {
+    pending: 'cog fa-spin',
+    building: 'cog fa-spin',
+    failed: 'exclamation-circle'
+};
+
+/**
+ * Build or rebuild the download package of a published map (zalf-rdm/geonode#659),
+ * e.g. for maps published before packages existed. Shows the package state and
+ * polls while a build is pending or running.
+ */
+export const DownloadPackageButton = ({ pk, variant, size }) => {
+    const [pkg, setPkg] = useState(null);
+    const [error, setError] = useState(null);
+    // Hidden while the backend has the feature switched off (`enabled: false`,
+    // ZALF_DOWNLOAD_PACKAGE_ENABLED), or when the endpoint is not there at all:
+    // a build cannot be requested either way.
+    const [available, setAvailable] = useState(true);
+    const url = parseDevHostname(downloadPackageUrl(pk));
+
+    const load = useCallback(() => axios.get(url)
+        .then(({ data }) => {
+            setPkg(data);
+            setAvailable(packagesEnabled(data));
+        })
+        .catch((e) => {
+            setPkg(null);
+            if (errorStatus(e) === 404) {
+                setAvailable(false);
+            }
+        }), [url]);
+
+    useEffect(() => { load(); }, [load]);
+
+    const running = ['pending', 'building'].includes(pkg?.state);
+    useEffect(() => {
+        if (!running) return () => {};
+        const timer = setInterval(load, 10000);
+        return () => clearInterval(timer);
+    }, [running, load]);
+
+    const build = () => {
+        setError(null);
+        axios.post(url)
+            .then(({ data }) => setPkg(data))
+            .catch((e) => setError(errorDetail(e) || 'error'));
+    };
+
+    const TooltipButton = tooltip(Button);
+    const state = error ? 'failed' : (pkg?.state || 'none');
+    if (!available) {
+        return null;
+    }
+    return (
+        <TooltipButton
+            id="build-download-package"
+            tooltipPosition="left"
+            tooltip={<Message { ...i18n(`packageState.${state}`, { error: error || pkg?.error || '' }) } />}
+            variant={variant}
+            size={size}
+            disabled={running}
+            onClick={build}
+        >
+            <i className={'fa fa-' + (PACKAGE_ICONS[state] || 'file-archive-o')} />
+            {' '}<Message { ...i18n(pkg?.asset_id ? 'rebuildDownloadPackage' : 'buildDownloadPackageNow') } />
+        </TooltipButton>
+    );
+};
+
 const OpenDialogButton = ({
     variant,
     size,
@@ -257,6 +358,9 @@ const OpenDialogButton = ({
     // Publishing is restricted to managers of an allowed DataCite group
     const { canPublish } = useDatacitePrefixes();
 
+    if (canPublish && resourceData?.is_published && resourceData?.resource_type === 'map') {
+        return <DownloadPackageButton pk={resourceData.pk} variant={variant} size={size} />;
+    }
     if (!canPublish || resourceData?.is_published || !resourceData?.is_approved) {
         return null;
     }

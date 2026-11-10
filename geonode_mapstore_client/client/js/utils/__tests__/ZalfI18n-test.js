@@ -110,6 +110,14 @@ describe('ZalfI18n', () => {
             });
         });
 
+        it('carries every PublishDataCollection message in every locale', () => {
+            const publishKeys = Object.keys(flatten(enUS.messages.plugins.PublishDataCollection)).sort();
+            Object.keys(CATALOGUES).forEach((locale) => {
+                const keys = flatten(CATALOGUES[locale].messages.plugins.PublishDataCollection);
+                expect(Object.keys(keys).sort()).toEqual(publishKeys);
+            });
+        });
+
         it('has a label for every contributor role and date type the landing page shows', () => {
             const keys = zalfKeys(enUS);
             CONTRIBUTOR_ROLES.forEach(({ key }) => expect(keys[`landing.roles.${key}`]).toExist());
