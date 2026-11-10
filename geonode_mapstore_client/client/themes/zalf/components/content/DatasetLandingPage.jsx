@@ -1437,9 +1437,6 @@ function DatasetLandingContent() {
     const typeLabel = getResourceTypeLabel(r, t);
     const viewerHref = getViewerHref(pk, r);
     const viewerBtnLabel = getViewerButtonLabel(r, t);
-    // A plain click opens the read-only metadata overlay; a modified click (new tab/window)
-    // follows the link to the full read-only metadata page. Neither opens the editor.
-    const metadataHref = '#/metadata-view/' + pk;
     const backHref = '#/';
 
     const canDownload = (r.perms || []).includes('download_resourcebase');
@@ -1765,11 +1762,7 @@ function DatasetLandingContent() {
                         }, ce('span', { className: 'zalf-lp-btn-icon' }, ce(Icon, { name: 'download', className: 'zalf-lp-inline-icon' })), t('download', 'Download'))
                         : ce('span', { className: 'zalf-lp-btn zalf-lp-btn--disabled zalf-lp-btn--full' },
                             ce('span', { className: 'zalf-lp-btn-icon' }, ce(Icon, { name: 'download', className: 'zalf-lp-inline-icon' })), t('downloadLoginRequired', 'Download (login required)')
-                        ),
-                    ce('a', { className: 'zalf-lp-btn zalf-lp-btn--ghost zalf-lp-btn--full', href: metadataHref },
-                        ce('span', { className: 'zalf-lp-btn-icon' }, ce(Icon, { name: 'description', className: 'zalf-lp-inline-icon' })),
-                        t('fullMetadataRecord', 'Full Metadata Record')
-                    ),
+                        )
                 ),
 
                 // Dates (DataCite date types)
